@@ -1,0 +1,35 @@
+# Catalog of resources related to UV science projects
+# 
+# Description of the document hierarchy:
+#
+# <storage>: handle to call the storage system
+#   |___ <resource ID>: unique identifier of the resource item.
+#           |           IDs must be integers sequentially incremented from 0
+#           |___ name: handle to call the resource 
+#           |___ description: string to clarify the resource's context 
+#           |___ type: either "file" or "directory"
+#           |___ project: exact name of the synced project directory
+#           |             e.g. in the case of SAS cloud the remote file path con be constructed like this:
+#           |             /ULTRASAT-data/uc_science/<project>/<path>
+#           |___ path: the path to the resource file relative to the synced directory
+#
+sas_cloud:
+    0:
+        name: gal_visits_list
+        description: 'Complete list of all GALEX visits.'
+        type: file
+        project: uvvarcat
+        path: /GALEX_visits_list/GALEX_visits_list.fits
+    1:
+        name: gal_fields
+        description: 'Collection of GALEX dataproducts for fileds of interest.'
+        type: directory
+        project: uvvarcat
+        path: /GALEX_fields
+lustre:
+    0:
+        name: foo
+        description: bar
+        type: file
+        project: uvvarcat
+        path: /path/of/no/return
