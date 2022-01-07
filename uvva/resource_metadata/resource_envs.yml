@@ -1,0 +1,21 @@
+# List of required environment variables
+# with information on the corresponding storages and projects
+#
+# Description of the document hierarchy:
+#
+# <VAR>: environment variable
+#   |___ storage: name of the corresponding storage system
+#   |___ project: name of the synced project directory
+#   |___ description: short description
+#
+# Note: Names for `storage` and `project` are required to match 
+# the names used in `resource_catalog.yml`!
+#
+UC_SAS_UVVARCAT:
+    storage: sas_cloud
+    project: uvvarcat
+    description: 'Resources for the UV variability catalog project on DESY Sync & Share. Remote directory: ULTRASAT-data/uc_science/uvvarcat'
+UC_LUSTRE_UVVARCAT:
+    storage: lustre
+    project: uvvarcat
+    description: "Resoruces for the UV variability catalog project on DESY LUSTRE. Not used at the moment."

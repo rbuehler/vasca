@@ -1,0 +1,9 @@
+.python-version
+.pytest_cache
+.DS_Store
+**/.DS_Store
+uvva.egg-info
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+**__pycache__**
+.env
