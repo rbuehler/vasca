@@ -104,12 +104,18 @@ pip install -e .
 <h3>Environment setup with pyenv<a class="headerlink" href="#environment-setup-with-pyenv" title="Permalink to this headline"></a></h3>
 <p>Setup a virtual environment
 (<a class="reference external" href="https://github.com/pyenv/pyenv">pyenv</a> and
-<a class="reference external" href="https://github.com/pyenv/pyenv-virtualenv">pyenv-virtualenv</a>, install the requirements and general purpose modules using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
-<p>Install Python version 3.9.1 and setup a virtual environment (e.g. named <code class="docutils literal notranslate"><span class="pre">uc_science_venv39</span></code>) after following the pyenv  installation described <a class="reference external" href="https://github.com/pyenv/pyenv#installation">here</a> and <a class="reference external" href="https://github.com/pyenv/pyenv-virtualenv#installation">here</a>:</p>
+<a class="reference external" href="https://github.com/pyenv/pyenv-virtualenv">pyenv-virtualenv</a>, install
+the requirements and general purpose modules using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
+<p>Install Python version 3.9.1 and setup a virtual environment (e.g. named
+<code class="docutils literal notranslate"><span class="pre">uc_science_venv39</span></code>) after following the pyenv  installation described
+<a class="reference external" href="https://github.com/pyenv/pyenv#installation">here</a> and
+<a class="reference external" href="https://github.com/pyenv/pyenv-virtualenv#installation">here</a>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyenv virtualenv <span class="m">3</span>.9.1 uc_science_venv39
 </pre></div>
 </div>
-<p>Make sure that the virtual environment is automatically <a class="reference external" href="https://github.com/pyenv/pyenv/blob/master/COMMANDS.md#pyenv-local">enabled</a> for commands executed from the repository root directory:</p>
+<p>Make sure that the virtual environment is automatically
+<a class="reference external" href="https://github.com/pyenv/pyenv/blob/master/COMMANDS.md#pyenv-local">enabled</a>
+for commands executed from the repository root directory:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> &lt;your_install_folder&gt;/uc_science
 pyenv <span class="nb">local</span> uc_science_venv39
 </pre></div>
@@ -122,7 +128,10 @@ pip install -e .
 </section>
 <section id="environment-setup-with-anaconda">
 <h3>Environment setup with Anaconda<a class="headerlink" href="#environment-setup-with-anaconda" title="Permalink to this headline"></a></h3>
-<p>You can setup the environment with <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a> with the <code class="docutils literal notranslate"><span class="pre">conda_env.yml</span></code> file (see <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#create-env-from-file">here</a>):</p>
+<p>You can setup the environment with
+<a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a> with the
+<code class="docutils literal notranslate"><span class="pre">conda_env.yml</span></code> file (see
+<a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#create-env-from-file">here</a>):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda env create -f conda_env.yml
 conda activate uc_uvva
 </pre></div>
@@ -131,10 +140,19 @@ conda activate uc_uvva
 </section>
 <section id="coding-guidelines">
 <h2>Coding guidelines<a class="headerlink" href="#coding-guidelines" title="Permalink to this headline"></a></h2>
-<p>We use the <a class="reference external" href="https://realpython.com/python-pep8/">PEP 8</a> coding conventions. Before contributing please consider the use of automatic code formatting
+<p>We use the <a class="reference external" href="https://realpython.com/python-pep8/">PEP 8</a> coding conventions.
+Before contributing please consider the use of automatic code formatting
 tools like <a class="reference external" href="https://github.com/pycqa/isort">isort</a>,
 <a class="reference external" href="https://github.com/PyCQA/flake8">flake8</a> and
-<a class="reference external" href="https://black.readthedocs.io/en/stable/#">black</a>. The recommended Python version to use is 3.9.x . For docstrings we use the <a class="reference external" href="https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html">ņumpy</a> format.</p>
+<a class="reference external" href="https://black.readthedocs.io/en/stable/#">black</a>. The recommended Python
+version to use is 3.9.x . For docstrings we use the
+<a class="reference external" href="https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html">ņumpy</a>
+format.</p>
+<p>For documentation we use <a class="reference external" href="https://www.sphinx-doc.org/en/master/">SPHINX</a>. To make them yourself be
+sure to have the <code class="docutils literal notranslate"><span class="pre">sphinx-rtd-theme</span></code>, <code class="docutils literal notranslate"><span class="pre">sphinx.ext.autodoc</span></code>
+and <code class="docutils literal notranslate"><span class="pre">sphinx.ext.napoleon</span></code>  installed (see
+<a class="reference external" href="https://betterprogramming.pub/auto-documenting-a-python-project-using-sphinx-8878f9ddc6e9">here</a>
+for a quick guide).</p>
 </section>
 </section>
 
