@@ -66,4 +66,4 @@ Coding guidelines
 We use the `PEP 8 <https://realpython.com/python-pep8/>`__ coding conventions. Before contributing please consider the use of automatic code formatting
 tools like `isort <https://github.com/pycqa/isort>`__,
 `flake8 <https://github.com/PyCQA/flake8>`__ and
-`black <https://black.readthedocs.io/en/stable/#>`__. The recommended Python version to use is 3.9.x .
+`black <https://black.readthedocs.io/en/stable/#>`__. The recommended Python version to use is 3.9.x . For docstrings we use the `ņumpy <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html>`__ format.
