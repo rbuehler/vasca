@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+
+region:
+    name: "2424979629631602688"         # Chosen name for the analysed region
+    parobs_ids: []                      # Passed GALEX co-add IDs 
+    visit_ids:
+        - 2424979492226203648           # Passed GALEX visit IDs
+        - 2424979492259758080
+        - 2424979492293312512
+        - 2424979492326866944
+        - 2424979492360421376
+
+sources:
+    - cluster:
+        - algorithm:  Name              # Clustering algorithm
+        - params: {"par1":2}
+    - selection:
+        - params: {"par1":2}
+
+run:
+    loglevel: DEBUG                     # NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
+    logfile:  logfile.txt               #
+    showfigs: true                      # Display figues interactivelly
