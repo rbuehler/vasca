@@ -1,6 +1,7 @@
 import inspect
 import itertools
 import os
+import sys
 from collections import OrderedDict
 from copy import copy
 from datetime import datetime
@@ -18,15 +19,86 @@ from astropy.table import Table, hstack, unique
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
+from loguru import logger
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
+from sklearn import cluster
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 
 # global paths
-CLASS_DIR = os.path.dirname(os.path.abspath(__file__))  # this file "gField.py"
-PACKAGE_DIR = CLASS_DIR + "/../"
+CLASS_DIR = os.path.dirname(os.path.abspath(__file__))  # path to this file "field.py"
+PACKAGE_DIR = CLASS_DIR + "/../"  # path to the package "uvva"
+
+
+class BaseField(object):
+    """
+    Skeleton class that defines the basic data structure for field-based analysis.
+    To be inherited by field analysis classes, which can then be tailored to the needs
+    of the observatories supported by the UVVA pipeline
+    """
+
+    def __init__(self, field_id=None, observatory=None):
+        self.field_id = field_id  # unique field identifier
+        self.observatory = observatory  # observatory/instrument name
+
+        # standard field attributes
+        self.tt_visit = None  # visits metadata
+        self.tt_coadd = None  # coadd metadata, optional
+        self.field_center = None  # center coordinate
+        self.tt_visit_sources = None  # all mission-generated detections
+
+        # low-level pipeline results
+        self.tt_sources = None  # master source list
+        self.tt_sources_m = None  # source magnitudes
+        self.tt_sources_s2n = None  # source signal-to-noise ratio
+        self.tt_sources_ul = None  # source upper limits
+
+    def _clustering(self, data):
+        """
+        Computes source clusters and create master source list
+        """
+        tt_clusters = cluster.MeanShift(data)
+        return tt_clusters
+
+
+class GALEX_Field(BaseField):
+    """
+    Instance of one GALEX field (coadd + visits)
+
+    Parameters
+    ----------
+
+    parobs_id : int
+
+    include_coadd : bool
+
+    Notes
+    -----
+
+    Note in the MAST data base "obs_id" is equal
+    to the "ParentImgRunID" of the visits table.
+    """
+
+    def __init__(self, parobs_id, include_coadd=False, **kwargs):
+
+        logger.info(f"[{self.__class__.__name__}]: Initializing field.")
+
+        super().__init__(field_id=parobs_id, observatory="galex", **kwargs)
+
+        if self.observatory != "galex":
+            raise ValueError(
+                f"Incorrect observatory specified ('{self.observatory}') "
+                "when using GALEX_Field (expected 'galex')"
+            )
+
+    def _load_galex_archive_products():
+        """
+        Loads the relevant data products from MAST servers and
+        stores them using the ResourceManager
+        """
+        pass
 
 
 class Field:
