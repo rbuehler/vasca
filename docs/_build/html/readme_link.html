@@ -18,7 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="uvva.test package" href="uvva.test.html" /> 
+    <link rel="next" title="uc_uvva" href="modules.html" />
+    <link rel="prev" title="Welcome to UVVA’s documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,17 +39,15 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ultraviolet-variability-analysis-uvva">Ultraviolet Variability Analysis (UVVA)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coding-guidelines">Coding guidelines</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">uc_uvva</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#ultraviolet-variability-analysis-uvva">Ultraviolet Variability Analysis (UVVA)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#environment-setup-with-pyenv">Environment setup with pyenv</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#environment-setup-with-anaconda">Environment setup with Anaconda</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#coding-guidelines">Coding guidelines</a></li>
-</ul>
-</li>
 </ul>
 
         </div>
@@ -77,12 +76,11 @@
              
   <section id="getting-started">
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
-</section>
 <section id="ultraviolet-variability-analysis-uvva">
-<h1>Ultraviolet Variability Analysis (UVVA)<a class="headerlink" href="#ultraviolet-variability-analysis-uvva" title="Permalink to this headline"></a></h1>
+<h2>Ultraviolet Variability Analysis (UVVA)<a class="headerlink" href="#ultraviolet-variability-analysis-uvva" title="Permalink to this headline"></a></h2>
 <p>UVVA is an astronomy analysis pipeline of ultraviolet sources. Its main purpose is to create catalogs of variable sources. Primarily, this will be done based on GALEX data.</p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h3>
 <ol class="arabic simple">
 <li><p>Clone this repository:</p></li>
 </ol>
@@ -100,8 +98,7 @@ pip install -e .
 <ol class="arabic simple" start="4">
 <li><p>Setup the resource manager by including your cloud path location in the the <code class="docutils literal notranslate"><span class="pre">.env_template</span></code> file and rename it to <code class="docutils literal notranslate"><span class="pre">.env</span></code>.</p></li>
 </ol>
-<section id="environment-setup-with-pyenv">
-<h3>Environment setup with pyenv<a class="headerlink" href="#environment-setup-with-pyenv" title="Permalink to this headline"></a></h3>
+<p><strong>Environment setup with pyenv</strong></p>
 <p>Setup a virtual environment
 (<a class="reference external" href="https://github.com/pyenv/pyenv">pyenv</a> and
 <a class="reference external" href="https://github.com/pyenv/pyenv-virtualenv">pyenv-virtualenv</a>, install
@@ -125,9 +122,7 @@ pyenv <span class="nb">local</span> uc_science_venv39
 pip install -e .
 </pre></div>
 </div>
-</section>
-<section id="environment-setup-with-anaconda">
-<h3>Environment setup with Anaconda<a class="headerlink" href="#environment-setup-with-anaconda" title="Permalink to this headline"></a></h3>
+<p><strong>Environment setup with Anaconda</strong></p>
 <p>You can setup the environment with
 <a class="reference external" href="https://www.anaconda.com/products/individual">Anaconda</a> with the
 <code class="docutils literal notranslate"><span class="pre">conda_env.yml</span></code> file (see
@@ -137,9 +132,8 @@ conda activate uc_uvva
 </pre></div>
 </div>
 </section>
-</section>
 <section id="coding-guidelines">
-<h2>Coding guidelines<a class="headerlink" href="#coding-guidelines" title="Permalink to this headline"></a></h2>
+<h3>Coding guidelines<a class="headerlink" href="#coding-guidelines" title="Permalink to this headline"></a></h3>
 <p>We use the <a class="reference external" href="https://realpython.com/python-pep8/">PEP 8</a> coding conventions.
 Before contributing please consider the use of automatic code formatting
 tools like <a class="reference external" href="https://github.com/pycqa/isort">isort</a>,
@@ -155,12 +149,14 @@ and <code class="docutils literal notranslate"><span class="pre">sphinx.ext.napo
 for a quick guide).</p>
 </section>
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="uvva.test.html" class="btn btn-neutral float-left" title="uvva.test package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to UVVA’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="uc_uvva" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

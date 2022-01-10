@@ -23,8 +23,7 @@ Installation
 
 4. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
 
-Environment setup with pyenv
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Environment setup with pyenv**
 
 Setup a virtual environment
 (`pyenv <https://github.com/pyenv/pyenv>`__ and
@@ -56,8 +55,7 @@ Install the necessary Python modules:
    pip install -r requirements.txt   
    pip install -e .
 
-Environment setup with Anaconda
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Environment setup with Anaconda**
 
 You can setup the environment with
 `Anaconda <https://www.anaconda.com/products/individual>`__ with the

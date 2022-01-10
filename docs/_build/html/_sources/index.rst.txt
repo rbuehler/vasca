@@ -10,8 +10,9 @@ Welcome to UVVA's documentation!
    :maxdepth: 2
    :caption: Contents:
    
-   modules
    readme_link
+   modules
+
 
 
 Indices and tables
