@@ -21,15 +21,15 @@ from astroquery.mast import Observations
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
 
-from .gUtils import get_time_delta, get_time_delta_mean, sky_sep2d
-from .ResourceManager import ResourceManager
+from .resource_manager import ResourceManager
+from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 
 # global paths
 CLASS_DIR = os.path.dirname(os.path.abspath(__file__))  # this file "gField.py"
 PACKAGE_DIR = CLASS_DIR + "/../"
 
 
-class gField:
+class Field:
     """
     Instance of one GALEX field (coadd + visits)
 
