@@ -1,7 +1,7 @@
 Ultraviolet Variability Analysis (UVVA)
 ========================================
 
-UVVA is an astronomy analysis pipeline of ultra-violet sources. Its main purpose is to create catalogs of variable sources. Primarily, this will be done based on GALEX data. 
+UVVA is an astronomy analysis pipeline of ultraviolet sources. Its main purpose is to create catalogs of variable sources. Primarily, this will be done based on GALEX data. 
 
 Installation
 ------------
