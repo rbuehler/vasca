@@ -172,9 +172,6 @@ class BaseField(object):
         for key, vals in self.__dict__.items():
             out_str += "\n\n" + vals.meta["INFO"] + "\n"
             out_str += vals.__str__()
-            print("\n" + vals.meta["INFO"])
-            print(key + ":")
-            vals.info()
 
         return out_str
 
