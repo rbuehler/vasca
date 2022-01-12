@@ -27,9 +27,14 @@ from sklearn import cluster
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 
+from astropy.table import QTable
+from astropy import units as uu
+
 # global paths
 CLASS_DIR = os.path.dirname(os.path.abspath(__file__))  # path to this file "field.py"
 PACKAGE_DIR = CLASS_DIR + "/../"  # path to the package "uvva"
+
+dimless = uu.dimensionless_unscaled
 
 
 class BaseField(object):
@@ -39,28 +44,139 @@ class BaseField(object):
     of the observatories supported by the UVVA pipeline
     """
 
-    def __init__(self, field_id=None, observatory=None):
-        self.field_id = field_id  # unique field identifier
-        self.observatory = observatory  # observatory/instrument name
-
-        # standard field attributes
-        self.tt_visit = None  # visits metadata
-        self.tt_coadd = None  # coadd metadata, optional
-        self.field_center = None  # center coordinate
-        self.tt_visit_sources = None  # all mission-generated detections
-
-        # low-level pipeline results
-        self.tt_sources = None  # master source list
-        self.tt_sources_m = None  # source magnitudes
-        self.tt_sources_s2n = None  # source signal-to-noise ratio
-        self.tt_sources_ul = None  # source upper limits
-
-    def _clustering(self, data):
+    def __init__(self, field_name="default", ra=-1.0, dec=-1.0, observatory="default"):
         """
-        Computes source clusters and create master source list
+
+        Parameters
+        ----------
+        field_name : str, optional
+            Name of the field. The default is "default".
+        ra : float, optional
+            Right Assention of the field center in degrees. The default is -1.0.
+        dec : TYPE, optional
+            Declination of the field center in degrees. The default is -1.0.
+        observatory : str, optional
+            Observatory with which the data was taken. The default is "default".
+
+        Returns
+        -------
+        None.
+
         """
-        tt_clusters = cluster.MeanShift(data)
-        return tt_clusters
+
+        # Field information
+        print(np.str(field_name))
+        self.tt_field = Table(
+            names=["name", "ra", "dec", "observatory"],
+            dtype=["S", "float16", "float16", "S"],
+            units=[None, uu.deg, uu.deg, None],
+        )
+        self.tt_field.add_row([field_name, ra, dec, observatory])
+        self.tt_field.meta["DATA_PATH"] = "none"  # Path to original data
+        self.tt_field.meta["INFO"] = "Field information"
+
+        # Visits information
+        self.tt_visits = Table(
+            names=["id", "time", "exposure"],
+            dtype=["uint32", "float64", "float16"],
+            units=[dimless, uu.d, uu.s],
+        )
+        self.tt_visits.meta["INFO"] = "Visits information"
+
+        # Detected visit sources
+        self.tt_visit_sources = Table(
+            names=[
+                "id",
+                "ra",
+                "dec",
+                "pos_err",
+                "mag",
+                "mag_err",
+                "s2n",
+                "flags",
+                "src_id",
+            ],
+            dtype=[
+                "uint32",
+                "float16",
+                "float16",
+                "float16",
+                "float16",
+                "float16",
+                "float16",
+                "int32",
+                "uint32",
+            ],
+            units=[
+                dimless,
+                uu.deg,
+                uu.deg,
+                uu.deg,
+                dimless,
+                dimless,
+                dimless,
+                dimless,
+                dimless,
+            ],
+        )
+        self.tt_visit_sources.meta["INFO"] = "Visits sources information"
+
+        # Field sources information
+        self.tt_sources = Table(
+            names=["src_id", "ra", "dec", "nr_vis_det", "flag"],
+            dtype=["uint32", "float16", "float16", "uint32", "int32"],
+            units=[dimless, uu.deg, uu.deg, dimless, dimless],
+        )
+        self.tt_sources.meta["CLUSTER_ALG"] = "None"  # Applied clustering algorithm.
+        self.tt_sources.meta["INFO"] = "Field sources information"
+
+        # Field sources visit information
+        # Colums are source IDs and rows are given in magnitudes
+
+        # Magnitude flux
+        self.tt_sources_mag = Table()
+        self.tt_sources_mag.meta["INFO"] = "AB Magnitude flux"
+
+        # Signal to noise
+        self.tt_sources_s2n = Table()
+        self.tt_sources_s2n.meta["INFO"] = "Signal to noise of the detection"
+
+        # 95% confidence upper limit magnitude
+        self.tt_sources_ulmag95 = Table()
+        self.tt_sources_ulmag95.meta["INFO"] = "AB Magnitude flux 95% upper limit"
+
+    def info(self):
+        """
+        Prints out information about the field, its visits and sources.
+
+        Returns
+        -------
+        None.
+
+        """
+        for key, vals in self.__dict__.items():
+            print("\n" + vals.meta["INFO"])
+            print(key + ":")
+            vals.info()
+
+    def __str__(self):
+        """
+        Returns string with information about the field, its visits and sources.
+
+        Returns
+        -------
+        None.
+
+        """
+        out_str = ""
+        for key, vals in self.__dict__.items():
+            out_str += "\n\n" + vals.meta["INFO"] + "\n"
+            out_str += vals.__str__()
+            print("\n" + vals.meta["INFO"])
+            print(key + ":")
+            vals.info()
+
+        return out_str
 
 
 class GALEX_Field(BaseField):
@@ -113,9 +229,7 @@ class Field:
 
         # logging prefix
         log_prefix = str.format(
-            "[{}.{}] ",
-            self.__class__.__name__,
-            inspect.currentframe().f_code.co_name,
+            "[{}.{}] ", self.__class__.__name__, inspect.currentframe().f_code.co_name,
         )
 
         # parse arguments --------------------------------------------------------------
@@ -801,11 +915,7 @@ class Field:
 
         # colorbar
         cbaxes = fig.add_axes([0.875, 0.1, 0.03, 0.75])
-        cb = colorbar.Colorbar(
-            ax=cbaxes,
-            mappable=img,
-            orientation="vertical",
-        )
+        cb = colorbar.Colorbar(ax=cbaxes, mappable=img, orientation="vertical",)
         cb.ax.tick_params(labelsize=label_fontsize)
         cb.set_label("NUV Flux [a.u.]", size=label_fontsize)
 
@@ -1000,9 +1110,7 @@ class Field:
         plt.style.use(PACKAGE_DIR + "/lib/mpl_style_sheets/spie_scout_testing.mplstyle")
 
         log_prefix = str.format(
-            "[{}.{}]",
-            self.__class__.__name__,
-            inspect.currentframe().f_code.co_name,
+            "[{}.{}]", self.__class__.__name__, inspect.currentframe().f_code.co_name,
         )
 
         # validate input key
@@ -1258,10 +1366,7 @@ class Field:
         # color bar indicates date
         dates_str = [
             datetime.fromisoformat(d.to_value("iso"))
-            for d in Time(
-                self.tt_visits["PhotoObsDate_MJD"],
-                format="mjd",
-            )
+            for d in Time(self.tt_visits["PhotoObsDate_MJD"], format="mjd",)
         ]
         dates_num = mdates.date2num(dates_str)
         vmin = dates_num[0]
