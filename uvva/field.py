@@ -15,7 +15,7 @@ from astropy import units as uu
 from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import Table, hstack, unique
+from astropy.table import QTable, Table, hstack, unique
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
@@ -27,9 +27,6 @@ from sklearn import cluster
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 
-from astropy.table import QTable
-from astropy import units as uu
-
 # global paths
 CLASS_DIR = os.path.dirname(os.path.abspath(__file__))  # path to this file "field.py"
 PACKAGE_DIR = CLASS_DIR + "/../"  # path to the package "uvva"
@@ -39,16 +36,26 @@ dimless = uu.dimensionless_unscaled
 
 class BaseField(object):
     """
-    Skeleton class that defines the basic data structure for field-based analysis.
-    To be inherited by field analysis classes, which can then be tailored to the needs
-    of the observatories supported by the UVVA pipeline
+    `~uvva.field.BaseField` provides class that defines the basic data structure
+    for field-based analysis. To be inherited by field analysis classes,
+    which can then be tailored to the needs of the observatories supported
+    by the UVVA pipeline
     """
 
-    def __init__(self, field_name="default", ra=-1.0, dec=-1.0, observatory="default"):
+    def __init__(
+        self,
+        field_id=None,
+        field_name=None,
+        ra=None,
+        dec=None,
+        observatory=None,
+    ):
         """
 
         Parameters
         ----------
+        field_id : int, optional
+            Unique identifier number specifying the field.
         field_name : str, optional
             Name of the field. The default is "default".
         ra : float, optional
@@ -58,30 +65,57 @@ class BaseField(object):
         observatory : str, optional
             Observatory with which the data was taken. The default is "default".
 
+        Attributes
+        ----------
+        tt_field : astropy.table.Table
+            Table holding general information/metadata about the field of interest.
+            The minimum required columns are specified as follows:
+            +--------------+------------+----------+---------------------+
+            | Column name  | type       | unit     | description         |
+            +==============+============+========+=======================+
+            | id           | uint32     | dimless  | Unique, numeric ID  |
+            +--------------+------------+----------+---------------------+
+            | name         | S32        |  None    | Field name          |
+            +--------------+------------+----------+---------------------+
+            | ra           | float64    |  degree  | Ra of field center  |
+            +--------------+------------+----------+---------------------+
+            | dec          | float64    |  degree  | Dec of field center |
+            +--------------+------------+----------+---------------------+
+            | observatory  | S32        |  None    | Observatory name    |
+            +--------------+------------+----------+---------------------+
+            Additional metadata is stored in the meta dictionary
+            (`astropy.table.Table.meta`). Two keys are pre-defined:
+            - 'DATA_PATH': The the path to the original data relative
+            to the storage system
+            - 'INFO': Miscellaneous information
+
         Returns
         -------
         None.
 
         """
+        # Configure logger
+        logger.configure(extra={"classname": self.__class__.__name__})
 
         # Field information
-        print(np.str(field_name))
+        logger.info(f"Initializing new field with name '{field_name}'")
         self.tt_field = Table(
-            names=["name", "ra", "dec", "observatory"],
-            dtype=["S", "float16", "float16", "S"],
-            units=[None, uu.deg, uu.deg, None],
+            names=["id", "name", "ra", "dec", "observatory"],
+            dtype=["uint32", "S32", "float64", "float64", "S32"],
+            units=[dimless, None, uu.deg, uu.deg, None],
+            meta={
+                "DATA_PATH": None,
+                "INFO": "Field information",
+            },
         )
-        self.tt_field.add_row([field_name, ra, dec, observatory])
-        self.tt_field.meta["DATA_PATH"] = "none"  # Path to original data
-        self.tt_field.meta["INFO"] = "Field information"
 
         # Visits information
         self.tt_visits = Table(
             names=["id", "time", "exposure"],
             dtype=["uint32", "float64", "float16"],
             units=[dimless, uu.d, uu.s],
+            meta={"INFO": "Visit information"},
         )
-        self.tt_visits.meta["INFO"] = "Visits information"
 
         # Detected visit sources
         self.tt_visit_sources = Table(
@@ -118,32 +152,37 @@ class BaseField(object):
                 dimless,
                 dimless,
             ],
+            meta={"INFO": "Initial list of unclustered sources from visit detections"},
         )
-        self.tt_visit_sources.meta["INFO"] = "Visits sources information"
 
         # Field sources information
         self.tt_sources = Table(
             names=["src_id", "ra", "dec", "nr_vis_det", "flag"],
             dtype=["uint32", "float16", "float16", "uint32", "int32"],
             units=[dimless, uu.deg, uu.deg, dimless, dimless],
+            meta={
+                "INFO": "Master list of sources",
+                "CLUSTER_ALG": None,  # Applied clustering algorithm.
+            },
         )
-        self.tt_sources.meta["CLUSTER_ALG"] = "None"  # Applied clustering algorithm.
-        self.tt_sources.meta["INFO"] = "Field sources information"
 
         # Field sources visit information
-        # Colums are source IDs and rows are given in magnitudes
+        # Columns are source IDs and rows are magnitudes for each visit
 
         # Magnitude flux
-        self.tt_sources_mag = Table()
-        self.tt_sources_mag.meta["INFO"] = "AB Magnitude flux"
+        self.tt_sources_mag = Table(
+            meta={"INFO": "AB Magnitude flux"},
+        )
 
         # Signal to noise
-        self.tt_sources_s2n = Table()
-        self.tt_sources_s2n.meta["INFO"] = "Signal to noise of the detection"
+        self.tt_sources_s2n = Table(
+            meta={"INFO": "Signal to noise of the detection"},
+        )
 
         # 95% confidence upper limit magnitude
-        self.tt_sources_ulmag95 = Table()
-        self.tt_sources_ulmag95.meta["INFO"] = "AB Magnitude flux 95% upper limit"
+        self.tt_sources_ulmag95 = Table(
+            meta={"INFO": "AB Magnitude flux 95% upper limit"},
+        )
 
     def info(self):
         """
@@ -155,7 +194,7 @@ class BaseField(object):
 
         """
         for key, vals in self.__dict__.items():
-            print("\n" + vals.meta["INFO"])
+            print("\n" + str(vals.meta["INFO"]))
             print(key + ":")
             vals.info()
 
@@ -165,18 +204,18 @@ class BaseField(object):
 
         Returns
         -------
-        None.
+        str
 
         """
         out_str = ""
         for key, vals in self.__dict__.items():
-            out_str += "\n\n" + vals.meta["INFO"] + "\n"
+            out_str += "\n\n" + str(vals.meta["INFO"]) + "\n"
             out_str += vals.__str__()
 
         return out_str
 
 
-class GALEX_Field(BaseField):
+class GALEXField(BaseField):
     """
     Instance of one GALEX field (coadd + visits)
 
@@ -196,15 +235,7 @@ class GALEX_Field(BaseField):
 
     def __init__(self, parobs_id, include_coadd=False, **kwargs):
 
-        logger.info(f"[{self.__class__.__name__}]: Initializing field.")
-
         super().__init__(field_id=parobs_id, observatory="galex", **kwargs)
-
-        if self.observatory != "galex":
-            raise ValueError(
-                f"Incorrect observatory specified ('{self.observatory}') "
-                "when using GALEX_Field (expected 'galex')"
-            )
 
     def _load_galex_archive_products():
         """
@@ -226,7 +257,9 @@ class Field:
 
         # logging prefix
         log_prefix = str.format(
-            "[{}.{}] ", self.__class__.__name__, inspect.currentframe().f_code.co_name,
+            "[{}.{}] ",
+            self.__class__.__name__,
+            inspect.currentframe().f_code.co_name,
         )
 
         # parse arguments --------------------------------------------------------------
@@ -912,7 +945,11 @@ class Field:
 
         # colorbar
         cbaxes = fig.add_axes([0.875, 0.1, 0.03, 0.75])
-        cb = colorbar.Colorbar(ax=cbaxes, mappable=img, orientation="vertical",)
+        cb = colorbar.Colorbar(
+            ax=cbaxes,
+            mappable=img,
+            orientation="vertical",
+        )
         cb.ax.tick_params(labelsize=label_fontsize)
         cb.set_label("NUV Flux [a.u.]", size=label_fontsize)
 
@@ -1107,7 +1144,9 @@ class Field:
         plt.style.use(PACKAGE_DIR + "/lib/mpl_style_sheets/spie_scout_testing.mplstyle")
 
         log_prefix = str.format(
-            "[{}.{}]", self.__class__.__name__, inspect.currentframe().f_code.co_name,
+            "[{}.{}]",
+            self.__class__.__name__,
+            inspect.currentframe().f_code.co_name,
         )
 
         # validate input key
@@ -1363,7 +1402,10 @@ class Field:
         # color bar indicates date
         dates_str = [
             datetime.fromisoformat(d.to_value("iso"))
-            for d in Time(self.tt_visits["PhotoObsDate_MJD"], format="mjd",)
+            for d in Time(
+                self.tt_visits["PhotoObsDate_MJD"],
+                format="mjd",
+            )
         ]
         dates_num = mdates.date2num(dates_str)
         vmin = dates_num[0]
