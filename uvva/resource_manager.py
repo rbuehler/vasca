@@ -65,6 +65,13 @@ class ResourceManager:
         # set environment variables
         self._load_env()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        # do some cleanup here
+        pass
+
     def _load_metadata(self):
         # store metadata in dictionary
         # construct dict from list to keep it general
