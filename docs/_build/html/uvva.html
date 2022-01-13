@@ -131,8 +131,8 @@ by the UVVA pipeline.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Class atributes are of the tyooe astropy.Table. To see a
-description of each of them run BaseField.info().</p>
+<p>Many class attributes are strored in astropy.Tables. To see a
+description of each of their columns run BaseField.info().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p></p>
@@ -200,7 +200,22 @@ description of each of them run BaseField.info().</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="uvva.field.BaseField.get_ttcol_narray">
 <span class="sig-name descname"><span class="pre">get_ttcol_narray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tt_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.get_ttcol_narray" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Helper function to get numpy arrays for columns in the attribute tables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tt_name</strong> (<em>str</em>) – Name of the astropy table</p></li>
+<li><p><strong>tt_var</strong> (<em>str</em>) – Name of the column</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Numpy array for the asked table column</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="uvva.field.BaseField.info">
@@ -250,8 +265,8 @@ to the “ParentImgRunID” of the visits table.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Class atributes are of the tyooe astropy.Table. To see a
-description of each of them run BaseField.info().</p>
+<p>Many class attributes are strored in astropy.Tables. To see a
+description of each of their columns run BaseField.info().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p></p>

@@ -196,6 +196,22 @@ class BaseField(object):
         self.dec = self.get_ttcol_narray("tt_field", "dec")[0]
 
     def get_ttcol_narray(self, tt_name, tt_var):
+        """
+        Helper function to get numpy arrays for columns in the attribute tables
+
+        Parameters
+        ----------
+        tt_name : str
+            Name of the astropy table
+        tt_var : str
+            Name of the column
+
+        Returns
+        -------
+        ndarray
+            Numpy array for the asked table column
+
+        """
         return self.tt_list[tt_name][tt_var].data
 
     def info(self):
