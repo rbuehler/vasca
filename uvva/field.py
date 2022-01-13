@@ -263,9 +263,31 @@ class GALEXField(BaseField):
     to the "ParentImgRunID" of the visits table.
     """
 
-    def __init__(self, parobs_id, include_coadd=False, **kwargs):
+    def __init__(self, obs_id, include_coadd=False, include_FUV=False, **kwargs):
 
-        super().__init__(field_id=parobs_id, observatory="galex", **kwargs)
+        # Collects coadd and visit metadata tables in order
+        # to bootstrap the initialization procedure using the base class
+        with ResourceManager() as rm:
+            #: Path to read and write data relevant to the pipeline
+            self.data_path = rm.get_path("gal_fields", "sas_cloud") + "/" + str(obs_id)
+        tt_galex_field_info = self._load_galex_field_info()
+        tt_galex_visits_info = self._load_galex_visits_info()
+
+        super().__init__(
+            field_id=obs_id,
+            field_name=None,
+            ra=None,
+            dec=None,
+            observatory="galex",
+            obsfilter="NUV",
+            **kwargs,
+        )
+
+    def _load_galex_field_info(self):
+        pass
+
+    def _load_galex_visits_info(self):
+        pass
 
     def _load_galex_archive_products():
         """
