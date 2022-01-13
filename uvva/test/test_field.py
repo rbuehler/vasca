@@ -18,7 +18,7 @@ from uvva.field import BaseField, Field, GALEXField
 def main():
     # logging
     # replacing the standard handler
-    logger.remove(0)
+    # logger.remove(0)
     # setup custom handler to make use of
     # additional fields defined by uvva
     fmt = (
@@ -35,6 +35,7 @@ def main():
     ff = BaseField()
     print("\n******** INFO *********")
     ff.info()
+
     print("\n******** PRINT ********")
     print(ff)
 
@@ -43,7 +44,7 @@ def main():
     print(gf.tt_field.info)
     pprint(gf.tt_field.meta)
 
-    # tt_field is the old tt_coadd
+    # # tt_field is the old tt_coadd
     gf = Field(6388191295067652096)
     print("GALEX field info:")
 
