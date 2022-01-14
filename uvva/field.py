@@ -233,9 +233,9 @@ class BaseField(object):
 
         # Convenience class attributes
         #: Ordered dictionary of attribute astropy tables
-        self.tt_odic = collections.OrderedDict()
+        self.od_data = collections.OrderedDict()
         for tt_name in self.tt_list:
-            self.tt_odic[tt_name] = self.__dict__[tt_name]
+            self.od_data[tt_name] = self.__dict__[tt_name]
 
         #: Field center coordinate as SkyCoord object with frame "icrs"
         self.center = (
@@ -264,7 +264,7 @@ class BaseField(object):
         # Create HDU list and write
         hdup = fits.PrimaryHDU()
         hdus = [hdup]
-        for key, val in self.tt_odic.items():
+        for key, val in self.od_data.items():
             logger.debug(f"Writing table '{key}'")
             hdu = fits.table_to_hdu(val)
             hdu.name = key  # Add Name for fits extension
@@ -286,7 +286,7 @@ class BaseField(object):
 
         """
         logger.info(f"Loading file with name '{file_name}'")
-        for key, val in self.tt_odic.items():
+        for key, val in self.od_data.items():
             logger.debug(f"Loading table '{key}'")
             val = Table.read(file_name, hdu=key)
 
@@ -299,7 +299,7 @@ class BaseField(object):
         None.
 
         """
-        for key, val in self.tt_odic.items():
+        for key, val in self.od_data.items():
             print("\n" + key + ":")
             val.info()
 
@@ -313,7 +313,7 @@ class BaseField(object):
 
         """
         out_str = ""
-        for key, val in self.tt_odic.items():
+        for key, val in self.od_data.items():
             out_str += "\n" + val.__str__()
 
         return out_str
