@@ -10,3 +10,4 @@ uvva.egg-info
 .env
 .spyproject/
 uvva/test/default_field.fits
+uvva/test/field_default.fits
