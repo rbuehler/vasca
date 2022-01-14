@@ -244,12 +244,12 @@ class BaseField(object):
             else None
         )
 
-    def write(self, filename="field_default.fits", overwrite=True):
+    def write_to_fits(self, file_name="field_default.fits", overwrite=True):
         """
 
         Parameters
         ----------
-        filename : str, optional
+        file_name : str, optional
             File name. The default is "field_default.fits".
         overwrite : bool, optional
             Overwrite existing file. The default is True.
@@ -259,18 +259,36 @@ class BaseField(object):
         None.
 
         """
-        logger.info(f"Writing file with name '{filename}'")
+        logger.info(f"Writing file with name '{file_name}'")
 
         # Create HDU list and write
         hdup = fits.PrimaryHDU()
         hdus = [hdup]
         for key, val in self.tt_odic.items():
-            logger.debug(f"Adding table '{key}'")
+            logger.debug(f"Writing table '{key}'")
             hdu = fits.table_to_hdu(val)
             hdu.name = key  # Add Name for fits extension
             hdus.append(hdu)
         new_hdul = fits.HDUList(hdus)
-        new_hdul.writeto(filename, overwrite=overwrite)
+        new_hdul.writeto(file_name, overwrite=overwrite)
+
+    def load_from_fits(self, file_name="field_default.fits"):
+        """
+
+        Parameters
+        ----------
+        file_name : str, optional
+            File name. The default is "field_default.fits".
+
+        Returns
+        -------
+        None.
+
+        """
+        logger.info(f"Loading file with name '{file_name}'")
+        for key, val in self.tt_odic.items():
+            logger.debug(f"Loading table '{key}'")
+            val = Table.read(file_name, hdu=key)
 
     def info(self):
         """

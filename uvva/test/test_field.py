@@ -84,9 +84,12 @@ def test_base_field_print_info():
     print(ff)
 
 
-def test_base_field_write():
+def test_base_field_io():
     ff = BaseField()
-    ff.write()
+    ff.write_to_fits()
+    ff_olfstr = ff.__str__
+    ff.load_from_fits()
+    assert ff_olfstr == ff.__str__
 
 
 def main():
@@ -95,7 +98,7 @@ def main():
 
     # Tests to excecute
     # test_base_field_print_info()
-    test_base_field_write()
+    test_base_field_io()
 
 
 if __name__ == "__main__":
