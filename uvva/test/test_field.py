@@ -84,12 +84,18 @@ def test_base_field_print_info():
     print(ff)
 
 
+def test_base_field_write():
+    ff = BaseField()
+    ff.write()
+
+
 def main():
     # logging
     logger.enable("uvva")
 
     # Tests to excecute
-    test_base_field_print_info()
+    # test_base_field_print_info()
+    test_base_field_write()
 
 
 if __name__ == "__main__":

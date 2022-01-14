@@ -23,6 +23,7 @@ from loguru import logger
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
 from sklearn import cluster
+import collections
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
@@ -98,6 +99,9 @@ class BaseField(object):
             val = val * unit if (unit is not None and val is not None) else val
             setattr(self, key, val)
 
+        #: List of astropy table attributes
+        self.tt_list = ["tt_field"]
+
         #: Astropy table with field information
         self.tt_field = Table(
             names=["id", "name", "ra", "dec", "observatory", "obsfilter"],
@@ -111,7 +115,7 @@ class BaseField(object):
                 "Telescope of the observation (e.g. GALEX)",
                 "Filter of the observation (e.g. NUV)",
             ],
-            meta={"DATAPATH": None, "INFO": "Field information", "Name": "field"},
+            meta={"DATAPATH": None, "INFO": "Field information"},
         )
         # Add passed field parameters to the table
         self.tt_field.add_row(
@@ -126,6 +130,7 @@ class BaseField(object):
         )
 
         #: Astropy table with visit information
+        self.tt_list.append("tt_visits")
         self.tt_visits = Table(
             names=["id", "time", "exposure"],
             dtype=["uint32", "float64", "float16"],
@@ -135,10 +140,11 @@ class BaseField(object):
                 "Visit central time in MJD",
                 "Visit exposure time in s",
             ],
-            meta={"INFO": "Visit information", "Name": "visits"},
+            meta={"INFO": "Visit information"},
         )
 
         #: Astropy table with visit source information
+        self.tt_list.append("tt_visit_sources")
         self.tt_visit_sources = Table(
             names=[
                 "id",
@@ -187,11 +193,12 @@ class BaseField(object):
         )
 
         #: Astropy table with field sources information
+        self.tt_list.append("tt_sources")
         self.tt_sources = Table(
             names=["src_id", "ra", "dec", "nr_vis_det", "flag"],
             dtype=["uint32", "float16", "float16", "uint32", "int32"],
             units=[dimless, uu.deg, uu.deg, dimless, dimless],
-            meta={"INFO": "List of sources", "CLUSTALG": None, "Name": "sources"},
+            meta={"INFO": "List of sources", "CLUSTALG": None},
             descriptions=[
                 "Source ID nr.",
                 "Source RA (J2000)",
@@ -205,29 +212,30 @@ class BaseField(object):
         # Columns are source IDs and rows are magnitudes for each visit
 
         #:  Astropy table with flux magnitude for each source and vist
+        self.tt_list.append("tt_sources_mag")
         self.tt_sources_mag = Table(
-            meta={"INFO": "AB Magnitude flux", "Name": "sources_mag"},
+            meta={"INFO": "AB Magnitude flux"},
         )
 
         #:  Astropy table with signal to noise for each source and vist
+        self.tt_list.append("tt_sources_s2n")
         self.tt_sources_s2n = Table(
-            meta={"INFO": "Signal to noise of the detection", "Name": "sources_s2n"},
+            meta={"INFO": "Signal to noise of the detection"},
         )
 
         #: Astropy table with 95% confidence upper limit magnitude
+        self.tt_list.append("tt_sources_ulmag95")
         self.tt_sources_ulmag95 = Table(
             meta={
                 "INFO": "AB Magnitude flux 95% upper limit",
-                "Name": "sources_ulmag95",
             },
         )
 
         # Convenience class attributes
-        #: List of attribute astropy tables
-        self.tt_list = {}
-        for key, val in self.__dict__.items():
-            if type(val) is Table:
-                self.tt_list[key] = val
+        #: Ordered dictionary of attribute astropy tables
+        self.tt_odic = collections.OrderedDict()
+        for tt_name in self.tt_list:
+            self.tt_odic[tt_name] = self.__dict__[tt_name]
 
         #: Field center coordinate as SkyCoord object with frame "icrs"
         self.center = (
@@ -235,6 +243,35 @@ class BaseField(object):
             if (self.ra is not None and self.dec is not None)
             else None
         )
+
+    def write(self, filename="field_default.fits", overwrite=True):
+        """
+
+        Parameters
+        ----------
+        filename : str, optional
+            File name. The default is "field_default.fits".
+        overwrite : bool, optional
+            Overwrite existing file. The default is True.
+
+        Returns
+        -------
+        None.
+
+        """
+        logger.info(f"Writing file with name '{filename}'")
+
+        # Create HDU list and write
+        hdup = fits.PrimaryHDU()
+        hdus = [hdup]
+        for key, val in self.tt_odic.items():
+            logger.debug(f"Adding table '{key}'")
+            hdu = fits.table_to_hdu(val)
+            hdu.name = key  # Add Name for fits extension
+            hdus.append(hdu)
+        print(hdus)
+        new_hdul = fits.HDUList(hdus)
+        new_hdul.writeto(filename, overwrite=overwrite)
 
     def info(self):
         """
@@ -245,7 +282,7 @@ class BaseField(object):
         None.
 
         """
-        for key, val in self.tt_list.items():
+        for key, val in self.tt_odic.items():
             print("\n" + key + ":")
             val.info()
 
@@ -259,7 +296,7 @@ class BaseField(object):
 
         """
         out_str = ""
-        for key, val in self.tt_list.items():
+        for key, val in self.tt_odic.items():
             out_str += "\n" + val.__str__()
 
         return out_str
