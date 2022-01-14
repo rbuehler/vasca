@@ -269,7 +269,6 @@ class BaseField(object):
             hdu = fits.table_to_hdu(val)
             hdu.name = key  # Add Name for fits extension
             hdus.append(hdu)
-        print(hdus)
         new_hdul = fits.HDUList(hdus)
         new_hdul.writeto(filename, overwrite=overwrite)
 
