@@ -113,6 +113,17 @@ class BaseField(object):
             ],
             meta={"DATAPATH": None, "INFO": "Field information", "Name": "field"},
         )
+        # Add passed field parameters to the table
+        self.tt_field.add_row(
+            [
+                int(field_id or 0),
+                str(field_name or "None"),
+                float(ra or -1.0),
+                float(dec or -1.0),
+                str(observatory or "None"),
+                str(obsfilter or "None"),
+            ]
+        )
 
         #: Astropy table with visit information
         self.tt_visits = Table(
@@ -180,7 +191,7 @@ class BaseField(object):
             names=["src_id", "ra", "dec", "nr_vis_det", "flag"],
             dtype=["uint32", "float16", "float16", "uint32", "int32"],
             units=[dimless, uu.deg, uu.deg, dimless, dimless],
-            meta={"INFO": "List of sources", "CLUSTALG": None, "Name": "field"},
+            meta={"INFO": "List of sources", "CLUSTALG": None, "Name": "sources"},
             descriptions=[
                 "Source ID nr.",
                 "Source RA (J2000)",
@@ -195,17 +206,20 @@ class BaseField(object):
 
         #:  Astropy table with flux magnitude for each source and vist
         self.tt_sources_mag = Table(
-            meta={"INFO": "AB Magnitude flux"},
+            meta={"INFO": "AB Magnitude flux", "Name": "sources_mag"},
         )
 
         #:  Astropy table with signal to noise for each source and vist
         self.tt_sources_s2n = Table(
-            meta={"INFO": "Signal to noise of the detection"},
+            meta={"INFO": "Signal to noise of the detection", "Name": "sources_s2n"},
         )
 
         #: Astropy table with 95% confidence upper limit magnitude
         self.tt_sources_ulmag95 = Table(
-            meta={"INFO": "AB Magnitude flux 95% upper limit"},
+            meta={
+                "INFO": "AB Magnitude flux 95% upper limit",
+                "Name": "sources_ulmag95",
+            },
         )
 
         # Convenience class attributes
@@ -222,28 +236,9 @@ class BaseField(object):
             else None
         )
 
-    def get_ttcol_narray(self, tt_name, tt_var):
-        """
-        Helper function to get numpy arrays for columns in the attribute tables
-
-        Parameters
-        ----------
-        tt_name : str
-            Name of the astropy table
-        tt_var : str
-            Name of the column
-
-        Returns
-        -------
-        ndarray
-            Numpy array for the asked table column
-
-        """
-        return self.tt_list[tt_name][tt_var].data
-
     def info(self):
         """
-        Prints out information about the field, its visits and sources.
+        Print out information about the field, its visits and sources.
 
         Returns
         -------
@@ -251,13 +246,12 @@ class BaseField(object):
 
         """
         for key, val in self.tt_list.items():
-            print("\n" + str(val.meta["INFO"]))
-            print(key + ":")
+            print("\n" + key + ":")
             val.info()
 
     def __str__(self):
         """
-        Returns string with information about the field, its visits and sources.
+        Return string with information about the field, its visits and sources.
 
         Returns
         -------
@@ -266,8 +260,7 @@ class BaseField(object):
         """
         out_str = ""
         for key, val in self.tt_list.items():
-            out_str += "\n\n" + str(val.meta["INFO"]) + "\n"
-            out_str += val.__str__()
+            out_str += "\n" + val.__str__()
 
         return out_str
 
