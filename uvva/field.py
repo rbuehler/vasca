@@ -38,10 +38,10 @@ class BaseField(object):
     """
     `~uvva.field.BaseField` provides class that defines the basic data structure
     for field-based analysis. One `field` is generally the area in the sky covered
-    by an telescope in one observation. A field is generally composed of several 
-    `visits` of the telecope at different times.
-    
-    This class contains the main funtionality for source
+    by a telescope in one observation. A field is generally composed of several
+    `visits` of the telescope at different times.
+
+    This class contains the main functionality for source
     detection and drawing. To be inherited by field analysis classes,
     which can then be tailored to the needs of the observatories supported
     by the UVVA pipeline.
@@ -49,12 +49,12 @@ class BaseField(object):
 
     def __init__(
         self,
-        field_id=0,
-        field_name="None",
-        ra=-1,
-        dec=-1,
-        observatory="None",
-        obsfilter="None",
+        field_id=None,
+        field_name=None,
+        ra=None,
+        dec=None,
+        observatory=None,
+        obsfilter=None,
     ):
         """
 
@@ -75,7 +75,7 @@ class BaseField(object):
 
         Notes
         -----
-        Many class attributes are strored in astropy.Tables. To see a
+        Many class attributes are stored in astropy.Tables. To see a
         description of each of their columns run BaseField.info().
 
         Returns
@@ -85,9 +85,20 @@ class BaseField(object):
         """
         # Configure logger
         logger.configure(extra={"classname": self.__class__.__name__})
+        # Log class initialization
+        logger.info(f"Initializing new field with name '{field_name}'")
+
+        # Sets most important input parameters as class attributes.
+        # Where necessary, stores the parameters as astropy.units.Quantity objects.
+        # Attribute descriptions match those of the class input parameters
+        par_keys = ["field_id", "field_name", "ra", "dec", "observatory", "obsfilter"]
+        par_units = [dimless, None, uu.deg, uu.deg, None, None]
+        dd_par = locals()  # dict of all current local variables
+        for key, unit, val in zip(par_keys, par_units, [dd_par[k] for k in par_keys]):
+            val = val * unit if (unit is not None and val is not None) else val
+            setattr(self, key, val)
 
         #: Astropy table with field information
-        logger.info(f"Initializing new field with name '{field_name}'")
         self.tt_field = Table(
             names=["id", "name", "ra", "dec", "observatory", "obsfilter"],
             dtype=["uint32", "S32", "float16", "float16", "S32", "S32"],
@@ -100,7 +111,6 @@ class BaseField(object):
                 "Telescope of the observation (e.g. GALEX)",
                 "Filter of the observation (e.g. NUV)",
             ],
-            data=[[field_id], [field_name], [ra], [dec], [observatory], [obsfilter]],
             meta={"DATAPATH": None, "INFO": "Field information", "Name": "field"},
         )
 
@@ -119,7 +129,16 @@ class BaseField(object):
 
         #: Astropy table with visit source information
         self.tt_visit_sources = Table(
-            names=["id", "ra", "dec", "mag", "mag_err", "s2n", "flags", "src_id",],
+            names=[
+                "id",
+                "ra",
+                "dec",
+                "mag",
+                "mag_err",
+                "s2n",
+                "flags",
+                "src_id",
+            ],
             dtype=[
                 "uint32",
                 "float16",
@@ -150,7 +169,10 @@ class BaseField(object):
                 "Visit source flags",
                 "Source ID associated to the visit source",
             ],
-            meta={"INFO": "List of visit detections", "Name": "visit_sources",},
+            meta={
+                "INFO": "List of visit detections",
+                "Name": "visit_sources",
+            },
         )
 
         #: Astropy table with field sources information
@@ -172,10 +194,14 @@ class BaseField(object):
         # Columns are source IDs and rows are magnitudes for each visit
 
         #:  Astropy table with flux magnitude for each source and vist
-        self.tt_sources_mag = Table(meta={"INFO": "AB Magnitude flux"},)
+        self.tt_sources_mag = Table(
+            meta={"INFO": "AB Magnitude flux"},
+        )
 
         #:  Astropy table with signal to noise for each source and vist
-        self.tt_sources_s2n = Table(meta={"INFO": "Signal to noise of the detection"},)
+        self.tt_sources_s2n = Table(
+            meta={"INFO": "Signal to noise of the detection"},
+        )
 
         #: Astropy table with 95% confidence upper limit magnitude
         self.tt_sources_ulmag95 = Table(
@@ -189,11 +215,12 @@ class BaseField(object):
             if type(val) is Table:
                 self.tt_list[key] = val
 
-        #: RA of the field center in degrees (J2000)
-        self.ra = self.get_ttcol_narray("tt_field", "ra")[0]
-
-        #: Dec of the field center in degrees (J2000)
-        self.dec = self.get_ttcol_narray("tt_field", "dec")[0]
+        #: Field center coordinate as SkyCoord object with frame "icrs"
+        self.center = (
+            SkyCoord(self.ra, self.dec, frame="icrs")
+            if (self.ra is not None and self.dec is not None)
+            else None
+        )
 
     def get_ttcol_narray(self, tt_name, tt_var):
         """
@@ -309,7 +336,9 @@ class Field:
 
         # logging prefix
         log_prefix = str.format(
-            "[{}.{}] ", self.__class__.__name__, inspect.currentframe().f_code.co_name,
+            "[{}.{}] ",
+            self.__class__.__name__,
+            inspect.currentframe().f_code.co_name,
         )
 
         # parse arguments --------------------------------------------------------------
@@ -995,7 +1024,11 @@ class Field:
 
         # colorbar
         cbaxes = fig.add_axes([0.875, 0.1, 0.03, 0.75])
-        cb = colorbar.Colorbar(ax=cbaxes, mappable=img, orientation="vertical",)
+        cb = colorbar.Colorbar(
+            ax=cbaxes,
+            mappable=img,
+            orientation="vertical",
+        )
         cb.ax.tick_params(labelsize=label_fontsize)
         cb.set_label("NUV Flux [a.u.]", size=label_fontsize)
 
@@ -1190,7 +1223,9 @@ class Field:
         plt.style.use(PACKAGE_DIR + "/lib/mpl_style_sheets/spie_scout_testing.mplstyle")
 
         log_prefix = str.format(
-            "[{}.{}]", self.__class__.__name__, inspect.currentframe().f_code.co_name,
+            "[{}.{}]",
+            self.__class__.__name__,
+            inspect.currentframe().f_code.co_name,
         )
 
         # validate input key
@@ -1446,7 +1481,10 @@ class Field:
         # color bar indicates date
         dates_str = [
             datetime.fromisoformat(d.to_value("iso"))
-            for d in Time(self.tt_visits["PhotoObsDate_MJD"], format="mjd",)
+            for d in Time(
+                self.tt_visits["PhotoObsDate_MJD"],
+                format="mjd",
+            )
         ]
         dates_num = mdates.date2num(dates_str)
         vmin = dates_num[0]
