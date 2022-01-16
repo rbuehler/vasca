@@ -1,3 +1,4 @@
+import collections
 import inspect
 import itertools
 import os
@@ -23,7 +24,6 @@ from loguru import logger
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
 from sklearn import cluster
-import collections
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
@@ -48,15 +48,7 @@ class BaseField(object):
     by the UVVA pipeline.
     """
 
-    def __init__(
-        self,
-        field_id=None,
-        field_name=None,
-        ra=None,
-        dec=None,
-        observatory=None,
-        obsfilter=None,
-    ):
+    def __init__(self):
         """
 
         Parameters
@@ -86,18 +78,6 @@ class BaseField(object):
         """
         # Configure logger
         logger.configure(extra={"classname": self.__class__.__name__})
-        # Log class initialization
-        logger.info(f"Initializing new field with name '{field_name}'")
-
-        # Sets most important input parameters as class attributes.
-        # Where necessary, stores the parameters as astropy.units.Quantity objects.
-        # Attribute descriptions match those of the class input parameters
-        par_keys = ["field_id", "field_name", "ra", "dec", "observatory", "obsfilter"]
-        par_units = [dimless, None, uu.deg, uu.deg, None, None]
-        dd_par = locals()  # dict of all current local variables
-        for key, unit, val in zip(par_keys, par_units, [dd_par[k] for k in par_keys]):
-            val = val * unit if (unit is not None and val is not None) else val
-            setattr(self, key, val)
 
         #: List of astropy table attributes
         self.tt_list = ["tt_field"]
@@ -117,17 +97,17 @@ class BaseField(object):
             ],
             meta={"DATAPATH": None, "INFO": "Field information"},
         )
-        # Add passed field parameters to the table
-        self.tt_field.add_row(
-            [
-                int(field_id or 0),
-                str(field_name or "None"),
-                float(ra or -1.0),
-                float(dec or -1.0),
-                str(observatory or "None"),
-                str(obsfilter or "None"),
-            ]
-        )
+        # # Add passed field parameters to the table
+        # self.tt_field.add_row(
+        #     [
+        #         int(field_id or 0),
+        #         str(field_name or "None"),
+        #         float(ra or -1.0),
+        #         float(dec or -1.0),
+        #         str(observatory or "None"),
+        #         str(obsfilter or "None"),
+        #     ]
+        # )
 
         #: Astropy table with visit information
         self.tt_list.append("tt_visits")
@@ -211,13 +191,13 @@ class BaseField(object):
         # Field sources visit information
         # Columns are source IDs and rows are magnitudes for each visit
 
-        #:  Astropy table with flux magnitude for each source and vist
+        #:  Astropy table with flux magnitude for each source and visit
         self.tt_list.append("tt_sources_mag")
         self.tt_sources_mag = Table(
             meta={"INFO": "AB Magnitude flux"},
         )
 
-        #:  Astropy table with signal to noise for each source and vist
+        #:  Astropy table with signal to noise for each source and visit
         self.tt_list.append("tt_sources_s2n")
         self.tt_sources_s2n = Table(
             meta={"INFO": "Signal to noise of the detection"},
@@ -232,17 +212,101 @@ class BaseField(object):
         )
 
         # Convenience class attributes
+
+        # Defining names of class attributes
+        # for naming convention of private variables see
+        # https://docs.python.org/3/tutorial/classes.html#private-variables
+        # (remove this comment block later)
+
+        #: Internal list of important parameters
+        #: to be set as class attributes for convenience
+        self._field_attr_names = [
+            "id",
+            "name",
+            "ra",
+            "dec",
+            "center",
+            "observatory",
+            "obsfilter",
+        ]
+        #: Internal list of tables holding the central field data
+        self._field_table_names = [  # this should replace self.tt_list
+            "tt_field",
+            "tt_visits",
+            "tt_visit_sources",
+            "tt_sources",
+            "tt_sources_mag",
+            "tt_sources_s2n",
+            "tt_sources_ulmag95",
+        ]
+
         #: Ordered dictionary of attribute astropy tables
         self.od_tables = collections.OrderedDict()
         for tt_name in self.tt_list:
             self.od_tables[tt_name] = self.__dict__[tt_name]
 
-        #: Field center coordinate as SkyCoord object with frame "icrs"
-        self.center = (
-            SkyCoord(self.ra, self.dec, frame="icrs")
-            if (self.ra is not None and self.dec is not None)
-            else None
+    def set_field_attr(self, names=None):
+        """
+        Sets the most important field parameters as class attributes.
+
+        Parameters
+        ----------
+        names : list, None
+            List of strings containing the parameter names. If None (default),
+            a set of pre-defined parameters is set.
+        """
+
+        if names is None:
+            names = self._field_attr_names
+        for name in names:
+            setattr(self, name, self.get_field_par(name))
+
+    # @logger.catch
+    def get_field_par(self, name):
+        """
+        Returns field metadata parameter `name`
+        derived from `~uvva.field.BaseField.tt_field`.
+
+        Parameter
+        ---------
+        name : str
+            Parameter name
+
+        Returns
+        -------
+        str
+
+        Raises
+        ------
+        AssertionError
+            If `~uvva.field.BaseField.tt_field` has not exactly one row
+
+        """
+        # Consistency checks
+        assert len(self.tt_field) == 1, (
+            "Inconsistent data. Expeted single-rowed field metadata table 'tt_field', "
+            f"got {len(self.tt_field)}."
         )
+
+        # Indirectly derived parameters
+        if name == "center":
+            par = SkyCoord(
+                self.get_field_par("ra"),
+                self.get_field_par("dec"),
+                frame="icrs",
+            )
+        # Directly derived parameters
+        else:
+            # Maintains unit, but strings need special handling
+            unit = self.tt_field[name].unit
+            if unit is None:
+                par = self.tt_field[name].data[0]
+                if isinstance(par, bytes):
+                    par = par.decode("utf-8")
+            else:
+                par = self.tt_field[name].data[0] * unit
+
+        return par
 
     def write_to_fits(self, file_name="field_default.fits", overwrite=True):
         """
