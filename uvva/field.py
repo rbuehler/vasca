@@ -51,6 +51,21 @@ class BaseField(object):
     def __init__(self):
         """
 
+        Parameters
+        ----------
+        field_id : int, optional
+            Unique identifier number specifying the field. The default is 0.
+        field_name : str, optional
+            Name of the field. The default is "None".
+        ra : float, optional
+            Right Assention of the field center in degrees. The default is -1.
+        dec : TYPE, optional
+            Declination of the field center in degrees. The default is -1.
+        observatory : str, optional
+            Observatory with which the data was taken. The default is "None".
+        obsfilter : str, optional
+            Observing filter at which the data was taken. The default is "None".
+
         Notes
         -----
         Many class attributes are stored in astropy.Tables. To see a
@@ -82,6 +97,17 @@ class BaseField(object):
             ],
             meta={"DATAPATH": None, "INFO": "Field information"},
         )
+        # # Add passed field parameters to the table
+        # self.tt_field.add_row(
+        #     [
+        #         int(field_id or 0),
+        #         str(field_name or "None"),
+        #         float(ra or -1.0),
+        #         float(dec or -1.0),
+        #         str(observatory or "None"),
+        #         str(obsfilter or "None"),
+        #     ]
+        # )
 
         #: Astropy table with visit information
         self.tt_list.append("tt_visits")
@@ -187,6 +213,11 @@ class BaseField(object):
 
         # Convenience class attributes
 
+        # Defining names of class attributes
+        # for naming convention of private variables see
+        # https://docs.python.org/3/tutorial/classes.html#private-variables
+        # (remove this comment block later)
+
         #: Internal list of important parameters
         #: to be set as class attributes for convenience
         self._field_attr_names = [
@@ -279,7 +310,6 @@ class BaseField(object):
 
     def write_to_fits(self, file_name="field_default.fits", overwrite=True):
         """
-        Write field to a fits file, each field table in one HDU.
 
         Parameters
         ----------
@@ -308,7 +338,6 @@ class BaseField(object):
 
     def load_from_fits(self, file_name="field_default.fits"):
         """
-        Load field from a fits file.
 
         Parameters
         ----------
