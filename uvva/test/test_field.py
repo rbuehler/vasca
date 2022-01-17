@@ -56,7 +56,7 @@ def main():
     logger.enable("uvva")
 
     # Tests to execute
-    # test_base_field_print_info()
+    test_base_field_print_info()
     test_base_field_io()
 
 
