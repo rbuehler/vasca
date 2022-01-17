@@ -279,6 +279,7 @@ class BaseField(object):
 
     def write_to_fits(self, file_name="field_default.fits", overwrite=True):
         """
+        Write field to a fits file, each field table in one HDU.
 
         Parameters
         ----------
@@ -307,6 +308,7 @@ class BaseField(object):
 
     def load_from_fits(self, file_name="field_default.fits"):
         """
+        Load field from a fits file.
 
         Parameters
         ----------
