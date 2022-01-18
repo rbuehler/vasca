@@ -269,6 +269,11 @@ class BaseField(object):
             "Inconsistent data. Expeted single-rowed field metadata table 'tt_field', "
             f"got {len(self.tt_field)}."
         )
+        if name not in self.tt_field.colnames and name != "center":
+            raise KeyError(
+                f"Unknown parameter name '{name}'. "
+                f"Known names are {self.tt_field.colnames}."
+            )
 
         # Indirectly derived parameters
         if name == "center":
@@ -279,12 +284,16 @@ class BaseField(object):
             )
         # Directly derived parameters
         else:
-            # Maintains unit, but strings need special handling
+            # Maintains unit
+            # Some combinations of unit and dtype need special handling
             unit = self.tt_field[name].unit
-            if unit is None:
+            dtype_kind = self.tt_field[name].dtype.kind
+            # check (byte-)string or unicode
+            if dtype_kind in ["U", "S"]:
+                par = self.tt_field[name].data[0].decode("utf-8")
+            # check uu.dimensionless_unscaled and integer
+            elif unit == "" and dtype_kind in ["i", "u"]:
                 par = self.tt_field[name].data[0]
-                if isinstance(par, bytes):
-                    par = par.decode("utf-8")
             else:
                 par = self.tt_field[name].data[0] * unit
 
@@ -400,10 +409,11 @@ class GALEXField(BaseField):
     to the "ParentImgRunID" of the visits table.
     """
 
-    def __init__(self, obs_id, filters="NUV", refresh=False):
+    def __init__(self, obs_id, filter="NUV", refresh=False):
 
         # sets skeleton
         super().__init__()
+        super().__str__()
 
         # Collects coadd and visit metadata tables in order
         # to bootstrap the initialization procedure using the base class
@@ -411,93 +421,93 @@ class GALEXField(BaseField):
             #: Path to read and write data relevant to the pipeline
             self.data_path = rm.get_path("gal_fields", "sas_cloud") + "/" + str(obs_id)
         # sets `self.tt_field`
-        self._load_galex_field_info(obs_id, filters=filters, refresh=refresh)
+        self._load_galex_field_info(obs_id, filter=filter, refresh=refresh)
         # sets `self.tt_visits`
         self._load_galex_visits_info()
 
     def _load_galex_field_info(
-        self, obs_id, col_names=None, filters=None, refresh=False
+        self, obs_id, col_names=None, filter=None, refresh=False
     ):
         """
         Loads the archival metadata associated to a given field ID.
         """
+        # Use default columns if not otherwise specified
         if col_names is None:
             col_names = [
                 "obs_id",
                 "target_name",
                 "s_ra",
                 "s_dec",
-                "t_min",
-                "t_max",
-                "t_exptime",
+                "instrument_name",
                 "filters",
+                # "t_min",
+                # "t_max",
+                # "t_exptime",
             ]
-        # filters should be list
-        if filters is None:
-            filters = ["NUV"]
-        elif isinstance(filters, str):
-            filters = [filters]
-        # makes string from filters
-        filters_name = "_".join([f for f in filters])
+
+        # check filter name, default is "NUV"
+        if filter is None:
+            filter = "NUV"
+        elif not isinstance(filter, str):
+            raise TypeError(
+                f"Expected argument of type 'str', got '{type(filter).__name__}'."
+            )
+        elif filter not in ["NUV", "FUV"]:
+            raise ValueError(
+                f"Unknown filter '{filter}'. "
+                "Available filters for GALEX are 'NUV' or 'FUV'."
+            )
+
         # path to store raw data
-        tt_coadd_path = f"{self.data_path}/MAST_{obs_id}_{filters_name}_coadd.fits"
-        # path to store field info (subset derived from raw data)
-        tt_field_path = f"{self.data_path}/MAST_{obs_id}_{filters_name}_field.fits"
+        tt_coadd_path = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
 
         # reads cached file if found found on disc
-        if not os.path.isfile(tt_field_path) or refresh:
-            if not os.path.isfile(tt_coadd_path) or refresh:
-                # download raw table
-                logger.info(
-                    f"Downloading archive field info and saving to {tt_coadd_path}."
-                )
-                tt_coadd = Observations.query_criteria(
-                    obs_id=obs_id,
-                    dataRights="PUBLIC",
-                    instrument_name="GALEX",
-                    filters=filters,
-                    dataproduct_type="image",
-                )
-                # save to disc
-                tt_coadd.write(tt_coadd_path, overwrite=True)
-            else:
-                # read cached
-                logger.info(
-                    f"Reading archive field info from cashed file '{tt_coadd_path}'"
-                )
-                tt_coadd = Table.read(tt_coadd_path)
-            # construct field info table
-            logger.info(f"Constructing 'tt_field' and saving as {tt_field_path}.")
-            self.tt_field.add_row(
-                [
-                    tt_coadd["obs_id"],
-                    tt_coadd["target_name"],
-                    tt_coadd["s_ra"],
-                    tt_coadd["s_dec"],
-                    "GALEX",
-                    tt_coadd["filters"],
-                ]
+        if not os.path.isfile(tt_coadd_path) or refresh:
+            # download raw table
+            logger.info(
+                f"Downloading archive field info and saving to {tt_coadd_path}."
             )
-            self.tt_field.add_columns(
-                [
-                    Time(tt_coadd["t_min"], format="mjd"),
-                    Time(tt_coadd["t_max"], format="mjd"),
-                    tt_coadd["t_exptime"] * uu.s,
-                    SkyCoord(
-                        ra=tt_coadd["s_ra"],
-                        dec=tt_coadd["s_dec"],
-                        unit=uu.deg,
-                        frame="icrs",
-                    ),
-                ],
-                names=["t_start", "t_stop", "t_exp_total", "center"],
+            tt_coadd = Observations.query_criteria(
+                obs_id=obs_id,
+                dataRights="PUBLIC",
+                instrument_name="GALEX",
+                filters=filter,
+                dataproduct_type="image",
             )
             # save to disc
-            self.tt_field.write(tt_field_path, overwrite=True)
+            tt_coadd.write(tt_coadd_path, overwrite=True)
         else:
-            # read cached and replace skeleton
-            logger.info(f"Set 'tt_field' from cashed file '{tt_field_path}'.")
-            self.tt_field = self.tt_field.update(Table.read(tt_field_path))
+            # read cached
+            logger.info(
+                f"Reading archive field info from cashed file '{tt_coadd_path}'"
+            )
+            tt_coadd = Table.read(tt_coadd_path)
+
+        # construct field info table
+        logger.info("Constructing 'tt_field'.")
+        # Fill default columns from first row of the archive field info data table
+        self.tt_field.add_row(tt_coadd[col_names[:6]][0])
+
+        # Fill additional data
+        self.tt_field.add_columns(
+            [
+                Time(tt_coadd["t_min"], format="mjd"),
+                Time(tt_coadd["t_max"], format="mjd"),
+                tt_coadd["t_exptime"] * uu.s,
+                # SkyCoord(
+                #     ra=tt_coadd["s_ra"],
+                #     dec=tt_coadd["s_dec"],
+                #     unit=uu.deg,
+                #     frame="icrs",
+                # ),
+            ],
+            names=[
+                "t_start",
+                "t_stop",
+                "t_exp_total",
+                # "center",
+            ],
+        )
 
     def _load_galex_visits_info(self):
         pass
