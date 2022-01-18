@@ -490,7 +490,7 @@ class GALEXField(BaseField):
         else:
             # read cached and replace skeleton
             logger.info(f"Set 'tt_field' from cashed file '{tt_field_path}'.")
-            self.tt_field = Table.read(tt_field_path)
+            self.tt_field = self.tt_field.update(Table.read(tt_field_path))
 
     def _load_galex_visits_info(self):
         pass
