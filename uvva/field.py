@@ -37,10 +37,10 @@ dimless = uu.dimensionless_unscaled
 
 class BaseField(object):
     """
-    `~uvva.field.BaseField` provides class that defines the basic data structure
-    for field-based analysis. One `field` is generally the area in the sky covered
+    :class: `~uvva.field.BaseField` provides class that defines the basic data structure
+    for field-based analysis. One *field* is generally the area in the sky covered
     by a telescope in one observation. A field is generally composed of several
-    `visits` of the telescope at different times.
+    *visits* of the telescope at different times.
 
     This class contains the main functionality for source
     detection and drawing. To be inherited by field analysis classes,
@@ -53,16 +53,21 @@ class BaseField(object):
 
         Notes
         -----
-        Many class attributes are stored in astropy.Tables. To see a
-        description of each of their columns run BaseField.info().
+        Many class attributes are stored in astropy.table.Tables_. To see a
+        description of each of their columns run :meth: `~uvva.field.BaseField.info`.
 
         Returns
         -------
         None.
 
+        .. _astropy.table.Tables: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
+
         """
         # Configure logger
+        # adds the class name as an extra key; accessible vie the handler format
         logger.configure(extra={"classname": self.__class__.__name__})
+
+        # Initializing skeleton data structure
 
         #: List of astropy table attributes
         self.tt_list = ["tt_field"]
@@ -188,7 +193,7 @@ class BaseField(object):
         # Convenience class attributes
 
         #: Internal list of important parameters
-        #: to be set as class attributes for convenience
+        #: to be set as class attributes for convenience.
         self._field_attr_names = [
             "id",
             "name",
@@ -198,7 +203,7 @@ class BaseField(object):
             "observatory",
             "obsfilter",
         ]
-        #: Internal list of tables holding the central field data
+        #: Internal list of tables holding the central field data.
         self._field_table_names = [  # this should replace self.tt_list
             "tt_field",
             "tt_visits",
@@ -214,10 +219,12 @@ class BaseField(object):
         for tt_name in self.tt_list:
             self.od_tables[tt_name] = self.__dict__[tt_name]
 
-        #: List of 2D sky images of each visit, ordered as tt_visits table
+        #: List of 2D sky images of each visit,
+        #: ordered as :attr: `~uvva.field.BaseField.tt_visits` table
         self.vis_imgs = None
 
-        # Astropy WCS object for one 2D images. The WCS has to be the same for all visit.
+        #: Astropy WCS object for one 2D images.
+        #: The WCS has to be the same for all visit.
         self.vis_iwcs = None
 
     def set_field_attr(self, names=None):
@@ -239,8 +246,8 @@ class BaseField(object):
     # @logger.catch
     def get_field_par(self, name):
         """
-        Returns field metadata parameter `name`
-        derived from `~uvva.field.BaseField.tt_field`.
+        Returns field metadata parameter ``name``
+        derived from :attr: `~uvva.field.BaseField.tt_field`.
 
         Parameter
         ---------
@@ -254,7 +261,7 @@ class BaseField(object):
         Raises
         ------
         AssertionError
-            If `~uvva.field.BaseField.tt_field` has not exactly one row
+            If :attr: `~uvva.field.BaseField.tt_field` has not exactly one row
 
         """
         # Consistency checks
