@@ -214,6 +214,12 @@ class BaseField(object):
         for tt_name in self.tt_list:
             self.od_tables[tt_name] = self.__dict__[tt_name]
 
+        #: List of 2D sky images of each visit, ordered as tt_visits table
+        self.vis_imgs = None
+
+        # Astropy WCS object for one 2D images. The WCS has to be the same for all visit.
+        self.vis_iwcs = None
+
     def set_field_attr(self, names=None):
         """
         Sets the most important field parameters as class attributes.
@@ -296,6 +302,12 @@ class BaseField(object):
 
         # Create HDU list and write
         hdup = fits.PrimaryHDU()
+
+        # Check if image data is set and add to primary HDU
+        if self.vis_imgs is not None and self.vis_wcs is not None:
+            logger.debug(f"Storing image data'")
+            hdup = fits.PrimaryHDU(self.vis_imgs, header=self.vis_wcs.to_header())
+
         hdus = [hdup]
         for key, val in self.od_tables.items():
             logger.debug(f"Writing table '{key}'")
@@ -318,10 +330,21 @@ class BaseField(object):
         None.
 
         """
+        # Load tables
         logger.info(f"Loading file with name '{file_name}'")
         for key, val in self.od_tables.items():
             logger.debug(f"Loading table '{key}'")
             val = Table.read(file_name, hdu=key)
+
+        # Load image data
+        ff = fits.open(file_name)
+        self.vis_imgs = ff[0].data
+        if self.vis_imgs is not None:
+            self.vis_wcs = wcs.WCS(ff[0].header)
+        else:
+            self.vis_wcs = None
+
+        ff.close()
 
     def info(self):
         """
