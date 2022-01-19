@@ -16,7 +16,7 @@ from astropy import units as uu
 from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import QTable, Table, hstack, unique
+from astropy.table import QTable, Table, hstack, unique, conf
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
@@ -33,6 +33,7 @@ CLASS_DIR = os.path.dirname(os.path.abspath(__file__))  # path to this file "fie
 PACKAGE_DIR = CLASS_DIR + "/../"  # path to the package "uvva"
 
 dimless = uu.dimensionless_unscaled
+conf.replace_warnings = ["always"]
 
 
 class BaseField(object):
@@ -70,7 +71,7 @@ class BaseField(object):
         # Initializing skeleton data structure
 
         #: List of astropy table attributes
-        self.tt_list = ["tt_field"]
+        self._field_names = ["tt_field"]
 
         #: Astropy table with field information
         self.tt_field = Table(
@@ -89,7 +90,7 @@ class BaseField(object):
         )
 
         #: Astropy table with visit information
-        self.tt_list.append("tt_visits")
+        self._field_names.append("tt_visits")
         self.tt_visits = Table(
             names=["id", "time", "exposure"],
             dtype=["uint32", "float64", "float16"],
@@ -103,7 +104,7 @@ class BaseField(object):
         )
 
         #: Astropy table with visit source information
-        self.tt_list.append("tt_visit_sources")
+        self._field_names.append("tt_visit_sources")
         self.tt_visit_sources = Table(
             names=[
                 "id",
@@ -152,7 +153,7 @@ class BaseField(object):
         )
 
         #: Astropy table with field sources information
-        self.tt_list.append("tt_sources")
+        self._field_names.append("tt_sources")
         self.tt_sources = Table(
             names=["src_id", "ra", "dec", "nr_vis_det", "flag"],
             dtype=["uint32", "float16", "float16", "uint32", "int32"],
@@ -171,19 +172,19 @@ class BaseField(object):
         # Columns are source IDs and rows are magnitudes for each visit
 
         #:  Astropy table with flux magnitude for each source and visit
-        self.tt_list.append("tt_sources_mag")
+        self._field_names.append("tt_sources_mag")
         self.tt_sources_mag = Table(
             meta={"INFO": "AB Magnitude flux"},
         )
 
         #:  Astropy table with signal to noise for each source and visit
-        self.tt_list.append("tt_sources_s2n")
+        self._field_names.append("tt_sources_s2n")
         self.tt_sources_s2n = Table(
             meta={"INFO": "Signal to noise of the detection"},
         )
 
         #: Astropy table with 95% confidence upper limit magnitude
-        self.tt_list.append("tt_sources_ulmag95")
+        self._field_names.append("tt_sources_ulmag95")
         self.tt_sources_ulmag95 = Table(
             meta={
                 "INFO": "AB Magnitude flux 95% upper limit",
@@ -194,7 +195,7 @@ class BaseField(object):
 
         #: Internal list of important parameters
         #: to be set as class attributes for convenience.
-        self._field_attr_names = [
+        self._attr_names = [
             "id",
             "name",
             "ra",
@@ -203,21 +204,6 @@ class BaseField(object):
             "observatory",
             "obsfilter",
         ]
-        #: Internal list of tables holding the central field data.
-        self._field_table_names = [  # this should replace self.tt_list
-            "tt_field",
-            "tt_visits",
-            "tt_visit_sources",
-            "tt_sources",
-            "tt_sources_mag",
-            "tt_sources_s2n",
-            "tt_sources_ulmag95",
-        ]
-
-        #: Ordered dictionary of attribute astropy tables
-        self.od_tables = collections.OrderedDict()
-        for tt_name in self.tt_list:
-            self.od_tables[tt_name] = self.__dict__[tt_name]
 
         #: List of 2D sky images of each visit,
         #: ordered as :attr: `~uvva.field.BaseField.tt_visits` table
@@ -239,7 +225,7 @@ class BaseField(object):
         """
 
         if names is None:
-            names = self._field_attr_names
+            names = self._attr_names
         for name in names:
             setattr(self, name, self.get_field_par(name))
 
@@ -325,9 +311,9 @@ class BaseField(object):
             hdup = fits.PrimaryHDU(self.vis_imgs, header=self.vis_wcs.to_header())
 
         hdus = [hdup]
-        for key, val in self.od_tables.items():
+        for key in self._field_names:
             logger.debug(f"Writing table '{key}'")
-            hdu = fits.table_to_hdu(val)
+            hdu = fits.table_to_hdu(self.__dict__[key])
             hdu.name = key  # Add Name for fits extension
             hdus.append(hdu)
         new_hdul = fits.HDUList(hdus)
@@ -348,9 +334,9 @@ class BaseField(object):
         """
         # Load tables
         logger.info(f"Loading file with name '{file_name}'")
-        for key, val in self.od_tables.items():
+        for key in self._field_names:
             logger.debug(f"Loading table '{key}'")
-            val = Table.read(file_name, hdu=key)
+            self.__dict__[key] = Table.read(file_name, hdu=key)
 
         # Load image data
         ff = fits.open(file_name)
@@ -371,9 +357,9 @@ class BaseField(object):
         None.
 
         """
-        for key, val in self.od_tables.items():
+        for key in self._field_names:
             print("\n" + key + ":")
-            val.info()
+            self.__dict__[key].info()
 
     def __str__(self):
         """
@@ -385,8 +371,8 @@ class BaseField(object):
 
         """
         out_str = ""
-        for key, val in self.od_tables.items():
-            out_str += "\n" + val.__str__()
+        for key in self._field_names:
+            out_str += "\n" + self.__dict__[key].__str__()
 
         return out_str
 
