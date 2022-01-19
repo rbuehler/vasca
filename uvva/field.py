@@ -57,11 +57,11 @@ class BaseField(object):
         Many class attributes are stored in astropy.table.Tables_. To see a
         description of each of their columns run :meth: `~uvva.field.BaseField.info`.
 
+        .. _astropy.table.Tables: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
+
         Returns
         -------
         None.
-
-        .. _astropy.table.Tables: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
 
         """
         # Configure logger
