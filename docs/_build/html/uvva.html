@@ -106,10 +106,14 @@
 <dt class="sig sig-object py" id="uvva.field.BaseField">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uvva.field.</span></span><span class="sig-name descname"><span class="pre">BaseField</span></span><a class="headerlink" href="#uvva.field.BaseField" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p><cite>~uvva.field.BaseField</cite> provides class that defines the basic data structure
-for field-based analysis. One <cite>field</cite> is generally the area in the sky covered
+<dl class="field-list simple">
+<dt class="field-odd">Class</dt>
+<dd class="field-odd"><p><cite>~uvva.field.BaseField</cite> provides class that defines the basic data structure</p>
+</dd>
+</dl>
+<p>for field-based analysis. One <em>field</em> is generally the area in the sky covered
 by a telescope in one observation. A field is generally composed of several
-<cite>visits</cite> of the telescope at different times.</p>
+<em>visits</em> of the telescope at different times.</p>
 <p>This class contains the main functionality for source
 detection and drawing. To be inherited by field analysis classes,
 which can then be tailored to the needs of the observatories supported
@@ -118,8 +122,8 @@ by the UVVA pipeline.</p>
 <dt class="sig sig-object py" id="uvva.field.BaseField.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.__init__" title="Permalink to this definition"></a></dt>
 <dd><p class="rubric">Notes</p>
-<p>Many class attributes are stored in astropy.Tables. To see a
-description of each of their columns run BaseField.info().</p>
+<p>Many class attributes are stored in <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html">astropy.table.Tables</a>. To see a
+description of each of their columns run :meth: <cite>~uvva.field.BaseField.info</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p></p>
@@ -131,21 +135,23 @@ description of each of their columns run BaseField.info().</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="uvva.field.BaseField.tt_list">
-<span class="sig-name descname"><span class="pre">tt_list</span></span><a class="headerlink" href="#uvva.field.BaseField.tt_list" title="Permalink to this definition"></a></dt>
-<dd><p>List of astropy table attributes</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="uvva.field.BaseField.tt_field">
 <span class="sig-name descname"><span class="pre">tt_field</span></span><a class="headerlink" href="#uvva.field.BaseField.tt_field" title="Permalink to this definition"></a></dt>
 <dd><p>Astropy table with field information</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="uvva.field.BaseField.od_tables">
-<span class="sig-name descname"><span class="pre">od_tables</span></span><a class="headerlink" href="#uvva.field.BaseField.od_tables" title="Permalink to this definition"></a></dt>
-<dd><p>Ordered dictionary of attribute astropy tables</p>
+<dt class="sig sig-object py" id="uvva.field.BaseField.vis_imgs">
+<span class="sig-name descname"><span class="pre">vis_imgs</span></span><a class="headerlink" href="#uvva.field.BaseField.vis_imgs" title="Permalink to this definition"></a></dt>
+<dd><p>List of 2D sky images of each visit,
+ordered as :attr: <cite>~uvva.field.BaseField.tt_visits</cite> table</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uvva.field.BaseField.vis_iwcs">
+<span class="sig-name descname"><span class="pre">vis_iwcs</span></span><a class="headerlink" href="#uvva.field.BaseField.vis_iwcs" title="Permalink to this definition"></a></dt>
+<dd><p>Astropy WCS object for one 2D images.
+The WCS has to be the same for all visit.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -163,8 +169,8 @@ a set of pre-defined parameters is set.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="uvva.field.BaseField.get_field_par">
 <span class="sig-name descname"><span class="pre">get_field_par</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.get_field_par" title="Permalink to this definition"></a></dt>
-<dd><p>Returns field metadata parameter <cite>name</cite>
-derived from <cite>~uvva.field.BaseField.tt_field</cite>.</p>
+<dd><p>Returns field metadata parameter <code class="docutils literal notranslate"><span class="pre">name</span></code>
+derived from :attr: <cite>~uvva.field.BaseField.tt_field</cite>.</p>
 <dl class="simple">
 <dt>name<span class="classifier">str</span></dt><dd><p>Parameter name</p>
 </dd>
@@ -177,7 +183,7 @@ derived from <cite>~uvva.field.BaseField.tt_field</cite>.</p>
 <dd class="field-even"><p>str</p>
 </dd>
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>AssertionError</strong> – If <cite>~uvva.field.BaseField.tt_field</cite> has not exactly one row</p>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If :attr: <cite>~uvva.field.BaseField.tt_field</cite> has not exactly one row</p>
 </dd>
 </dl>
 </dd></dl>
@@ -185,8 +191,7 @@ derived from <cite>~uvva.field.BaseField.tt_field</cite>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="uvva.field.BaseField.write_to_fits">
 <span class="sig-name descname"><span class="pre">write_to_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'field_default.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.write_to_fits" title="Permalink to this definition"></a></dt>
-<dd><p>Write field to a fits file, each field table in one HDU.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_name</strong> (<em>str</em><em>, </em><em>optional</em>) – File name. The default is “field_default.fits”.</p></li>
@@ -205,8 +210,7 @@ derived from <cite>~uvva.field.BaseField.tt_field</cite>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="uvva.field.BaseField.load_from_fits">
 <span class="sig-name descname"><span class="pre">load_from_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'field_default.fits'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.load_from_fits" title="Permalink to this definition"></a></dt>
-<dd><p>Load field from a fits file.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_name</strong> (<em>str</em><em>, </em><em>optional</em>) – File name. The default is “field_default.fits”.</p>
 </dd>
@@ -237,7 +241,7 @@ derived from <cite>~uvva.field.BaseField.tt_field</cite>.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="uvva.field.GALEXField">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uvva.field.</span></span><span class="sig-name descname"><span class="pre">GALEXField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_coadd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_FUV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uvva.field.</span></span><span class="sig-name descname"><span class="pre">GALEXField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NUV'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#uvva.field.BaseField" title="uvva.field.BaseField"><code class="xref py py-class docutils literal notranslate"><span class="pre">uvva.field.BaseField</span></code></a></p>
 <p>Instance of one GALEX field (coadd + visits)</p>
 <dl class="field-list simple">
@@ -253,10 +257,10 @@ derived from <cite>~uvva.field.BaseField.tt_field</cite>.</p>
 to the “ParentImgRunID” of the visits table.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="uvva.field.GALEXField.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_coadd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_FUV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NUV'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField.__init__" title="Permalink to this definition"></a></dt>
 <dd><p class="rubric">Notes</p>
-<p>Many class attributes are stored in astropy.Tables. To see a
-description of each of their columns run BaseField.info().</p>
+<p>Many class attributes are stored in <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html">astropy.table.Tables</a>. To see a
+description of each of their columns run :meth: <cite>~uvva.field.BaseField.info</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p></p>
