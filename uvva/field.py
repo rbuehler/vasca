@@ -16,7 +16,7 @@ from astropy import units as uu
 from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import QTable, Table, hstack, unique, conf
+from astropy.table import QTable, Table, conf, hstack, unique
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
@@ -270,18 +270,20 @@ class BaseField(object):
             )
         # Directly derived parameters
         else:
+            # retrieve parameter
+            par = self.tt_field[name].data[0]
             # Maintains unit
             # Some combinations of unit and dtype need special handling
             unit = self.tt_field[name].unit
             dtype_kind = self.tt_field[name].dtype.kind
             # check (byte-)string or unicode
             if dtype_kind in ["U", "S"]:
-                par = self.tt_field[name].data[0].decode("utf-8")
+                par = par.decode("utf-8")
             # check uu.dimensionless_unscaled and integer
             elif unit == "" and dtype_kind in ["i", "u"]:
-                par = self.tt_field[name].data[0]
+                par = int(par)
             else:
-                par = self.tt_field[name].data[0] * unit
+                par = par * unit
 
         return par
 
@@ -495,8 +497,14 @@ class GALEXField(BaseField):
             ],
         )
 
-    def _load_galex_visits_info(self):
-        pass
+    def _load_galex_visits_info(self, col_names=None):
+
+        if col_names is None:
+            col_names = ["foo"]
+        with ResourceManager() as rm:
+            tt_visits_raw = Table.read(rm.get_path("gal_visits_list", "sas_cloud"))
+
+        print(tt_visits_raw.info)
 
     def _load_galex_archive_products():
         """
