@@ -16,7 +16,9 @@ from uvva.field import BaseField, Field, GALEXField
 @pytest.fixture
 def new_field():
     bf = BaseField()
-    bf.tt_field.add_row([42, "name", 2, 3, "obs", "filter"])
+    bf.tt_field = bf.add_table(
+        np.asarray([42, "name", 2, 3, "obs", "filter"]), "base_field:tt_field"
+    )
 
     return bf
 
@@ -24,7 +26,7 @@ def new_field():
 def test_set_field_attr_type(new_field):
     new_field.set_field_attr()
     expected = {
-        "id": 1 * uu.dimensionless_unscaled,
+        "id": int(1),
         "name": "name",
         "ra": 1 * uu.deg,
         "dec": 1 * uu.deg,
