@@ -112,7 +112,7 @@ base_field:
   tt_visits:
     descriptions:
     - Visit ID nr.
-    - Visit central time in MJD
+    - Visit central date and time in MJD
     - Visit exposure time in s
     dtype:
     - uint32
@@ -122,8 +122,8 @@ base_field:
       INFO: Visit information table
     names:
     - id
-    - time
-    - exposure
+    - date
+    - t_exp
     units:
     - '1'
     - '1'
@@ -132,39 +132,39 @@ galex_field:
   tt_visits:
     descriptions:
     - Visit ID nr.
-    - Visit central time in MJD
+    - Visit central date and time in MJD
     - Visit exposure time in s
     - Visit exposure time of the alternative filter in s
+    - Visit start time in 'mm/dd/yyyy hh:mm:ss <AM/PM>' format
+    - Visit start time in 'mm/dd/yyyy hh:mm:ss <AM/PM>' format
     - Center RA of the visit FoV (J2000)
     - Center Dec of the visit FoV (J2000)
-    - Visit start time in 'mm/dd/yyyy hh:mm:ss <AM/PM>' format
-    - Visit start time in 'mm/dd/yyyy hh:mm:ss <AM/PM>' format
     dtype:
     - uint32
     - float64
     - float16
     - float16
+    - float64
+    - float64
     - float16
     - float16
-    - S32
-    - S32
     meta:
       INFO: Visit information table
     names:
     - id
-    - time
-    - exposure
-    - exposure_alt_filt
+    - date
+    - t_exp
+    - t_exp_alt_filt
+    - t_start
+    - t_stop
     - ra
     - dec
-    - t_stop
-    - t_start
     units:
     - '1'
     - '1'
     - s
     - s
+    - '1'
+    - '1'
     - degree
     - degree
-    - ''
-    - ''

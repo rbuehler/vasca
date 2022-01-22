@@ -16,7 +16,7 @@ from uvva.field import BaseField, Field, GALEXField
 @pytest.fixture
 def new_field():
     bf = BaseField()
-    bf.tt_field = bf.add_table(
+    bf.tt_field = bf.get_table(
         np.asarray([42, "name", 2, 3, "obs", "filter"]), "base_field:tt_field"
     )
 
