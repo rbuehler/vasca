@@ -1,4 +1,5 @@
 import collections
+import datetime
 import inspect
 import itertools
 import os
@@ -17,7 +18,7 @@ from astropy import units as uu
 from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import QTable, Table, conf, hstack, unique
+from astropy.table import Column, QTable, Table, conf, hstack, unique
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
@@ -87,17 +88,27 @@ class BaseField(object):
             "tt_sources_ulmag95",
         ]
 
-        #: Internal list of important parameters
+        #: Internal dictionary of important parameters
+        #: with corresponding tables
         #: to be set as class attributes for convenience.
-        self._attr_names = [
-            "id",
-            "name",
-            "ra",
-            "dec",
-            "center",
-            "observatory",
-            "obsfilter",
-        ]
+        self._dd_attr_names = {
+            "tt_field": [
+                "id",
+                "name",
+                "ra",
+                "dec",
+                "observatory",
+                "obsfilter",
+                "center",
+            ],
+            "tt_visits": [
+                "n_visits",
+                "t_exp_sum",
+                # following parameters not standardized yet:
+                # "t_start",
+                # "t_stop",
+            ],
+        }
 
         #: List of 2D sky images of each visit,
         #: ordered as :attr: `~uvva.field.BaseField.tt_visits` table
@@ -107,7 +118,7 @@ class BaseField(object):
         #: The WCS has to be the same for all visit.
         self.vis_iwcs = None
 
-    def add_table(
+    def get_table(
         self,
         data,
         template_name=None,
@@ -120,7 +131,7 @@ class BaseField(object):
         **kwargs,
     ):
         """
-        Adds a new astropy table as class attribute.
+        Creates a new astropy table.
 
         Parameters
         ----------
@@ -181,6 +192,12 @@ class BaseField(object):
                 f"Unknown table key '{table_key}'. Choose one from {table_keys}"
             )
 
+        # logging
+        if use_template:
+            logger.debug(f"Creating new table from template '{template_name}'.")
+        else:
+            logger.debug("Creating new table from scratch")
+
         # Create table
         data = np.asarray(data)
         if use_template:
@@ -206,36 +223,42 @@ class BaseField(object):
             )
         return tt_out
 
-    def set_field_attr(self, names=None):
+    def set_field_attr(self, dd_names=None):
         """
         Sets the most important field parameters as class attributes.
 
         Parameters
         ----------
-        names : list, None
+        dd_names : dict, None
             List of strings containing the parameter names. If None (default),
             a set of pre-defined parameters is set.
         """
 
-        if names is None:
-            names = self._attr_names
-        for name in names:
-            setattr(self, name, self.get_field_par(name))
+        if dd_names is None:
+            dd_names = self._dd_attr_names
+        for table in dd_names:
+            for par in dd_names[table]:
+                setattr(self, par, self.get_field_par(par, table))
 
     # @logger.catch
-    def get_field_par(self, name):
+    def get_field_par(self, par_name, table_name):
         """
-        Returns field metadata parameter ``name``
-        derived from :attr: `~uvva.field.BaseField.tt_field`.
+        Returns metadata parameter ``par_name``
+        derived from astropy table data ``table_name``.
 
         Parameter
         ---------
-        name : str
-            Parameter name
+        par_name : str
+            Name of the parameter to be read either directly or calculated
+            from table data.
+        table_name : str
+            Name of table data. Must be initialized as class attribute.
 
         Returns
         -------
-        str
+        str, None
+            None is returned if either ``par_name`` or ``table_name`` are
+            not available. In this case warnings are issued to logging.
 
         Raises
         ------
@@ -243,32 +266,54 @@ class BaseField(object):
             If :attr: `~uvva.field.BaseField.tt_field` has not exactly one row
 
         """
+        # Check data availability
+        # Returns none if table is unknown
+        if table_name not in self.__dict__:
+            logger.warning(
+                f"Data '{table_name}' not available. "
+                f"Returning None for parameter '{par_name}'."
+            )
+            return None
+
         # Consistency checks
-        assert len(self.tt_field) == 1, (
-            "Inconsistent data. Expeted single-rowed field metadata table 'tt_field', "
-            f"got {len(self.tt_field)}."
-        )
-        if name not in self.tt_field.colnames and name != "center":
-            raise KeyError(
-                f"Unknown parameter name '{name}'. "
-                f"Known names are {self.tt_field.colnames}."
+        # tt_field must be single-rowed
+        if table_name == "tt_field" and len(self.tt_field) != 1:
+            raise ValueError(
+                "Inconsistent data. Expeted single-rowed "
+                f"field metadata table 'tt_field', got {len(self.tt_field)}."
             )
 
         # Indirectly derived parameters
-        if name == "center":
+        if par_name == "center":
             par = SkyCoord(
-                self.get_field_par("ra"),
-                self.get_field_par("dec"),
+                self.get_field_par("ra", "tt_field"),
+                self.get_field_par("dec", "tt_field"),
                 frame="icrs",
             )
+        elif par_name == "n_visits":
+            par = len(self.tt_visits)
+        elif par_name == "t_exp_sum":
+            par = self.tt_visits["t_exp"].sum() * uu.s
+        # elif par_name == "t_start":
+        #     par = self.tt_visit["t_start"][0]
+        # elif par_name == "t_stop":
+        #     par = self.tt_visit["t_stop"][-1]
         # Directly derived parameters
+        # Return None if parameter is not in table
+        elif par_name not in self.__dict__[table_name].colnames:
+            logger.warning(
+                f"Unknown parameter in data set '{table_name}'"
+                f"Known parameters are {self.__dict__[table_name].colnames}."
+                f"Returning None for parameter '{par_name}'."
+            )
+            par = None
         else:
             # retrieve parameter
-            par = self.tt_field[name].data[0]
+            par = self.tt_field[par_name].data[0]
             # Maintains unit
             # Some combinations of unit and dtype need special handling
-            unit = self.tt_field[name].unit
-            dtype_kind = self.tt_field[name].dtype.kind
+            unit = self.tt_field[par_name].unit
+            dtype_kind = self.tt_field[par_name].dtype.kind
             # check (byte-)string or unicode
             if dtype_kind in ["U", "S"]:
                 par = par.decode("utf-8")
@@ -469,7 +514,7 @@ class GALEXField(BaseField):
         logger.info("Constructing 'tt_field'.")
         # Fill default columns from first row of the archive field info data table
         tt_coadd_select = tt_coadd[col_names]
-        self.tt_field = self.add_table(tt_coadd_select, "base_field:tt_field")
+        self.tt_field = self.get_table(tt_coadd_select, "base_field:tt_field")
 
     def _load_galex_visits_info(self, id, col_names=None, filter=None):
 
@@ -481,10 +526,10 @@ class GALEXField(BaseField):
                 "PhotoObsDate_MJD",
                 "nexptime" if filter == "NUV" else "fexptime",
                 "fexptime" if filter == "NUV" else "nexptime",
-                "RATileCenter",
-                "DECTileCenter",
                 "minPhotoObsDate",
                 "maxPhotoObsDate",
+                "RATileCenter",
+                "DECTileCenter",
             ]
         with ResourceManager() as rm:
             # read cached
@@ -499,7 +544,35 @@ class GALEXField(BaseField):
         tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == id][
             col_names
         ]
-        self.tt_visits = self.add_table(tt_visits_raw_select, "galex_field:tt_visits")
+        print(tt_visits_raw_select)
+        # Convert string time format to mjd
+        tt_visits_raw_select.update(
+            {
+                "minPhotoObsDate": Time(
+                    [
+                        datetime.strptime(
+                            date_str.decode("utf-8"), "%m/%d/%Y %I:%M:%S %p"
+                        )
+                        for date_str in tt_visits_raw_select["minPhotoObsDate"].data
+                    ]
+                ).mjd
+            }
+        )
+        tt_visits_raw_select.update(
+            {
+                "maxPhotoObsDate": Time(
+                    [
+                        datetime.strptime(
+                            date_str.decode("utf-8"), "%m/%d/%Y %I:%M:%S %p"
+                        )
+                        for date_str in tt_visits_raw_select["maxPhotoObsDate"].data
+                    ]
+                ).mjd
+            }
+        )
+        print(tt_visits_raw_select)
+        # Set as class attribute
+        self.tt_visits = self.get_table(tt_visits_raw_select, "galex_field:tt_visits")
 
     def _load_galex_archive_products():
         """
