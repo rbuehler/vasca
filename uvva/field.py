@@ -1,5 +1,4 @@
 import collections
-import datetime
 import inspect
 import itertools
 import os
@@ -29,6 +28,7 @@ from sklearn import cluster
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
+from .uvva_table import UVVATable, dd_uvva_tables
 
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
@@ -70,23 +70,11 @@ class BaseField(object):
         # adds the class name as an extra key; accessible vie the handler format
         logger.configure(extra={"classname": self.__class__.__name__})
 
-        # Initializing skeleton data structure
-
-        # Nothing is happening here anymore...
-
         # Convenience class attributes
 
         #: Internal list of tables holding the central field data
-        #: All of these are defined in ``uvva_tables.py``
-        self._table_names = [
-            "tt_field",
-            "tt_visits",
-            "tt_visit_sources",
-            "tt_sources",
-            "tt_sources_mag",
-            "tt_sources_s2n",
-            "tt_sources_ulmag95",
-        ]
+        #: All of these are defined in ``uvva_table.py``
+        self._table_names = list(dd_uvva_tables["base_field"].keys())
 
         #: Internal dictionary of important parameters
         #: with corresponding tables
@@ -104,9 +92,8 @@ class BaseField(object):
             "tt_visits": [
                 "n_visits",
                 "t_exp_sum",
-                # following parameters not standardized yet:
-                # "t_start",
-                # "t_stop",
+                "t_start",
+                "t_stop",
             ],
         }
 
@@ -117,111 +104,6 @@ class BaseField(object):
         #: Astropy WCS object for one 2D images.
         #: The WCS has to be the same for all visit.
         self.vis_iwcs = None
-
-    def get_table(
-        self,
-        data,
-        template_name=None,
-        use_template=True,
-        colnames=None,
-        units=None,
-        dtype=None,
-        descriptions=None,
-        meta=None,
-        **kwargs,
-    ):
-        """
-        Creates a new astropy table.
-
-        Parameters
-        ----------
-        data : list, array-like
-            Data of the table with shape (n, n_cols), with ''n'' arbitrary number
-            of rows and ''n_cols'' number of columns that must match the
-            length of the table attributes ''colnames'', ''units'', ''dtype'',
-            ''descriptions'' and ''meta''.
-        template_name : str, None
-            Identifier to select a table template. Templates are selected by
-            setting the class key and a corresponding table key in one string
-            separated by a colon, e.g. template_name=<class_key>:<table_key>.
-            Must be str if ``use_template`` is True (default).
-        use_template : bool
-            If True a template specified by ``template_name`` is used.
-        """
-        # Check usage...
-        # for adding a table by template
-        if template_name is None and use_template is True:
-            raise ValueError("Cannot use template without specifying 'template_name'.")
-        # for adding a table from scratch
-        if use_template is False and any(
-            v is None for v in [colnames, units, dtype, descriptions, meta]
-        ):
-            raise ValueError(
-                "Cannot add table from scratch without specifing all "
-                "table parameters (colnames, units, dtype, descriptions, meta)"
-            )
-
-        # Open templates config file as dictionary
-        templates_path = f"{FILE_DIR}/uvva_tables_auto_gen.yml"
-        if not os.path.isfile(templates_path):
-            raise FileNotFoundError(
-                "Wrong file or file path '{templates_path}'. "
-                "Cannot read table templates."
-            )
-        with open(templates_path, "r") as ymlfile:
-            templates = yaml.safe_load(ymlfile)
-
-        # Parse template identifier keys
-        if template_name is not None:
-            class_key = template_name.split(":")[0]
-            table_key = template_name.split(":")[1]
-
-        # Generate lists of available class and table keys
-        class_keys = [clss for clss in templates.keys()]
-        table_keys = [
-            tbl for clss in templates.keys() for tbl in templates[clss].keys()
-        ]
-
-        # Check if template exists for template_name
-        if class_key not in class_keys:
-            raise KeyError(
-                f"Unknown class key '{class_key}'. Choose one from {class_keys}"
-            )
-        if table_key not in table_keys:
-            raise KeyError(
-                f"Unknown table key '{table_key}'. Choose one from {table_keys}"
-            )
-
-        # logging
-        if use_template:
-            logger.debug(f"Creating new table from template '{template_name}'.")
-        else:
-            logger.debug("Creating new table from scratch")
-
-        # Create table
-        data = np.asarray(data)
-        if use_template:
-            tt_out = Table(data=data, **templates[class_key][table_key])
-        else:
-            # check if table attributes exist for all columns
-            if not all(
-                len(attr) == data.shape[1]
-                for attr in [colnames, units, dtype, descriptions, meta]
-            ):
-                raise ValueError(
-                    "Cannot create table from scratch. "
-                    "All table attributes and data must have the same length."
-                )
-            tt_out = Table(
-                data=np.asarray(data),
-                names=colnames,
-                units=units,
-                dtype=dtype,
-                descriptions=descriptions,
-                meta=meta,
-                **kwargs,
-            )
-        return tt_out
 
     def set_field_attr(self, dd_names=None):
         """
@@ -240,7 +122,6 @@ class BaseField(object):
             for par in dd_names[table]:
                 setattr(self, par, self.get_field_par(par, table))
 
-    # @logger.catch
     def get_field_par(self, par_name, table_name):
         """
         Returns metadata parameter ``par_name``
@@ -294,10 +175,10 @@ class BaseField(object):
             par = len(self.tt_visits)
         elif par_name == "t_exp_sum":
             par = self.tt_visits["t_exp"].sum() * uu.s
-        # elif par_name == "t_start":
-        #     par = self.tt_visit["t_start"][0]
-        # elif par_name == "t_stop":
-        #     par = self.tt_visit["t_stop"][-1]
+        elif par_name == "t_start":
+            par = Time(self.tt_visits["t_start"][0], format="mjd")
+        elif par_name == "t_stop":
+            par = Time(self.tt_visits["t_stop"][-1], format="mjd")
         # Directly derived parameters
         # Return None if parameter is not in table
         elif par_name not in self.__dict__[table_name].colnames:
@@ -460,7 +341,7 @@ class GALEXField(BaseField):
                 "Available filters for GALEX are 'NUV' or 'FUV'."
             )
 
-        # sets skeleton
+        # sets skeleton field
         super().__init__()
 
         # Collects coadd and visit metadata tables in order
@@ -520,7 +401,7 @@ class GALEXField(BaseField):
         logger.info("Constructing 'tt_field'.")
         # Fill default columns from first row of the archive field info data table
         tt_coadd_select = tt_coadd[col_names]
-        self.tt_field = self.get_table(tt_coadd_select, "base_field:tt_field")
+        self.tt_field = UVVATable.from_template(tt_coadd_select, "base_field:tt_field")
 
     def _load_galex_visits_info(self, id, col_names=None, filter=None):
 
@@ -529,11 +410,10 @@ class GALEXField(BaseField):
         if col_names is None:
             col_names = [
                 "imgRunID",
-                "PhotoObsDate_MJD",
-                "nexptime" if filter == "NUV" else "fexptime",
-                "fexptime" if filter == "NUV" else "nexptime",
                 "minPhotoObsDate",
                 "maxPhotoObsDate",
+                "nexptime" if filter == "NUV" else "fexptime",
+                "fexptime" if filter == "NUV" else "nexptime",
                 "RATileCenter",
                 "DECTileCenter",
             ]
@@ -550,35 +430,25 @@ class GALEXField(BaseField):
         tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == id][
             col_names
         ]
-        print(tt_visits_raw_select)
         # Convert string time format to mjd
-        tt_visits_raw_select.update(
-            {
-                "minPhotoObsDate": Time(
-                    [
-                        datetime.strptime(
-                            date_str.decode("utf-8"), "%m/%d/%Y %I:%M:%S %p"
-                        )
-                        for date_str in tt_visits_raw_select["minPhotoObsDate"].data
-                    ]
-                ).mjd
-            }
-        )
-        tt_visits_raw_select.update(
-            {
-                "maxPhotoObsDate": Time(
-                    [
-                        datetime.strptime(
-                            date_str.decode("utf-8"), "%m/%d/%Y %I:%M:%S %p"
-                        )
-                        for date_str in tt_visits_raw_select["maxPhotoObsDate"].data
-                    ]
-                ).mjd
-            }
-        )
-        print(tt_visits_raw_select)
+        for key in ["minPhotoObsDate", "maxPhotoObsDate"]:
+            tt_visits_raw_select.update(
+                {
+                    key: Time(
+                        [
+                            datetime.strptime(
+                                date_str.decode("utf-8"), "%m/%d/%Y %I:%M:%S %p"
+                            )
+                            for date_str in tt_visits_raw_select[key].data
+                        ]
+                    ).mjd
+                }
+            )
+
         # Set as class attribute
-        self.tt_visits = self.get_table(tt_visits_raw_select, "galex_field:tt_visits")
+        self.tt_visits = UVVATable.from_template(
+            tt_visits_raw_select, "galex_field:tt_visits"
+        )
 
     def _load_galex_archive_products():
         """

@@ -11,12 +11,13 @@ from astropy.coordinates import SkyCoord
 from loguru import logger
 
 from uvva.field import BaseField, Field, GALEXField
+from uvva.uvva_table import UVVATable
 
 
 @pytest.fixture
 def new_field():
     bf = BaseField()
-    bf.tt_field = bf.get_table(
+    bf.tt_field = UVVATable.from_template(
         np.asarray([42, "name", 2, 3, "obs", "filter"]), "base_field:tt_field"
     )
 
