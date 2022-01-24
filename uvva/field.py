@@ -350,15 +350,21 @@ class BaseField(object):
             logger.debug(f"Storing image data'")
             hdup = fits.PrimaryHDU(self.vis_imgs, header=self.vis_wcs.to_header())
 
-        hdus = [hdup]
+        new_hdul = fits.HDUList([hdup])
+        new_hdul.writeto(file_name, overwrite=overwrite)
+
         for key in self._table_names:
             if key in self.__dict__:
                 logger.debug(f"Writing table '{key}'")
-                hdu = fits.table_to_hdu(self.__dict__[key])
-                hdu.name = key  # Add Name for fits extension
-                hdus.append(hdu)
-        new_hdul = fits.HDUList(hdus)
-        new_hdul.writeto(file_name, overwrite=overwrite)
+                # hdu = fits.table_to_hdu(self.__dict__[key])
+                # hdu.name = key  # Add Name for fits extension
+                # hdus.append(hdu)
+                print(self.__dict__[key])
+                self.__dict__[key].info()
+                fits.append(file_name, self.__dict__[key])
+
+        # new_hdul = fits.HDUList(hdus)
+        # new_hdul.writeto(file_name, overwrite=overwrite)
 
     def load_from_fits(self, file_name="field_default.fits"):
         """
