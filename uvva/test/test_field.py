@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import glob
 import sys
 from pprint import pprint
 
@@ -34,7 +35,6 @@ def new_field():
     bf.tt_visits = UVVATable.from_template(
         np.asarray(visits_data), "base_field:tt_visits"
     )
-
     return bf
 
 
@@ -70,6 +70,17 @@ def test_base_field_io():
     ff_olfstr = ff.__str__
     ff.load_from_fits()
     assert ff_olfstr == ff.__str__
+
+
+def test_base_field_io_alt(tmp_path, new_field):
+    # create temporary directory to store fits data in
+    d = tmp_path / "fits_out_dir"
+    d.mkdir()
+    # get path pointing to the fits file as string
+    file_path = (d / "uvva_tables_output.fits").resolve()
+    new_field.write_to_fits(file_path)
+    # test if a fits file exists
+    assert not glob.glob(f"{d.resolve}/*.fits")
 
 
 def main():
