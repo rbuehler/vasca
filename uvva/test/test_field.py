@@ -58,18 +58,17 @@ def test_set_field_attr_type(new_field):
     )
 
 
-def test_base_field_print_info():
-    ff = BaseField()
-    ff.info()
-    print(ff)
+def test_base_field_print_info(new_field):
+    new_field = BaseField()
+    new_field.info()
+    print(new_field)
 
 
-def test_base_field_io():
-    ff = BaseField()
-    ff.write_to_fits()
-    ff_olfstr = ff.__str__
-    ff.load_from_fits()
-    assert ff_olfstr == ff.__str__
+def test_base_field_io(new_field):
+    new_field.write_to_fits()
+    olfstr = new_field.__str__
+    new_field.load_from_fits()
+    assert olfstr == new_field.__str__
 
 
 def test_base_field_io_alt(tmp_path, new_field):
@@ -78,6 +77,7 @@ def test_base_field_io_alt(tmp_path, new_field):
     d.mkdir()
     # get path pointing to the fits file as string
     file_path = (d / "uvva_tables_output.fits").resolve()
+    new_field.info()
     new_field.write_to_fits(file_path)
     # test if a fits file exists
     assert not glob.glob(f"{d.resolve}/*.fits")
@@ -87,9 +87,10 @@ def main():
     # logging
     logger.enable("uvva")
 
-    # Tests to execute
-    test_base_field_print_info()
-    test_base_field_io()
+    bf = BaseField()
+    test_base_field_io(bf)
+    test_base_field_print_info(bf)
+    test_base_field_io(bf)
 
 
 if __name__ == "__main__":

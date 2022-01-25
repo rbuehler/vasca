@@ -29,6 +29,7 @@ from sklearn import cluster
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from .uvva_table import UVVATable, dd_uvva_tables
+from astropy.io.fits.hdu.base import _BaseHDU
 
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
@@ -231,21 +232,23 @@ class BaseField(object):
             logger.debug(f"Storing image data'")
             hdup = fits.PrimaryHDU(self.vis_imgs, header=self.vis_wcs.to_header())
 
+        hdus = [hdup]
         new_hdul = fits.HDUList([hdup])
         new_hdul.writeto(file_name, overwrite=overwrite)
 
         for key in self._table_names:
             if key in self.__dict__:
                 logger.debug(f"Writing table '{key}'")
-                # hdu = fits.table_to_hdu(self.__dict__[key])
-                # hdu.name = key  # Add Name for fits extension
-                # hdus.append(hdu)
-                print(self.__dict__[key])
-                self.__dict__[key].info()
-                fits.append(file_name, self.__dict__[key])
+                self.__dict__[key].write(file_name, append=True)
 
-        # new_hdul = fits.HDUList(hdus)
-        # new_hdul.writeto(file_name, overwrite=overwrite)
+        # Rename extensions to table names
+        ext_nr = 0
+        ff = fits.open(file_name, "update")
+        for key in self._table_names:
+            if key in self.__dict__:
+                ext_nr += 1
+                ff[ext_nr].header["EXTNAME"] = key
+        ff.close()
 
     def load_from_fits(self, file_name="field_default.fits"):
         """
@@ -290,6 +293,7 @@ class BaseField(object):
             if key in self.__dict__:
                 print("\n" + key + ":")
                 self.__dict__[key].info()
+                print(self.__dict__[key].meta)
 
     def __str__(self):
         """
