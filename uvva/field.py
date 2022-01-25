@@ -12,11 +12,12 @@ import healpy as hpy
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
+import yaml
 from astropy import units as uu
 from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import QTable, Table, conf, hstack, unique
+from astropy.table import Column, QTable, Table, conf, hstack, unique
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
@@ -27,10 +28,12 @@ from sklearn import cluster
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
+from .uvva_table import UVVATable, dd_uvva_tables
+from astropy.io.fits.hdu.base import _BaseHDU
 
 # global paths
-CLASS_DIR = os.path.dirname(os.path.abspath(__file__))  # path to this file "field.py"
-PACKAGE_DIR = CLASS_DIR + "/../"  # path to the package "uvva"
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
+ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 
 dimless = uu.dimensionless_unscaled
 conf.replace_warnings = ["always"]
@@ -68,142 +71,32 @@ class BaseField(object):
         # adds the class name as an extra key; accessible vie the handler format
         logger.configure(extra={"classname": self.__class__.__name__})
 
-        # Initializing skeleton data structure
-
-        #: List of astropy table attributes
-        self._field_names = ["tt_field"]
-
-        #: Astropy table with field information
-        self.tt_field = Table(
-            names=["id", "name", "ra", "dec", "observatory", "obsfilter"],
-            dtype=["uint32", "S32", "float16", "float16", "S32", "S32"],
-            units=[dimless, None, uu.deg, uu.deg, None, None],
-            descriptions=[
-                "Field ID nr.",
-                "Field name",
-                "Center RA of the field (J2000)",
-                "Center Dec of the field (J2000)",
-                "Telescope of the observation (e.g. GALEX)",
-                "Filter of the observation (e.g. NUV)",
-            ],
-            meta={"DATAPATH": None, "INFO": "Field information"},
-        )
-
-        #: Astropy table with visit information
-        self._field_names.append("tt_visits")
-        self.tt_visits = Table(
-            names=["id", "time", "exposure"],
-            dtype=["uint32", "float64", "float16"],
-            units=[dimless, uu.d, uu.s],
-            descriptions=[
-                "Visit ID nr.",
-                "Visit central time in MJD",
-                "Visit exposure time in s",
-            ],
-            meta={"INFO": "Visit information"},
-        )
-
-        #: Astropy table with visit source information
-        self._field_names.append("tt_visit_sources")
-        self.tt_visit_sources = Table(
-            names=[
-                "id",
-                "ra",
-                "dec",
-                "mag",
-                "mag_err",
-                "s2n",
-                "flags",
-                "src_id",
-            ],
-            dtype=[
-                "uint32",
-                "float16",
-                "float16",
-                "float16",
-                "float16",
-                "float16",
-                "int32",
-                "uint32",
-            ],
-            units=[
-                dimless,
-                uu.deg,
-                uu.deg,
-                dimless,
-                dimless,
-                dimless,
-                dimless,
-                dimless,
-            ],
-            descriptions=[
-                "Visit source ID nr.",
-                "Visit source RA (J2000)",
-                "Visit source Dec (J2000)",
-                "Visit source magnitude",
-                "Visit source magnitude error",
-                "Visit source signal to noise",
-                "Visit source flags",
-                "Source ID associated to the visit source",
-            ],
-            meta={
-                "INFO": "List of visit detections",
-                "Name": "visit_sources",
-            },
-        )
-
-        #: Astropy table with field sources information
-        self._field_names.append("tt_sources")
-        self.tt_sources = Table(
-            names=["src_id", "ra", "dec", "nr_vis_det", "flag"],
-            dtype=["uint32", "float16", "float16", "uint32", "int32"],
-            units=[dimless, uu.deg, uu.deg, dimless, dimless],
-            meta={"INFO": "List of sources", "CLUSTALG": None},
-            descriptions=[
-                "Source ID nr.",
-                "Source RA (J2000)",
-                "Source Dec (J2000)",
-                "Number of visit detections of the source",
-                "Source flags",
-            ],
-        )
-
-        # Field sources visit information
-        # Columns are source IDs and rows are magnitudes for each visit
-
-        #:  Astropy table with flux magnitude for each source and visit
-        self._field_names.append("tt_sources_mag")
-        self.tt_sources_mag = Table(
-            meta={"INFO": "AB Magnitude flux"},
-        )
-
-        #:  Astropy table with signal to noise for each source and visit
-        self._field_names.append("tt_sources_s2n")
-        self.tt_sources_s2n = Table(
-            meta={"INFO": "Signal to noise of the detection"},
-        )
-
-        #: Astropy table with 95% confidence upper limit magnitude
-        self._field_names.append("tt_sources_ulmag95")
-        self.tt_sources_ulmag95 = Table(
-            meta={
-                "INFO": "AB Magnitude flux 95% upper limit",
-            },
-        )
-
         # Convenience class attributes
 
-        #: Internal list of important parameters
+        #: Internal list of tables holding the central field data
+        #: All of these are defined in ``uvva_table.py``
+        self._table_names = list(dd_uvva_tables["base_field"].keys())
+
+        #: Internal dictionary of important parameters
+        #: with corresponding tables
         #: to be set as class attributes for convenience.
-        self._attr_names = [
-            "id",
-            "name",
-            "ra",
-            "dec",
-            "center",
-            "observatory",
-            "obsfilter",
-        ]
+        self._dd_attr_names = {
+            "tt_field": [
+                "id",
+                "name",
+                "ra",
+                "dec",
+                "observatory",
+                "obsfilter",
+                "center",
+            ],
+            "tt_visits": [
+                "n_visits",
+                "t_exp_sum",
+                "t_start",
+                "t_stop",
+            ],
+        }
 
         #: List of 2D sky images of each visit,
         #: ordered as :attr: `~uvva.field.BaseField.tt_visits` table
@@ -213,36 +106,41 @@ class BaseField(object):
         #: The WCS has to be the same for all visit.
         self.vis_iwcs = None
 
-    def set_field_attr(self, names=None):
+    def set_field_attr(self, dd_names=None):
         """
         Sets the most important field parameters as class attributes.
 
         Parameters
         ----------
-        names : list, None
+        dd_names : dict, None
             List of strings containing the parameter names. If None (default),
             a set of pre-defined parameters is set.
         """
 
-        if names is None:
-            names = self._attr_names
-        for name in names:
-            setattr(self, name, self.get_field_par(name))
+        if dd_names is None:
+            dd_names = self._dd_attr_names
+        for table in dd_names:
+            for par in dd_names[table]:
+                setattr(self, par, self.get_field_par(par, table))
 
-    # @logger.catch
-    def get_field_par(self, name):
+    def get_field_par(self, par_name, table_name):
         """
-        Returns field metadata parameter ``name``
-        derived from :attr: `~uvva.field.BaseField.tt_field`.
+        Returns metadata parameter ``par_name``
+        derived from astropy table data ``table_name``.
 
         Parameter
         ---------
-        name : str
-            Parameter name
+        par_name : str
+            Name of the parameter to be read either directly or calculated
+            from table data.
+        table_name : str
+            Name of table data. Must be initialized as class attribute.
 
         Returns
         -------
-        str
+        str, None
+            None is returned if either ``par_name`` or ``table_name`` are
+            not available. In this case warnings are issued to logging.
 
         Raises
         ------
@@ -250,32 +148,54 @@ class BaseField(object):
             If :attr: `~uvva.field.BaseField.tt_field` has not exactly one row
 
         """
+        # Check data availability
+        # Returns none if table is unknown
+        if table_name not in self.__dict__:
+            logger.warning(
+                f"Data '{table_name}' not available. "
+                f"Returning None for parameter '{par_name}'."
+            )
+            return None
+
         # Consistency checks
-        assert len(self.tt_field) == 1, (
-            "Inconsistent data. Expeted single-rowed field metadata table 'tt_field', "
-            f"got {len(self.tt_field)}."
-        )
-        if name not in self.tt_field.colnames and name != "center":
-            raise KeyError(
-                f"Unknown parameter name '{name}'. "
-                f"Known names are {self.tt_field.colnames}."
+        # tt_field must be single-rowed
+        if table_name == "tt_field" and len(self.tt_field) != 1:
+            raise ValueError(
+                "Inconsistent data. Expeted single-rowed "
+                f"field metadata table 'tt_field', got {len(self.tt_field)}."
             )
 
         # Indirectly derived parameters
-        if name == "center":
+        if par_name == "center":
             par = SkyCoord(
-                self.get_field_par("ra"),
-                self.get_field_par("dec"),
+                self.get_field_par("ra", "tt_field"),
+                self.get_field_par("dec", "tt_field"),
                 frame="icrs",
             )
+        elif par_name == "n_visits":
+            par = len(self.tt_visits)
+        elif par_name == "t_exp_sum":
+            par = self.tt_visits["t_exp"].sum() * uu.s
+        elif par_name == "t_start":
+            par = Time(self.tt_visits["t_start"][0], format="mjd")
+        elif par_name == "t_stop":
+            par = Time(self.tt_visits["t_stop"][-1], format="mjd")
         # Directly derived parameters
+        # Return None if parameter is not in table
+        elif par_name not in self.__dict__[table_name].colnames:
+            logger.warning(
+                f"Unknown parameter in data set '{table_name}'"
+                f"Known parameters are {self.__dict__[table_name].colnames}."
+                f"Returning None for parameter '{par_name}'."
+            )
+            par = None
         else:
             # retrieve parameter
-            par = self.tt_field[name].data[0]
+            par = self.tt_field[par_name].data[0]
             # Maintains unit
             # Some combinations of unit and dtype need special handling
-            unit = self.tt_field[name].unit
-            dtype_kind = self.tt_field[name].dtype.kind
+            unit = self.tt_field[par_name].unit
+            dtype_kind = self.tt_field[par_name].dtype.kind
             # check (byte-)string or unicode
             if dtype_kind in ["U", "S"]:
                 par = par.decode("utf-8")
@@ -313,13 +233,22 @@ class BaseField(object):
             hdup = fits.PrimaryHDU(self.vis_imgs, header=self.vis_wcs.to_header())
 
         hdus = [hdup]
-        for key in self._field_names:
-            logger.debug(f"Writing table '{key}'")
-            hdu = fits.table_to_hdu(self.__dict__[key])
-            hdu.name = key  # Add Name for fits extension
-            hdus.append(hdu)
-        new_hdul = fits.HDUList(hdus)
+        new_hdul = fits.HDUList([hdup])
         new_hdul.writeto(file_name, overwrite=overwrite)
+
+        for key in self._table_names:
+            if key in self.__dict__:
+                logger.debug(f"Writing table '{key}'")
+                self.__dict__[key].write(file_name, append=True)
+
+        # Rename extensions to table names
+        ext_nr = 0
+        ff = fits.open(file_name, "update")
+        for key in self._table_names:
+            if key in self.__dict__:
+                ext_nr += 1
+                ff[ext_nr].header["EXTNAME"] = key
+        ff.close()
 
     def load_from_fits(self, file_name="field_default.fits"):
         """
@@ -336,9 +265,10 @@ class BaseField(object):
         """
         # Load tables
         logger.info(f"Loading file with name '{file_name}'")
-        for key in self._field_names:
-            logger.debug(f"Loading table '{key}'")
-            self.__dict__[key] = Table.read(file_name, hdu=key)
+        for key in self._table_names:
+            if key in self.__dict__:
+                logger.debug(f"Loading table '{key}'")
+                self.__dict__[key] = Table.read(file_name, hdu=key)
 
         # Load image data
         ff = fits.open(file_name)
@@ -359,9 +289,11 @@ class BaseField(object):
         None.
 
         """
-        for key in self._field_names:
-            print("\n" + key + ":")
-            self.__dict__[key].info()
+        for key in self._table_names:
+            if key in self.__dict__:
+                print("\n" + key + ":")
+                self.__dict__[key].info()
+                print(self.__dict__[key].meta)
 
     def __str__(self):
         """
@@ -373,8 +305,9 @@ class BaseField(object):
 
         """
         out_str = ""
-        for key in self._field_names:
-            out_str += "\n" + self.__dict__[key].__str__()
+        for key in self._table_names:
+            if key in self.__dict__:
+                out_str += "\n" + self.__dict__[key].__str__()
 
         return out_str
 
@@ -397,41 +330,7 @@ class GALEXField(BaseField):
     to the "ParentImgRunID" of the visits table.
     """
 
-    def __init__(self, obs_id, filter="NUV", refresh=False):
-
-        # sets skeleton
-        super().__init__()
-        super().__str__()
-
-        # Collects coadd and visit metadata tables in order
-        # to bootstrap the initialization procedure using the base class
-        with ResourceManager() as rm:
-            #: Path to read and write data relevant to the pipeline
-            self.data_path = rm.get_path("gal_fields", "sas_cloud") + "/" + str(obs_id)
-        # sets `self.tt_field`
-        self._load_galex_field_info(obs_id, filter=filter, refresh=refresh)
-        # sets `self.tt_visits`
-        self._load_galex_visits_info()
-
-    def _load_galex_field_info(
-        self, obs_id, col_names=None, filter=None, refresh=False
-    ):
-        """
-        Loads the archival metadata associated to a given field ID.
-        """
-        # Use default columns if not otherwise specified
-        if col_names is None:
-            col_names = [
-                "obs_id",
-                "target_name",
-                "s_ra",
-                "s_dec",
-                "instrument_name",
-                "filters",
-                # "t_min",
-                # "t_max",
-                # "t_exptime",
-            ]
+    def __init__(self, obs_id, filter=None, refresh=False):
 
         # check filter name, default is "NUV"
         if filter is None:
@@ -446,13 +345,44 @@ class GALEXField(BaseField):
                 "Available filters for GALEX are 'NUV' or 'FUV'."
             )
 
+        # sets skeleton field
+        super().__init__()
+
+        # Collects coadd and visit metadata tables in order
+        # to bootstrap the initialization procedure using the base class
+        with ResourceManager() as rm:
+            #: Path to read and write data relevant to the pipeline
+            self.data_path = rm.get_path("gal_fields", "sas_cloud") + "/" + str(obs_id)
+        # sets `self.tt_field`
+        self._load_galex_field_info(obs_id, filter=filter, refresh=refresh)
+        # sets `self.tt_visits`
+        self._load_galex_visits_info(obs_id, filter=filter)
+
+    def _load_galex_field_info(
+        self, obs_id, col_names=None, filter=None, refresh=False
+    ):
+        """
+        Loads the archival metadata associated to a given field ID.
+        """
+        # Use default columns if not otherwise specified
+        # Already sets the order in which columns are added later on
+        if col_names is None:
+            col_names = [
+                "obs_id",
+                "target_name",
+                "s_ra",
+                "s_dec",
+                "instrument_name",
+                "filters",
+            ]
+
         # path to store raw data
         tt_coadd_path = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
 
         # reads cached file if found found on disc
         if not os.path.isfile(tt_coadd_path) or refresh:
             # download raw table
-            logger.info(
+            logger.debug(
                 f"Downloading archive field info and saving to {tt_coadd_path}."
             )
             tt_coadd = Observations.query_criteria(
@@ -466,45 +396,63 @@ class GALEXField(BaseField):
             tt_coadd.write(tt_coadd_path, overwrite=True)
         else:
             # read cached
-            logger.info(
+            logger.debug(
                 f"Reading archive field info from cashed file '{tt_coadd_path}'"
             )
             tt_coadd = Table.read(tt_coadd_path)
 
         # construct field info table
-        logger.info("Constructing 'tt_field'.")
         # Fill default columns from first row of the archive field info data table
-        self.tt_field.add_row(tt_coadd[col_names[:6]][0])
+        tt_coadd_select = tt_coadd[col_names]
+        self.tt_field = UVVATable.from_template(tt_coadd_select, "base_field:tt_field")
+        logger.info("Constructed 'tt_field'.")
 
-        # Fill additional data
-        self.tt_field.add_columns(
-            [
-                Time(tt_coadd["t_min"], format="mjd"),
-                Time(tt_coadd["t_max"], format="mjd"),
-                tt_coadd["t_exptime"] * uu.s,
-                # SkyCoord(
-                #     ra=tt_coadd["s_ra"],
-                #     dec=tt_coadd["s_dec"],
-                #     unit=uu.deg,
-                #     frame="icrs",
-                # ),
-            ],
-            names=[
-                "t_start",
-                "t_stop",
-                "t_exp_total",
-                # "center",
-            ],
-        )
+    def _load_galex_visits_info(self, id, col_names=None, filter=None):
 
-    def _load_galex_visits_info(self, col_names=None):
-
+        # Use default columns if not otherwise specified
+        # Already sets the order in which columns are added later on
         if col_names is None:
-            col_names = ["foo"]
+            col_names = [
+                "imgRunID",
+                "minPhotoObsDate",
+                "maxPhotoObsDate",
+                "nexptime" if filter == "NUV" else "fexptime",
+                "fexptime" if filter == "NUV" else "nexptime",
+                "RATileCenter",
+                "DECTileCenter",
+            ]
         with ResourceManager() as rm:
+            # read cached
+            logger.debug(
+                "Reading archive visit info from cashed file "
+                f"'{rm.get_path('gal_visits_list', 'sas_cloud')}'"
+            )
             tt_visits_raw = Table.read(rm.get_path("gal_visits_list", "sas_cloud"))
 
-        print(tt_visits_raw.info)
+        # Filters for visits corresponding to field id and selects specified columns
+        tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == id][
+            col_names
+        ]
+        # Convert string time format to mjd
+        for key in ["minPhotoObsDate", "maxPhotoObsDate"]:
+            tt_visits_raw_select.update(
+                {
+                    key: Time(
+                        [
+                            datetime.strptime(
+                                date_str.decode("utf-8"), "%m/%d/%Y %I:%M:%S %p"
+                            )
+                            for date_str in tt_visits_raw_select[key].data
+                        ]
+                    ).mjd
+                }
+            )
+
+        # Set as class attribute
+        self.tt_visits = UVVATable.from_template(
+            tt_visits_raw_select, "galex_field:tt_visits"
+        )
+        logger.info("Constructed 'tt_visits'.")
 
     def _load_galex_archive_products():
         """
@@ -1410,7 +1358,7 @@ class Field:
         """
 
         # use custom style sheet
-        plt.style.use(PACKAGE_DIR + "/lib/mpl_style_sheets/spie_scout_testing.mplstyle")
+        plt.style.use(ROOT_DIR + "/lib/mpl_style_sheets/spie_scout_testing.mplstyle")
 
         log_prefix = str.format(
             "[{}.{}]",
