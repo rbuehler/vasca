@@ -378,7 +378,7 @@ class GALEXField(BaseField):
         # reads cached file if found found on disc
         if not os.path.isfile(tt_coadd_path) or refresh:
             # download raw table
-            logger.info(
+            logger.debug(
                 f"Downloading archive field info and saving to {tt_coadd_path}."
             )
             tt_coadd = Observations.query_criteria(
@@ -392,16 +392,16 @@ class GALEXField(BaseField):
             tt_coadd.write(tt_coadd_path, overwrite=True)
         else:
             # read cached
-            logger.info(
+            logger.debug(
                 f"Reading archive field info from cashed file '{tt_coadd_path}'"
             )
             tt_coadd = Table.read(tt_coadd_path)
 
         # construct field info table
-        logger.info("Constructing 'tt_field'.")
         # Fill default columns from first row of the archive field info data table
         tt_coadd_select = tt_coadd[col_names]
         self.tt_field = UVVATable.from_template(tt_coadd_select, "base_field:tt_field")
+        logger.info("Constructed 'tt_field'.")
 
     def _load_galex_visits_info(self, id, col_names=None, filter=None):
 
@@ -419,14 +419,13 @@ class GALEXField(BaseField):
             ]
         with ResourceManager() as rm:
             # read cached
-            logger.info(
+            logger.debug(
                 "Reading archive visit info from cashed file "
                 f"'{rm.get_path('gal_visits_list', 'sas_cloud')}'"
             )
             tt_visits_raw = Table.read(rm.get_path("gal_visits_list", "sas_cloud"))
 
         # Filters for visits corresponding to field id and selects specified columns
-        logger.info("Constructing 'tt_visits'.")
         tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == id][
             col_names
         ]
@@ -449,6 +448,7 @@ class GALEXField(BaseField):
         self.tt_visits = UVVATable.from_template(
             tt_visits_raw_select, "galex_field:tt_visits"
         )
+        logger.info("Constructed 'tt_visits'.")
 
     def _load_galex_archive_products():
         """
