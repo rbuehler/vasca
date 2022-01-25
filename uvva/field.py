@@ -17,7 +17,7 @@ from astropy import units as uu
 from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import Column, QTable, Table, conf, hstack, unique
+from astropy.table import Column, QTable, Table, conf, hstack, unique, vstack
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
@@ -349,10 +349,12 @@ class GALEXField(BaseField):
         with ResourceManager() as rm:
             #: Path to read and write data relevant to the pipeline
             self.data_path = rm.get_path("gal_fields", "sas_cloud") + "/" + str(obs_id)
-        # sets `self.tt_field`
+        # Sets ``self.tt_field``
         self._load_galex_field_info(obs_id, filter=filter, refresh=refresh)
-        # sets `self.tt_visits`
+        # Sets ``self.tt_visits``
         self._load_galex_visits_info(obs_id, filter=filter)
+        # Sets ``self.tt_visit_sources``
+        self._load_galex_archive_products(obs_id, filter=filter, refresh=refresh)
 
     def _load_galex_field_info(
         self, obs_id, col_names=None, filter=None, refresh=False
@@ -373,13 +375,13 @@ class GALEXField(BaseField):
             ]
 
         # path to store raw data
-        tt_coadd_path = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
+        path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
 
         # reads cached file if found found on disc
-        if not os.path.isfile(tt_coadd_path) or refresh:
+        if not os.path.isfile(path_tt_coadd) or refresh:
             # download raw table
             logger.debug(
-                f"Downloading archive field info and saving to {tt_coadd_path}."
+                f"Downloading archive field info and saving to {path_tt_coadd}."
             )
             tt_coadd = Observations.query_criteria(
                 obs_id=obs_id,
@@ -389,13 +391,13 @@ class GALEXField(BaseField):
                 dataproduct_type="image",
             )
             # save to disc
-            tt_coadd.write(tt_coadd_path, overwrite=True)
+            tt_coadd.write(path_tt_coadd, overwrite=True)
         else:
             # read cached
             logger.debug(
-                f"Reading archive field info from cashed file '{tt_coadd_path}'"
+                f"Reading archive field info from cashed file '{path_tt_coadd}'"
             )
-            tt_coadd = Table.read(tt_coadd_path)
+            tt_coadd = Table.read(path_tt_coadd)
 
         # construct field info table
         # Fill default columns from first row of the archive field info data table
@@ -450,12 +452,130 @@ class GALEXField(BaseField):
         )
         logger.info("Constructed 'tt_visits'.")
 
-    def _load_galex_archive_products():
+    def _load_galex_archive_products(
+        self, obs_id, filter=None, product_list=None, refresh=False
+    ):
         """
         Loads the relevant data products from MAST servers and
         stores them using the ResourceManager
         """
-        pass
+        # Path to MAST helper files
+        path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
+        path_tt_data = f"{self.data_path}/MAST_{obs_id}_{filter}_data.fits"
+        path_tt_down = f"{self.data_path}/MAST_{obs_id}_{filter}_down.ecsv"
+
+        # tt_data: List of all archival data products
+        # Reads cached file if found found on disc
+        if not os.path.isfile(path_tt_data) or refresh:
+            # Get cached field info for archive query input
+            logger.debug(
+                f"Reading archive field info from cashed file '{path_tt_coadd}'"
+            )
+            tt_coadd = Table.read(path_tt_coadd)
+            # Download
+            logger.debug(
+                f"Downloading archive data products list and saving to {path_tt_data}."
+            )
+            tt_data = Observations.get_product_list(tt_coadd)
+            # Saves to disc
+            tt_data.write(path_tt_data, overwrite=True)
+        else:
+            logger.debug(
+                f"Reading archive data products list from cashed file '{path_tt_data}'"
+            )
+            tt_data = Table.read(path_tt_data)
+
+        # Sets default products to download if a selection was not explicitly passed
+        if product_list is None:
+            # Default: Catalog and NUV intensity map
+            product_list = [
+                "xd-mcat.fits.gz",
+                "nd-int.fits.gz" if filter == "NUV" else "fd-int.fits.gz",
+            ]
+        # Verifies if products are listed in products list
+        product_list_missing = [
+            prod
+            for prod in product_list
+            if not any(prod in uri for uri in tt_data["dataURI"])
+        ]
+        if not len(product_list_missing) == 0:
+            raise ValueError(
+                f"Missing entry for data products {product_list_missing} "
+                "in product list."
+            )
+
+        # Filters for products of interest
+        aa_sel_prod = np.full(len(tt_data), False)  # bool array
+        aa_data_uri = tt_data["dataURI"].data.astype(str)  # string array
+        for prod in product_list:
+            aa_sel_prod += np.char.endswith(aa_data_uri, prod)  # Logical AND operation
+
+        # Download data products
+        # tt_down: manifest of files downloaded
+        if not os.path.isfile(path_tt_down) or refresh:
+            # Download
+            logger.debug(
+                f"Downloading archive data products. Manifest saved to {path_tt_down}."
+            )
+            tt_down = Observations.download_products(
+                tt_data,
+                download_dir=self.data_path,
+                cache=True,
+                dataURI=tt_data[aa_sel_prod]["dataURI"],
+            )["Local Path", "Status"]
+            # Save to disc
+            tt_down["Local Path"] = [
+                str(s).split(self.data_path)[1] for s in tt_down["Local Path"]
+            ]
+            tt_down.write(path_tt_down, overwrite=True)
+        else:
+            # Reading cached manifest
+            logger.debug(f"Reading archive data product manifest from {path_tt_down}.")
+            tt_down = Table.read(path_tt_down)
+        # Adds column with corresponding IDs
+        tt_down["ID"] = [int(path.split(os.sep)[-2]) for path in tt_down["Local Path"]]
+
+        # Verifies completed download
+        aa_status_mask = np.where(
+            tt_down["Status"].data.astype(str) == "COMPLETE", True, False
+        )  # bool array
+        if not aa_status_mask.all():
+            raise ValueError(
+                "Data products download incomplete. "
+                "Missing products are:\n"
+                f"{tt_down[~aa_status_mask]}"
+            )
+
+        # Collects data products
+        # Source catalogs
+        aa_sel_mcat = np.char.endswith(
+            tt_down["Local Path"].data.astype(str), product_list[0]
+        )
+        # Selects only the coadd path
+        path_tt_reference = (
+            self.data_path
+            + tt_down[np.logical_and(aa_sel_mcat, tt_down["ID"] == obs_id)][
+                "Local Path"
+            ][0]
+        )  # string
+        # Selects everything else but the coadd path
+        path_tt_visit_sources = [
+            self.data_path + path
+            for path in tt_down[np.logical_and(aa_sel_mcat, tt_down["ID"] != obs_id)][
+                "Local Path"
+            ].data.astype(str)
+        ]  # list
+
+        # Open catalogs
+        tt_reference_raw = Table.read(path_tt_reference)
+        tt_visit_sources_raw = vstack(
+            [Table.read(path) for path in path_tt_visit_sources]
+        )
+
+        print("coadd sources", len(tt_reference_raw))
+        print("visit sources", len(tt_visit_sources_raw))
+
+        # Todo: Intensity maps
 
 
 class Field:
