@@ -609,9 +609,16 @@ class GALEXField(BaseField):
                 # "NUV_CLASS_STAR" if filter == "NUV" else "FUV_CLASS_STAR",
                 # "chkobj_type",
             ]
-        self.tt_visit_sources = tt_visit_sources_raw[col_names]
-        self.tt_reference_sources = tt_reference_sources_raw[col_names[1:]]
-
+        self.tt_visit_sources = UVVATable.from_template(
+            tt_visit_sources_raw[col_names], "base_field:tt_visit_sources"
+        )
+        logger.info("Constructed 'tt_visit_sources'.")
+        self.tt_reference_sources = UVVATable.from_template(
+            tt_reference_sources_raw[col_names[1:]], "base_field:tt_reference_sources"
+        )
+        logger.info("Constructed 'tt_reference_sources'.")
+        print(self.tt_visit_sources.info)
+        print(self.tt_reference_sources.info)
         # Todo: Intensity maps
 
 
