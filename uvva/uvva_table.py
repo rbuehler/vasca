@@ -2,6 +2,7 @@ import os
 from pprint import pprint
 
 import numpy as np
+import pandas as pd
 import yaml
 from astropy import units as uu
 from astropy.table import Table
@@ -43,66 +44,86 @@ base_field = {
     },
     "tt_detections": {
         "names": [
+            "vis_id",
+            "src_id",
             "det_id",
             "ra",
             "dec",
             "pos_err",
             "mag",
             "mag_err",
-            "vis_id",
-            "src_id",
         ],
         "dtype": [
-            "uint32",
+            "uint64",
+            "uint64",
+            "uint64",
+            "float64",
+            "float64",
             "float32",
             "float32",
             "float32",
-            "float32",
-            "float32",
-            "uint32",
-            "uint32",
         ],
-        "units": ["1", "degree", "degree", "degree", "1", "1", "1", "1"],
+        "units": [
+            "1",
+            "1",
+            "1",
+            "degree",
+            "degree",
+            "arcseconds",
+            "1",
+            "1",
+        ],
         "descriptions": [
-            "Visit ID",
-            "Visit source ID nr.",
-            "Visit source RA (J2000)",
-            "Visit source Dec (J2000)",
+            "Visit ID associated to the visit detection",
+            "Source ID associated to the visit detection",
+            "Detection ID",
+            "Visit detection RA (J2000)",
+            "Visit detection Dec (J2000)",
             "Visit position error",
-            "Visit source magnitude",
-            "Visit source magnitude error",
-            "Visit ID associated to the visit source",
-            "Source ID associated to the visit source",
+            "Visit detection magnitude",
+            "Visit detection magnitude error",
         ],
         "meta": {
             "INFO": "Visit detections table",
             "Name": "visit_sources",
         },
     },
-    "tt_reference_sources": {
-        "names": ["id", "ra", "dec", "mag", "mag_err", "s2n", "flags"],
+    "tt_ref_sources": {
+        "names": [
+            "det_id",
+            "ra",
+            "dec",
+            "pos_err",
+            "mag",
+            "mag_err",
+        ],
         "dtype": [
             "uint64",
             "float64",
             "float64",
-            "float64",
-            "float64",
-            "float64",
-            "int32",
+            "float32",
+            "float32",
+            "float32",
         ],
-        "units": ["1", "degree", "degree", "1", "1", "1", "1"],
+        "units": [
+            "1",
+            "degree",
+            "degree",
+            "arcseconds",
+            "1",
+            "1",
+        ],
         "descriptions": [
             "Reference source ID nr.",
             "Reference source RA (J2000)",
             "Reference source Dec (J2000)",
+            "Reference position error",
             "Reference source magnitude",
             "Reference source magnitude error",
-            "Reference source signal to noise",
-            "Reference source flags",
         ],
         "meta": {
             "INFO": "Reference detections table",
-            "Name": "reference_sources",
+            "Name": "ref_sources",
         },
     },
     "tt_sources": {
@@ -142,15 +163,90 @@ galex_field = {
             "float64",
             "float64",
         ],
-        "units": [*base_field["tt_visits"]["units"], "s", "degree", "degree"],
+        "units": [
+            *base_field["tt_visits"]["units"],
+            "s",
+            "degree",
+            "degree",
+        ],
         "descriptions": [
             *base_field["tt_visits"]["descriptions"],
             "Visit exposure time of the alternative filter in s",
             "Center RA of the visit FoV (J2000)",
             "Center Dec of the visit FoV (J2000)",
         ],
-        "meta": {**base_field["tt_visits"]["meta"]},
-    }
+        "meta": {
+            **base_field["tt_visits"]["meta"],
+        },
+    },
+    "tt_detections": {
+        "names": [
+            *base_field["tt_detections"]["names"],
+            "r_fov",
+            "artifacts",
+            "point_src_prob",
+            "bright_match",
+        ],
+        "dtype": [
+            *base_field["tt_detections"]["dtype"],
+            "float32",
+            "int32",
+            "float32",
+            "int32",
+        ],
+        "units": [
+            *base_field["tt_detections"]["units"],
+            "degree",
+            "1",
+            "1",
+            "1",
+        ],
+        "descriptions": [
+            *base_field["tt_detections"]["descriptions"],
+            "Distance from center of FOV in degrees",
+            "Logical OR of artifact flags",
+            "Point-source probability: 0.0 (resolved), 1.0 (unresolved)",
+            "Detection matched to a known star (bright_match=1)",
+        ],
+        "meta": {
+            **base_field["tt_detections"]["meta"],
+            "PRECUTS": "List of pre-cuts",
+        },
+    },
+    "tt_ref_sources": {
+        "names": [
+            *base_field["tt_ref_sources"]["names"],
+            "r_fov",
+            "artifacts",
+            "point_src_prob",
+            "bright_match",
+        ],
+        "dtype": [
+            *base_field["tt_ref_sources"]["dtype"],
+            "float32",
+            "int32",
+            "float32",
+            "int32",
+        ],
+        "units": [
+            *base_field["tt_ref_sources"]["units"],
+            "degree",
+            "1",
+            "1",
+            "1",
+        ],
+        "descriptions": [
+            *base_field["tt_ref_sources"]["descriptions"],
+            "Distance from center of FOV in degrees",
+            "Logical OR of artifact flags",
+            "Point-source probability: 0.0 (resolved), 1.0 (unresolved)",
+            "Detection matched to a known star (bright_match=1)",
+        ],
+        "meta": {
+            **base_field["tt_ref_sources"]["meta"],
+            "PRECUTS": "List of pre-cuts",
+        },
+    },
 }
 # global, combined dictionary
 class_keys = ["base_field", "galex_field"]
@@ -211,7 +307,6 @@ class UVVATable(Table):
             )
 
         # Create table
-        # data = np.asarray(data)
         tt_out = Table(data=data, **templates[class_key][table_key])
 
         # logging
