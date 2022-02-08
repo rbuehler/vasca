@@ -16,7 +16,7 @@ ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 # global dictionaries defining the table structures
 base_field = {
     "tt_field": {
-        "names": ["id", "name", "ra", "dec", "observatory", "obsfilter"],
+        "names": ["field_id", "name", "ra", "dec", "observatory", "obsfilter"],
         "dtype": ["uint64", "S64", "float64", "float64", "S64", "S64"],
         "units": ["1", "", "degree", "degree", "", ""],
         "descriptions": [
@@ -30,7 +30,7 @@ base_field = {
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
     },
     "tt_visits": {
-        "names": ["id", "t_start", "t_stop", "t_exp"],
+        "names": ["vis_id", "t_start", "t_stop", "t_exp"],
         "dtype": ["uint64", "float64", "float64", "float64"],
         "units": ["1", "1", "1", "s"],
         "descriptions": [
@@ -41,28 +41,38 @@ base_field = {
         ],
         "meta": {"INFO": "Visit information table"},
     },
-    "tt_visit_sources": {
-        "names": ["visit_id", "id", "ra", "dec", "mag", "mag_err", "s2n", "flags"],
-        "dtype": [
-            "uint64",
-            "uint64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
-            "int32",
+    "tt_detections": {
+        "names": [
+            "det_id",
+            "ra",
+            "dec",
+            "pos_err",
+            "mag",
+            "mag_err",
+            "vis_id",
+            "src_id",
         ],
-        "units": ["1", "1", "degree", "degree", "1", "1", "1", "1"],
+        "dtype": [
+            "uint32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "uint32",
+            "uint32",
+        ],
+        "units": ["1", "degree", "degree", "degree", "1", "1", "1", "1"],
         "descriptions": [
             "Visit ID",
             "Visit source ID nr.",
             "Visit source RA (J2000)",
             "Visit source Dec (J2000)",
+            "Visit position error",
             "Visit source magnitude",
             "Visit source magnitude error",
-            "Visit source signal to noise",
-            "Visit source flags",
+            "Visit ID associated to the visit source",
+            "Source ID associated to the visit source",
         ],
         "meta": {
             "INFO": "Visit detections table",
@@ -164,10 +174,8 @@ class UVVATable(Table):
         Parameters
         ----------
         data : list, array-like
-            Data of the table with shape (n, n_cols), with ''n'' arbitrary number
-            of rows and ''n_cols'' number of columns that must match the
-            length of the table attributes ''colnames'', ''units'', ''dtype'',
-            ''descriptions'' and ''meta''.
+            Data of the table with shape (n, n_cols) or as dictionaty with the
+            key corresponding to the templates columns.
         template_name : str
             Identifier to select a table template. Templates are selected by
             setting the class key and a corresponding table key in one string
@@ -203,7 +211,7 @@ class UVVATable(Table):
             )
 
         # Create table
-        data = np.asarray(data)
+        # data = np.asarray(data)
         tt_out = Table(data=data, **templates[class_key][table_key])
 
         # logging
