@@ -76,7 +76,7 @@ base_field = {
         "descriptions": [
             "Visit ID associated to the visit detection",
             "Source ID associated to the visit detection",
-            "Detection ID",
+            "Visit detection ID",
             "Visit detection RA (J2000)",
             "Visit detection Dec (J2000)",
             "Visit position error",
@@ -127,7 +127,7 @@ base_field = {
         },
     },
     "tt_sources": {
-        "names": ["src_id", "ra", "dec", "nr_vis_det", "flag"],
+        "names": ["src_id", "ra", "dec", "nr_det", "flag"],
         "dtype": ["uint32", "float16", "float16", "uint32", "int32"],
         "units": ["1", "degree", "degree", "1", "1"],
         "descriptions": [

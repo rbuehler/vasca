@@ -30,6 +30,7 @@ from sklearn import cluster
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from .uvva_table import UVVATable, dd_uvva_tables
+from sklearn.cluster import MeanShift
 
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
@@ -75,7 +76,7 @@ class BaseField(object):
 
         #: Internal list of tables holding the central field data
         #: All of these are defined in ``uvva_table.py``
-        self._table_names = list(dd_uvva_tables["base_field"].keys())
+        self._table_names = []  # list(dd_uvva_tables["base_field"].keys())
 
         #: Internal dictionary of important parameters
         #: with corresponding tables
@@ -105,6 +106,79 @@ class BaseField(object):
         #: Astropy WCS object for one 2D images.
         #: The WCS has to be the same for all visit.
         self.vis_iwcs = None
+
+    def add_table(self, data, template_name):
+        """
+        Add a UVVA table to the field.
+
+        Parameters
+        ----------
+        data : list, array-like
+            Data of the table with shape (n, n_cols) or as dictionaty with the
+            key corresponding to the templates columns.
+        template_name : str
+            Identifier to select a table template. Templates are selected by
+            setting the class key and a corresponding table key in one string
+            separated by a colon, e.g. template_name=<class_key>:<table_key>.
+
+        """
+        logger.info(f"Adding table '{template_name}'")
+
+        table_key = template_name.split(":")[1]
+
+        if table_key in self._table_names:
+            logger.warning(f"Table '{table_key}' already exists, overwriting")
+        else:
+            self._table_names.append(table_key)
+
+        self.__dict__[table_key] = UVVATable.from_template(data, template_name)
+
+    def cluster_meanshift(self, bandwidth=1.0, cluster_all=True):
+        """
+        Apply _MeanShift clustering algorithm using to derive sources.
+
+        .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
+
+        Parameters
+        ----------
+        bandwidth : float, optional
+            Bandwidth used in the RBF kernel. The default is 1.0.
+        cluster_all : bool, optional
+            If true, then all points are clustered, even those orphans that are not
+            within any kernel. Orphans are assigned to the nearest kernel.
+            The default is True.
+
+        Returns
+        -------
+        int
+            Number of detected clusters.
+        """
+        logger.info("Clustering sources")
+
+        # Get detection coordinatees and run clustering
+        coords = np.array(
+            list(zip(self.tt_detections["ra"].data, self.tt_detections["dec"].data))
+        )
+        ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=cluster_all)
+        ms.fit(coords)
+
+        # Fill in data into field tables
+        self.tt_detections["src_id"] = ms.labels_
+        src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+
+        cluster_centers = ms.cluster_centers_
+        nr_srcs = len(cluster_centers)
+        srcs_data = {
+            "src_id": src_ids,
+            "ra": cluster_centers[:, 0],
+            "dec": cluster_centers[:, 1],
+            "nr_det": det_cts,
+            "flag": np.zeros(nr_srcs),
+        }
+
+        self.add_table(srcs_data, "base_field:tt_sources")
+
+        return nr_srcs
 
     def set_field_attr(self, dd_names=None):
         """
