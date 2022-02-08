@@ -135,7 +135,7 @@ class BaseField(object):
 
     def cluster_meanshift(self, bandwidth=1.0, cluster_all=True):
         """
-        Apply _MeanShift clustering algorithm using to derive sources.
+        Apply MeanShift_ clustering algorithm using to derive sources.
 
         .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
 
