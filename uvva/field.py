@@ -17,6 +17,7 @@ from astropy import units as uu
 from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
+from astropy.io.fits.hdu.base import _BaseHDU
 from astropy.table import Column, QTable, Table, conf, hstack, unique, vstack
 from astropy.time import Time
 from astropy.wcs import wcs
@@ -29,7 +30,6 @@ from sklearn import cluster
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from .uvva_table import UVVATable, dd_uvva_tables
-from astropy.io.fits.hdu.base import _BaseHDU
 
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
@@ -457,7 +457,7 @@ class GALEXField(BaseField):
         logger.info("Constructed 'tt_visits'.")
 
     def _load_galex_archive_products(
-        self, obs_id, filter=None, product_list=None, refresh=False
+        self, obs_id, col_names=None, filter=None, product_list=None, refresh=False
     ):
         """
         Loads the relevant data products from MAST servers and
@@ -551,6 +551,7 @@ class GALEXField(BaseField):
             )
 
         # Collects data products
+
         # Source catalogs
         aa_sel_mcat = np.char.endswith(
             tt_down["Local Path"].data.astype(str), product_list[0]
@@ -570,15 +571,54 @@ class GALEXField(BaseField):
             ].data.astype(str)
         ]  # list
 
-        # Open catalogs
-        tt_reference_raw = Table.read(path_tt_reference)
-        tt_visit_sources_raw = vstack(
-            [Table.read(path) for path in path_tt_visit_sources]
+        # Open reference catalog
+        tt_reference_sources_raw = Table.read(path_tt_reference)
+        # Open visit catalogs, add a column for visit ID and stack all catalogs
+        tt_visit_sources_raw = None
+        for path, id in zip(path_tt_visit_sources, self.tt_visits["id"]):
+            # read new visits catalog
+            tt_vis_mcat = Table.read(path)
+            # set initial
+            if tt_visit_sources_raw is None:
+                tt_vis_mcat.add_column(
+                    np.full(len(tt_vis_mcat), id), name="visit_id", index=0
+                )
+                tt_visit_sources_raw = tt_vis_mcat
+            # append
+            else:
+                tt_vis_mcat.add_column(
+                    np.full(len(tt_vis_mcat), id), name="visit_id", index=0
+                )
+                tt_visit_sources_raw = vstack([tt_visit_sources_raw, tt_vis_mcat])
+            # clean up
+            del tt_vis_mcat
+
+        # Add to tables as class attributes
+        if col_names is None:
+            col_names = [
+                "visit_id",
+                "ggoid_dec",
+                "alpha_j2000",  # take band-merged quantities?
+                "delta_j2000",  # take band-merged quantities?
+                # "nuv_poserr" if filter == "NUV" else "fuv_poserr",
+                "nuv_mag" if filter == "NUV" else "fuv_mag",
+                "nuv_magerr" if filter == "NUV" else "fuv_magerr",
+                "nuv_s2n" if filter == "NUV" else "fuv_s2n",
+                # "fov_radius",
+                "nuv_artifact" if filter == "NUV" else "fuv_artifact",
+                # "NUV_CLASS_STAR" if filter == "NUV" else "FUV_CLASS_STAR",
+                # "chkobj_type",
+            ]
+        self.tt_visit_sources = UVVATable.from_template(
+            tt_visit_sources_raw[col_names], "base_field:tt_visit_sources"
         )
-
-        print("coadd sources", len(tt_reference_raw))
-        print("visit sources", len(tt_visit_sources_raw))
-
+        logger.info("Constructed 'tt_visit_sources'.")
+        self.tt_reference_sources = UVVATable.from_template(
+            tt_reference_sources_raw[col_names[1:]], "base_field:tt_reference_sources"
+        )
+        logger.info("Constructed 'tt_reference_sources'.")
+        print(self.tt_visit_sources.info)
+        print(self.tt_reference_sources.info)
         # Todo: Intensity maps
 
 

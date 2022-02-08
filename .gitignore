@@ -12,3 +12,5 @@ uvva.egg-info
 uvva/test/default_field.fits
 uvva/test/field_default.fits
 uvva/myscripts/
+/development/*
+*.fits
