@@ -4,7 +4,7 @@ import itertools
 import os
 import sys
 from collections import OrderedDict
-from copy import copy
+from copy import copy, deepcopy
 from datetime import datetime
 from pprint import pprint
 
@@ -26,11 +26,11 @@ from loguru import logger
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
 from sklearn import cluster
+from sklearn.cluster import MeanShift
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from .uvva_table import UVVATable, dd_uvva_tables
-from sklearn.cluster import MeanShift
 
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
@@ -76,7 +76,7 @@ class BaseField(object):
 
         #: Internal list of tables holding the central field data
         #: All of these are defined in ``uvva_table.py``
-        self._table_names = []  # list(dd_uvva_tables["base_field"].keys())
+        self._table_names = list()
 
         #: Internal dictionary of important parameters
         #: with corresponding tables
@@ -135,7 +135,7 @@ class BaseField(object):
 
     def cluster_meanshift(self, bandwidth=1.0, cluster_all=True):
         """
-        Apply MeanShift_ clustering algorithm using to derive sources.
+        Apply _MeanShift clustering algorithm using to derive sources.
 
         .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
 
@@ -367,7 +367,7 @@ class BaseField(object):
         """
         for key in self._table_names:
             if key in self.__dict__:
-                print("\n" + key + ":")
+                print(f"\n {key}:")
                 self.__dict__[key].info()
                 print(self.__dict__[key].meta)
 
@@ -698,11 +698,11 @@ class GALEXField(BaseField):
                 "NUV_CLASS_STAR" if filter == "NUV" else "FUV_CLASS_STAR",
                 "chkobj_type",
             ]
-        self.tt_detections = UVVATable.from_template(
+        self.tt_detections = self.add_table(
             tt_detections_raw[col_names], "galex_field:tt_detections"
         )
         logger.info("Constructed 'tt_detections'.")
-        self.tt_ref_sources = UVVATable.from_template(
+        self.tt_ref_sources = self.add_table(
             tt_ref_sources_raw[col_names[2:]], "galex_field:tt_ref_sources"
         )
         logger.info("Constructed 'tt_ref_sources'.")
