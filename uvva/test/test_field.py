@@ -31,10 +31,8 @@ def new_field():
         [2605053108576845824, 54520.248125, 54520.2578125, 837.05],
     ]
     bf = BaseField()
-    bf.tt_field = UVVATable.from_template(np.asarray(field_data), "base_field:tt_field")
-    bf.tt_visits = UVVATable.from_template(
-        np.asarray(visits_data), "base_field:tt_visits"
-    )
+    bf.tt_field = bf.add_table(np.asarray(field_data), "base_field:tt_field")
+    bf.tt_visits = bf.add_table(np.asarray(visits_data), "base_field:tt_visits")
     return bf
 
 
