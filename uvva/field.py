@@ -131,7 +131,7 @@ class BaseField(object):
         else:
             self._table_names.append(table_key)
 
-        self.__dict__[table_key] = UVVATable.from_template(data, template_name)
+        setattr(self, table_key, UVVATable.from_template(data, template_name))
 
     def cluster_meanshift(self, bandwidth=1.0, cluster_all=True):
         """
