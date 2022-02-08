@@ -64,6 +64,7 @@ base_field = {
         ],
         "units": ["1", "degree", "degree", "degree", "1", "1", "1", "1"],
         "descriptions": [
+            "Visit ID",
             "Visit source ID nr.",
             "Visit source RA (J2000)",
             "Visit source Dec (J2000)",
@@ -76,6 +77,32 @@ base_field = {
         "meta": {
             "INFO": "Visit detections table",
             "Name": "visit_sources",
+        },
+    },
+    "tt_reference_sources": {
+        "names": ["id", "ra", "dec", "mag", "mag_err", "s2n", "flags"],
+        "dtype": [
+            "uint64",
+            "float64",
+            "float64",
+            "float64",
+            "float64",
+            "float64",
+            "int32",
+        ],
+        "units": ["1", "degree", "degree", "1", "1", "1", "1"],
+        "descriptions": [
+            "Reference source ID nr.",
+            "Reference source RA (J2000)",
+            "Reference source Dec (J2000)",
+            "Reference source magnitude",
+            "Reference source magnitude error",
+            "Reference source signal to noise",
+            "Reference source flags",
+        ],
+        "meta": {
+            "INFO": "Reference detections table",
+            "Name": "reference_sources",
         },
     },
     "tt_sources": {
