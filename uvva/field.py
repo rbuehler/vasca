@@ -164,15 +164,17 @@ class BaseField(object):
 
         # Fill in data into field tables
         self.tt_detections["src_id"] = ms.labels_
+        src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+        print("unique", src_ids, det_cts)
 
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
         srcs_data = {
-            "src_id": range(1, nr_srcs + 1),
+            "src_id": src_ids,
             "ra": cluster_centers[:, 0],
             "dec": cluster_centers[:, 1],
-            "nr_vis_det": np.ones(nr_srcs),
-            "flag": np.ones(nr_srcs),
+            "nr_det": det_cts,
+            "flag": np.ones(nr_srcs) * -1,
         }
 
         self.add_table(srcs_data, "base_field:tt_sources")
