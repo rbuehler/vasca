@@ -41,7 +41,7 @@ def new_field():
 def test_set_field_attr_type(new_field):
     new_field.set_field_attr()
     expected = {
-        "id": int(1),
+        "field_id": int(1),
         "name": "name",
         "ra": 1 * uu.deg,
         "dec": 1 * uu.deg,

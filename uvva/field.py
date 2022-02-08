@@ -82,7 +82,7 @@ class BaseField(object):
         #: to be set as class attributes for convenience.
         self._dd_attr_names = {
             "tt_field": [
-                "id",
+                "field_id",
                 "name",
                 "ra",
                 "dec",
@@ -122,6 +122,8 @@ class BaseField(object):
         for table in dd_names:
             for par in dd_names[table]:
                 setattr(self, par, self.get_field_par(par, table))
+
+        logger.info(f"Set attributes: {self._dd_attr_names}")
 
     def get_field_par(self, par_name, table_name):
         """
@@ -184,8 +186,8 @@ class BaseField(object):
         # Return None if parameter is not in table
         elif par_name not in self.__dict__[table_name].colnames:
             logger.warning(
-                f"Unknown parameter in data set '{table_name}'"
-                f"Known parameters are {self.__dict__[table_name].colnames}."
+                f"Unknown parameter in data set '{table_name}'. "
+                f"Known parameters are {self.__dict__[table_name].colnames}. "
                 f"Returning None for parameter '{par_name}'."
             )
             par = None
@@ -409,7 +411,7 @@ class GALEXField(BaseField):
         self.tt_field = UVVATable.from_template(tt_coadd_select, "base_field:tt_field")
         logger.info("Constructed 'tt_field'.")
 
-    def _load_galex_visits_info(self, id, col_names=None, filter=None):
+    def _load_galex_visits_info(self, obs_id, col_names=None, filter=None):
 
         # Use default columns if not otherwise specified
         # Already sets the order in which columns are added later on
@@ -432,7 +434,7 @@ class GALEXField(BaseField):
             tt_visits_raw = Table.read(rm.get_path("gal_visits_list", "sas_cloud"))
 
         # Filters for visits corresponding to field id and selects specified columns
-        tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == id][
+        tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == obs_id][
             col_names
         ]
         # Convert string time format to mjd
@@ -557,14 +559,14 @@ class GALEXField(BaseField):
             tt_down["Local Path"].data.astype(str), product_list[0]
         )
         # Selects only the coadd path
-        path_tt_reference = (
+        path_tt_ref = (
             self.data_path
             + tt_down[np.logical_and(aa_sel_mcat, tt_down["ID"] == obs_id)][
                 "Local Path"
             ][0]
         )  # string
         # Selects everything else but the coadd path
-        path_tt_visit_sources = [
+        path_tt_detections = [
             self.data_path + path
             for path in tt_down[np.logical_and(aa_sel_mcat, tt_down["ID"] != obs_id)][
                 "Local Path"
@@ -572,24 +574,36 @@ class GALEXField(BaseField):
         ]  # list
 
         # Open reference catalog
-        tt_reference_sources_raw = Table.read(path_tt_reference)
-        # Open visit catalogs, add a column for visit ID and stack all catalogs
-        tt_visit_sources_raw = None
-        for path, id in zip(path_tt_visit_sources, self.tt_visits["id"]):
+        tt_ref_sources_raw = Table.read(path_tt_ref)
+        # Open visit catalogs, add a columns for visit and source IDs
+        # and stack all catalogs
+        tt_detections_raw = None
+        # loop over visits
+        for path, id in zip(path_tt_detections, self.tt_visits["vis_id"]):
             # read new visits catalog
             tt_vis_mcat = Table.read(path)
             # set initial
-            if tt_visit_sources_raw is None:
+            if tt_detections_raw is None:
+                # column visit id
                 tt_vis_mcat.add_column(
                     np.full(len(tt_vis_mcat), id), name="visit_id", index=0
                 )
-                tt_visit_sources_raw = tt_vis_mcat
+                # column source id
+                tt_vis_mcat.add_column(
+                    np.full(len(tt_vis_mcat), 999999999), name="source_id", index=1
+                )
+                tt_detections_raw = tt_vis_mcat
             # append
             else:
+                # column visit id
                 tt_vis_mcat.add_column(
                     np.full(len(tt_vis_mcat), id), name="visit_id", index=0
                 )
-                tt_visit_sources_raw = vstack([tt_visit_sources_raw, tt_vis_mcat])
+                # column source id
+                tt_vis_mcat.add_column(
+                    np.full(len(tt_vis_mcat), 999999999), name="source_id", index=1
+                )
+                tt_detections_raw = vstack([tt_detections_raw, tt_vis_mcat])
             # clean up
             del tt_vis_mcat
 
@@ -597,28 +611,27 @@ class GALEXField(BaseField):
         if col_names is None:
             col_names = [
                 "visit_id",
+                "source_id",
                 "ggoid_dec",
                 "alpha_j2000",  # take band-merged quantities?
                 "delta_j2000",  # take band-merged quantities?
-                # "nuv_poserr" if filter == "NUV" else "fuv_poserr",
+                "nuv_poserr" if filter == "NUV" else "fuv_poserr",
                 "nuv_mag" if filter == "NUV" else "fuv_mag",
                 "nuv_magerr" if filter == "NUV" else "fuv_magerr",
-                "nuv_s2n" if filter == "NUV" else "fuv_s2n",
-                # "fov_radius",
+                # "nuv_s2n" if filter == "NUV" else "fuv_s2n",
+                "fov_radius",
                 "nuv_artifact" if filter == "NUV" else "fuv_artifact",
-                # "NUV_CLASS_STAR" if filter == "NUV" else "FUV_CLASS_STAR",
-                # "chkobj_type",
+                "NUV_CLASS_STAR" if filter == "NUV" else "FUV_CLASS_STAR",
+                "chkobj_type",
             ]
-        self.tt_visit_sources = UVVATable.from_template(
-            tt_visit_sources_raw[col_names], "base_field:tt_visit_sources"
+        self.tt_detections = UVVATable.from_template(
+            tt_detections_raw[col_names], "galex_field:tt_detections"
         )
-        logger.info("Constructed 'tt_visit_sources'.")
-        self.tt_reference_sources = UVVATable.from_template(
-            tt_reference_sources_raw[col_names[1:]], "base_field:tt_reference_sources"
+        logger.info("Constructed 'tt_detections'.")
+        self.tt_ref_sources = UVVATable.from_template(
+            tt_ref_sources_raw[col_names[2:]], "galex_field:tt_ref_sources"
         )
-        logger.info("Constructed 'tt_reference_sources'.")
-        print(self.tt_visit_sources.info)
-        print(self.tt_reference_sources.info)
+        logger.info("Constructed 'tt_ref_sources'.")
         # Todo: Intensity maps
 
 
