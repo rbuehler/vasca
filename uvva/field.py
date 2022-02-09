@@ -3,6 +3,7 @@ import inspect
 import itertools
 import os
 import sys
+import warnings
 from collections import OrderedDict
 from copy import copy, deepcopy
 from datetime import datetime
@@ -18,7 +19,7 @@ from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
 from astropy.io.fits.hdu.base import _BaseHDU
-from astropy.table import Column, QTable, Table, conf, hstack, unique, vstack
+from astropy.table import Column, Table, conf, hstack, unique, vstack
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
@@ -30,7 +31,7 @@ from sklearn.cluster import MeanShift
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
-from .uvva_table import UVVATable, dd_uvva_tables
+from .uvva_table import UVVATable
 
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
@@ -197,7 +198,7 @@ class BaseField(object):
             for par in dd_names[table]:
                 setattr(self, par, self.get_field_par(par, table))
 
-        logger.info(f"Set attributes: {self._dd_attr_names}")
+        logger.debug(f"Set attributes: {self._dd_attr_names}")
 
     def get_field_par(self, par_name, table_name):
         """
@@ -258,7 +259,7 @@ class BaseField(object):
             par = Time(self.tt_visits["t_stop"][-1], format="mjd")
         # Directly derived parameters
         # Return None if parameter is not in table
-        elif par_name not in self.__dict__[table_name].colnames:
+        elif par_name not in getattr(self, table_name).colnames:
             logger.warning(
                 f"Unknown parameter in data set '{table_name}'. "
                 f"Known parameters are {self.__dict__[table_name].colnames}. "
@@ -272,11 +273,12 @@ class BaseField(object):
             # Some combinations of unit and dtype need special handling
             unit = self.tt_field[par_name].unit
             dtype_kind = self.tt_field[par_name].dtype.kind
+            logger.debug(f"Getting parameter '{par_name}': {par}, {unit}, {dtype_kind}")
             # check (byte-)string or unicode
             if dtype_kind in ["U", "S"]:
                 par = par.decode("utf-8")
             # check uu.dimensionless_unscaled and integer
-            elif unit == "" and dtype_kind in ["i", "u"]:
+            elif (unit == "" or unit is None) and dtype_kind in ["i", "u"]:
                 par = int(par)
             else:
                 par = par * unit
@@ -339,22 +341,31 @@ class BaseField(object):
         None.
 
         """
-        # Load tables
         logger.info(f"Loading file with name '{file_name}'")
-        for key in self._table_names:
-            if key in self.__dict__:
-                logger.debug(f"Loading table '{key}'")
-                self.__dict__[key] = Table.read(file_name, hdu=key)
+        with fits.open(file_name) as ff:
+            # Load tables
+            # get available table names
+            table_names = [
+                hdu.header["EXTNAME"]
+                for hdu in ff[1:]
+                if hdu.header["EXTNAME"].startswith("tt_")
+            ]
+            # loop over tables
+            for name in table_names:
+                logger.debug(f"Loading table '{name}'")
+                # add to table manifest
+                if name in self._table_names:
+                    logger.warning(f"Table '{name}' already exists, overwriting.")
+                else:
+                    self._table_names.append(name)
+                setattr(self, name, Table.read(file_name, hdu=name))
 
-        # Load image data
-        ff = fits.open(file_name)
-        self.vis_imgs = ff[0].data
-        if self.vis_imgs is not None:
-            self.vis_wcs = wcs.WCS(ff[0].header)
-        else:
-            self.vis_wcs = None
-
-        ff.close()
+            # Load image data
+            self.vis_imgs = ff[0].data
+            if self.vis_imgs is not None:
+                self.vis_wcs = wcs.WCS(ff[0].header)
+            else:
+                self.vis_wcs = None
 
     def info(self):
         """
@@ -390,23 +401,32 @@ class BaseField(object):
 
 class GALEXField(BaseField):
     """
-    Instance of one GALEX field (coadd + visits)
-
-    Parameters
-    ----------
-
-    parobs_id : int
-
-    include_coadd : bool
-
-    Notes
-    -----
-
-    Note in the MAST data base "obs_id" is equal
-    to the "ParentImgRunID" of the visits table.
+    Instance of one GALEX field
     """
 
-    def __init__(self, obs_id, filter=None, refresh=False):
+    def __init__(self, obs_id, filter=None):
+        """
+        Initializes a new GALEXField instance with
+        skeleton UVVA data structure.
+
+        Parameters
+        ----------
+        obs_id : int
+            GALEX field ID
+        filter : str, optional
+            Selects the GALEX filter for which the corresponding
+            observation data is loaded. Needs to be either from:
+            'FUV' -> 135-175 nm
+            'NUV' -> 175-280 nm  (default)
+
+        Attributes
+        ----------
+        data_path : str
+            Path to root location of cloud-synced data associated with the GALEX field
+        uvva_file_prefix : str
+            File name prefix following UVVA naming convention:
+            'UVVA_<observatory>_<filed_id>_<filter>'
+        """
 
         # check filter name, default is "NUV"
         if filter is None:
@@ -421,20 +441,122 @@ class GALEXField(BaseField):
                 "Available filters for GALEX are 'NUV' or 'FUV'."
             )
 
-        # sets skeleton field
+        # Sets skeleton
         super().__init__()
 
-        # Collects coadd and visit metadata tables in order
-        # to bootstrap the initialization procedure using the base class
+        # Set root location of cloud-synced data associated with the field
         with ResourceManager() as rm:
-            #: Path to read and write data relevant to the pipeline
+            # Path to read and write data relevant to the pipeline
             self.data_path = rm.get_path("gal_fields", "sas_cloud") + "/" + str(obs_id)
-        # Sets ``self.tt_field``
-        self._load_galex_field_info(obs_id, filter=filter, refresh=refresh)
-        # Sets ``self.tt_visits``
-        self._load_galex_visits_info(obs_id, filter=filter)
-        # Sets ``self.tt_visit_sources``
-        self._load_galex_archive_products(obs_id, filter=filter, refresh=refresh)
+            self.uvva_file_prefix = f"UVVA_GALEX_{obs_id}_{filter}"
+
+    @classmethod
+    def from_fits(cls, obs_id, filter="NUV", fits_path=None):
+        """
+        Constructor to initialize a GALEXField instance
+        from a UVVA-generated FITS file
+
+        Parameters
+        ----------
+        obs_id : int
+            GALEX field ID
+        filter : str, optional
+            Selects the GALEX filter for which the corresponding
+            observation data is loaded. Needs to be either from:
+            'FUV' -> 135-175 nm
+            'NUV' -> 175-280 nm  (default)
+        fits_path : str, optional
+            Path to the fits file. Defaults to a path handled by ResourceManager.
+
+        Returns
+        -------
+        uvva.field.GALEXField
+        """
+        # Bootstrap the initialization procedure using the base class
+        gf = cls(obs_id, filter)  # new GALEXField instance
+
+        if fits_path is None:
+            # Construct the file name from field ID and filter
+            fits_path = f"{gf.data_path}/{gf.uvva_file_prefix}_field_data.fits"
+        # Check if file exists
+        if not os.path.isfile(fits_path):
+            raise FileNotFoundError(
+                "Wrong file or file path to UVVA data "
+                f"for GALEX field '{obs_id}' with filter '{filter}'."
+            )
+        # Reads the UVVA-generated field data
+        gf.load_from_fits(fits_path)
+        # Sets convenience class attributes
+        gf.set_field_attr()
+        # Check consistency
+        if not gf.field_id == obs_id:
+            raise ValueError(
+                "Inconsistent data: Missmatch for 'field_id'. "
+                f"Expected '{obs_id}' but got '{gf.field_id}' "
+                f"from file '{fits_path.split(os.sep)[-1]}."
+            )
+        elif not gf.obsfilter == filter:
+            raise ValueError(
+                "Inconsistent data: Missmatch for 'obsfilter'. "
+                f"Expected '{filter}' but got '{gf.obsfilter}' "
+                f"from file '{fits_path.split(os.sep)[-1]}."
+            )
+
+        logger.info(
+            f"Loaded UVVA data for GALEX field '{obs_id}' with filter '{filter}'."
+        )
+
+        return gf
+
+    @classmethod
+    def from_archive(cls, obs_id, filter="NUV", refresh=False):
+        """
+        Constructor to initialize a GALEXField instance either
+        fresh from the MAST archive (refresh=True) or if available
+        from cached raw data (refresh=False).
+
+        The procedure uses uvva.resource_manager.ResourceManager
+        to handle file locations.
+
+        Parameters
+        ----------
+        obs_id : int
+            GALEX field ID
+        filter : str, optional
+            Selects the GALEX filter for which the corresponding
+            observation data is loaded. Needs to be either from:
+            'FUV' -> 135-175 nm
+            'NUV' -> 175-280 nm  (default)
+        refresh : bool, optional
+            Selects if data is freshly loaded from MAST (refresh=True) or
+            from cashed data on disc (refresh=False, default).
+
+        Returns
+        -------
+        uvva.field.GALEXField
+
+        """
+        # Checks
+        if not isinstance(refresh, bool):
+            raise TypeError(f"Expected boolean argument, got {type(refresh).__name__}.")
+
+        # Bootstrap the initialization procedure using the base class
+        gf = cls(obs_id, filter)  # new GALEXField instance
+
+        # Sets ``gf.tt_field``
+        gf._load_galex_field_info(obs_id, filter=filter, refresh=refresh)
+        # Sets ``gf.tt_visits``
+        gf._load_galex_visits_info(obs_id, filter=filter)
+        # Sets ``gf.tt_detections`` and ``gf.tt_ref_sources``
+        gf._load_galex_archive_products(obs_id, filter=filter, refresh=refresh)
+        # Sets convenience class attributes
+        gf.set_field_attr()
+
+        logger.info(
+            f"Loaded new GALEX field '{obs_id}' with filter '{filter}' from MAST data."
+        )
+
+        return gf
 
     def _load_galex_field_info(
         self, obs_id, col_names=None, filter=None, refresh=False
@@ -482,7 +604,7 @@ class GALEXField(BaseField):
         # construct field info table
         # Fill default columns from first row of the archive field info data table
         tt_coadd_select = tt_coadd[col_names]
-        self.tt_field = UVVATable.from_template(tt_coadd_select, "base_field:tt_field")
+        self.add_table(tt_coadd_select, "base_field:tt_field")
         logger.info("Constructed 'tt_field'.")
 
     def _load_galex_visits_info(self, obs_id, col_names=None, filter=None):
@@ -527,9 +649,7 @@ class GALEXField(BaseField):
             )
 
         # Set as class attribute
-        self.tt_visits = UVVATable.from_template(
-            tt_visits_raw_select, "galex_field:tt_visits"
-        )
+        self.add_table(tt_visits_raw_select, "galex_field:tt_visits")
         logger.info("Constructed 'tt_visits'.")
 
     def _load_galex_archive_products(
@@ -681,6 +801,19 @@ class GALEXField(BaseField):
             # clean up
             del tt_vis_mcat
 
+        filter_l = filter.lower()  # lower case filter name
+
+        # Convert positional error to degree
+        # See GALEX docs mor details:
+        # http://www.galex.caltech.edu/wiki/GCAT_Manual#Catalog_Column_Description
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UserWarning)
+            for tbl in [tt_detections_raw, tt_ref_sources_raw]:
+                tbl[f"{filter_l}_poserr"].unit = uu.arcsec
+                tbl[f"{filter_l}_poserr"] = Column(
+                    tbl[f"{filter_l}_poserr"].to(uu.degree), dtype="float64"
+                )
+
         # Add to tables as class attributes
         if col_names is None:
             col_names = [
@@ -689,13 +822,13 @@ class GALEXField(BaseField):
                 "ggoid_dec",
                 "alpha_j2000",  # take band-merged quantities?
                 "delta_j2000",  # take band-merged quantities?
-                "nuv_poserr" if filter == "NUV" else "fuv_poserr",
-                "nuv_mag" if filter == "NUV" else "fuv_mag",
-                "nuv_magerr" if filter == "NUV" else "fuv_magerr",
-                # "nuv_s2n" if filter == "NUV" else "fuv_s2n",
+                f"{filter_l}_poserr",
+                f"{filter_l}_mag",
+                f"{filter_l}_magerr",
+                # f"{filter_l}_s2n",
                 "fov_radius",
-                "nuv_artifact" if filter == "NUV" else "fuv_artifact",
-                "NUV_CLASS_STAR" if filter == "NUV" else "FUV_CLASS_STAR",
+                f"{filter_l}_artifact",
+                f"{filter}_CLASS_STAR",
                 "chkobj_type",
             ]
         # set data as class attributes
