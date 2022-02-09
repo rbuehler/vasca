@@ -32,6 +32,9 @@ from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from .uvva_table import UVVATable, dd_uvva_tables
 
+import matplotlib.pyplot as plt
+from itertools import cycle
+
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
 ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
@@ -106,6 +109,108 @@ class BaseField(object):
         #: Astropy WCS object for one 2D images.
         #: The WCS has to be the same for all visit.
         self.vis_iwcs = None
+
+    def plot_sky_sources(
+        self, ax=None, plot_detections=True, src_kwargs=None, det_kwargs=None
+    ):
+        """
+        Plot the sources and (optinally) the visit detections on the sky.
+
+        Parameters
+        ----------
+        ax : axes, optional
+            Matplotlib axes to plot on. The default is None.
+        plot_detections : bool, optional
+            Plot the visit detections below the sources. The default is True.
+        src_kwargs : dict, optional
+            Keyword arguments for pyplot.plot_ of the sources. The default is None.
+        det_kwargs : dict, optional
+            Keyword arguments for pyplot.plot_ of the detections. The default is None.
+
+        Returns
+        -------
+        ax : axes
+            DESCRIPTION.
+
+        .. _pyplot.plot: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
+
+        """
+
+        if ax is None:
+            ax = plt.gca()
+
+        # Set marker properties for sources
+        plt_src_kwargs = {
+            "marker": "o",
+            "markerfacecolor": "None",
+            "markersize": 12,
+        }
+        if src_kwargs is not None:
+            plt_src_kwargs.update(src_kwargs)
+
+        # Set marker properties for detections
+        plt_det_kwargs = {
+            "marker": "o",
+            "markerfacecolor": "None",
+            "markersize": 6,
+            "alpha": 0.5,
+            "lw": 0,
+        }
+        if det_kwargs is not None:
+            plt_det_kwargs.update(det_kwargs)
+
+        # Prepare data
+        det_src_ids = self.tt_detections["src_id"].data
+        src_ids = self.tt_sources["src_id"].data
+        det_poss = np.array(
+            list(zip(self.tt_detections["ra"].data, self.tt_detections["dec"].data))
+        )
+        src_poss = np.dstack((self.tt_sources["ra"].data, self.tt_sources["dec"].data))[
+            0
+        ]
+        nr_srcs = len(src_ids)
+
+        # Loop over all srcs and plot
+        colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
+        for kk, col in zip(range(nr_srcs), colors):
+            sel_dets = det_src_ids == kk
+            src_pos = src_poss[kk]
+            if plot_detections:
+                ax.plot(
+                    det_poss[sel_dets, 0],
+                    det_poss[sel_dets, 1],
+                    markeredgecolor=col,
+                    **plt_det_kwargs,
+                )
+            ax.plot(src_pos[0], src_pos[1], markeredgecolor=col, **plt_src_kwargs)
+        return ax
+
+    # TODO: def plot_sky_map():
+
+    def plot_sky(self, plot_detections=True, plot_map=False):
+        """
+        Plot all field sources and/or a background reference image in the sky.
+
+        Parameters
+        ----------
+        plot_detections : bool, optional
+            Plot sources. The default is True.
+        plot_map : bool, optional
+            Plot reference image in the background. The default is False.
+
+        Returns
+        -------
+        fig : figure
+            Matplotlib figure used to plot.
+
+        """
+
+        fig = plt.figure(1)
+        plt.clf()
+        if plot_detections:
+            self.plot_sky_sources(plot_detections=plot_detections)
+        plt.show()
+        return fig
 
     def add_table(self, data, template_name):
         """
