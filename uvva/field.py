@@ -698,14 +698,12 @@ class GALEXField(BaseField):
                 "NUV_CLASS_STAR" if filter == "NUV" else "FUV_CLASS_STAR",
                 "chkobj_type",
             ]
-        self.tt_detections = self.add_table(
-            tt_detections_raw[col_names], "galex_field:tt_detections"
-        )
+        # set data as class attributes
+        self.add_table(tt_detections_raw[col_names], "galex_field:tt_detections")
         logger.info("Constructed 'tt_detections'.")
-        self.tt_ref_sources = self.add_table(
-            tt_ref_sources_raw[col_names[2:]], "galex_field:tt_ref_sources"
-        )
+        self.add_table(tt_ref_sources_raw[col_names[2:]], "galex_field:tt_ref_sources")
         logger.info("Constructed 'tt_ref_sources'.")
+
         # Todo: Intensity maps
 
 
