@@ -114,7 +114,7 @@ class BaseField(object):
         Parameters
         ----------
         data : list, array-like
-            Data of the table with shape (n, n_cols) or as dictionaty with the
+            Data of the table with shape (n, n_cols) or as dictionary with the
             key corresponding to the templates columns.
         template_name : str
             Identifier to select a table template. Templates are selected by
@@ -155,7 +155,7 @@ class BaseField(object):
         """
         logger.info("Clustering sources")
 
-        # Get detection coordinatees and run clustering
+        # Get detection coordinates and run clustering
         coords = np.array(
             list(zip(self.tt_detections["ra"].data, self.tt_detections["dec"].data))
         )
@@ -305,7 +305,7 @@ class BaseField(object):
 
         # Check if image data is set and add to primary HDU
         if self.vis_imgs is not None and self.vis_wcs is not None:
-            logger.debug(f"Storing image data'")
+            logger.debug("Storing image data'")
             hdup = fits.PrimaryHDU(self.vis_imgs, header=self.vis_wcs.to_header())
 
         hdus = [hdup]
