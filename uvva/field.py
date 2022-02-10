@@ -7,6 +7,7 @@ import warnings
 from collections import OrderedDict
 from copy import copy, deepcopy
 from datetime import datetime
+from itertools import cycle
 from pprint import pprint
 
 import healpy as hpy
@@ -32,9 +33,6 @@ from sklearn.cluster import MeanShift
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from .uvva_table import UVVATable
-
-import matplotlib.pyplot as plt
-from itertools import cycle
 
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
