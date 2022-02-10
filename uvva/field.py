@@ -224,10 +224,9 @@ class BaseField(object):
 
         """
         logger.info(f"Loading skypmap from file: '{file_name}'")
-
-        ff = fits.open(file_name)
-        self.ref_wcs = wcs.WCS(ff[0].header)
-        self.ref_img = ff[0].data
+        with fits.open(file_name) as ff:
+            self.ref_wcs = wcs.WCS(ff[0].header)
+            self.ref_img = ff[0].data
 
     def add_table(self, data, template_name):
         """
@@ -446,12 +445,11 @@ class BaseField(object):
 
         # Rename extensions to table names
         ext_nr = 0
-        ff = fits.open(file_name, "update")
-        for key in self._table_names:
-            if key in self.__dict__:
-                ext_nr += 1
-                ff[ext_nr].header["EXTNAME"] = key
-        ff.close()
+        with fits.open(file_name, "update") as ff:
+            for key in self._table_names:
+                if key in self.__dict__:
+                    ext_nr += 1
+                    ff[ext_nr].header["EXTNAME"] = key
 
     def load_from_fits(self, file_name="field_default.fits"):
         """
@@ -1044,6 +1042,8 @@ class GALEXField(BaseField):
                     np.logical_and(aa_sel_int_map, tt_down["ID"] != obs_id)
                 ]["Local Path"].data.astype(str)
             ]  # list
+
+        self.load_sky_map(path_int_map_ref)
 
 
 class Field:
