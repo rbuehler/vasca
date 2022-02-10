@@ -184,7 +184,7 @@ class BaseField(object):
             ax.plot(src_pos[0], src_pos[1], markeredgecolor=col, **plt_src_kwargs)
         return ax
 
-    # TODO: def plot_sky_map():
+    # TODO def plot_sky_map(self,ax=None,**img_kwargs):
 
     def plot_sky(self, plot_detections=True, plot_map=False):
         """
