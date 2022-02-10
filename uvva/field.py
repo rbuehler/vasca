@@ -647,11 +647,11 @@ class GALEXField(BaseField):
         gf = cls(obs_id, filter)  # new GALEXField instance
 
         # Sets ``gf.tt_field``
-        gf._load_galex_field_info(obs_id, filter=filter, refresh=refresh)
+        gf._load_galex_field_info(obs_id, filter, refresh=refresh)
         # Sets ``gf.tt_visits``
-        gf._load_galex_visits_info(obs_id, filter=filter)
-        # Sets ``gf.tt_detections`` and ``gf.tt_ref_sources``
-        gf._load_galex_archive_products(obs_id, filter=filter, refresh=refresh)
+        gf._load_galex_visits_info(obs_id, filter)
+        # Sets ``gf.tt_detections``, ``gf.tt_ref_sources`` and loads the ref image
+        gf._load_galex_archive_products(obs_id, filter, refresh=refresh)
         # Sets convenience class attributes
         gf.set_field_attr()
 
@@ -661,9 +661,7 @@ class GALEXField(BaseField):
 
         return gf
 
-    def _load_galex_field_info(
-        self, obs_id, col_names=None, filter=None, refresh=False
-    ):
+    def _load_galex_field_info(self, obs_id, filter, col_names=None, refresh=False):
         """
         Loads the archival metadata associated to a given field ID.
         """
@@ -678,6 +676,11 @@ class GALEXField(BaseField):
                 "instrument_name",
                 "filters",
             ]
+        elif not isinstance(col_names, list):
+            raise TypeError(
+                "Expected list type for argument 'col_names', "
+                f"got '{type(col_names).__name__}'."
+            )
 
         # path to store raw data
         path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
@@ -707,10 +710,12 @@ class GALEXField(BaseField):
         # construct field info table
         # Fill default columns from first row of the archive field info data table
         tt_coadd_select = tt_coadd[col_names]
+        print(col_names)
+        print(tt_coadd["obs_id", "target_name"])
         self.add_table(tt_coadd_select, "base_field:tt_field")
         logger.info("Constructed 'tt_field'.")
 
-    def _load_galex_visits_info(self, obs_id, col_names=None, filter=None):
+    def _load_galex_visits_info(self, obs_id, filter, col_names=None):
 
         # Use default columns if not otherwise specified
         # Already sets the order in which columns are added later on
@@ -724,6 +729,11 @@ class GALEXField(BaseField):
                 "RATileCenter",
                 "DECTileCenter",
             ]
+        elif not isinstance(col_names, list):
+            raise TypeError(
+                "Expected list type for argument 'col_names', "
+                f"got '{type(col_names).__name__}'."
+            )
         with ResourceManager() as rm:
             # read cached
             logger.debug(
@@ -756,11 +766,36 @@ class GALEXField(BaseField):
         logger.info("Constructed 'tt_visits'.")
 
     def _load_galex_archive_products(
-        self, obs_id, col_names=None, filter=None, product_list=None, refresh=False
+        self,
+        obs_id,
+        filter,
+        col_names=None,
+        dd_products=None,
+        ref_maps_only=True,
+        refresh=False,
     ):
         """
         Loads the relevant data products from MAST servers and
-        stores them using the ResourceManager
+        stores them using the ResourceManager.
+
+        Parameters
+        ----------
+        obs_id : int
+            GALEX field ID.
+        filter : str
+            Selects the GALEX filter for which the corresponding
+            observation data is loaded. Needs to be either from ['NUV', 'FUV'].
+        col_names : list, optional
+            List of columns to store from raw data.
+        dd_products : dict, optional
+            Dictionary of listing the data products to be loaded.
+        re_maps_only : bool, optional
+            If True, only the reference/coadd maps are loaded (default).
+            If False, also the visit maps are included.
+        refresh : bool, optional
+            Set True to refresh the raw data via a MAST query. On default
+            cashed raw data is used.
+
         """
         # Path to MAST helper files
         path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
@@ -789,17 +824,27 @@ class GALEXField(BaseField):
             tt_data = Table.read(path_tt_data)
 
         # Sets default products to download if a selection was not explicitly passed
-        if product_list is None:
+        if dd_products is None:
             # Default: Catalog and NUV intensity map
-            product_list = [
-                "xd-mcat.fits.gz",
-                "nd-int.fits.gz" if filter == "NUV" else "fd-int.fits.gz",
-            ]
+            dd_products = {
+                0: {
+                    "name": "mcat",
+                    "file_name": "xd-mcat.fits.gz",
+                    "product_type": "catalog",
+                },
+                1: {
+                    "name": "int_map",
+                    "file_name": "nd-int.fits.gz"
+                    if filter == "NUV"
+                    else "fd-int.fits.gz",
+                    "product_type": "map",
+                },
+            }
         # Verifies if products are listed in products list
         product_list_missing = [
-            prod
-            for prod in product_list
-            if not any(prod in uri for uri in tt_data["dataURI"])
+            prod["file_name"]
+            for _, prod in dd_products.items()
+            if not any(prod["file_name"] in uri for uri in tt_data["dataURI"])
         ]
         if not len(product_list_missing) == 0:
             raise ValueError(
@@ -809,9 +854,21 @@ class GALEXField(BaseField):
 
         # Filters for products of interest
         aa_sel_prod = np.full(len(tt_data), False)  # bool array
+        # Product files
         aa_data_uri = tt_data["dataURI"].data.astype(str)  # string array
-        for prod in product_list:
-            aa_sel_prod += np.char.endswith(aa_data_uri, prod)  # Logical AND operation
+        # obs_id
+        aa_obs_id = tt_data["obs_id"].data.astype(int)  # int array
+
+        for _, prod in dd_products.items():
+            if prod["product_type"] == "map" and ref_maps_only:
+                aa_sel_prod += np.logical_and(
+                    np.char.endswith(aa_data_uri, prod["file_name"]),
+                    aa_obs_id == obs_id,
+                )
+            else:
+                aa_sel_prod += np.char.endswith(
+                    aa_data_uri, prod["file_name"]
+                )  # Logical AND operation
 
         # Download data products
         # tt_down: manifest of files downloaded
@@ -853,7 +910,7 @@ class GALEXField(BaseField):
 
         # Source catalogs
         aa_sel_mcat = np.char.endswith(
-            tt_down["Local Path"].data.astype(str), product_list[0]
+            tt_down["Local Path"].data.astype(str), "xd-mcat.fits.gz"
         )
         # Selects only the coadd path
         path_tt_ref = (
@@ -934,13 +991,37 @@ class GALEXField(BaseField):
                 f"{filter}_CLASS_STAR",
                 "chkobj_type",
             ]
+        elif not isinstance(col_names, list):
+            raise TypeError(
+                "Expected list type for argument 'col_names', "
+                f"got '{type(col_names).__name__}'."
+            )
         # set data as class attributes
         self.add_table(tt_detections_raw[col_names], "galex_field:tt_detections")
         logger.info("Constructed 'tt_detections'.")
         self.add_table(tt_ref_sources_raw[col_names[2:]], "galex_field:tt_ref_sources")
         logger.info("Constructed 'tt_ref_sources'.")
 
-        # Todo: Intensity maps
+        # Intensity maps
+        aa_sel_int_map = np.char.endswith(
+            tt_down["Local Path"].data.astype(str),
+            "nd-int.fits.gz" if filter == "NUV" else "fd-int.fits.gz",
+        )
+        # Selects the reference/coadd path
+        path_int_map_ref = (
+            self.data_path
+            + tt_down[np.logical_and(aa_sel_int_map, tt_down["ID"] == obs_id)][
+                "Local Path"
+            ][0]
+        )  # string
+        if not ref_maps_only:
+            # Selects everything else but the coadd path
+            path_int_map_visits = [
+                self.data_path + path
+                for path in tt_down[
+                    np.logical_and(aa_sel_int_map, tt_down["ID"] != obs_id)
+                ]["Local Path"].data.astype(str)
+            ]  # list
 
 
 class Field:
