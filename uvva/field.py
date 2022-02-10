@@ -27,7 +27,7 @@ from loguru import logger
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
 from sklearn import cluster
-from sklearn.cluster import MeanShift
+from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
@@ -103,13 +103,11 @@ class BaseField(object):
             ],
         }
 
-        #: List of 2D sky images of each visit,
-        #: ordered as :attr: `~uvva.field.BaseField.tt_visits` table
-        self.vis_imgs = None
+        #: Reference image
+        self.ref_img = None
 
-        #: Astropy WCS object for one 2D images.
-        #: The WCS has to be the same for all visit.
-        self.vis_iwcs = None
+        #: Reference wcs
+        self.ref_wcs = None
 
     def plot_sky_sources(
         self, ax=None, plot_detections=True, src_kwargs=None, det_kwargs=None
@@ -213,6 +211,26 @@ class BaseField(object):
         plt.show()
         return fig
 
+    def load_sky_map(self, file_name):
+        """
+        Load reference image and WCS from passed fits file
+
+        Parameters
+        ----------
+        filename : str
+            File name of image FITS
+
+        Returns
+        -------
+        None.
+
+        """
+        logger.info(f"Loading skypmap from file: '{file_name}'")
+
+        ff = fits.open(file_name)
+        self.ref_wcs = wcs.WCS(ff[0].header)
+        self.ref_img = ff[0].data
+
     def add_table(self, data, template_name):
         """
         Add a UVVA table to the field.
@@ -239,7 +257,7 @@ class BaseField(object):
 
         setattr(self, table_key, UVVATable.from_template(data, template_name))
 
-    def cluster_meanshift(self, bandwidth=1.0, cluster_all=True):
+    def cluster_meanshift(self, bandwidth=None, cluster_all=True):
         """
         Apply _MeanShift clustering algorithm using to derive sources.
 
@@ -248,7 +266,7 @@ class BaseField(object):
         Parameters
         ----------
         bandwidth : float, optional
-            Bandwidth used in the RBF kernel. The default is 1.0.
+            Bandwidth used in the RBF kernel, if set to None is is estimated automatically. The default is None.
         cluster_all : bool, optional
             If true, then all points are clustered, even those orphans that are not
             within any kernel. Orphans are assigned to the nearest kernel.
@@ -265,6 +283,10 @@ class BaseField(object):
         coords = np.array(
             list(zip(self.tt_detections["ra"].data, self.tt_detections["dec"].data))
         )
+        if bandwidth is None:
+            bandwidth = estimate_bandwidth(coords)
+        logger.info(f"MeanShift with bandwidth '{bandwidth}'")
+
         ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=cluster_all)
         ms.fit(coords)
 
@@ -411,9 +433,9 @@ class BaseField(object):
         hdup = fits.PrimaryHDU()
 
         # Check if image data is set and add to primary HDU
-        if self.vis_imgs is not None and self.vis_wcs is not None:
+        if self.ref_img is not None and self.ref_wcs is not None:
             logger.debug("Storing image data'")
-            hdup = fits.PrimaryHDU(self.vis_imgs, header=self.vis_wcs.to_header())
+            hdup = fits.PrimaryHDU(self.ref_img, header=self.ref_wcs.to_header())
 
         hdus = [hdup]
         new_hdul = fits.HDUList([hdup])
@@ -466,11 +488,11 @@ class BaseField(object):
                 setattr(self, name, Table.read(file_name, hdu=name))
 
             # Load image data
-            self.vis_imgs = ff[0].data
-            if self.vis_imgs is not None:
-                self.vis_wcs = wcs.WCS(ff[0].header)
+            self.ref_img = ff[0].data
+            if self.ref_img is not None:
+                self.ref_wcs = wcs.WCS(ff[0].header)
             else:
-                self.vis_wcs = None
+                self.ref_wcs = None
 
     def info(self):
         """
