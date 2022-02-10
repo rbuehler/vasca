@@ -128,7 +128,7 @@ base_field = {
     },
     "tt_sources": {
         "names": ["src_id", "ra", "dec", "nr_det", "flag"],
-        "dtype": ["uint32", "float16", "float16", "uint32", "int32"],
+        "dtype": ["uint32", "float32", "float32", "uint32", "int32"],
         "units": ["1", "degree", "degree", "1", "1"],
         "descriptions": [
             "Source ID nr.",
