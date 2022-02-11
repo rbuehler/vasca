@@ -135,17 +135,93 @@ description of each of their columns run :meth: <cite>~uvva.field.BaseField.info
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="uvva.field.BaseField.vis_imgs">
-<span class="sig-name descname"><span class="pre">vis_imgs</span></span><a class="headerlink" href="#uvva.field.BaseField.vis_imgs" title="Permalink to this definition"></a></dt>
-<dd><p>List of 2D sky images of each visit,
-ordered as :attr: <cite>~uvva.field.BaseField.tt_visits</cite> table</p>
+<dt class="sig sig-object py" id="uvva.field.BaseField.ref_img">
+<span class="sig-name descname"><span class="pre">ref_img</span></span><a class="headerlink" href="#uvva.field.BaseField.ref_img" title="Permalink to this definition"></a></dt>
+<dd><p>Reference image</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="uvva.field.BaseField.vis_iwcs">
-<span class="sig-name descname"><span class="pre">vis_iwcs</span></span><a class="headerlink" href="#uvva.field.BaseField.vis_iwcs" title="Permalink to this definition"></a></dt>
-<dd><p>Astropy WCS object for one 2D images.
-The WCS has to be the same for all visit.</p>
+<dt class="sig sig-object py" id="uvva.field.BaseField.ref_wcs">
+<span class="sig-name descname"><span class="pre">ref_wcs</span></span><a class="headerlink" href="#uvva.field.BaseField.ref_wcs" title="Permalink to this definition"></a></dt>
+<dd><p>Reference wcs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uvva.field.BaseField.plot_sky_sources">
+<span class="sig-name descname"><span class="pre">plot_sky_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_detections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">det_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.plot_sky_sources" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the sources and (optinally) the visit detections on the sky.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>axes</em><em>, </em><em>optional</em>) – Matplotlib axes to plot on. The default is None.</p></li>
+<li><p><strong>plot_detections</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot the visit detections below the sources. The default is True.</p></li>
+<li><p><strong>src_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments for pyplot.plot of the sources. The default is None.</p></li>
+<li><p><strong>det_kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Keyword arguments for pyplot.plot of the detections. The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ax</strong> – DESCRIPTION.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uvva.field.BaseField.plot_sky_map">
+<span class="sig-name descname"><span class="pre">plot_sky_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">img_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.plot_sky_map" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>axes</em><em>, </em><em>optional</em>) – Matplotlib axes to plot on. The default is None.</p></li>
+<li><p><strong>**img_kwargs</strong> (<em>dict</em>) – Key word arguments for pyplot.imshow plotting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>graph</strong> – Matplotlib axes of 2D image.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>AxesImage</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uvva.field.BaseField.plot_sky">
+<span class="sig-name descname"><span class="pre">plot_sky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_detections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.plot_sky" title="Permalink to this definition"></a></dt>
+<dd><p>Plot all field sources and/or a background reference image in the sky.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_detections</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot sources. The default is True.</p></li>
+<li><p><strong>plot_map</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot reference image in the background. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fig</strong> – Matplotlib figure used to plot.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uvva.field.BaseField.load_sky_map">
+<span class="sig-name descname"><span class="pre">load_sky_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.load_sky_map" title="Permalink to this definition"></a></dt>
+<dd><p>Load reference image and WCS from passed fits file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – File name of image FITS</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -155,7 +231,7 @@ The WCS has to be the same for all visit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>list</em><em>, </em><em>array-like</em>) – Data of the table with shape (n, n_cols) or as dictionaty with the
+<li><p><strong>data</strong> (<em>list</em><em>, </em><em>array-like</em>) – Data of the table with shape (n, n_cols) or as dictionary with the
 key corresponding to the templates columns.</p></li>
 <li><p><strong>template_name</strong> (<em>str</em>) – Identifier to select a table template. Templates are selected by
 setting the class key and a corresponding table key in one string
@@ -167,12 +243,12 @@ separated by a colon, e.g. template_name=&lt;class_key&gt;:&lt;table_key&gt;.</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="uvva.field.BaseField.cluster_meanshift">
-<span class="sig-name descname"><span class="pre">cluster_meanshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.cluster_meanshift" title="Permalink to this definition"></a></dt>
-<dd><p>Apply <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html">MeanShift</a> clustering algorithm using to derive sources.</p>
+<span class="sig-name descname"><span class="pre">cluster_meanshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.BaseField.cluster_meanshift" title="Permalink to this definition"></a></dt>
+<dd><p>Apply _MeanShift clustering algorithm using to derive sources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>bandwidth</strong> (<em>float</em><em>, </em><em>optional</em>) – Bandwidth used in the RBF kernel. The default is 1.0.</p></li>
+<li><p><strong>bandwidth</strong> (<em>float</em><em>, </em><em>optional</em>) – Bandwidth used in the RBF kernel, if set to None is is estimated automatically. The default is None.</p></li>
 <li><p><strong>cluster_all</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, then all points are clustered, even those orphans that are not
 within any kernel. Orphans are assigned to the nearest kernel.
 The default is True.</p></li>
@@ -278,40 +354,102 @@ not available. In this case warnings are issued to logging.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="uvva.field.GALEXField">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uvva.field.</span></span><span class="sig-name descname"><span class="pre">GALEXField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uvva.field.</span></span><span class="sig-name descname"><span class="pre">GALEXField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#uvva.field.BaseField" title="uvva.field.BaseField"><code class="xref py py-class docutils literal notranslate"><span class="pre">uvva.field.BaseField</span></code></a></p>
-<p>Instance of one GALEX field (coadd + visits)</p>
+<p>Instance of one GALEX field</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="uvva.field.GALEXField.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a new GALEXField instance with
+skeleton UVVA data structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parobs_id</strong> (<em>int</em>) – </p></li>
-<li><p><strong>include_coadd</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>obs_id</strong> (<em>int</em>) – GALEX field ID</p></li>
+<li><p><strong>filter</strong> (<em>str</em><em>, </em><em>optional</em>) – Selects the GALEX filter for which the corresponding
+observation data is loaded. Needs to be either from:
+‘FUV’ -&gt; 135-175 nm
+‘NUV’ -&gt; 175-280 nm  (default)</p></li>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>Note in the MAST data base “obs_id” is equal
-to the “ParentImgRunID” of the visits table.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="uvva.field.GALEXField.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField.__init__" title="Permalink to this definition"></a></dt>
-<dd><p class="rubric">Notes</p>
-<p>Many class attributes are stored in <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html">astropy.table.Tables</a>. To see a
-description of each of their columns run :meth: <cite>~uvva.field.BaseField.info</cite>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uvva.field.GALEXField.data_path">
+<span class="sig-name descname"><span class="pre">data_path</span></span><a class="headerlink" href="#uvva.field.GALEXField.data_path" title="Permalink to this definition"></a></dt>
+<dd><p>Path to root location of cloud-synced data associated with the GALEX field</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None.</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="uvva.field.GALEXField.data_path">
-<span class="sig-name descname"><span class="pre">data_path</span></span><a class="headerlink" href="#uvva.field.GALEXField.data_path" title="Permalink to this definition"></a></dt>
-<dd><p>Path to read and write data relevant to the pipeline</p>
+<dt class="sig sig-object py" id="uvva.field.GALEXField.uvva_file_prefix">
+<span class="sig-name descname"><span class="pre">uvva_file_prefix</span></span><a class="headerlink" href="#uvva.field.GALEXField.uvva_file_prefix" title="Permalink to this definition"></a></dt>
+<dd><p>File name prefix following UVVA naming convention:
+‘UVVA_&lt;observatory&gt;_&lt;filed_id&gt;_&lt;filter&gt;’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uvva.field.GALEXField.from_fits">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NUV'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField.from_fits" title="Permalink to this definition"></a></dt>
+<dd><p>Constructor to initialize a GALEXField instance
+from a UVVA-generated FITS file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_id</strong> (<em>int</em>) – GALEX field ID</p></li>
+<li><p><strong>filter</strong> (<em>str</em><em>, </em><em>optional</em>) – Selects the GALEX filter for which the corresponding
+observation data is loaded. Needs to be either from:
+‘FUV’ -&gt; 135-175 nm
+‘NUV’ -&gt; 175-280 nm  (default)</p></li>
+<li><p><strong>fits_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the fits file. Defaults to a path handled by ResourceManager.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#uvva.field.GALEXField" title="uvva.field.GALEXField">uvva.field.GALEXField</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uvva.field.GALEXField.from_archive">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NUV'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#uvva.field.GALEXField.from_archive" title="Permalink to this definition"></a></dt>
+<dd><p>Constructor to initialize a GALEXField instance either
+fresh from the MAST archive (refresh=True) or if available
+from cached raw data (refresh=False).</p>
+<p>The procedure uses uvva.resource_manager.ResourceManager
+to handle file locations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_id</strong> (<em>int</em>) – GALEX field ID</p></li>
+<li><p><strong>filter</strong> (<em>str</em><em>, </em><em>optional</em>) – Selects the GALEX filter for which the corresponding
+observation data is loaded. Needs to be either from:
+‘FUV’ -&gt; 135-175 nm
+‘NUV’ -&gt; 175-280 nm  (default)</p></li>
+<li><p><strong>refresh</strong> (<em>bool</em><em>, </em><em>optional</em>) – Selects if data is freshly loaded from MAST (refresh=True) or
+from cashed data on disc (refresh=False, default).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#uvva.field.GALEXField" title="uvva.field.GALEXField">uvva.field.GALEXField</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
