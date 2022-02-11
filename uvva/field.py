@@ -242,7 +242,7 @@ class BaseField(object):
 
         logger.debug("Plotting sky map and/or sources'")
 
-        fig = plt.figure(1)
+        fig = plt.figure()
         plt.clf()
         if self.ref_wcs is not None:
             ax = plt.subplot(projection=self.ref_wcs)  #
