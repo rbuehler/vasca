@@ -133,6 +133,7 @@ class BaseField(object):
         .. _pyplot.plot: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
 
         """
+        logger.debug("Plotting sky sources'")
 
         if ax is None:
             ax = plt.gca()
@@ -184,8 +185,25 @@ class BaseField(object):
         return ax
 
     def plot_sky_map(self, ax=None, **img_kwargs):
+        """
 
-        logger.info("Plotting sky map'")
+        Parameters
+        ----------
+        ax : axes, optional
+            Matplotlib axes to plot on. The default is None.
+        **img_kwargs : dict
+            Key word arguments for pyplot.imshow_ plotting.
+
+        Returns
+        -------
+        graph : AxesImage
+            Matplotlib axes of 2D image.
+
+        _pyplot.imshow https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
+
+        """
+
+        logger.debug("Plotting sky map'")
 
         if self.ref_img is None:
             logger.error("No map to draw")
@@ -224,6 +242,8 @@ class BaseField(object):
             Matplotlib figure used to plot.
 
         """
+
+        logger.debug("Plotting sky map and/or sources'")
 
         fig = plt.figure(1)
         plt.clf()
