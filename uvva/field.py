@@ -13,6 +13,7 @@ from pprint import pprint
 import healpy as hpy
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import numpy as np
 import yaml
 from astropy import units as uu
@@ -140,17 +141,17 @@ class BaseField(object):
         plt_src_kwargs = {
             "marker": "o",
             "markerfacecolor": "None",
-            "markersize": 12,
+            "markersize": 3,
         }
         if src_kwargs is not None:
             plt_src_kwargs.update(src_kwargs)
 
         # Set marker properties for detections
         plt_det_kwargs = {
-            "marker": "o",
+            "marker": "s",
             "markerfacecolor": "None",
-            "markersize": 6,
-            "alpha": 0.5,
+            "markersize": 2,
+            "alpha": 0.3,
             "lw": 0,
         }
         if det_kwargs is not None:
@@ -182,9 +183,31 @@ class BaseField(object):
             ax.plot(src_pos[0], src_pos[1], markeredgecolor=col, **plt_src_kwargs)
         return ax
 
-    # TODO def plot_sky_map(self,ax=None,**img_kwargs):
+    def plot_sky_map(self, ax=None, **img_kwargs):
 
-    def plot_sky(self, plot_detections=True, plot_map=False):
+        logger.info("Plotting sky map'")
+
+        if self.ref_img is None:
+            logger.error("No map to draw")
+
+        if ax is None:
+            ax = plt.gca()
+
+        plt_img_kwargs = {
+            "interpolation": "None",
+            "cmap": "gist_yarg",
+            "origin": "lower",
+            "norm": LogNorm(),
+        }
+
+        if img_kwargs is not None:
+            plt_img_kwargs.update(img_kwargs)
+
+        graph = ax.imshow(self.ref_img, **plt_img_kwargs)
+
+        return graph
+
+    def plot_sky(self, plot_detections=True, plot_map=True):
         """
         Plot all field sources and/or a background reference image in the sky.
 
@@ -204,8 +227,28 @@ class BaseField(object):
 
         fig = plt.figure(1)
         plt.clf()
+        if self.ref_wcs is not None:
+            ax = plt.subplot(projection=self.ref_wcs)  #
+            ax.coords["ra"].set_major_formatter("d.dd")
+            ax.coords["dec"].set_major_formatter("d.dd")
+            ax.set_xlabel("Ra")
+            ax.set_ylabel("Dec")
+
+        if plot_map:
+            graph = self.plot_sky_map()
+            fig.colorbar(graph, label="Intensity [a.u.]")
+
         if plot_detections:
-            self.plot_sky_sources(plot_detections=plot_detections)
+            if plot_map:
+                plot_arg = {"transform": ax.get_transform("world")}
+                self.plot_sky_sources(
+                    plot_detections=plot_detections,
+                    src_kwargs=plot_arg,
+                    det_kwargs=plot_arg,
+                )
+            else:
+                self.plot_sky_sources(plot_detections=plot_detections)
+        # plt.tight_layout()
         plt.show()
         return fig
 
@@ -288,6 +331,8 @@ class BaseField(object):
         ms.fit(coords)
 
         # Fill in data into field tables
+        self.tt_detections["src_id"] = ms.labels_
+
         src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
 
         cluster_centers = ms.cluster_centers_
