@@ -184,6 +184,7 @@ class BaseField(object):
 
     def plot_sky_map(self, ax=None, **img_kwargs):
         """
+        Plot the reference sky map.
 
         Parameters
         ----------
