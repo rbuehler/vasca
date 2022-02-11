@@ -731,7 +731,7 @@ class GALEXField(BaseField):
         # Fill default columns from first row of the archive field info data table
         tt_coadd_select = tt_coadd[col_names]
         self.add_table(tt_coadd_select, "base_field:tt_field")
-        logger.info("Constructed 'tt_field'.")
+        logger.debug("Constructed 'tt_field'.")
 
     def _load_galex_visits_info(self, obs_id, filter, col_names=None):
 
@@ -781,7 +781,7 @@ class GALEXField(BaseField):
 
         # Set as class attribute
         self.add_table(tt_visits_raw_select, "galex_field:tt_visits")
-        logger.info("Constructed 'tt_visits'.")
+        logger.debug("Constructed 'tt_visits'.")
 
     def _load_galex_archive_products(
         self,
@@ -1016,9 +1016,9 @@ class GALEXField(BaseField):
             )
         # set data as class attributes
         self.add_table(tt_detections_raw[col_names], "galex_field:tt_detections")
-        logger.info("Constructed 'tt_detections'.")
+        logger.debug("Constructed 'tt_detections'.")
         self.add_table(tt_ref_sources_raw[col_names[2:]], "galex_field:tt_ref_sources")
-        logger.info("Constructed 'tt_ref_sources'.")
+        logger.debug("Constructed 'tt_ref_sources'.")
 
         # Intensity maps
         aa_sel_int_map = np.char.endswith(
@@ -1042,6 +1042,7 @@ class GALEXField(BaseField):
             ]  # list
 
         self.load_sky_map(path_int_map_ref)
+        # Future: Optional loading of visit sky maps may happen here.
 
 
 class Field:
