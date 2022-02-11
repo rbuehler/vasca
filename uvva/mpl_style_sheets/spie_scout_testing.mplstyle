@@ -37,7 +37,7 @@ patch.edgecolor: w
 patch.force_edgecolor: True
 patch.facecolor: 4c72b0  # first cycler color
 
-image.cmap: rocket
+image.cmap: turbo
 
 # CONTEXT
 font.size: 12
