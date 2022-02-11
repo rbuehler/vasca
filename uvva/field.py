@@ -730,8 +730,6 @@ class GALEXField(BaseField):
         # construct field info table
         # Fill default columns from first row of the archive field info data table
         tt_coadd_select = tt_coadd[col_names]
-        print(col_names)
-        print(tt_coadd["obs_id", "target_name"])
         self.add_table(tt_coadd_select, "base_field:tt_field")
         logger.info("Constructed 'tt_field'.")
 
