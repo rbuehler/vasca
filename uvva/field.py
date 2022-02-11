@@ -288,7 +288,6 @@ class BaseField(object):
         ms.fit(coords)
 
         # Fill in data into field tables
-        self.tt_detections["src_id"] = ms.labels_
         src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
 
         cluster_centers = ms.cluster_centers_
