@@ -121,16 +121,14 @@ class BaseField(object):
         plot_detections : bool, optional
             Plot the visit detections below the sources. The default is True.
         src_kwargs : dict, optional
-            Keyword arguments for pyplot.plot_ of the sources. The default is None.
+            Keyword arguments for pyplot.plot of the sources. The default is None.
         det_kwargs : dict, optional
-            Keyword arguments for pyplot.plot_ of the detections. The default is None.
+            Keyword arguments for pyplot.plot of the detections. The default is None.
 
         Returns
         -------
         ax : axes
             DESCRIPTION.
-
-        .. _pyplot.plot: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html
 
         """
         logger.debug("Plotting sky sources'")
@@ -192,14 +190,12 @@ class BaseField(object):
         ax : axes, optional
             Matplotlib axes to plot on. The default is None.
         **img_kwargs : dict
-            Key word arguments for pyplot.imshow_ plotting.
+            Key word arguments for pyplot.imshow plotting.
 
         Returns
         -------
         graph : AxesImage
             Matplotlib axes of 2D image.
-
-        _pyplot.imshow https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
 
         """
 
