@@ -265,7 +265,7 @@ class BaseField(object):
             else:
                 self.plot_sky_sources(plot_detections=plot_detections)
         # plt.tight_layout()
-        plt.show()
+
         return fig
 
     def load_sky_map(self, file_name):
