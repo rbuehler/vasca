@@ -13,7 +13,6 @@ from pprint import pprint
 import healpy as hpy
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
 import numpy as np
 import yaml
 from astropy import units as uu
@@ -348,7 +347,6 @@ class BaseField(object):
         ms.fit(coords)
 
         # Fill in data into field tables
-        self.tt_detections["src_id"] = ms.labels_
 
         src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
 
