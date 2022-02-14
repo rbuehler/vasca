@@ -139,10 +139,10 @@ base_field = {
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
-    "t_sources_mag": {
+    "tt_sources_mag": {
         "meta": {"INFO": "AB Magnitude flux table"},
     },
-    "tt_sources_s2n": {
+    "tt_sources_mag_err": {
         "meta": {"INFO": "Signal to noise of the detection table"},
     },
     "tt_sources_ulmag": {
