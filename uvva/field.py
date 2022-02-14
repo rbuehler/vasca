@@ -11,6 +11,8 @@ from itertools import cycle
 from pprint import pprint
 
 import healpy as hpy
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 from astropy import units as uu
@@ -23,8 +25,6 @@ from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
 from loguru import logger
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
 from sklearn import cluster
@@ -369,8 +369,9 @@ class BaseField(object):
         self.add_table(srcs_data, "base_field:tt_sources")
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
 
-        self.tt_detections["src_id"] = ms.labels_
-
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UserWarning)
+            self.tt_detections["src_id"] = ms.labels_
         # Fill light curve data into tables
 
         return nr_srcs
