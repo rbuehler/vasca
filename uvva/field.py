@@ -11,8 +11,6 @@ from itertools import cycle
 from pprint import pprint
 
 import healpy as hpy
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 from astropy import units as uu
@@ -25,6 +23,8 @@ from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
 from loguru import logger
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
 from sklearn import cluster
@@ -251,20 +251,20 @@ class BaseField(object):
             ax.set_ylabel("Dec")
 
         if plot_map:
-            graph = self.plot_sky_map()
+            graph = self.plot_sky_map(ax)
             fig.colorbar(graph, label="Intensity [a.u.]")
 
         if plot_detections:
             if plot_map:
                 plot_arg = {"transform": ax.get_transform("world")}
                 self.plot_sky_sources(
+                    ax,
                     plot_detections=plot_detections,
                     src_kwargs=plot_arg,
                     det_kwargs=plot_arg,
                 )
             else:
                 self.plot_sky_sources(plot_detections=plot_detections)
-        # plt.tight_layout()
 
         return fig
 
@@ -347,8 +347,13 @@ class BaseField(object):
         ms.fit(coords)
 
         # Fill in data into field tables
-
         src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+
+        # src_ids, det_idx, det_cts = np.unique(
+        #     ms.labels_, return_index=True, return_counts=True
+        # )
+
+        # print(det_idx, det_idx.shape)
 
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
@@ -360,7 +365,13 @@ class BaseField(object):
             "flag": np.zeros(nr_srcs),
         }
 
+        # Full information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
+        self.tt_sources.meta["CLUSTALG"] = "MeanShift"
+
+        self.tt_detections["src_id"] = ms.labels_
+
+        # Fill light curve data into tables
 
         return nr_srcs
 
