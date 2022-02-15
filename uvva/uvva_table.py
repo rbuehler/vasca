@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import yaml
 from astropy import units as uu
-from astropy.table import Table
+from astropy.table import QTable
 from loguru import logger
 
 dimless = uu.dimensionless_unscaled
@@ -254,7 +254,7 @@ class_dicts = [base_field, galex_field]
 dd_uvva_tables = {c_key: c_dict for c_key, c_dict in zip(class_keys, class_dicts)}
 
 
-class UVVATable(Table):
+class UVVATable(QTable):
     def __init__(self):
         # Configure logger
         # adds the class name as an extra key; accessible vie the handler format
@@ -307,7 +307,7 @@ class UVVATable(Table):
             )
 
         # Create table
-        tt_out = Table(data=data, **templates[class_key][table_key])
+        tt_out = QTable(data=data, **templates[class_key][table_key])
 
         # logging
         logger.debug(f"Created new table from template '{template_name}'.")
@@ -339,7 +339,7 @@ class UVVATable(Table):
                 "Cannot create table from scratch. "
                 "All table attributes and data must have the same length."
             )
-        tt_out = Table(
+        tt_out = QTable(
             data=np.asarray(data),
             names=colnames,
             units=units,
