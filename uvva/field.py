@@ -372,9 +372,29 @@ class BaseField(object):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             self.tt_detections["src_id"] = ms.labels_
+
+        # self.remove_double_visit_detections()
         # Fill light curve data into tables
 
         return nr_srcs
+
+    def remove_double_visit_detections(self):
+
+        self.tt_sources.add_index("src_id")
+        self.tt_detections.add_index("det_id")
+
+        # Determine detection_id of srcs with more than one detection in one visit
+        rm_det_ids = []
+        tt_det_grp = self.tt_detections.group_by(["vis_id", "src_id"])
+        for ids, tt_det in zip(tt_det_grp.groups.keys, tt_det_grp.groups):
+            if len(tt_det) > 1:
+                rm_det_ids.extend(tt_det["det_id"].data[:-1])
+
+        # remove the doubled detections
+
+        rm_idx = self.tt_detections.loc_indices[rm_det_ids]
+        print("Number of removed doubled detections:", len(rm_det_ids))
+        self.tt_detections.remove_rows(rm_idx)
 
     def set_field_attr(self, dd_names=None):
         """
