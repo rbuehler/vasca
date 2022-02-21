@@ -1,7 +1,6 @@
 standalone-install-test:
   image: python:3.9-bullseye
   script:
-    - pip install --upgrade pip
     - pip install -r requirements.txt
     - pip install .
     - pytest
