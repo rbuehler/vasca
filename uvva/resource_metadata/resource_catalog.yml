@@ -33,3 +33,10 @@ lustre:
         type: file
         project: uvvarcat
         path: /path/of/no/return
+uvva:
+    0:
+        name: test_resources
+        description: 'Data used for UVVA development'
+        type: directory
+        project: uvva
+        path: '/uvva/test/resources'

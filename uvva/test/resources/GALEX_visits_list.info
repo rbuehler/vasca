@@ -1,0 +1,11 @@
+Below the applied data querry to MAST https://galex.stsci.edu/GR6/?page=sqlform
+
+select vpe.avaspra as RATileCenter, vpe.avaspdec as DECTileCenter,
+isnull(nuv_mpstype,fuv_mpstype) as survey,
+vpe.nexptime, vpe.fexptime, ir.*
+from imgrun as ir, visitimg as vi,
+visitphotoextract as vpe
+where ir.imgrunid=vi.imgrunid
+and vi.imgid=vpe.imgid
+and ir.source = 'visiti'
+order by ir.tilenum, ir.photoobsdate                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
