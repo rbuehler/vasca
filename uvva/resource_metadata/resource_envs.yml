@@ -19,3 +19,7 @@ UC_LUSTRE_UVVARCAT:
     storage: lustre
     project: uvvarcat
     description: "Resoruces for the UV variability catalog project on DESY LUSTRE. Not used at the moment."
+UC_UVVA_TEST_RESOURCES:
+    storage: uvva
+    project: uvva
+    description: "Resources needed for unit testing of the UVVA module."

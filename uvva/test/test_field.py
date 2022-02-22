@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import glob
-import sys
-from pprint import pprint
 
 import astropy.units as uu
 import numpy as np
@@ -12,8 +10,30 @@ from astropy.coordinates import SkyCoord
 from astropy.time import Time
 from loguru import logger
 
-from uvva.field import BaseField, Field, GALEXField
-from uvva.uvva_table import UVVATable
+from uvva.field import BaseField, GALEXField
+from uvva.resource_manager import ResourceManager
+
+
+@pytest.fixture
+def galex_test_field_from_archive():
+    field_id = 6388191295067652096
+    filter = "NUV"
+    with ResourceManager() as rm:
+        test_resource_path = rm.get_path("test_resources", "uvva")
+        data_path = f"{test_resource_path}/{field_id}"
+        visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
+    gf = GALEXField.from_archive(
+        obs_id=field_id,
+        filter=filter,
+        data_path=data_path,
+        visits_data_path=visits_data_path,
+    )
+    return gf
+
+
+def test_galex_field_from_archive(galex_test_field_from_archive):
+    gf = galex_test_field_from_archive
+    assert gf.field_id == 6388191295067652096
 
 
 @pytest.fixture
