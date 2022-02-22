@@ -16,7 +16,7 @@ Installation
    
 2. Setup your environment, either using ``pyenv`` or ``Anaconda`` (see below).
 
-3. Install the ``UVVO`` package:
+3. Install the ``UVVA`` package:
 
 .. code:: bash
 
@@ -32,14 +32,14 @@ Setup a virtual environment
 `pyenv-virtualenv <https://github.com/pyenv/pyenv-virtualenv>`__, install
 the requirements and general purpose modules using ``pip``.
 
-Install Python version 3.9.1 and setup a virtual environment (e.g. named
-``uc_science_venv39``) after following the pyenv  installation described
+Install Python version 3.9.9 and setup a virtual environment (e.g. named
+``uc_uvva_venv39``) after following the pyenv  installation described
 `here <https://github.com/pyenv/pyenv#installation>`__ and
 `here <https://github.com/pyenv/pyenv-virtualenv#installation>`__:
 
 .. code:: bash
 
-   pyenv virtualenv 3.9.1 uc_science_venv39 
+   pyenv virtualenv 3.9.9 uc_uvva_venv39 
 
 Make sure that the virtual environment is automatically
 `enabled <https://github.com/pyenv/pyenv/blob/master/COMMANDS.md#pyenv-local>`__ 
@@ -48,7 +48,7 @@ for commands executed from the repository root directory:
 .. code:: bash
 
    cd <your_install_folder>/uc_science   
-   pyenv local uc_science_venv39 
+   pyenv local uc_uvva_venv39 
 
 Install the necessary Python modules:
 
@@ -69,6 +69,10 @@ You can setup the environment with
    conda env create -f conda_env.yml
    conda activate uc_uvva
 
+**Prototyping and functional examples**
+We use `Jupyter lab <https://github.com/jupyterlab/jupyterlab>`__ for prototyping and for functional examples given in ``uvva/examples``.
+Follow these `instructions <https://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html/>`__ to add  a pyenv-generated virtual environment as a Jupyter kernel. Jupyter lab extensions can be used to enable interactive Matoplotlib figures: First install the `ipywidgets <https://github.com/jupyter-widgets/ipywidgets>`__ extension and then the `ipympl <https://github.com/matplotlib/ipympl>`__ extension.
+
 Coding guidelines
 -----------------
 
@@ -76,7 +80,7 @@ We use the `PEP 8 <https://realpython.com/python-pep8/>`__ coding conventions.
 Before contributing please consider the use of automatic code formatting
 tools like `isort <https://github.com/pycqa/isort>`__,
 `flake8 <https://github.com/PyCQA/flake8>`__ and
-`black <https://black.readthedocs.io/en/stable/#>`__. The recommended Python
+`black <https://black.readthedocs.io/en/stable/#>`__. We set `88 characters <https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html?highlight=88%20#line-length>`__ for the default line width. The recommended Python
 version to use is 3.9.x . For docstrings we use the
 `ņumpy <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html>`__ 
 format.
