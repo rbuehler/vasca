@@ -3,4 +3,8 @@ standalone-install-test:
   script:
     - pip install -r requirements.txt
     - pip install .
+    - echo -e "UC_SAS_UVVARCAT='/dev/null'\nUC_LUSTRE_UVVARCAT='/dev/null'\nUC_UVVA_TEST_RESOURCES='.'"  > .env
+    - pwd
+    - ls -a
+    - cat .env
     - pytest

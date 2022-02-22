@@ -373,7 +373,7 @@ class BaseField(object):
             warnings.simplefilter("ignore", UserWarning)
             self.tt_detections["src_id"] = ms.labels_
 
-        self.remove_double_visit_detections()
+        # self.remove_double_visit_detections()
         # Fill light curve data into tables
 
         return nr_srcs
@@ -651,7 +651,7 @@ class GALEXField(BaseField):
     Instance of one GALEX field
     """
 
-    def __init__(self, obs_id, filter=None):
+    def __init__(self, obs_id, filter=None, data_path=None, visits_data_path=None):
         """
         Initializes a new GALEXField instance with
         skeleton UVVA data structure.
@@ -665,11 +665,19 @@ class GALEXField(BaseField):
             observation data is loaded. Needs to be either from:
             'FUV' -> 135-175 nm
             'NUV' -> 175-280 nm  (default)
+        data_path : str, optional
+            Path to root location of cloud-synced data associated with the GALEX field.
+            Defaults to a path given by the resource manager.
+        visits_data_path : str, optional
+            Path to a pre-downloaded table holding the complete list of GALEX visits.
+            Defaults to a path given by the resource manager.
 
         Attributes
         ----------
         data_path : str
             Path to root location of cloud-synced data associated with the GALEX field
+        visits_data_path : str
+            Path to a pre-downloaded table holding the complete list of GALEX visits
         uvva_file_prefix : str
             File name prefix following UVVA naming convention:
             'UVVA_<observatory>_<filed_id>_<filter>'
@@ -692,13 +700,28 @@ class GALEXField(BaseField):
         super().__init__()
 
         # Set root location of cloud-synced data associated with the field
-        with ResourceManager() as rm:
-            # Path to read and write data relevant to the pipeline
-            self.data_path = rm.get_path("gal_fields", "sas_cloud") + "/" + str(obs_id)
-            self.uvva_file_prefix = f"UVVA_GALEX_{obs_id}_{filter}"
+        if data_path is not None:
+            self.data_path = data_path
+        if visits_data_path is not None:
+            self.visits_data_path = visits_data_path
+        if data_path is None or visits_data_path is None:
+            with ResourceManager() as rm:
+                # Path to read and write data relevant to the pipeline
+                if data_path is None:
+                    self.data_path = (
+                        rm.get_path("gal_fields", "sas_cloud") + "/" + str(obs_id)
+                    )
+                # Path to a pre-downloaded table holding
+                # the complete list of GALEX visits
+                if visits_data_path is None:
+                    self.visits_data_path = rm.get_path("gal_visits_list", "sas_cloud")
+        # File name prefix for UVVA/GALEXField outputs
+        self.uvva_file_prefix = f"UVVA_GALEX_{obs_id}_{filter}"
+        logger.debug(f"{self.data_path}")
+        logger.debug(f"{self.visits_data_path}")
 
     @classmethod
-    def from_fits(cls, obs_id, filter="NUV", fits_path=None):
+    def from_fits(cls, obs_id, filter="NUV", fits_path=None, **kwargs):
         """
         Constructor to initialize a GALEXField instance
         from a UVVA-generated FITS file
@@ -714,13 +737,15 @@ class GALEXField(BaseField):
             'NUV' -> 175-280 nm  (default)
         fits_path : str, optional
             Path to the fits file. Defaults to a path handled by ResourceManager.
+        **kwargs
+            All additional keyword arguments are passed to `~GALEXField.__init__()`
 
         Returns
         -------
         uvva.field.GALEXField
         """
         # Bootstrap the initialization procedure using the base class
-        gf = cls(obs_id, filter)  # new GALEXField instance
+        gf = cls(obs_id, filter, **kwargs)  # new GALEXField instance
 
         if fits_path is None:
             # Construct the file name from field ID and filter
@@ -756,7 +781,7 @@ class GALEXField(BaseField):
         return gf
 
     @classmethod
-    def from_archive(cls, obs_id, filter="NUV", refresh=False):
+    def from_archive(cls, obs_id, filter="NUV", refresh=False, **kwargs):
         """
         Constructor to initialize a GALEXField instance either
         fresh from the MAST archive (refresh=True) or if available
@@ -777,6 +802,8 @@ class GALEXField(BaseField):
         refresh : bool, optional
             Selects if data is freshly loaded from MAST (refresh=True) or
             from cashed data on disc (refresh=False, default).
+        **kwargs
+            All additional keyword arguments are passed to `~GALEXField.__init__()`
 
         Returns
         -------
@@ -788,7 +815,7 @@ class GALEXField(BaseField):
             raise TypeError(f"Expected boolean argument, got {type(refresh).__name__}.")
 
         # Bootstrap the initialization procedure using the base class
-        gf = cls(obs_id, filter)  # new GALEXField instance
+        gf = cls(obs_id, filter, **kwargs)  # new GALEXField instance
 
         # Sets ``gf.tt_field``
         gf._load_galex_field_info(obs_id, filter, refresh=refresh)
@@ -876,13 +903,11 @@ class GALEXField(BaseField):
                 "Expected list type for argument 'col_names', "
                 f"got '{type(col_names).__name__}'."
             )
-        with ResourceManager() as rm:
-            # read cached
-            logger.debug(
-                "Reading archive visit info from cashed file "
-                f"'{rm.get_path('gal_visits_list', 'sas_cloud')}'"
-            )
-            tt_visits_raw = Table.read(rm.get_path("gal_visits_list", "sas_cloud"))
+        # read cached
+        logger.debug(
+            "Reading archive visit info from cashed file " f"'{self.visits_data_path}'"
+        )
+        tt_visits_raw = Table.read(self.visits_data_path)
 
         # Filters for visits corresponding to field id and selects specified columns
         tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == obs_id][
