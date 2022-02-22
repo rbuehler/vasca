@@ -5,6 +5,16 @@ The Ultraviolet Variability Analysis (UVVA) is an astronomy pipeline
 for time-variable sources. Its main purpose is to create a source catalog
 based on GALEX data.
 
+.. image:: https://gitlab.desy.de/ultrasat-camera/uc_uvva/badges/main/pipeline.svg
+    :target: https://gitlab.desy.de/ultrasat-camera/uc_uvva/-/commits/main
+    :alt: pipeline status
+    
+.. image:: https://gitlab.desy.de/ultrasat-camera/uc_uvva/badges/main/coverage.svg
+    :target: https://gitlab.desy.de/ultrasat-camera/uc_uvva/-/commits/main
+    :alt: coverage report
+
+
+
 Installation
 ------------
 
