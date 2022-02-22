@@ -4,7 +4,7 @@ standalone-install-test:
     - pip install --upgrade pip
     - pip install -r requirements.txt
     - pip install .
-    - echo "UC_SAS_UVVARCAT='/dev/null'\nUC_LUSTRE_UVVARCAT='/dev/null'\nUC_UVVA_TEST_RESOURCES='.'"  > .env
+    - echo -e "UC_SAS_UVVARCAT='/dev/null'\nUC_LUSTRE_UVVARCAT='/dev/null'\nUC_UVVA_TEST_RESOURCES='.'"  > .env
     - pwd
     - ls -a
     - cat .env
