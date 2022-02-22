@@ -4,7 +4,9 @@ standalone-install-test:
     - pip install -r requirements.txt
     - pip install .
     - echo -e "UC_SAS_UVVARCAT='/dev/null'\nUC_LUSTRE_UVVARCAT='/dev/null'\nUC_UVVA_TEST_RESOURCES='.'"  > .env
-    - pwd
-    - ls -a
-    - cat .env
-    - pytest
+    - coverage run -m pytest -v
+    - coverage report
+    - coverage xml
+  artifacts:
+    reports:
+      cobertura: coverage.xml
