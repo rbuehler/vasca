@@ -15,3 +15,5 @@ uvva/myscripts/
 development/*
 *.fits
 !uvva/test/resources/**/*.fits
+.coverage
+coverage.xml
