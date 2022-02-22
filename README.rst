@@ -47,7 +47,7 @@ for commands executed from the repository root directory:
 
 .. code:: bash
 
-   cd <your_install_folder>/uc_science   
+   cd <your_install_folder>/uv_uvva   
    pyenv local uc_uvva_venv39 
 
 Install the necessary Python modules:
@@ -70,6 +70,7 @@ You can setup the environment with
    conda activate uc_uvva
 
 **Prototyping and functional examples**
+
 We use `Jupyter lab <https://github.com/jupyterlab/jupyterlab>`__ for prototyping and for functional examples given in ``uvva/examples``.
 Follow these `instructions <https://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html/>`__ to add  a pyenv-generated virtual environment as a Jupyter kernel. Jupyter lab extensions can be used to enable interactive Matoplotlib figures: First install the `ipywidgets <https://github.com/jupyter-widgets/ipywidgets>`__ extension and then the `ipympl <https://github.com/matplotlib/ipympl>`__ extension.
 
@@ -80,7 +81,7 @@ We use the `PEP 8 <https://realpython.com/python-pep8/>`__ coding conventions.
 Before contributing please consider the use of automatic code formatting
 tools like `isort <https://github.com/pycqa/isort>`__,
 `flake8 <https://github.com/PyCQA/flake8>`__ and
-`black <https://black.readthedocs.io/en/stable/#>`__. We set `88 characters <https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html?highlight=88%20#line-length>`__ for the default line width. The recommended Python
+`black <https://black.readthedocs.io/en/stable/#>`__. We set `88 characters <https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html?highlight=88%20#line-length>`__ as the default line width. The recommended Python
 version to use is 3.9.x . For docstrings we use the
 `ņumpy <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html>`__ 
 format.
