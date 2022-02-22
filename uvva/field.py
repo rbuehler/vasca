@@ -373,7 +373,7 @@ class BaseField(object):
             warnings.simplefilter("ignore", UserWarning)
             self.tt_detections["src_id"] = ms.labels_
 
-        self.remove_double_visit_detections()
+        # self.remove_double_visit_detections()
         # Fill light curve data into tables
 
         return nr_srcs
