@@ -389,7 +389,7 @@ class BaseField(object):
             List of removed det_ids
 
         """
-
+        logger.debug("Scanning for doubled visit detections")
         self.tt_sources.add_index("src_id")
         self.tt_detections.add_index("det_id")
 
@@ -418,6 +418,10 @@ class BaseField(object):
                 rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1 :])
 
         if len(rm_det_ids) > 0:
+
+            logger.warning(
+                "Removed Nr. double visit detections:" + str(len(rm_det_ids))
+            )
 
             # remove the doubled detections from tt_detections
             rm_idx = self.tt_detections.loc_indices[rm_det_ids]
