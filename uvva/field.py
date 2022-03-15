@@ -373,7 +373,7 @@ class BaseField(object):
             warnings.simplefilter("ignore", UserWarning)
             self.tt_detections["src_id"] = ms.labels_
 
-        # self.remove_double_visit_detections()
+        self.remove_double_visit_detections()
         # Fill light curve data into tables
 
         return nr_srcs
@@ -402,31 +402,33 @@ class BaseField(object):
 
                 # Get source coordinate
                 src_idx = self.tt_detections.loc_indices[tt_det["src_id"].data[0]]
-                src_ra = self.tt_sources["ra"][src_idx]
-                src_dec = self.tt_sources["dec"][src_idx]
+                src_ra = self.tt_sources["ra"].quantity[src_idx]
+                src_dec = self.tt_sources["dec"].quantity[src_idx]
                 src_coord = SkyCoord(src_ra, src_dec, frame="icrs")
 
                 # Determine distance
-                det_coords = SkyCoord(tt_det["ra"], tt_det["dec"], frame="icrs")
+                det_coords = SkyCoord(
+                    tt_det["ra"].quantity, tt_det["dec"].quantity, frame="icrs"
+                )
                 sep = det_coords.separation(src_coord).to(uu.arcsec)
                 min_sep_idx = np.where(sep == np.amin(sep))[0][0]
-                # print(
-                #     "here:",
-                #     min_sep_idx,
-                #     "\n",
-                #     tt_det[min_sep_idx],
-                #     "\n",
-                #     sep[min_sep_idx],
-                # )
 
                 # Save all detection but the closest for deletion
                 rm_det_ids.extend(tt_det["det_id"].data[:min_sep_idx])
                 rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1 :])
 
-        # remove the doubled detections
-        rm_idx = self.tt_detections.loc_indices[rm_det_ids]
-        # print("Number of removed doubled detections:", len(rm_det_ids))
-        self.tt_detections.remove_rows(rm_idx)
+        if len(rm_det_ids) > 0:
+
+            # remove the doubled detections from tt_detections
+            rm_idx = self.tt_detections.loc_indices[rm_det_ids]
+            self.tt_detections.remove_rows(rm_idx)
+
+            # Update detection count in tt_sources
+            src_ids, det_cts = np.unique(
+                self.tt_detections["src_id"], return_counts=True
+            )
+            self.tt_sources["src_id"] = det_cts
+
         return rm_det_ids
 
     def set_field_attr(self, dd_names=None):
