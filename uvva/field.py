@@ -379,6 +379,25 @@ class BaseField(object):
 
         return nr_srcs
 
+    def get_visit_upper_limits(self):
+        """
+        Calculates upper limits on non detections to the tt_visits table
+        following Gezari et al. ApJ 766 (2013) p4
+
+        Returns
+        -------
+        upper_limits : float array
+            Array of upper limits for each visit
+
+        """
+
+        B_sky = 3e-3
+        N_pix = 16 * np.pi
+        C_app = -0.23
+        T_exp = self.tt_visits["t_exp"].data
+        upper_limit = -2.5 * np.log(5 * (B_sky * N_pix / T_exp)) + C_app
+        return upper_limit
+
     def add_light_curve_info(self):
         """
         Helper function of cluster_meanshift().
