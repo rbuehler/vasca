@@ -375,11 +375,52 @@ class BaseField(object):
 
         self.remove_double_visit_detections()
         # Fill light curve data into tables
+        self.add_light_curve_info()
 
         return nr_srcs
 
+    def add_light_curve_info(self):
+        """
+        Helper function of cluster_meanshift().
+        Adds detection information into tt_source_mag and tt_sources_magerr.
+
+        Returns
+        -------
+        None.
+
+        """
+        logger.info("Creating light curve tables")
+
+        # Create empty tables
+        nr_vis = len(self.tt_visits)
+
+        self.tt_visits.add_index("vis_id")
+
+        self.add_table([], "base_field:tt_sources_mag")
+        self.add_table([], "base_field:tt_sources_mag_err")
+
+        # Loop over sources and add them to tables
+        tt_det_grp = self.tt_detections.group_by(["src_id"])
+
+        for tt_det in tt_det_grp.groups:
+            print("Adding source:", tt_det["src_id"][0], ":\n", tt_det)
+            vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
+            np_mag = np.zeros(nr_vis)
+            np_mag[vis_idxs] = tt_det["mag"]
+            self.tt_sources_mag.add_column(
+                np_mag, name="src_" + str(tt_det["src_id"][0])
+            )
+            np_mag_err = np.zeros(nr_vis)
+            np_mag_err[vis_idxs] = tt_det["mag_err"]
+            self.tt_sources_mag_err.add_column(
+                np_mag_err, name="src_" + str(tt_det["src_id"][0])
+            )
+        # print("tt_sources_mag:\n", self.tt_sources_mag)
+        # print("tt_sources_mag_err:\n", self.tt_sources_mag_err)
+
     def remove_double_visit_detections(self):
         """
+        Helper function of cluster_meanshift().
         Remove multiple detections of one souce in one visit from tt_detections.
         Keep only the closest detection.
 
