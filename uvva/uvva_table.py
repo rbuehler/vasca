@@ -31,14 +31,15 @@ base_field = {
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
     },
     "tt_visits": {
-        "names": ["vis_id", "t_start", "t_stop", "t_exp"],
-        "dtype": ["uint64", "float64", "float64", "float64"],
-        "units": ["1", "1", "1", "s"],
+        "names": ["vis_id", "t_start", "t_stop", "t_exp", "UL_mag"],
+        "dtype": ["uint64", "float64", "float64", "float64", "float64"],
+        "units": ["1", "1", "1", "s", "1"],
         "descriptions": [
             "Visit ID nr.",
             "Visit exposure start date and time in MJD",
             "Visit exposure stop date and time in MJD",
             "Visit exposure time in s",
+            "Magnitude upper limit of an average non-detection ",
         ],
         "meta": {"INFO": "Visit information table"},
     },
