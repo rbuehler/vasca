@@ -375,10 +375,11 @@ class BaseField(object):
 
         self.remove_double_visit_detections()
         # Fill light curve data into tables
-        self.add_light_curve_info()
+        self.add_light_curve()
 
         return nr_srcs
 
+    # TODO: Move to GALEXField
     def get_visit_upper_limits(self):
         """
         Calculates upper limits on non detections to the tt_visits table
@@ -398,7 +399,7 @@ class BaseField(object):
         upper_limit = -2.5 * np.log(5 * (B_sky * N_pix / T_exp)) + C_app
         return upper_limit
 
-    def add_light_curve_info(self):
+    def add_light_curve(self):
         """
         Helper function of cluster_meanshift().
         Adds detection information into tt_source_mag and tt_sources_magerr.
@@ -424,12 +425,12 @@ class BaseField(object):
         for tt_det in tt_det_grp.groups:
             print("Adding source:", tt_det["src_id"][0], ":\n", tt_det)
             vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
-            np_mag = np.zeros(nr_vis)
+            np_mag = np.zeros(nr_vis) - 1
             np_mag[vis_idxs] = tt_det["mag"]
             self.tt_sources_mag.add_column(
                 np_mag, name="src_" + str(tt_det["src_id"][0])
             )
-            np_mag_err = np.zeros(nr_vis)
+            np_mag_err = np.zeros(nr_vis) - 1.0
             np_mag_err[vis_idxs] = tt_det["mag_err"]
             self.tt_sources_mag_err.add_column(
                 np_mag_err, name="src_" + str(tt_det["src_id"][0])
