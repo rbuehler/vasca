@@ -409,22 +409,17 @@ class BaseField(object):
         None.
 
         """
-        logger.info("Creating light curve tables")
+        logger.info("Creating light curve table")
 
-        # Create empty tables
+        # Create table
         nr_vis = len(self.tt_visits)
-
         self.tt_visits.add_index("vis_id")
-
-        # self.add_table([], "base_field:tt_sources_mag")
         self.add_table(
             self.tt_visits["time_start", "time_delta"], "base_field:tt_sources_lc"
         )
-        # self.tt_sources_lc.add_column(self.tt_visits[""]        )
 
         # Loop over sources and add them to tables
         tt_det_grp = self.tt_detections.group_by(["src_id"])
-
         for tt_det in tt_det_grp.groups:
             print("Adding source:", tt_det["src_id"][0], ":\n", tt_det)
             vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
@@ -438,8 +433,6 @@ class BaseField(object):
             self.tt_sources_lc.add_column(
                 np_mag_err, name="src_" + str(tt_det["src_id"][0]) + "_mag_err"
             )
-        # print("tt_sources_mag:\n", self.tt_sources_mag)
-        # print("tt_sources_mag_err:\n", self.tt_sources_mag_err)
 
     def remove_double_visit_detections(self):
         """
