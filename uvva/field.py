@@ -95,7 +95,7 @@ class BaseField(object):
             ],
             "tt_visits": [
                 "n_visits",
-                "t_exp_sum",
+                "time_delta_sum",
                 "t_start",
                 "t_stop",
             ],
@@ -395,7 +395,7 @@ class BaseField(object):
         B_sky = 3e-3
         N_pix = 16 * np.pi
         C_app = -0.23
-        T_exp = self.tt_visits["t_exp"].data
+        T_exp = self.tt_visits["time_delta"].data
         upper_limit = -2.5 * np.log(5 * (B_sky * N_pix / T_exp)) + C_app
         return upper_limit
 
@@ -416,8 +416,11 @@ class BaseField(object):
 
         self.tt_visits.add_index("vis_id")
 
-        self.add_table([], "base_field:tt_sources_mag")
-        self.add_table([], "base_field:tt_sources_mag_err")
+        # self.add_table([], "base_field:tt_sources_mag")
+        self.add_table(
+            self.tt_visits["time_start", "time_delta"], "base_field:tt_sources_lc"
+        )
+        # self.tt_sources_lc.add_column(self.tt_visits[""]        )
 
         # Loop over sources and add them to tables
         tt_det_grp = self.tt_detections.group_by(["src_id"])
@@ -427,13 +430,13 @@ class BaseField(object):
             vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
             np_mag = np.zeros(nr_vis) - 1
             np_mag[vis_idxs] = tt_det["mag"]
-            self.tt_sources_mag.add_column(
-                np_mag, name="src_" + str(tt_det["src_id"][0])
+            self.tt_sources_lc.add_column(
+                np_mag, name="src_" + str(tt_det["src_id"][0]) + "_mag"
             )
             np_mag_err = np.zeros(nr_vis) - 1.0
             np_mag_err[vis_idxs] = tt_det["mag_err"]
-            self.tt_sources_mag_err.add_column(
-                np_mag_err, name="src_" + str(tt_det["src_id"][0])
+            self.tt_sources_lc.add_column(
+                np_mag_err, name="src_" + str(tt_det["src_id"][0]) + "_mag_err"
             )
         # print("tt_sources_mag:\n", self.tt_sources_mag)
         # print("tt_sources_mag_err:\n", self.tt_sources_mag_err)
@@ -566,8 +569,8 @@ class BaseField(object):
             )
         elif par_name == "n_visits":
             par = len(self.tt_visits)
-        elif par_name == "t_exp_sum":
-            par = self.tt_visits["t_exp"].sum() * uu.s
+        elif par_name == "time_delta_sum":
+            par = self.tt_visits["time_delta"].sum() * uu.s
         elif par_name == "t_start":
             par = Time(self.tt_visits["t_start"][0], format="mjd")
         elif par_name == "t_stop":
