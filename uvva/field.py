@@ -269,7 +269,12 @@ class BaseField(object):
         return fig
 
     def plot_light_curve(
-        self, src_id_list, ax=None, legend_loc="upper right", **errorbar_kwargs
+        self,
+        src_id_list,
+        ax=None,
+        ylim=[25, 15],
+        legend_loc="upper right",
+        **errorbar_kwargs,
     ):
         """
         Plot the magnitude light curves of the passed sources.
@@ -292,15 +297,19 @@ class BaseField(object):
 
         """
 
+        logger.debug("Plotting light curves'")
+
         # Setup plotting parameters
         if ax is None:
             ax = plt.gca()
         ax.invert_yaxis()
+        ax.set_ylim(ylim)
 
         plt_errorbar_kwargs = {
             "markersize": 6,
             "capsize": 2,
-            "lw": 0.1,
+            "lw": 0.2,
+            "linestyle": "dotted",
             "elinewidth": 1,
         }
         if errorbar_kwargs is not None:
@@ -311,10 +320,17 @@ class BaseField(object):
         markers = cycle("osDd.<>^vpP*")
         for src_id, col, mar in zip(src_id_list, colors, markers):
             src_lab = "src_" + str(src_id)
+            uplims = self.tt_sources_lc[src_lab + "_mag"] < 0
+            mags = self.tt_sources_lc[src_lab + "_mag"]
+            mags_err = self.tt_sources_lc[src_lab + "_mag_err"]
+            if uplims.sum() > 0:
+                mags = mags * ~uplims + mags_err * uplims
+                mags_err = mags_err * ~uplims + 1 * uplims
             plt.errorbar(
                 self.tt_sources_lc["time_start"],
-                self.tt_sources_lc[src_lab + "_mag"],
-                yerr=self.tt_sources_lc[src_lab + "_mag_err"],
+                mags,
+                yerr=mags_err,
+                lolims=uplims,
                 color=col,
                 marker=mar,
                 label=src_lab,
@@ -457,10 +473,17 @@ class BaseField(object):
         upper_limit = -2.5 * np.log(5 * (B_sky * N_pix / T_exp)) + C_app
         return upper_limit
 
-    def add_light_curve(self):
+    def add_light_curve(self, add_upper_limits=True):
         """
         Helper function of cluster_meanshift().
         Adds detections information into tt_source_lc.
+
+        Parameters
+        ----------
+        add_upper_limits : bool
+            Add upper limits to the lightcurve, for visits with no detection.
+            Upper limits are stored in the mag_err columns for none detections.
+            The default is True.
 
         Returns
         -------
@@ -486,7 +509,11 @@ class BaseField(object):
             self.tt_sources_lc.add_column(
                 np_mag, name="src_" + str(tt_det["src_id"][0]) + "_mag"
             )
-            np_mag_err = np.zeros(nr_vis) - 1.0
+            # Store upper limits if no detection in a visit
+            # TODO: make this more general and not GALEX specific
+            np_mag_err = np.zeros(nr_vis) - 1
+            if add_upper_limits:
+                np_mag_err = self.get_visit_upper_limits()
             np_mag_err[vis_idxs] = tt_det["mag_err"]
             self.tt_sources_lc.add_column(
                 np_mag_err, name="src_" + str(tt_det["src_id"][0]) + "_mag_err"
