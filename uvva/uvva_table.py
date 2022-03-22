@@ -31,13 +31,12 @@ base_field = {
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
     },
     "tt_visits": {
-        "names": ["vis_id", "t_start", "t_stop", "t_exp"],
-        "dtype": ["uint64", "float64", "float64", "float64"],
-        "units": ["1", "1", "1", "s"],
+        "names": ["vis_id", "time_start", "time_delta"],
+        "dtype": ["uint64", "float64", "float64"],
+        "units": ["1", "d", "s"],
         "descriptions": [
             "Visit ID nr.",
             "Visit exposure start date and time in MJD",
-            "Visit exposure stop date and time in MJD",
             "Visit exposure time in s",
         ],
         "meta": {"INFO": "Visit information table"},
@@ -85,7 +84,6 @@ base_field = {
         ],
         "meta": {
             "INFO": "Visit detections table",
-            "Name": "visit_sources",
         },
     },
     "tt_ref_sources": {
@@ -123,7 +121,6 @@ base_field = {
         ],
         "meta": {
             "INFO": "Reference detections table",
-            "Name": "ref_sources",
         },
     },
     "tt_sources": {
@@ -139,14 +136,15 @@ base_field = {
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
-    "tt_sources_mag": {
-        "meta": {"INFO": "AB Magnitude flux table"},
-    },
-    "tt_sources_mag_err": {
-        "meta": {"INFO": "Signal to noise of the detection table"},
-    },
-    "tt_sources_ulmag": {
-        "meta": {"INFO": "AB Magnitude upper limit table", "CONFLEVE": "0.95"}
+    "tt_sources_lc": {
+        "names": ["time_start", "time_delta"],
+        "dtype": ["float64", "float64"],
+        "units": ["d", "s"],
+        "descriptions": [
+            "Visit exposure start date and time in MJD",
+            "Visit exposure stop date and time in MJD",
+        ],
+        "meta": {"INFO": "Magnitude flux and error table"},
     },
 }
 galex_field = {
