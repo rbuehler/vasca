@@ -402,7 +402,7 @@ class BaseField(object):
     def add_light_curve(self):
         """
         Helper function of cluster_meanshift().
-        Adds detection information into tt_source_mag and tt_sources_magerr.
+        Adds detections information into tt_source_lc.
 
         Returns
         -------

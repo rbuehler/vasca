@@ -144,7 +144,7 @@ base_field = {
             "Visit exposure start date and time in MJD",
             "Visit exposure stop date and time in MJD",
         ],
-        "meta": {"INFO": "Magnitude flux and error table"},
+        "meta": {"INFO": "Light curve magnitude flux and error table"},
     },
 }
 galex_field = {
