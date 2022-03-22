@@ -127,7 +127,7 @@ class BaseField(object):
         Returns
         -------
         ax : axes
-            DESCRIPTION.
+            Used Matplotlib axes.
 
         """
         logger.debug("Plotting sky sources'")
@@ -267,6 +267,64 @@ class BaseField(object):
                 self.plot_sky_sources(plot_detections=plot_detections)
 
         return fig
+
+    def plot_light_curve(
+        self, src_id_list, ax=None, legend_loc="upper right", **errorbar_kwargs
+    ):
+        """
+        Plot the magnitude light curves of the passed sources.
+
+        Parameters
+        ----------
+        src_id_list : list
+            List of source IDs to plot.
+        ax : axes, optional
+                Matplotlib axes to plot on. The default is None.
+        legend_loc : string, optional
+            Position of the legend in the figure. The default is "upper right".
+        **errorbar_kwargs : TYPE
+            Key word arguments for pyplot.errorbars plotting.
+
+        Returns
+        -------
+        ax : axes
+            Used Matplotlib axes.
+
+        """
+
+        # Setup plotting parameters
+        if ax is None:
+            ax = plt.gca()
+        ax.invert_yaxis()
+
+        plt_errorbar_kwargs = {
+            "markersize": 6,
+            "capsize": 2,
+            "lw": 0.1,
+            "elinewidth": 1,
+        }
+        if errorbar_kwargs is not None:
+            plt_errorbar_kwargs.update(errorbar_kwargs)
+
+        # Loop over selected sources and plot
+        colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
+        markers = cycle("osDd.<>^vpP*")
+        for src_id, col, mar in zip(src_id_list, colors, markers):
+            src_lab = "src_" + str(src_id)
+            plt.errorbar(
+                self.tt_sources_lc["time_start"],
+                self.tt_sources_lc[src_lab + "_mag"],
+                yerr=self.tt_sources_lc[src_lab + "_mag_err"],
+                color=col,
+                marker=mar,
+                label=src_lab,
+                **plt_errorbar_kwargs,
+            )
+        ax.legend(loc=legend_loc)
+        ax.set_xlabel("MJD")
+        ax.set_ylabel("Magnitude")
+
+        return ax
 
     def load_sky_map(self, file_name):
         """
