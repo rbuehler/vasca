@@ -13,6 +13,7 @@ uvva/test/default_field.fits
 uvva/test/field_default.fits
 uvva/myscripts/
 development/*
+build/*
 *.fits
 !uvva/test/resources/**/*.fits
 .coverage
