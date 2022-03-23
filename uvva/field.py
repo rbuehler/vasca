@@ -272,8 +272,9 @@ class BaseField(object):
         self,
         src_id_list,
         ax=None,
-        ylim=[25, 15],
+        ylim=[23.5, 16.5],
         legend_loc="upper right",
+        plot_upper_limits=True,
         **errorbar_kwargs,
     ):
         """
@@ -287,6 +288,8 @@ class BaseField(object):
                 Matplotlib axes to plot on. The default is None.
         legend_loc : string, optional
             Position of the legend in the figure. The default is "upper right".
+        plot_upper_limits : bool
+            Plot upper limits to the lightcurve. The default is True.
         **errorbar_kwargs : TYPE
             Key word arguments for pyplot.errorbars plotting.
 
@@ -319,18 +322,27 @@ class BaseField(object):
         colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
         markers = cycle("osDd.<>^vpP*")
         for src_id, col, mar in zip(src_id_list, colors, markers):
+
+            # Get arrays
             src_lab = "src_" + str(src_id)
-            uplims = self.tt_sources_lc[src_lab + "_mag"] < 0
+            uplims = np.zeros(len(self.tt_sources_lc))
+            sel = self.tt_sources_lc[src_lab + "_mag"] > 0
             mags = self.tt_sources_lc[src_lab + "_mag"]
             mags_err = self.tt_sources_lc[src_lab + "_mag_err"]
-            if uplims.sum() > 0:
+
+            # Modify arrays if upper limits are plotted
+            if plot_upper_limits:
+                uplims = self.tt_sources_lc[src_lab + "_mag"] < 0
+                sel = np.ones(len(self.tt_sources_lc), dtype=bool)
                 mags = mags * ~uplims + mags_err * uplims
                 mags_err = mags_err * ~uplims + 1 * uplims
+
+            # Plot
             plt.errorbar(
-                self.tt_sources_lc["time_start"],
-                mags,
-                yerr=mags_err,
-                lolims=uplims,
+                self.tt_sources_lc["time_start"][sel],
+                mags[sel],
+                yerr=mags_err[sel],
+                lolims=uplims[sel],
                 color=col,
                 marker=mar,
                 label=src_lab,
@@ -387,7 +399,9 @@ class BaseField(object):
 
         setattr(self, table_key, UVVATable.from_template(data, template_name))
 
-    def cluster_meanshift(self, bandwidth=None, cluster_all=True):
+    def cluster_meanshift(
+        self, bandwidth=None, cluster_all=True, add_upper_limits=True
+    ):
         """
         Apply _MeanShift clustering algorithm using to derive sources.
 
@@ -401,6 +415,11 @@ class BaseField(object):
             If true, then all points are clustered, even those orphans that are not
             within any kernel. Orphans are assigned to the nearest kernel.
             The default is True.
+        add_upper_limits : bool
+            Add upper limits to the tt_sources_lc, for visits with no detection.
+            Upper limits are stored in the mag_err columns for none detections.
+            The default is True.
+
 
         Returns
         -------
@@ -423,12 +442,6 @@ class BaseField(object):
         # Fill in data into field tables
         src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
 
-        # src_ids, det_idx, det_cts = np.unique(
-        #     ms.labels_, return_index=True, return_counts=True
-        # )
-
-        # print(det_idx, det_idx.shape)
-
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
         srcs_data = {
@@ -439,17 +452,16 @@ class BaseField(object):
             "flag": np.zeros(nr_srcs),
         }
 
-        # Full information into tables.
+        # Fill information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
-
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             self.tt_detections["src_id"] = ms.labels_
 
-        self.remove_double_visit_detections()
         # Fill light curve data into tables
-        self.add_light_curve()
+        self.remove_double_visit_detections()
+        self.add_light_curve(add_upper_limits=add_upper_limits)
 
         return nr_srcs
 
@@ -481,7 +493,7 @@ class BaseField(object):
         Parameters
         ----------
         add_upper_limits : bool
-            Add upper limits to the lightcurve, for visits with no detection.
+            Add upper limits to the tt_sources_lc, for visits with no detection.
             Upper limits are stored in the mag_err columns for none detections.
             The default is True.
 
