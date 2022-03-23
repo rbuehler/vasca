@@ -95,9 +95,9 @@ class BaseField(object):
             ],
             "tt_visits": [
                 "n_visits",
-                "time_delta_sum",
-                "t_start",
-                "t_stop",
+                "time_bin_size_sum",
+                "time_start",
+                "time_stop",
             ],
         }
 
@@ -492,7 +492,7 @@ class BaseField(object):
 
         Parameters
         ----------
-        add_upper_limits : bool
+        add_upper_limits : bool, optional
             Add upper limits to the tt_sources_lc, for visits with no detection.
             Upper limits are stored in the mag_err columns for none detections.
             The default is True.
@@ -513,23 +513,19 @@ class BaseField(object):
 
         # Loop over sources and add them to tables
         tt_det_grp = self.tt_detections.group_by(["src_id"])
-        for tt_det in tt_det_grp.groups:
-            print("Adding source:", tt_det["src_id"][0], ":\n", tt_det)
+        for tt_det, src_id in zip(tt_det_grp.groups, tt_det_grp.groups.keys):
+            print(f"Adding source: {src_id}:\n{tt_det}")
             vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
             np_mag = np.zeros(nr_vis) - 1
             np_mag[vis_idxs] = tt_det["mag"]
-            self.tt_sources_lc.add_column(
-                np_mag, name="src_" + str(tt_det["src_id"][0]) + "_mag"
-            )
+            self.tt_sources_lc.add_column(np_mag, name=f"src_{src_id}_mag")
             # Store upper limits if no detection in a visit
             # TODO: make this more general and not GALEX specific
             np_mag_err = np.zeros(nr_vis) - 1
             if add_upper_limits:
                 np_mag_err = self.get_visit_upper_limits()
             np_mag_err[vis_idxs] = tt_det["mag_err"]
-            self.tt_sources_lc.add_column(
-                np_mag_err, name="src_" + str(tt_det["src_id"][0]) + "_mag_err"
-            )
+            self.tt_sources_lc.add_column(np_mag_err, name=f"src_{src_id}_mag_err")
 
     def remove_double_visit_detections(self):
         """
@@ -659,12 +655,16 @@ class BaseField(object):
             )
         elif par_name == "n_visits":
             par = len(self.tt_visits)
-        elif par_name == "time_delta_sum":
-            par = self.tt_visits["time_delta"].sum() * uu.s
-        elif par_name == "t_start":
-            par = Time(self.tt_visits["t_start"][0], format="mjd")
-        elif par_name == "t_stop":
-            par = Time(self.tt_visits["t_stop"][-1], format="mjd")
+        elif par_name == "time_bin_size_sum":
+            par = self.tt_visits["time_bin_size"].sum() * uu.s
+        elif par_name == "time_start":
+            par = Time(self.tt_visits["time_bin_start"][0], format="mjd")
+        elif par_name == "time_stop":
+            par = Time(
+                self.tt_visits["time_bin_start"][-1]
+                + self.tt_visits["time_bin_size"][-1],
+                format="mjd",
+            )
         # Directly derived parameters
         # Return None if parameter is not in table
         elif par_name not in getattr(self, table_name).colnames:
@@ -1052,7 +1052,6 @@ class GALEXField(BaseField):
             col_names = [
                 "imgRunID",
                 "minPhotoObsDate",
-                "maxPhotoObsDate",
                 "nexptime" if filter == "NUV" else "fexptime",
                 "fexptime" if filter == "NUV" else "nexptime",
                 "RATileCenter",
@@ -1074,7 +1073,7 @@ class GALEXField(BaseField):
             col_names
         ]
         # Convert string time format to mjd
-        for key in ["minPhotoObsDate", "maxPhotoObsDate"]:
+        for key in ["minPhotoObsDate"]:
             tt_visits_raw_select.update(
                 {
                     key: Time(
@@ -1430,7 +1429,7 @@ class Field:
         else:
             return dd_cuts_default
 
-    def _load_visits(self, parobs_id, hpy_nside=2 ** 10, cframe="galactic", raw=False):
+    def _load_visits(self, parobs_id, hpy_nside=2**10, cframe="galactic", raw=False):
         """
         Loads the table containing a list of GALEX visits.
         Reduces the list contents to all visits corresponding the the field ID
@@ -2633,7 +2632,7 @@ class Field:
                             tt_source["nuv_mag"],
                             color="k",
                             marker=marker,
-                            s=marker_size ** 2,
+                            s=marker_size**2,
                         )
                         ax.set_xticks(np.arange(selection.shape[1]))
 

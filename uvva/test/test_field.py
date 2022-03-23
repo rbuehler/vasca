@@ -47,8 +47,8 @@ def new_field():
         "NUV",
     ]
     visits_data = [
-        [2605053108543291392, 54510.66210648148, 54510.68184027778, 1705.0],
-        [2605053108576845824, 54520.248125, 54520.2578125, 837.05],
+        [2605053108543291392, 54510.66210648148, 1705.0],
+        [2605053108576845824, 54520.248125, 837.05],
     ]
     bf = BaseField()
     bf.add_table(np.asarray(field_data), "base_field:tt_field")
@@ -67,9 +67,9 @@ def test_set_field_attr_type(new_field):
         "obsfilter": "filter",
         "center": SkyCoord(1, 1, unit="deg"),
         "n_visits": 1,
-        "t_exp_sum": 42.0 * uu.s,
-        "t_start": Time(54520.248125, format="mjd"),
-        "t_stop": Time(54520.248125, format="mjd"),
+        "time_bin_size_sum": 42.0 * uu.s,
+        "time_start": Time(54520.248125, format="mjd"),
+        "time_stop": Time(54520.248125, format="mjd"),
     }
     assert all(
         [isinstance(new_field.__dict__[key], type(expected[key])) for key in expected]

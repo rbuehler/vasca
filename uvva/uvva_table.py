@@ -31,7 +31,7 @@ base_field = {
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
     },
     "tt_visits": {
-        "names": ["vis_id", "time_start", "time_delta"],
+        "names": ["vis_id", "time_bin_start", "time_bin_size"],
         "dtype": ["uint64", "float64", "float64"],
         "units": ["1", "d", "s"],
         "descriptions": [
@@ -151,7 +151,7 @@ galex_field = {
     "tt_visits": {
         "names": [
             *base_field["tt_visits"]["names"],
-            "t_exp_alt_filt",
+            "time_bin_size_alt_filt",
             "ra",
             "dec",
         ],
