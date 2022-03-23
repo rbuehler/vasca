@@ -410,12 +410,13 @@ class BaseField(object):
         Parameters
         ----------
         bandwidth : float, optional
-            Bandwidth used in the RBF kernel, if set to None is is estimated automatically. The default is None.
+            Bandwidth used in the RBF kernel, if set to None is is estimated
+            automatically. The default is None.
         cluster_all : bool, optional
             If true, then all points are clustered, even those orphans that are not
             within any kernel. Orphans are assigned to the nearest kernel.
             The default is True.
-        add_upper_limits : bool
+        add_upper_limits : bool, optional
             Add upper limits to the tt_sources_lc, for visits with no detection.
             Upper limits are stored in the mag_err columns for none detections.
             The default is True.
@@ -460,16 +461,14 @@ class BaseField(object):
             self.tt_detections["src_id"] = ms.labels_
 
         # Fill light curve data into tables
-        self.remove_double_visit_detections()
+        # self.remove_double_visit_detections()
         self.add_light_curve(add_upper_limits=add_upper_limits)
 
         return nr_srcs
 
-    # TODO: Move to GALEXField
-    def get_visit_upper_limits(self):
+    def get_upper_limits(self):
         """
-        Calculates upper limits on non detections to the tt_visits table
-        following Gezari et al. ApJ 766 (2013) p4
+        Calculates magnitude upper limits on non-detections to the tt_visits table.
 
         Returns
         -------
@@ -477,12 +476,14 @@ class BaseField(object):
             Array of upper limits for each visit
 
         """
+        observatory = self.get_field_par("observatory", "tt_field")
+        upper_limit = None
 
-        B_sky = 3e-3
-        N_pix = 16 * np.pi
-        C_app = -0.23
-        T_exp = self.tt_visits["time_delta"].data
-        upper_limit = -2.5 * np.log(5 * (B_sky * N_pix / T_exp)) + C_app
+        # Call upper limit function according to observatory.
+        # String matching is case insensitive
+        if observatory.casefold() == "GALEX".casefold():
+            upper_limit = GALEXField.get_visit_upper_limits(self.tt_visits)
+
         return upper_limit
 
     def add_light_curve(self, add_upper_limits=True):
@@ -508,13 +509,14 @@ class BaseField(object):
         nr_vis = len(self.tt_visits)
         self.tt_visits.add_index("vis_id")
         self.add_table(
-            self.tt_visits["time_start", "time_delta"], "base_field:tt_sources_lc"
+            self.tt_visits["time_bin_start", "time_bin_size"],
+            "base_field:tt_sources_lc",
         )
 
         # Loop over sources and add them to tables
         tt_det_grp = self.tt_detections.group_by(["src_id"])
-        for tt_det, src_id in zip(tt_det_grp.groups, tt_det_grp.groups.keys):
-            print(f"Adding source: {src_id}:\n{tt_det}")
+        for tt_det in tt_det_grp.groups:
+            src_id = tt_det["src_id"][0]
             vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
             np_mag = np.zeros(nr_vis) - 1
             np_mag[vis_idxs] = tt_det["mag"]
@@ -523,14 +525,14 @@ class BaseField(object):
             # TODO: make this more general and not GALEX specific
             np_mag_err = np.zeros(nr_vis) - 1
             if add_upper_limits:
-                np_mag_err = self.get_visit_upper_limits()
+                np_mag_err = self.get_upper_limits()
             np_mag_err[vis_idxs] = tt_det["mag_err"]
             self.tt_sources_lc.add_column(np_mag_err, name=f"src_{src_id}_mag_err")
 
     def remove_double_visit_detections(self):
         """
         Helper function of cluster_meanshift().
-        Remove multiple detections of one souce in one visit from tt_detections.
+        Remove multiple detections of one source in one visit from tt_detections.
         Keep only the closest detection.
 
         Returns
@@ -991,6 +993,30 @@ class GALEXField(BaseField):
         )
 
         return gf
+
+    @staticmethod
+    def get_visit_upper_limits(tt_visits):
+        """
+        Calculates upper limits on non-detections to the tt_visits table
+        following the article_ of Gezari et al. ApJ 766 (2013) p4
+
+        .. _article: https://iopscience.iop.org/article/10.1088/0004-637X/766/1/60
+
+        Returns
+        -------
+        upper_limits : float array
+            Array of upper limits for each visit
+
+        """
+
+        logger.debug("Computing GALEX magnitude upper limit.")
+
+        B_sky = 3e-3
+        N_pix = 16 * np.pi
+        C_app = -0.23
+        T_exp = tt_visits["time_bin_size"].data
+        upper_limit = -2.5 * np.log(5 * (B_sky * N_pix / T_exp)) + C_app
+        return upper_limit
 
     def _load_galex_field_info(self, obs_id, filter, col_names=None, refresh=False):
         """
