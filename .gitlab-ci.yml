@@ -1,7 +1,6 @@
 standalone-install-test:
   image: python:3.9-bullseye
   script:
-    - pip install -r requirements.txt
     - pip install .
     - echo -e "UC_SAS_UVVARCAT='/dev/null'\nUC_LUSTRE_UVVARCAT='/dev/null'\nUC_UVVA_TEST_RESOURCES='.'"  > .env
     - coverage run -m pytest -v
