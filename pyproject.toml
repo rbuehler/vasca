@@ -35,7 +35,7 @@ dependencies = [
 [project.optional-dependencies]
 jupyter = [
     "jupyter-client < 7, >= 5.3.4",
-    "ipympl >= 0.8.0, < 0.8.8,",
+    "ipympl <= 0.8.8,",
 ]
 docs = [
     "spinx",
