@@ -7,8 +7,8 @@ requires = ["setuptools", "wheel"]  # PEP 508 specifications.
 name = "uvva"
 version = "0.0.1"
 description = "Ultraviolet Variability Analysis is an astronomy pipeline for time-variable sources."
-long_description = "README.rst"
-requires_python = ">=3.9"
+readme = "README.rst"
+requires-python = ">=3.9"
 # license = {file = "LICENSE.txt"}
 keywords = ["astronomy", "ultraviolet", "pipeline"]
 authors = [
