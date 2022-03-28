@@ -26,11 +26,17 @@ Installation
    
 2. Setup your environment, either using ``pyenv`` or ``Anaconda`` (see below).
 
-3. Install the ``UVVA`` package:
+3. Install the required python modules
 
 .. code:: bash
 
   cd ./uc_uvva
+  pip install -r requirements.txt  
+
+3. Install the ``UVVA`` package:
+
+.. code:: bash
+
   pip install -e .
 
 4. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
@@ -60,24 +66,16 @@ for commands executed from the repository root directory:
    cd <your_install_folder>/uv_uvva   
    pyenv local uc_uvva_venv39 
 
-Install the necessary Python modules:
-
-.. code:: bash
-
-   pip install -r requirements.txt   
-   pip install -e .
-
 **Environment setup with Anaconda**
 
 You can setup the environment with
-`Anaconda <https://www.anaconda.com/products/individual>`__ with the
-``conda_env.yml`` file (see
-`here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#create-env-from-file>`__):
+`Anaconda <https://www.anaconda.com/products/individual>`__ :
 
 .. code:: bash
 
-   conda env create -f conda_env.yml
-   conda activate uc_uvva
+   conda create -n uvva python=3.9.9 spyder jupyterlab ipympl pipreqs
+   conda activate uvva
+
 
 **Prototyping and functional examples**
 
