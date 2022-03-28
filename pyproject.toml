@@ -33,11 +33,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-jupyter = [
+test = [
     "jupyter-client < 7, >= 5.3.4",
     "ipympl <= 0.8.8,",
 ]
-docs = [
+doc = [
     "spinx",
     "sphinx-rtd-theme~=1.0.0",
 ]
