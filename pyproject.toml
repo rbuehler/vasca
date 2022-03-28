@@ -35,7 +35,7 @@ dependencies = [
 [project.optional-dependencies]
 jupyter = [
     "jupyter-client<7, >=5.3.4",
-    "ipympl~=0.8.7, >=0.8.0,",
+    "ipympl~=0.8.0, <0.8.8,",
 ]
 docs = [
     "spinx",
@@ -43,10 +43,10 @@ docs = [
 ]
 
 [project.urls]
-homepage = "tbd.desy.de"
-documentation = "tbd.desy.de"
+homepage = "https://tbd.desy.de"
+documentation = "https://tbd.desy.de"
 repository = "https://gitlab.desy.de/ultrasat-camera/uc_uvva"
-changelog = "tbd.desy.de"
+changelog = "https://tbd.desy.de"
 
 [tool.setuptools]
 packages = ["uvva"]
