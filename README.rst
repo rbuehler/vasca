@@ -25,18 +25,12 @@ Installation
    git clone https://gitlab.desy.de/ultrasat-camera/uc_uvva.git
    
 2. Setup your environment, either using ``pyenv`` or ``Anaconda`` (see below).
-
-3. Install the required python modules
-
-.. code:: bash
-
-  cd ./uc_uvva
-  pip install -r requirements.txt  
-
+ 
 3. Install the ``UVVA`` package:
 
 .. code:: bash
 
+  cd ./uc_uvva
   pip install -e .
 
 4. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
