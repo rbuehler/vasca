@@ -1,5 +1,6 @@
 astropy==5.0.2
 astroquery==0.4.6
+coverage==6.3.2
 healpy==1.15.2
 loguru==0.6.0
 matplotlib==3.5.1
