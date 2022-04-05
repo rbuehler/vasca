@@ -16,5 +16,7 @@ development/*
 build/*
 *.fits
 !uvva/test/resources/**/*.fits
+*.hdf5
+!uvva/test/resources/**/*.hdf5
 .coverage
 coverage.xml
