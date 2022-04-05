@@ -13,8 +13,8 @@ requires-python = ">=3.9"
 keywords = ["astronomy", "ultraviolet", "pipeline"]
 authors = [
     {name =  "Julian Schliwinski", email = "julian.schliwinski@desy.de"},
-    {name = "Rolf Bühler"},
-    {name = "Andrea Porelli"},
+    {name = "Rolf Bühler", email "rolf.buehler@desy.de"},
+    {name = "Andrea Porelli", email = "andrea.porelli@desy.de"},
 ]
 dependencies = [
   "astropy ~= 5.0.2",
@@ -30,6 +30,7 @@ dependencies = [
   "PyYAML ~= 6.0",
   "scikit_learn ~= 1.0.2",
   "setuptools ~= 58.0.4",
+  "h5py ~= 3.6.0",
 ]
 
 [project.urls]
