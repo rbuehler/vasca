@@ -90,7 +90,7 @@ def test_base_field_io(new_field):
     load_str_fits = new_field.__str__
     new_field.load_from_hdf5()
     load_str_hdf5 = new_field.__str__
-    assert save_str == load_str_fits
+    assert save_str == load_str_fits == load_str_hdf5
 
 
 def test_base_field_io_alt(tmp_path, new_field):
