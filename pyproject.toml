@@ -13,7 +13,7 @@ requires-python = ">=3.9"
 keywords = ["astronomy", "ultraviolet", "pipeline"]
 authors = [
     {name =  "Julian Schliwinski", email = "julian.schliwinski@desy.de"},
-    {name = "Rolf Bühler", email "rolf.buehler@desy.de"},
+    {name = "Rolf Bühler", email = "rolf.buehler@desy.de"},
     {name = "Andrea Porelli", email = "andrea.porelli@desy.de"},
 ]
 dependencies = [
