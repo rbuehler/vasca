@@ -13,8 +13,6 @@ based on GALEX data.
     :target: https://gitlab.desy.de/ultrasat-camera/uc_uvva/-/commits/main
     :alt: coverage report
 
-
-
 Installation
 ------------
 
@@ -23,53 +21,15 @@ Installation
 .. code:: bash
 
    git clone https://gitlab.desy.de/ultrasat-camera/uc_uvva.git
-   
-2. Setup your environment, either using ``pyenv`` or ``Anaconda`` (see below).
  
-3. Install the ``UVVA`` package:
+2. Install the ``UVVA`` package:
 
 .. code:: bash
 
   cd ./uc_uvva
   pip install -e .
 
-4. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
-
-**Environment setup with pyenv**
-
-Setup a virtual environment
-(`pyenv <https://github.com/pyenv/pyenv>`__ and
-`pyenv-virtualenv <https://github.com/pyenv/pyenv-virtualenv>`__, install
-the requirements and general purpose modules using ``pip``.
-
-Install Python version 3.9.9 and setup a virtual environment (e.g. named
-``uc_uvva_venv39``) after following the pyenv  installation described
-`here <https://github.com/pyenv/pyenv#installation>`__ and
-`here <https://github.com/pyenv/pyenv-virtualenv#installation>`__:
-
-.. code:: bash
-
-   pyenv virtualenv 3.9.9 uc_uvva_venv39 
-
-Make sure that the virtual environment is automatically
-`enabled <https://github.com/pyenv/pyenv/blob/master/COMMANDS.md#pyenv-local>`__ 
-for commands executed from the repository root directory:
-
-.. code:: bash
-
-   cd <your_install_folder>/uv_uvva   
-   pyenv local uc_uvva_venv39 
-
-**Environment setup with Anaconda**
-
-You can setup the environment with
-`Anaconda <https://www.anaconda.com/products/individual>`__ :
-
-.. code:: bash
-
-   conda create -n uvva python=3.9.9 spyder jupyterlab ipympl pipreqs
-   conda activate uvva
-
+3. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
 
 **Prototyping and functional examples**
 
