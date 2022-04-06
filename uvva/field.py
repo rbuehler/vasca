@@ -1,25 +1,18 @@
-import collections
 import inspect
 import itertools
 import os
-import sys
 import warnings
 from collections import OrderedDict
-from copy import copy, deepcopy
 from datetime import datetime
 from itertools import cycle
-from pprint import pprint
 
 import healpy as hpy
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
-import yaml
 from astropy import units as uu
-from astropy.convolution import Gaussian2DKernel, convolve
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.io.fits.hdu.base import _BaseHDU
 from astropy.table import Column, Table, conf, hstack, unique, vstack
 from astropy.time import Time
 from astropy.wcs import wcs
@@ -27,7 +20,6 @@ from astroquery.mast import Observations
 from loguru import logger
 from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
-from sklearn import cluster
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from .resource_manager import ResourceManager
