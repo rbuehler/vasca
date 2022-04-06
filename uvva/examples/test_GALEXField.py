@@ -123,19 +123,19 @@ params = {
 gf.cluster_meanshift(params["bandwidth"])
 
 
-# In[ ]:
+# In[7]:
 
 
 _ = gf.plot_sky(True, True)
 
 
-# In[ ]:
+# In[8]:
 
 
 gf.tt_sources_lc
 
 
-# In[ ]:
+# In[16]:
 
 
 num = 10
@@ -144,7 +144,7 @@ fig, ax = plt.subplots(num=num)
 _ = gf.plot_light_curve(np.arange(10))
 
 
-# In[ ]:
+# In[10]:
 
 
 # Analysis Functions
@@ -203,7 +203,7 @@ def get_cutout_mask(tt_mcat, cutout_bounds, frame="fk5"):
     return mask_cutout_ra * mask_cutout_dec
 
 
-# In[ ]:
+# In[11]:
 
 
 # Plotting functions
@@ -315,7 +315,7 @@ class AnchoredHScaleBar(matplotlib.offsetbox.AnchoredOffsetbox):
                  **kwargs)
 
 
-# In[ ]:
+# In[12]:
 
 
 # Plot nearest neighbor distance
@@ -355,7 +355,7 @@ axs.set_ylabel("Number of sources")
 axs.legend()
 
 
-# In[ ]:
+# In[13]:
 
 
 # Plot sky map & cutout
@@ -592,7 +592,7 @@ def plot_cutout(cutout, tt_ref=None, tt_sources=None, cmap="gist_yarg", num=None
     return fig
 
 
-# In[ ]:
+# In[14]:
 
 
 # show sky
@@ -605,24 +605,6 @@ def plot_cutout(cutout, tt_ref=None, tt_sources=None, cmap="gist_yarg", num=None
 fig_sky, cutout = plot_galex_field(gf, num=3)
 fig_cutout = plot_cutout(cutout, tt_ref=gf.tt_ref_sources["ra","dec"], tt_sources=gf.tt_sources["ra","dec"], num=4)
 
-
-# In[ ]:
-
-
-# Debugging
-file_name = "/Users/julianschliwinski/Library/Mobile Documents/com~apple~CloudDocs/PhD/ULTRASAT/Science/cloud/uc_science/uvvarcat/GALEX_fields/6388191295067652096/mastDownload/GALEX/6388191295067652096/AIS_491_sg12-xd-mcat.fits.gz"
-file_name = "/Users/julianschliwinski/Library/Mobile Documents/com~apple~CloudDocs/PhD/ULTRASAT/Science/cloud/uc_science/uvvarcat/GALEX_fields/6388191295067652096/UVVA_GALEX_6388191295067652096_NUV_field_data.fits"
-with fits.open(file_name) as ff:
-            nwcs = wcs.WCS(ff[0].header)
-nwcs = gf.ref_wcs
-print(nwcs.wcs.cdelt)
-pix_scale = proj_plane_pixel_scales(nwcs)
-sx = pix_scale[0]
-sy = pix_scale[1]
-degrees_per_pixel = np.sqrt(sx * sy)
-print(degrees_per_pixel)
-print((degrees_per_pixel*uu.deg).to(uu.arcsec))
-print(np.sqrt(-1*nwcs.wcs.cdelt[0] * nwcs.wcs.cdelt[1]))
 
 
 # In[ ]:
