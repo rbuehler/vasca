@@ -454,7 +454,7 @@ class BaseField(object):
             self.tt_detections["src_id"] = ms.labels_
 
         # Fill light curve data into tables
-        # self.remove_double_visit_detections()
+        self.remove_double_visit_detections()
         self.add_light_curve(add_upper_limits=add_upper_limits)
 
         return nr_srcs
@@ -542,11 +542,12 @@ class BaseField(object):
         rm_det_ids = []
         tt_det_grp = self.tt_detections.group_by(["vis_id", "src_id"])
 
-        for ids, tt_det in zip(tt_det_grp.groups.keys, tt_det_grp.groups):
+        for tt_det in tt_det_grp.groups:
             if len(tt_det) > 1:
 
                 # Get source coordinate
-                src_idx = self.tt_detections.loc_indices[tt_det["src_id"].data[0]]
+                src_id = tt_det["src_id"].data[0]
+                src_idx = self.tt_sources.loc_indices[src_id]
                 src_ra = self.tt_sources["ra"].quantity[src_idx]
                 src_dec = self.tt_sources["dec"].quantity[src_idx]
                 src_coord = SkyCoord(src_ra, src_dec, frame="icrs")
