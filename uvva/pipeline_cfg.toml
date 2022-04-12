@@ -25,20 +25,25 @@ field_ids = [
 # -------- CLUSTERING -----------------------------------------------------------------#
 
 [clustering.meanshift]
-bandwidth = None  # Meanshift bandwidth
+bandwidth = nan  # Meanshift bandwidth
 
 # -------- SELECTION ------------------------------------------------------------------#
 
 [selection]
 
 [selection.detections]
-mag = [18.0, +inf]
-mag_err = [0.0, 1.0]
-s2n = [5.0, +inf]
-artifacts = [2, 3, 4, 9, 42]
+mag = [18.0, +inf]  # brightness magnitude [AB mag]
+mag_err = [0.0, 1.0]  # magnitude uncertainty [Δ AB mag]
+s2n = [5.0, +inf]  # signal to noise ratio
+artifacts = [2, 3, 4, 9, 42]  #  artifacts
 
 [selection.sources]
-dmag_max = [0.5, +inf]
+mag = [18.0, +inf]  # brightness magnitude [AB mag]
+mag_err = [0.0, 1.0]  # magnitude uncertainty [Δ AB mag]
+s2n = [5.0, +inf]  # signal to noise ratio
+r_fov = [-inf, 0.55]  # field of view radius [deg]
+dmag = [0.5, +inf]  # variability amplitude [Δ AB mag]
+pp_quiescence = [10, +inf]  # pre-peak quiescence time [days]
 
 # -------- DIAGNOSTICS ----------------------------------------------------------------#
 
