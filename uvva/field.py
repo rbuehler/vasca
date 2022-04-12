@@ -6,6 +6,7 @@ from collections import OrderedDict
 from datetime import datetime
 from itertools import cycle
 
+import h5py
 import healpy as hpy
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -25,7 +26,6 @@ from sklearn.cluster import MeanShift, estimate_bandwidth
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from .uvva_table import UVVATable
-import h5py
 
 # global paths
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
@@ -731,8 +731,8 @@ class BaseField(object):
                 if key in self.__dict__:
                     ext_nr += 1
                     ff[ext_nr].header["EXTNAME"] = key
-    
-    def write_to_hdf5(self,file_name="field_default.hdf5"):
+
+    def write_to_hdf5(self, file_name="field_default.hdf5"):
         """
         Write tables of a field to a hdf5 file.
 
@@ -748,23 +748,33 @@ class BaseField(object):
         None.
 
         """
-        
+
         logger.info(f"Writing file with name '{file_name}'")
-        
+
         ii = 0
         for key in self._table_names:
             if key in self.__dict__:
                 logger.debug(f"Writing table '{key}'")
-                ii +=1
+                ii += 1
                 if ii == 1:
-                    self.__dict__[key].write(file_name, path = "TABDATA/"+ key, overwrite=True, serialize_meta=True)
+                    self.__dict__[key].write(
+                        file_name,
+                        path="TABDATA/" + key,
+                        overwrite=True,
+                        serialize_meta=True,
+                    )
                 else:
-                    self.__dict__[key].write(file_name, path = "TABDATA/"+ key, append=True, serialize_meta=True)
+                    self.__dict__[key].write(
+                        file_name,
+                        path="TABDATA/" + key,
+                        append=True,
+                        serialize_meta=True,
+                    )
 
-    def load_from_hdf5(self,file_name="field_default.hdf5"):
+    def load_from_hdf5(self, file_name="field_default.hdf5"):
         """
         Loads field from a hdf5 file
-        
+
         Parameters
         ----------
         file_name : str, optional
@@ -775,21 +785,23 @@ class BaseField(object):
         None.
 
         """
-        
+
         logger.info(f"Loading file with name '{file_name}'")
-        in_file = h5py.File(file_name, 'r')
-        
+        in_file = h5py.File(file_name, "r")
+
         for table in in_file["TABDATA"].keys():
             if "meta" in str(table):
                 continue
             logger.debug(f"Loading table '{table}'")
             self._table_names.append(str(table))
-            setattr(self, str(table), Table.read(file_name, path='TABDATA/'+str(table)))
+            setattr(
+                self, str(table), Table.read(file_name, path="TABDATA/" + str(table))
+            )
 
     def load_from_fits(self, file_name="field_default.fits"):
         """
         Loads field from a fits file
-        
+
         Parameters
         ----------
         file_name : str, optional
@@ -1392,6 +1404,11 @@ class GALEXField(BaseField):
                 f"{filter_l}_artifact",
                 f"{filter}_CLASS_STAR",
                 "chkobj_type",
+                f"{filter}_FLUX_APER_4",
+                f"{filter}_FLUXERR_APER_4",
+                f"{filter}_FLUX_APER_3",
+                f"{filter}_FLUXERR_APER_3",
+                "E_bv",
             ]
         elif not isinstance(col_names, list):
             raise TypeError(
