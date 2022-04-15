@@ -87,3 +87,21 @@ def get_time_delta_mean(tt_visit_dates, unit=None, deviation=True):
         dtimes_std = np.std([dt.to_value(unit) for dt in np.diff(times)])
 
         return dtimes_mean if not deviation else (dtimes_mean, dtimes_std)
+
+
+def table_to_array(table):
+    """
+    Converts an astropy Table object into a regular numpy ndarray.
+    Caveat: All table columns must have the same type.
+    """
+    # Table to structured ndarray
+    x = np.array(table)
+    dtype = x.dtype[0]  # Type of first column
+
+    # Checks consistency of data types
+    assert all(
+        [x.dtype[i] == dtype for i in range(len(x.dtype.names))]
+    ), f"Expected same dtype '{dtype}' for all columns. {x.dtype}"
+
+    # Creates view (not a copy) to return a regular numpy array
+    return x.view((float, len(x.dtype.names)))
