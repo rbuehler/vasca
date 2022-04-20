@@ -308,7 +308,7 @@ class UVVATable(Table):
         Parameters
         ----------
         data : list, array-like
-            Data of the table with shape (n, n_cols) or as dictionaty with the
+            Data of the table with shape (n, n_cols) or as dictionary with the
             key corresponding to the templates columns.
         template_name : str
             Identifier to select a table template. Templates are selected by
