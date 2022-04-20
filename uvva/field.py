@@ -1284,8 +1284,6 @@ class GALEXField(BaseField):
             )
 
         # Filters for products of interest
-        print(tt_data)
-        print(tt_data.info)
         aa_sel_prod = np.full(len(tt_data), False)  # bool array
         # Product files
         aa_data_uri = tt_data["dataURI"].data.astype(str)  # string array
