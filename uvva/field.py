@@ -946,6 +946,7 @@ class GALEXField(BaseField):
 
         # File name prefix for UVVA/GALEXField outputs
         self.uvva_file_prefix = f"UVVA_GALEX_{obs_id}_{filter}"
+
         logger.debug(f"Field data path set to: '{self.data_path}'")
         logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
 
