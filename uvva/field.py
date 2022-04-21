@@ -1,3 +1,4 @@
+import inspect
 import itertools
 import os
 import warnings
@@ -527,7 +528,7 @@ class BaseField(TableCollection):
 
                 # Save all detection but the closest for deletion
                 rm_det_ids.extend(tt_det["det_id"].data[:min_sep_idx])
-                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1 :])
+                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1:])
 
         if len(rm_det_ids) > 0:
 
