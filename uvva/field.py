@@ -756,10 +756,16 @@ class GALEXField(BaseField):
                 # the complete list of GALEX visits
                 if visits_data_path is None:
                     self.visits_data_path = rm.get_path("gal_visits_list", "sas_cloud")
+
+        # Create and check existence of directory that holds field data and UVVA outputs
+        if not os.path.isdir(self.data_path):
+            os.makedirs(self.data_path)
+
         # File name prefix for UVVA/GALEXField outputs
         self.uvva_file_prefix = f"UVVA_GALEX_{obs_id}_{filter}"
-        logger.debug(f"{self.data_path}")
-        logger.debug(f"{self.visits_data_path}")
+
+        logger.debug(f"Field data path set to: '{self.data_path}'")
+        logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
 
     @classmethod
     def from_fits(cls, obs_id, filter="NUV", fits_path=None, **kwargs):
@@ -901,7 +907,7 @@ class GALEXField(BaseField):
         """
         Loads the archival metadata associated to a given field ID.
         """
-        # Use default columns if not otherwise specified
+        # Uses default columns if not otherwise specified
         # Already sets the order in which columns are added later on
         if col_names is None:
             col_names = [
@@ -918,10 +924,10 @@ class GALEXField(BaseField):
                 f"got '{type(col_names).__name__}'."
             )
 
-        # path to store raw data
+        # Path to store raw data
         path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
 
-        # reads cached file if found found on disc
+        # Reads cached file if found on disc
         if not os.path.isfile(path_tt_coadd) or refresh:
             # download raw table
             logger.debug(
@@ -943,15 +949,25 @@ class GALEXField(BaseField):
             )
             tt_coadd = Table.read(path_tt_coadd)
 
-        # construct field info table
-        # Fill default columns from first row of the archive field info data table
-        tt_coadd_select = tt_coadd[col_names]
+        # Constructs field info table
+        logger.debug("Constructing 'tt_field'.")
+        # Selects columns and strip mask
+        if tt_coadd.masked is True:
+            tt_coadd_select = Table(tt_coadd[col_names].as_array().data)
+        else:
+            tt_coadd_select = tt_coadd[col_names]
+        # Converts field id dtype from unicode ('U19') to bytestring ('S64')
+        if tt_coadd_select["obs_id"].dtype.kind == "U":
+            tt_coadd_select.replace_column(
+                "obs_id",
+                tt_coadd_select["obs_id"].astype(np.dtype("S64")),
+            )
+        # Sets table as class attribute
         self.add_table(tt_coadd_select, "base_field:tt_field")
-        logger.debug("Constructed 'tt_field'.")
 
     def _load_galex_visits_info(self, obs_id, filter, col_names=None):
 
-        # Use default columns if not otherwise specified
+        # Uses default columns if not otherwise specified
         # Already sets the order in which columns are added later on
         if col_names is None:
             col_names = [
@@ -967,17 +983,18 @@ class GALEXField(BaseField):
                 "Expected list type for argument 'col_names', "
                 f"got '{type(col_names).__name__}'."
             )
-        # read cached
+        # Reads cached file if found on disc
         logger.debug(
             "Reading archive visit info from cashed file " f"'{self.visits_data_path}'"
         )
         tt_visits_raw = Table.read(self.visits_data_path)
 
+        logger.debug("Constructing 'tt_visits'.")
         # Filters for visits corresponding to field id and selects specified columns
         tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == obs_id][
             col_names
         ]
-        # Convert string time format to mjd
+        # Converts string time format to mjd
         for key in ["minPhotoObsDate"]:
             tt_visits_raw_select.update(
                 {
@@ -992,9 +1009,8 @@ class GALEXField(BaseField):
                 }
             )
 
-        # Set as class attribute
+        # Sets table as class attribute
         self.add_table(tt_visits_raw_select, "galex_field:tt_visits")
-        logger.debug("Constructed 'tt_visits'.")
 
     def _load_galex_archive_products(
         self,
@@ -1045,9 +1061,11 @@ class GALEXField(BaseField):
             logger.debug(
                 f"Downloading archive data products list and saving to {path_tt_data}."
             )
-            tt_data = Observations.get_product_list(tt_coadd)
+            tt_data = Table(
+                Observations.get_product_list(tt_coadd).as_array().data
+            )  # Returns unmasked table
             # Saves to disc
-            tt_data.write(path_tt_data, overwrite=True)
+            # tt_data.write(path_tt_data, overwrite=True)
         else:
             logger.debug(
                 f"Reading archive data products list from cashed file '{path_tt_data}'"
@@ -1114,10 +1132,11 @@ class GALEXField(BaseField):
                 cache=True,
                 dataURI=tt_data[aa_sel_prod]["dataURI"],
             )["Local Path", "Status"]
-            # Save to disc
-            tt_down["Local Path"] = [
-                str(s).split(self.data_path)[1] for s in tt_down["Local Path"]
-            ]
+            # Saves table to disc
+            tt_down.replace_column(
+                "Local Path",
+                [str(s).split(self.data_path)[1] for s in tt_down["Local Path"]],
+            )  # Keeps path only relative to self.data_path
             tt_down.write(path_tt_down, overwrite=True)
         else:
             # Reading cached manifest
@@ -1149,7 +1168,7 @@ class GALEXField(BaseField):
             + tt_down[np.logical_and(aa_sel_mcat, tt_down["ID"] == obs_id)][
                 "Local Path"
             ][0]
-        )  # string
+        )  # String
         # Selects everything else but the coadd path
         path_tt_detections = [
             self.data_path + path
@@ -1158,9 +1177,9 @@ class GALEXField(BaseField):
             ].data.astype(str)
         ]  # list
 
-        # Open reference catalog
+        # Opens reference catalog
         tt_ref_sources_raw = Table.read(path_tt_ref)
-        # Open visit catalogs, add a columns for visit and source IDs
+        # Opens visit catalogs, add columns for visit and source IDs
         # and stack all catalogs
         tt_detections_raw = None
         # loop over visits
@@ -1197,13 +1216,12 @@ class GALEXField(BaseField):
         # Convert positional error to degree
         # See GALEX docs mor details:
         # http://www.galex.caltech.edu/wiki/GCAT_Manual#Catalog_Column_Description
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", UserWarning)
-            for tbl in [tt_detections_raw, tt_ref_sources_raw]:
-                tbl[f"{filter_l}_poserr"].unit = uu.arcsec
-                tbl[f"{filter_l}_poserr"] = Column(
-                    tbl[f"{filter_l}_poserr"].to(uu.degree), dtype="float64"
-                )
+        for tbl in [tt_detections_raw, tt_ref_sources_raw]:
+            tbl[f"{filter_l}_poserr"].unit = uu.arcsec
+            tbl.replace_column(
+                f"{filter_l}_poserr",
+                Column(tbl[f"{filter_l}_poserr"].to(uu.degree), dtype="float64"),
+            )
 
         # Add to tables as class attributes
         if col_names is None:
