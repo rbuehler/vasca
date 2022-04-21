@@ -1,0 +1,17 @@
+[observations]
+instrument = "GALEX"
+filter = "NUV"
+field_ids = [
+    2604912508670050304,  # PS_COSMOS_MOS21
+    2604982877414227968,  # PS_COSMOS_MOS22
+    2605053246158405632,  # PS_COSMOS_MOS23
+    2605123614902583296,  # PS_COSMOS_MOS24
+    2605193983646760960,  # PS_COSMOS_MOS25
+    2605264352416104448,  # PS_COSMOS_MOS26
+    2605334721135116288,  # PS_COSMOS_MOS27
+]
+
+[general]
+out_dir       = "CWD"                # If "CWD" current work directory will be used
+log_level     = "DEBUG"              #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+log_file      = "uvva.log"           # Will be written into "out_dir"
