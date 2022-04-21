@@ -656,37 +656,6 @@ class BaseField(TableCollection):
 
         return par
 
-    def info(self):
-        """
-        Print out information about the field, its visits and sources.
-
-        Returns
-        -------
-        None.
-
-        """
-        for key in self._table_names:
-            if key in self.__dict__:
-                print(f"\n {key}:")
-                self.__dict__[key].info()
-                print(self.__dict__[key].meta)
-
-    def __str__(self):
-        """
-        Return string with information about the field, its visits and sources.
-
-        Returns
-        -------
-        str
-
-        """
-        out_str = ""
-        for key in self._table_names:
-            if key in self.__dict__:
-                out_str += "\n" + self.__dict__[key].__str__()
-
-        return out_str
-
 
 class GALEXField(BaseField):
     """
