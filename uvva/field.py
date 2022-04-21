@@ -1,4 +1,3 @@
-import inspect
 import itertools
 import os
 import warnings
@@ -6,7 +5,6 @@ from collections import OrderedDict
 from datetime import datetime
 from itertools import cycle
 
-import h5py
 import healpy as hpy
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
@@ -25,17 +23,18 @@ from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from .resource_manager import ResourceManager
 from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
-from .uvva_table import UVVATable
+from .tables import TableCollection
 
 # global paths
-FILE_DIR = os.path.dirname(os.path.abspath(__file__))  # path to the dir. of this file
+# path to the dir. of this file
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 
 dimless = uu.dimensionless_unscaled
 conf.replace_warnings = ["always"]
 
 
-class BaseField(object):
+class BaseField(TableCollection):
     """
     :class: `~uvva.field.BaseField` provides class that defines the basic data structure
     for field-based analysis. One *field* is generally the area in the sky covered
@@ -63,15 +62,8 @@ class BaseField(object):
         None.
 
         """
-        # Configure logger
-        # adds the class name as an extra key; accessible vie the handler format
-        logger.configure(extra={"classname": self.__class__.__name__})
-
-        # Convenience class attributes
-
-        #: Internal list of tables holding the central field data
-        #: All of these are defined in ``uvva_table.py``
-        self._table_names = list()
+        # Sets skeleton
+        super().__init__()
 
         #: Internal dictionary of important parameters
         #: with corresponding tables
@@ -365,32 +357,6 @@ class BaseField(object):
         with fits.open(file_name) as ff:
             self.ref_wcs = wcs.WCS(ff[0].header)
             self.ref_img = ff[0].data
-
-    def add_table(self, data, template_name):
-        """
-        Add a UVVA table to the field.
-
-        Parameters
-        ----------
-        data : list, array-like
-            Data of the table with shape (n, n_cols) or as dictionary with the
-            key corresponding to the templates columns.
-        template_name : str
-            Identifier to select a table template. Templates are selected by
-            setting the class key and a corresponding table key in one string
-            separated by a colon, e.g. template_name=<class_key>:<table_key>.
-
-        """
-        logger.info(f"Adding table '{template_name}'")
-
-        table_key = template_name.split(":")[1]
-
-        if table_key in self._table_names:
-            logger.warning(f"Table '{table_key}' already exists, overwriting")
-        else:
-            self._table_names.append(table_key)
-
-        setattr(self, table_key, UVVATable.from_template(data, template_name))
 
     def cluster_meanshift(
         self, bandwidth=None, cluster_all=True, add_upper_limits=True
@@ -688,155 +654,6 @@ class BaseField(object):
                 par = par * unit
 
         return par
-
-    def write_to_fits(self, file_name="field_default.fits", overwrite=True):
-        """
-        Write tables and image of a field to a fits file.
-
-        Parameters
-        ----------
-        file_name : str, optional
-            File name. The default is "field_default.fits".
-        overwrite : bool, optional
-            Overwrite existing file. The default is True.
-
-        Returns
-        -------
-        None.
-
-        """
-        logger.info(f"Writing file with name '{file_name}'")
-
-        # Create HDU list and write
-        hdup = fits.PrimaryHDU()
-
-        # Check if image data is set and add to primary HDU
-        if self.ref_img is not None and self.ref_wcs is not None:
-            logger.debug("Storing image data'")
-            hdup = fits.PrimaryHDU(self.ref_img, header=self.ref_wcs.to_header())
-
-        hdus = [hdup]
-        new_hdul = fits.HDUList([hdup])
-        new_hdul.writeto(file_name, overwrite=overwrite)
-
-        for key in self._table_names:
-            if key in self.__dict__:
-                logger.debug(f"Writing table '{key}'")
-                self.__dict__[key].write(file_name, append=True)
-
-        # Rename extensions to table names
-        ext_nr = 0
-        with fits.open(file_name, "update") as ff:
-            for key in self._table_names:
-                if key in self.__dict__:
-                    ext_nr += 1
-                    ff[ext_nr].header["EXTNAME"] = key
-
-    def write_to_hdf5(self, file_name="field_default.hdf5"):
-        """
-        Write tables of a field to a hdf5 file.
-
-        Parameters
-        ----------
-        file_name : str, optional
-            File name. The default is "field_default.fits".
-        overwrite : bool, optional
-            Overwrite existing file. The default is True.
-
-        Returns
-        -------
-        None.
-
-        """
-
-        logger.info(f"Writing file with name '{file_name}'")
-
-        ii = 0
-        for key in self._table_names:
-            if key in self.__dict__:
-                logger.debug(f"Writing table '{key}'")
-                ii += 1
-                if ii == 1:
-                    self.__dict__[key].write(
-                        file_name,
-                        path="TABDATA/" + key,
-                        overwrite=True,
-                        serialize_meta=True,
-                    )
-                else:
-                    self.__dict__[key].write(
-                        file_name,
-                        path="TABDATA/" + key,
-                        append=True,
-                        serialize_meta=True,
-                    )
-
-    def load_from_hdf5(self, file_name="field_default.hdf5"):
-        """
-        Loads field from a hdf5 file
-
-        Parameters
-        ----------
-        file_name : str, optional
-            File name. The default is "field_default.hdf5".
-
-        Returns
-        -------
-        None.
-
-        """
-
-        logger.info(f"Loading file with name '{file_name}'")
-        in_file = h5py.File(file_name, "r")
-
-        for table in in_file["TABDATA"].keys():
-            if "meta" in str(table):
-                continue
-            logger.debug(f"Loading table '{table}'")
-            self._table_names.append(str(table))
-            setattr(
-                self, str(table), Table.read(file_name, path="TABDATA/" + str(table))
-            )
-
-    def load_from_fits(self, file_name="field_default.fits"):
-        """
-        Loads field from a fits file
-
-        Parameters
-        ----------
-        file_name : str, optional
-            File name. The default is "field_default.fits".
-
-        Returns
-        -------
-        None.
-
-        """
-        logger.info(f"Loading file with name '{file_name}'")
-        with fits.open(file_name) as ff:
-            # Load tables
-            # get available table names
-            table_names = [
-                hdu.header["EXTNAME"]
-                for hdu in ff[1:]
-                if hdu.header["EXTNAME"].startswith("tt_")
-            ]
-            # loop over tables
-            for name in table_names:
-                logger.debug(f"Loading table '{name}'")
-                # add to table manifest
-                if name in self._table_names:
-                    logger.warning(f"Table '{name}' already exists, overwriting.")
-                else:
-                    self._table_names.append(name)
-                setattr(self, name, Table.read(file_name, hdu=name))
-
-            # Load image data
-            self.ref_img = ff[0].data
-            if self.ref_img is not None:
-                self.ref_wcs = wcs.WCS(ff[0].header)
-            else:
-                self.ref_wcs = None
 
     def info(self):
         """
