@@ -15,8 +15,26 @@ from uvva.resource_manager import ResourceManager
 
 
 @pytest.fixture
-def galex_test_field_from_archive():
-    field_id = 6388191295067652096
+def galex_test_field_from_archive_online(tmp_path):
+    field_id = 6381787756527353856  # AIS_309_1_28 2 visits (Crab pulsar)
+    filter = "NUV"
+    d = tmp_path
+    with ResourceManager() as rm:
+        test_resource_path = rm.get_path("test_resources", "uvva")
+        data_path = f"/{d.resolve()}"
+        visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
+    gf = GALEXField.from_archive(
+        obs_id=field_id,
+        filter=filter,
+        data_path=data_path,
+        visits_data_path=visits_data_path,
+    )
+    return gf
+
+
+@pytest.fixture
+def galex_test_field_from_archive_offline():
+    field_id = 6388191295067652096  # NGC4993-GW170817 2 visits
     filter = "NUV"
     with ResourceManager() as rm:
         test_resource_path = rm.get_path("test_resources", "uvva")
@@ -31,9 +49,20 @@ def galex_test_field_from_archive():
     return gf
 
 
+@pytest.fixture(
+    params=[
+        "galex_test_field_from_archive_offline",
+        "galex_test_field_from_archive_online",
+    ],
+    ids=["NGC4993-GW170817 (cached)", "AIS_309_1_28 (downloaded)"],
+)
+def galex_test_field_from_archive(request):
+    return request.getfixturevalue(request.param)
+
+
 def test_galex_field_from_archive(galex_test_field_from_archive):
     gf = galex_test_field_from_archive
-    assert gf.field_id == 6388191295067652096
+    assert gf.field_id in [6388191295067652096, 6381787756527353856]
 
 
 @pytest.fixture
