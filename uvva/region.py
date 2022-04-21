@@ -6,10 +6,10 @@ Created on Wed Apr 20 14:33:38 2022
 @author: buehler
 """
 from uvva.field import BaseField, GALEXField
-from .uvva_table import UVVATable
+from .tables import TableCollection
 
 
-class Region(object):
+class Region(TableCollection):
     """
     :class: `~uvva.Region` defines a region in the sky as a
     list of uvva.field objects. It provides funtionality to 
@@ -31,8 +31,7 @@ class Region(object):
         None.
 
         """
-        #: Internal list of tables holding the central field data
-        #: All of these are defined in ``uvva_table.py``
-        self._table_names = list()
+        # Sets skeleton
+        super().__init__()
 
     def add_fields(self, field_id, name, "ra", "dec", "observatory", "obsfilter"):
