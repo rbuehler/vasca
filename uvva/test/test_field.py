@@ -15,7 +15,7 @@ from uvva.resource_manager import ResourceManager
 
 
 @pytest.fixture
-def galex_test_field_from_archive_online(request, tmp_path):
+def galex_test_field_from_archive_online(tmp_path):
     field_id = 6381787756527353856  # AIS_309_1_28 2 visits (Crab pulsar)
     filter = "NUV"
     d = tmp_path
@@ -33,7 +33,7 @@ def galex_test_field_from_archive_online(request, tmp_path):
 
 
 @pytest.fixture
-def galex_test_field_from_archive_offline(request):
+def galex_test_field_from_archive_offline():
     field_id = 6388191295067652096  # NGC4993-GW170817 2 visits
     filter = "NUV"
     with ResourceManager() as rm:
