@@ -17,7 +17,7 @@ ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 # global dictionaries defining the table structures
 base_field = {
     "tt_field": {
-        "names": ["field_id", "name", "ra", "dec", "observatory", "obsfilter"],
+        "names": ["field_id", "name", "ra", "dec", "observatory", "obs_filter"],
         "dtype": ["uint64", "S64", "float64", "float64", "S64", "S64"],
         "units": ["1", "", "degree", "degree", "", ""],
         "descriptions": [

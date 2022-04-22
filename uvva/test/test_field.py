@@ -17,7 +17,7 @@ from uvva.resource_manager import ResourceManager
 @pytest.fixture
 def galex_test_field_from_archive_online(tmp_path):
     field_id = 6381787756527353856  # AIS_309_1_28 2 visits (Crab pulsar)
-    filter = "NUV"
+    obs_filter = "NUV"
     d = tmp_path
     with ResourceManager() as rm:
         test_resource_path = rm.get_path("test_resources", "uvva")
@@ -25,7 +25,7 @@ def galex_test_field_from_archive_online(tmp_path):
         visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
     gf = GALEXField.from_archive(
         obs_id=field_id,
-        filter=filter,
+        obs_filter=obs_filter,
         data_path=data_path,
         visits_data_path=visits_data_path,
     )
@@ -35,14 +35,14 @@ def galex_test_field_from_archive_online(tmp_path):
 @pytest.fixture
 def galex_test_field_from_archive_offline():
     field_id = 6388191295067652096  # NGC4993-GW170817 2 visits
-    filter = "NUV"
+    obs_filter = "NUV"
     with ResourceManager() as rm:
         test_resource_path = rm.get_path("test_resources", "uvva")
         data_path = f"{test_resource_path}/{field_id}"
         visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
     gf = GALEXField.from_archive(
         obs_id=field_id,
-        filter=filter,
+        obs_filter=obs_filter,
         data_path=data_path,
         visits_data_path=visits_data_path,
     )
@@ -93,7 +93,7 @@ def test_set_field_attr_type(new_field):
         "ra": 1 * uu.deg,
         "dec": 1 * uu.deg,
         "observatory": "obs",
-        "obsfilter": "filter",
+        "obs_filter": "obs_filter",
         "center": SkyCoord(1, 1, unit="deg"),
         "n_visits": 1,
         "time_bin_size_sum": 42.0 * uu.s,

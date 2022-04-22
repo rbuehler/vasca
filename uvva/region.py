@@ -41,10 +41,10 @@ class Region(TableCollection):
 
     def load_from_config(self, obs):
         logger.debug("Loading fields from config file")
-        if obs["instrument"] == "GALEX":
+        if obs["observatory"] == "GALEX":
             for field_id in obs["field_ids"]:
-                gf = GALEXField(obs_id=field_id, filter=obs["filter"])
-                gf._load_galex_field_info(obs_id=field_id, filter=obs["filter"])
+                gf = GALEXField(obs_id=field_id, obs_filter=obs["obs_filter"])
+                gf._load_galex_field_info(obs_id=field_id, obs_filter=obs["obs_filter"])
                 field_info = dict(gf.tt_field[0])
                 field_info["size"] = 0.55
                 self.tt_fields.add_row(field_info)

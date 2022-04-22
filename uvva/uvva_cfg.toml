@@ -7,23 +7,9 @@ log_level     = "DEBUG"              #["NONE", "DEBUG", "INFO", "WARNING", "ERRO
 log_file      = "uvva.log"           # Will be written into "out_dir"
          
 [observations]
-instrument = "GALEX"
-filter = "NUV"
+observatory = "GALEX"
+obs_filter = "NUV"
 field_ids = [
     2604912508670050304,  # PS_COSMOS_MOS21
     2604982877414227968,  # PS_COSMOS_MOS22
 ]
-
-[selection.detections]
-mag = [18.0, +inf]  # brightness magnitude [AB mag]
-mag_err = [0.0, 1.0]  # magnitude uncertainty [Δ AB mag]
-s2n = [5.0, +inf]  # signal to noise ratio
-artifacts = [2, 3, 4, 9, 42]  #  artifacts
-
-[selection.sources]
-mag = [18.0, +inf]  # brightness magnitude [AB mag]
-mag_err = [0.0, 1.0]  # magnitude uncertainty [Δ AB mag]
-s2n = [5.0, +inf]  # signal to noise ratio
-r_fov = [-inf, 0.55]  # field of view radius [deg]
-dmag = [0.5, +inf]  # variability amplitude [Δ AB mag]
-pp_quiescence = [10, +inf]  # pre-peak quiescence time [days]
