@@ -4,22 +4,20 @@
 Script that runs the UVVA pipeline.
 """
 
-# %% import modules
+# %% Import modules
 import toml
 from loguru import logger
 import sys
 import datetime
 import os
 import argparse
+from uvva.region import Region
 
 # %% Argument parsing and confg file loadings
-# Load parsed arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--cfg', type=str, default=os.getcwd()+'/uvva_cfg.toml')
 args = parser.parse_args()
 
-
-# Open config file & set output directory
 with open(args.cfg) as file:
     uvva_cfg = toml.load(file)
 
@@ -31,20 +29,30 @@ if uvva_cfg["general"]["out_dir"] == "CWD":
 log_config = {
     "handlers": [
         {"sink": sys.stdout,
-         "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSSSSS}</green> <blue>{level}</blue>: {message}",
+         "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSSS}</green> <cyan>{name}</cyan>:<cyan>{line}</cyan> | <level>{level}:</level> {message} ",
          "level": uvva_cfg["general"]["log_level"],
-         "colorize":True},
+         "colorize":True,
+         "backtrace":True,
+         "diagnose":True},
         {"sink": uvva_cfg["general"]["log_file"],
          "serialize": True,
          "backtrace":True,
          "diagnose":True},
-    ]
+    ],
 }
 logger.configure(**log_config)
 logger.enable("uvva")
 
-if __name__ == '__main__':
-    logger.info("Runing '"+__file__+"'")
-    logger.debug("Config. file: '"+args.cfg+"'")
-    logger.debug("Output directory: '" + uvva_cfg["general"]["out_dir"]+"'")
-    logger.debug("Log. file: '" + uvva_cfg["general"]["log_file"]+"'")
+logger.info("Runing '"+__file__+"'")
+logger.debug("Config. file: '"+args.cfg+"'")
+logger.debug("Output directory: '" + uvva_cfg["general"]["out_dir"]+"'")
+logger.debug("Log. file: '" + uvva_cfg["general"]["log_file"]+"'")
+
+# %% Create region
+rg = Region()
+rg.load_from_config(uvva_cfg["observations"])
+for field_id in rg.tt_fields["field_id"]:
+    logger.info("Analysing field:"+str(field_id))
+
+
+# if __name__ == '__main__':

@@ -6,7 +6,9 @@ Created on Wed Apr 20 14:33:38 2022
 @author: buehler
 """
 from uvva.field import BaseField, GALEXField
-from .tables import TableCollection
+from uvva.tables import TableCollection
+from uvva import tables
+from loguru import logger
 
 
 class Region(TableCollection):
@@ -34,4 +36,15 @@ class Region(TableCollection):
         # Sets skeleton
         super().__init__()
 
-    def add_fields(self, field_id, name, "ra", "dec", "observatory", "obsfilter"):
+        # Add empty tables
+        self.add_table(None, "region:tt_fields")
+
+    def load_from_config(self, obs):
+        logger.debug("Loading fields from config file")
+        if obs["instrument"] == "GALEX":
+            for field_id in obs["field_ids"]:
+                gf = GALEXField(obs_id=field_id, filter=obs["filter"])
+                gf._load_galex_field_info(obs_id=field_id, filter=obs["filter"])
+                field_info = dict(gf.tt_field[0])
+                field_info["size"] = 0.55
+                self.tt_fields.add_row(field_info)
