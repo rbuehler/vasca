@@ -324,6 +324,27 @@ region = {
             **base_field["tt_field"]["meta"],
         },
     },
+    "tt_visits": {
+        "names": [
+            *base_field["tt_visits"]["names"],
+            "field_id",
+        ],
+        "dtype": [
+            *base_field["tt_visits"]["dtype"],
+            "uint64",
+        ],
+        "units": [
+            *base_field["tt_visits"]["units"],
+            "1",
+        ],
+        "descriptions": [
+            *base_field["tt_visits"]["descriptions"],
+            "Field ID nr.",
+        ],
+        "meta": {
+            **base_field["tt_visits"]["meta"],
+        },
+    },
 }
 
 # global, combined dictionary
@@ -343,7 +364,7 @@ class TableCollection(object):
 
         self._table_names = list()
 
-    @staticmethod
+    @ staticmethod
     def table_from_template(data, template_name):
         """
         Creates a new astropy table.

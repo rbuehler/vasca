@@ -36,10 +36,8 @@ class Region(TableCollection):
         # Sets skeleton
         super().__init__()
 
-        # Add empty tables
-        self.add_table(None, "region:tt_fields")
-
-    def load_from_config(self, obs):
+    @classmethod
+    def load_from_config(cls, obs):
         """
         Loads region from configuration from dictionary
 
@@ -54,8 +52,15 @@ class Region(TableCollection):
         None.
 
         """
+
+        rg = cls()
+
         logger.debug("Loading fields from config file")
         if obs["observatory"] == "GALEX":
+            rg.add_table(None, "region:tt_fields")
+            rg.add_table(None, "region:tt_visits")
+
+            # Loop over fields and store info
             for field_id in obs["field_ids"]:
                 gf = GALEXField.from_MAST(
                     obs_id=field_id, obs_filter=obs["obs_filter"], load_products=False)
@@ -65,6 +70,20 @@ class Region(TableCollection):
                 field_info["time_bin_size_sum"] = gf.time_bin_size_sum
                 field_info["time_start"] = gf.time_start.mjd
                 field_info["time_stop"] = gf.time_stop.mjd
-                self.tt_fields.add_row(field_info)
+                rg.tt_fields.add_row(field_info)
+
+                # Loop over visits and store info
+                keys_store = tables.dd_uvva_tables["base_field"]["tt_visits"]["names"]
+                for ii in range(0, len(gf.tt_visits)):
+                    #visit_info = {}
+                    # for key in keys_store:
+                    #    visit_info[key] = gf.tt_visits[ii][key]
+                    visits_info = dict(gf.tt_visits[keys_store][0])
+                    visits_info["field_id"] = field_id
+                    print(visits_info)
+                    rg.tt_visits.add_row(visits_info)
+
         else:
             logger.waring("Selected observatory `"+obs["observatory"]+"` not supportet")
+
+        return rg
