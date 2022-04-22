@@ -56,6 +56,7 @@ class Region(TableCollection):
         rg = cls()
 
         logger.debug("Loading fields from config file")
+
         if obs["observatory"] == "GALEX":
             rg.add_table(None, "region:tt_fields")
             rg.add_table(None, "region:tt_visits")
@@ -75,14 +76,10 @@ class Region(TableCollection):
                 # Loop over visits and store info
                 keys_store = tables.dd_uvva_tables["base_field"]["tt_visits"]["names"]
                 for ii in range(0, len(gf.tt_visits)):
-                    #visit_info = {}
-                    # for key in keys_store:
-                    #    visit_info[key] = gf.tt_visits[ii][key]
                     visits_info = dict(gf.tt_visits[keys_store][0])
                     visits_info["field_id"] = field_id
                     print(visits_info)
                     rg.tt_visits.add_row(visits_info)
-
         else:
             logger.waring("Selected observatory `"+obs["observatory"]+"` not supportet")
 
