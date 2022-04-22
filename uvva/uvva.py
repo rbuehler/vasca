@@ -55,6 +55,7 @@ rg.load_from_config(uvva_cfg["observations"])
 for field_id in rg.tt_fields["field_id"]:
     logger.info("Analysing field:"+str(field_id))
     gf = GALEXField(obs_id=field_id, obs_filter=uvva_cfg["observations"]["obs_filter"])
+rg.info()
 
 
 # if __name__ == '__main__':
