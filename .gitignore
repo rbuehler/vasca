@@ -19,4 +19,4 @@ build/*
 *.hdf5
 !uvva/test/resources/**/*.hdf5
 .coverage
-coverage.xml
+coverage.xmluvva/uvva.log
