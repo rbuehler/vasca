@@ -291,22 +291,37 @@ region = {
         "names": [
             *base_field["tt_field"]["names"],
             "size",  # TODO: Add sky angle for ULTRASAT squared FoV
+            "n_visits",
+            "time_bin_size_sum",
+            "time_start",
+            "time_stop",
         ],
         "dtype": [
             *base_field["tt_field"]["dtype"],
+            "float64",
+            "uint64",
+            "float64",
+            "float64",
             "float64",
         ],
         "units": [
             *base_field["tt_field"]["units"],
             "degree",
+            "1",
+            "s",
+            "d",
+            "d",
         ],
         "descriptions": [
             *base_field["tt_field"]["descriptions"],
-            "Field radius or box size (depending on the observatory)"
-
+            "Field radius or box size (depending on the observatory)",
+            "Total number of visits of the field",
+            "Total exposure time",
+            "Start time of first exposure",
+            "End time of last exposure",
         ],
         "meta": {
-            **base_field["tt_visits"]["meta"],
+            **base_field["tt_field"]["meta"],
         },
     },
 }

@@ -798,7 +798,7 @@ class GALEXField(BaseField):
         return gf
 
     @classmethod
-    def from_MAST(cls, obs_id, obs_filter="NUV", refresh=False, **kwargs):
+    def from_MAST(cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs):
         """
         Constructor to initialize a GALEXField instance either
         fresh from the MAST archive (refresh=True) or if available
@@ -819,6 +819,9 @@ class GALEXField(BaseField):
         refresh : bool, optional
             Selects if data is freshly loaded from MAST (refresh=True) or
             from cashed data on disc (refresh=False, default).
+        load_products : bool, optional
+            Selects if data products shall be loaded. Othervise only field and
+            visit information is loaded.
         **kwargs
             All additional keyword arguments are passed to `~GALEXField.__init__()`
 
@@ -838,10 +841,13 @@ class GALEXField(BaseField):
         gf._load_galex_field_info(obs_id, obs_filter, refresh=refresh)
         # Sets ``gf.tt_visits``
         gf._load_galex_visits_info(obs_id, obs_filter)
-        # Sets ``gf.tt_detections``, ``gf.tt_ref_sources`` and loads the ref image
-        gf._load_galex_archive_products(obs_id, obs_filter, refresh=refresh)
+
         # Sets convenience class attributes
         gf.set_field_attr()
+
+        # Sets ``gf.tt_detections``, ``gf.tt_ref_sources`` and loads the ref image
+        if load_products:
+            gf._load_galex_archive_products(obs_id, obs_filter, refresh=refresh)
 
         logger.info(
             f"Loaded new GALEX field '{obs_id}' with obs_filter '{obs_filter}' from MAST data."
