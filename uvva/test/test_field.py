@@ -15,7 +15,7 @@ from uvva.resource_manager import ResourceManager
 
 
 @pytest.fixture
-def galex_test_field_from_archive_online(tmp_path):
+def galex_test_field_from_MAST_online(tmp_path):
     field_id = 6381787756527353856  # AIS_309_1_28 2 visits (Crab pulsar)
     obs_filter = "NUV"
     d = tmp_path
@@ -23,7 +23,7 @@ def galex_test_field_from_archive_online(tmp_path):
         test_resource_path = rm.get_path("test_resources", "uvva")
         data_path = f"/{d.resolve()}"
         visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
-    gf = GALEXField.from_archive(
+    gf = GALEXField.from_MAST(
         obs_id=field_id,
         obs_filter=obs_filter,
         data_path=data_path,
@@ -33,14 +33,14 @@ def galex_test_field_from_archive_online(tmp_path):
 
 
 @pytest.fixture
-def galex_test_field_from_archive_offline():
+def galex_test_field_from_MAST_offline():
     field_id = 6388191295067652096  # NGC4993-GW170817 2 visits
     obs_filter = "NUV"
     with ResourceManager() as rm:
         test_resource_path = rm.get_path("test_resources", "uvva")
         data_path = f"{test_resource_path}/{field_id}"
         visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
-    gf = GALEXField.from_archive(
+    gf = GALEXField.from_MAST(
         obs_id=field_id,
         obs_filter=obs_filter,
         data_path=data_path,
@@ -51,17 +51,17 @@ def galex_test_field_from_archive_offline():
 
 @pytest.fixture(
     params=[
-        "galex_test_field_from_archive_offline",
-        "galex_test_field_from_archive_online",
+        "galex_test_field_from_MAST_offline",
+        "galex_test_field_from_MAST_online",
     ],
     ids=["NGC4993-GW170817 (cached)", "AIS_309_1_28 (downloaded)"],
 )
-def galex_test_field_from_archive(request):
+def galex_test_field_from_MAST(request):
     return request.getfixturevalue(request.param)
 
 
-def test_galex_field_from_archive(galex_test_field_from_archive):
-    gf = galex_test_field_from_archive
+def test_galex_field_from_MAST(galex_test_field_from_MAST):
+    gf = galex_test_field_from_MAST
     assert gf.field_id in [6388191295067652096, 6381787756527353856]
 
 
