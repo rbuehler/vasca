@@ -5,6 +5,8 @@ commet = """comment"""
 out_dir       = "CWD"                # If "CWD" current work directory will be used
 log_level     = "DEBUG"              #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 log_file      = "uvva.log"           # Will be written into "out_dir"
+data_source   = "MAST"               # Either from MAST (cached or online) or from "UVVA"
+
          
 [observations]
 observatory = "GALEX"

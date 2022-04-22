@@ -738,7 +738,7 @@ class GALEXField(BaseField):
         logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
 
     @classmethod
-    def from_fits(cls, obs_id, obs_filter="NUV", fits_path=None, **kwargs):
+    def from_UVVA(cls, obs_id, obs_filter="NUV", fits_path=None, **kwargs):
         """
         Constructor to initialize a GALEXField instance
         from a UVVA-generated FITS file
@@ -798,7 +798,7 @@ class GALEXField(BaseField):
         return gf
 
     @classmethod
-    def from_archive(cls, obs_id, obs_filter="NUV", refresh=False, **kwargs):
+    def from_MAST(cls, obs_id, obs_filter="NUV", refresh=False, **kwargs):
         """
         Constructor to initialize a GALEXField instance either
         fresh from the MAST archive (refresh=True) or if available
