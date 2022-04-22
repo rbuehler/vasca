@@ -290,7 +290,7 @@ region = {
     "tt_fields": {
         "names": [
             *base_field["tt_field"]["names"],
-            "size",
+            "size",  # TODO: Add sky angle for ULTRASAT squared FoV
         ],
         "dtype": [
             *base_field["tt_field"]["dtype"],
@@ -394,7 +394,7 @@ class TableCollection(object):
             separated by a colon, e.g. template_name=<class_key>:<table_key>.
 
         """
-        logger.info(f"Adding table '{template_name}'")
+        logger.debug(f"Adding table '{template_name}'")
 
         table_key = template_name.split(":")[1]
 

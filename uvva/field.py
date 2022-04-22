@@ -22,9 +22,9 @@ from matplotlib import cm, colorbar, colors
 from matplotlib.colors import LogNorm
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
-from .resource_manager import ResourceManager
-from .utils import get_time_delta, get_time_delta_mean, sky_sep2d
-from .tables import TableCollection
+from uvva.resource_manager import ResourceManager
+from uvva.utils import get_time_delta, get_time_delta_mean, sky_sep2d
+from uvva.tables import TableCollection
 
 # global paths
 # path to the dir. of this file
@@ -116,7 +116,7 @@ class BaseField(TableCollection):
             Used Matplotlib axes.
 
         """
-        logger.debug("Plotting sky sources'")
+        logger.debug("Plotting sky sources")
 
         if ax is None:
             ax = plt.gca()
@@ -695,7 +695,7 @@ class GALEXField(BaseField):
         """
 
         # check filter name, default is "NUV"
-        if filter is None:
+        if filter is None:  # TODO: I think this is redundant, the default should then be "NUV"
             filter = "NUV"
         elif not isinstance(filter, str):
             raise TypeError(
