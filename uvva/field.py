@@ -76,7 +76,7 @@ class BaseField(TableCollection):
                 "ra",
                 "dec",
                 "observatory",
-                "obsfilter",
+                "obs_filter",
                 "center",
             ],
             "tt_visits": [
@@ -662,7 +662,7 @@ class GALEXField(BaseField):
     Instance of one GALEX field
     """
 
-    def __init__(self, obs_id, filter=None, data_path=None, visits_data_path=None):
+    def __init__(self, obs_id, obs_filter=None, data_path=None, visits_data_path=None):
         """
         Initializes a new GALEXField instance with
         skeleton UVVA data structure.
@@ -671,8 +671,8 @@ class GALEXField(BaseField):
         ----------
         obs_id : int
             GALEX field ID
-        filter : str, optional
-            Selects the GALEX filter for which the corresponding
+        obs_filter : str, optional
+            Selects the GALEX obs_filter for which the corresponding
             observation data is loaded. Needs to be either from:
             'FUV' -> 135-175 nm
             'NUV' -> 175-280 nm  (default)
@@ -691,19 +691,19 @@ class GALEXField(BaseField):
             Path to a pre-downloaded table holding the complete list of GALEX visits
         uvva_file_prefix : str
             File name prefix following UVVA naming convention:
-            'UVVA_<observatory>_<filed_id>_<filter>'
+            'UVVA_<observatory>_<filed_id>_<obs_filter>'
         """
 
-        # check filter name, default is "NUV"
-        if filter is None:  # TODO: I think this is redundant, the default should then be "NUV"
-            filter = "NUV"
-        elif not isinstance(filter, str):
+        # check obs_filter name, default is "NUV"
+        if obs_filter is None:  # TODO: I think this is redundant, the default should then be "NUV"
+            obs_filter = "NUV"
+        elif not isinstance(obs_filter, str):
             raise TypeError(
-                f"Expected argument of type 'str', got '{type(filter).__name__}'."
+                f"Expected argument of type 'str', got '{type(obs_filter).__name__}'."
             )
-        elif filter not in ["NUV", "FUV"]:
+        elif obs_filter not in ["NUV", "FUV"]:
             raise ValueError(
-                f"Unknown filter '{filter}'. "
+                f"Unknown obs_filter '{obs_filter}'. "
                 "Available filters for GALEX are 'NUV' or 'FUV'."
             )
 
@@ -738,7 +738,7 @@ class GALEXField(BaseField):
         logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
 
     @classmethod
-    def from_fits(cls, obs_id, filter="NUV", fits_path=None, **kwargs):
+    def from_fits(cls, obs_id, obs_filter="NUV", fits_path=None, **kwargs):
         """
         Constructor to initialize a GALEXField instance
         from a UVVA-generated FITS file
@@ -747,7 +747,7 @@ class GALEXField(BaseField):
         ----------
         obs_id : int
             GALEX field ID
-        filter : str, optional
+        obs_filter : str, optional
             Selects the GALEX filter for which the corresponding
             observation data is loaded. Needs to be either from:
             'FUV' -> 135-175 nm
@@ -762,7 +762,7 @@ class GALEXField(BaseField):
         uvva.field.GALEXField
         """
         # Bootstrap the initialization procedure using the base class
-        gf = cls(obs_id, filter, **kwargs)  # new GALEXField instance
+        gf = cls(obs_id, obs_filter, **kwargs)  # new GALEXField instance
 
         if fits_path is None:
             # Construct the file name from field ID and filter
@@ -771,7 +771,7 @@ class GALEXField(BaseField):
         if not os.path.isfile(fits_path):
             raise FileNotFoundError(
                 "Wrong file or file path to UVVA data "
-                f"for GALEX field '{obs_id}' with filter '{filter}'."
+                f"for GALEX field '{obs_id}' with obs_filter '{obs_filter}'."
             )
         # Reads the UVVA-generated field data
         gf.load_from_fits(fits_path)
@@ -784,21 +784,21 @@ class GALEXField(BaseField):
                 f"Expected '{obs_id}' but got '{gf.field_id}' "
                 f"from file '{fits_path.split(os.sep)[-1]}."
             )
-        elif not gf.obsfilter == filter:
+        elif not gf.obs_filter == obs_filter:
             raise ValueError(
-                "Inconsistent data: Missmatch for 'obsfilter'. "
-                f"Expected '{filter}' but got '{gf.obsfilter}' "
+                "Inconsistent data: Missmatch for 'obs_filter'. "
+                f"Expected '{obs_filter}' but got '{gf.obs_filter}' "
                 f"from file '{fits_path.split(os.sep)[-1]}."
             )
 
         logger.info(
-            f"Loaded UVVA data for GALEX field '{obs_id}' with filter '{filter}'."
+            f"Loaded UVVA data for GALEX field '{obs_id}' with obs_filter '{obs_filter}'."
         )
 
         return gf
 
     @classmethod
-    def from_archive(cls, obs_id, filter="NUV", refresh=False, **kwargs):
+    def from_archive(cls, obs_id, obs_filter="NUV", refresh=False, **kwargs):
         """
         Constructor to initialize a GALEXField instance either
         fresh from the MAST archive (refresh=True) or if available
@@ -811,8 +811,8 @@ class GALEXField(BaseField):
         ----------
         obs_id : int
             GALEX field ID
-        filter : str, optional
-            Selects the GALEX filter for which the corresponding
+        obs_filter : str, optional
+            Selects the GALEX obs_filter for which the corresponding
             observation data is loaded. Needs to be either from:
             'FUV' -> 135-175 nm
             'NUV' -> 175-280 nm  (default)
@@ -832,19 +832,19 @@ class GALEXField(BaseField):
             raise TypeError(f"Expected boolean argument, got {type(refresh).__name__}.")
 
         # Bootstrap the initialization procedure using the base class
-        gf = cls(obs_id, filter, **kwargs)  # new GALEXField instance
+        gf = cls(obs_id, obs_filter, **kwargs)  # new GALEXField instance
 
         # Sets ``gf.tt_field``
-        gf._load_galex_field_info(obs_id, filter, refresh=refresh)
+        gf._load_galex_field_info(obs_id, obs_filter, refresh=refresh)
         # Sets ``gf.tt_visits``
-        gf._load_galex_visits_info(obs_id, filter)
+        gf._load_galex_visits_info(obs_id, obs_filter)
         # Sets ``gf.tt_detections``, ``gf.tt_ref_sources`` and loads the ref image
-        gf._load_galex_archive_products(obs_id, filter, refresh=refresh)
+        gf._load_galex_archive_products(obs_id, obs_filter, refresh=refresh)
         # Sets convenience class attributes
         gf.set_field_attr()
 
         logger.info(
-            f"Loaded new GALEX field '{obs_id}' with filter '{filter}' from MAST data."
+            f"Loaded new GALEX field '{obs_id}' with obs_filter '{obs_filter}' from MAST data."
         )
 
         return gf
@@ -873,7 +873,7 @@ class GALEXField(BaseField):
         upper_limit = -2.5 * np.log(5 * (B_sky * N_pix / T_exp)) + C_app
         return upper_limit
 
-    def _load_galex_field_info(self, obs_id, filter, col_names=None, refresh=False):
+    def _load_galex_field_info(self, obs_id, obs_filter, col_names=None, refresh=False):
         """
         Loads the archival metadata associated to a given field ID.
         """
@@ -895,7 +895,7 @@ class GALEXField(BaseField):
             )
 
         # Path to store raw data
-        path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
+        path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{obs_filter}_coadd.fits"
 
         # Reads cached file if found on disc
         if not os.path.isfile(path_tt_coadd) or refresh:
@@ -907,7 +907,7 @@ class GALEXField(BaseField):
                 obs_id=obs_id,
                 dataRights="PUBLIC",
                 instrument_name="GALEX",
-                filters=filter,
+                filters=obs_filter,
                 dataproduct_type="image",
             )
             # save to disc
@@ -935,7 +935,7 @@ class GALEXField(BaseField):
         # Sets table as class attribute
         self.add_table(tt_coadd_select, "base_field:tt_field")
 
-    def _load_galex_visits_info(self, obs_id, filter, col_names=None):
+    def _load_galex_visits_info(self, obs_id, obs_filter, col_names=None):
 
         # Uses default columns if not otherwise specified
         # Already sets the order in which columns are added later on
@@ -943,8 +943,8 @@ class GALEXField(BaseField):
             col_names = [
                 "imgRunID",
                 "minPhotoObsDate",
-                "nexptime" if filter == "NUV" else "fexptime",
-                "fexptime" if filter == "NUV" else "nexptime",
+                "nexptime" if obs_filter == "NUV" else "fexptime",
+                "fexptime" if obs_filter == "NUV" else "nexptime",
                 "RATileCenter",
                 "DECTileCenter",
             ]
@@ -985,7 +985,7 @@ class GALEXField(BaseField):
     def _load_galex_archive_products(
         self,
         obs_id,
-        filter,
+        obs_filter,
         col_names=None,
         dd_products=None,
         ref_maps_only=True,
@@ -999,7 +999,7 @@ class GALEXField(BaseField):
         ----------
         obs_id : int
             GALEX field ID.
-        filter : str
+        obs_filter : str
             Selects the GALEX filter for which the corresponding
             observation data is loaded. Needs to be either from ['NUV', 'FUV'].
         col_names : list, optional
@@ -1015,9 +1015,9 @@ class GALEXField(BaseField):
 
         """
         # Path to MAST helper files
-        path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{filter}_coadd.fits"
-        path_tt_data = f"{self.data_path}/MAST_{obs_id}_{filter}_data.fits"
-        path_tt_down = f"{self.data_path}/MAST_{obs_id}_{filter}_down.ecsv"
+        path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{obs_filter}_coadd.fits"
+        path_tt_data = f"{self.data_path}/MAST_{obs_id}_{obs_filter}_data.fits"
+        path_tt_down = f"{self.data_path}/MAST_{obs_id}_{obs_filter}_down.ecsv"
 
         # tt_data: List of all archival data products
         # Reads cached file if found found on disc
@@ -1054,7 +1054,7 @@ class GALEXField(BaseField):
                 1: {
                     "name": "int_map",
                     "file_name": "nd-int.fits.gz"
-                    if filter == "NUV"
+                    if obs_filter == "NUV"
                     else "fd-int.fits.gz",
                     "product_type": "map",
                 },
@@ -1181,16 +1181,16 @@ class GALEXField(BaseField):
             # clean up
             del tt_vis_mcat
 
-        filter_l = filter.lower()  # lower case filter name
+        obs_filter_l = obs_filter.lower()  # lower case obs_filter name
 
         # Convert positional error to degree
         # See GALEX docs mor details:
         # http://www.galex.caltech.edu/wiki/GCAT_Manual#Catalog_Column_Description
         for tbl in [tt_detections_raw, tt_ref_sources_raw]:
-            tbl[f"{filter_l}_poserr"].unit = uu.arcsec
+            tbl[f"{obs_filter_l}_poserr"].unit = uu.arcsec
             tbl.replace_column(
-                f"{filter_l}_poserr",
-                Column(tbl[f"{filter_l}_poserr"].to(uu.degree), dtype="float64"),
+                f"{obs_filter_l}_poserr",
+                Column(tbl[f"{obs_filter_l}_poserr"].to(uu.degree), dtype="float64"),
             )
 
         # Add to tables as class attributes
@@ -1201,18 +1201,18 @@ class GALEXField(BaseField):
                 "ggoid_dec",
                 "alpha_j2000",  # take band-merged quantities?
                 "delta_j2000",  # take band-merged quantities?
-                f"{filter_l}_poserr",
-                f"{filter_l}_mag",
-                f"{filter_l}_magerr",
-                # f"{filter_l}_s2n",
+                f"{obs_filter_l}_poserr",
+                f"{obs_filter_l}_mag",
+                f"{obs_filter_l}_magerr",
+                # f"{obs_filter_l}_s2n",
                 "fov_radius",
-                f"{filter_l}_artifact",
-                f"{filter}_CLASS_STAR",
+                f"{obs_filter_l}_artifact",
+                f"{obs_filter}_CLASS_STAR",
                 "chkobj_type",
-                f"{filter}_FLUX_APER_4",
-                f"{filter}_FLUXERR_APER_4",
-                f"{filter}_FLUX_APER_3",
-                f"{filter}_FLUXERR_APER_3",
+                f"{obs_filter}_FLUX_APER_4",
+                f"{obs_filter}_FLUXERR_APER_4",
+                f"{obs_filter}_FLUX_APER_3",
+                f"{obs_filter}_FLUXERR_APER_3",
                 "E_bv",
             ]
         elif not isinstance(col_names, list):
@@ -1229,7 +1229,7 @@ class GALEXField(BaseField):
         # Intensity maps
         aa_sel_int_map = np.char.endswith(
             tt_down["Local Path"].data.astype(str),
-            "nd-int.fits.gz" if filter == "NUV" else "fd-int.fits.gz",
+            "nd-int.fits.gz" if obs_filter == "NUV" else "fd-int.fits.gz",
         )
         # Selects the reference/coadd path
         path_int_map_ref = (
@@ -1352,7 +1352,7 @@ class Field:
         if raw:  # if only the raw table is requested, loading is completed here
             return tt_visits
 
-        else:  # otherwise more columns are added and filter for field ID
+        else:  # otherwise more columns are added and obs_filter for field ID
             tt_visits = tt_visits[tt_visits["ParentImgRunID"] == parobs_id]
             # set coordinate system
             if cframe == "galactic":
@@ -1416,7 +1416,7 @@ class Field:
 
             return tt_visits
 
-    def _load_coadd(self, parobs_id, filters=["NUV"]):
+    def _load_coadd(self, parobs_id, obs_filters=["NUV"]):
         """
         Loads the archival metadata associated to a given field/coadd ID.
         """
@@ -1437,7 +1437,7 @@ class Field:
                 obs_id=parobs_id,
                 dataRights="PUBLIC",
                 instrument_name="GALEX",
-                filters=filters,
+                filters=obs_filters,
                 dataproduct_type="image",
             )
             # save on disc
@@ -1490,7 +1490,7 @@ class Field:
             log_prefix,
             ", ".join(["{}"] * len(product_list_missing)).format(*product_list_missing),
         )
-        # filter for products of interest
+        # obs_filter for products of interest
         sel_prod = np.full(len(tt_data), False)  # bool array
         for prod in product_list:
             sel_prod += np.core.defchararray.find(tt_data["dataURI"], prod) != -1

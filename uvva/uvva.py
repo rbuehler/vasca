@@ -12,6 +12,7 @@ import datetime
 import os
 import argparse
 from uvva.region import Region
+from uvva.field import GALEXField
 
 # %% Argument parsing and confg file loadings
 parser = argparse.ArgumentParser()
@@ -53,6 +54,7 @@ rg = Region()
 rg.load_from_config(uvva_cfg["observations"])
 for field_id in rg.tt_fields["field_id"]:
     logger.info("Analysing field:"+str(field_id))
+    #gf = GALEXField(obs_id=field_id, filter=obs["obsfilter"])
 
 
 # if __name__ == '__main__':
