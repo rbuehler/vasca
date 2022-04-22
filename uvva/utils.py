@@ -18,6 +18,22 @@ def extr_value(inputlist, upper=False):
     return np.nanmax(padded_array) if upper else np.nanmin(padded_array)
 
 
+def get_hist_bins(data, bin_size, is_list=False):
+    """
+    Generates list of bin edges according to data (min/max) and bin_size.
+    """
+    # get minimum and maximum rounded to integer
+    if is_list:
+        vmin = np.floor(extr_value(data))
+        vmax = np.ceil(extr_value(data, upper=True))
+    else:
+        vmin = np.floor(np.min(data))
+        vmax = np.ceil(np.max(data))
+    # generate bin array
+    bins = np.arange(vmin, vmax + bin_size, bin_size)
+    return bins
+
+
 def sky_sep2d(coords, seperation_limit=180):
     """
     computes 2D distances between all possible pairs of coordinates
