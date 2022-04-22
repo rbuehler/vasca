@@ -50,12 +50,12 @@ logger.debug("Output directory: '" + uvva_cfg["general"]["out_dir"]+"'")
 logger.debug("Log. file: '" + uvva_cfg["general"]["log_file"]+"'")
 
 # %% Create region
-rg = Region()
-rg.load_from_config(uvva_cfg["observations"])
+rg = Region.load_from_config(uvva_cfg["observations"])
 for field_id in rg.tt_fields["field_id"]:
     logger.info("Analysing field:"+str(field_id))
     gf = GALEXField(obs_id=field_id, obs_filter=uvva_cfg["observations"]["obs_filter"])
 rg.info()
-
+print(rg)
+rg.write_to_fits(file_name="region_default.fits")
 
 # if __name__ == '__main__':
