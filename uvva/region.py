@@ -78,7 +78,6 @@ class Region(TableCollection):
                 for ii in range(0, len(gf.tt_visits)):
                     visits_info = dict(gf.tt_visits[keys_store][0])
                     visits_info["field_id"] = field_id
-                    print(visits_info)
                     rg.tt_visits.add_row(visits_info)
         else:
             logger.waring("Selected observatory `"+obs["observatory"]+"` not supportet")

@@ -1,11 +1,12 @@
 authors = "UC science"
-commet = """comment"""
+commet = """Example configuration file"""
 
 [general]
-out_dir       = "CWD"                # If "CWD" current work directory will be used
-log_level     = "DEBUG"              #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-log_file      = "uvva.log"           # Will be written into "out_dir"
-data_source   = "MAST"               # Either from MAST (cached or online) or from "UVVA"
+name          = "example_field"
+out_dir       = "./examples/uvva_pipeline"                 # If "CWD" current work directory will be used
+log_level     = "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+log_file      = "uvva.log"                                 # Will be written into "out_dir"
+data_source   = "MAST"                                     # Either "MAST" (cached or online) or "UVVA"
 
          
 [observations]
