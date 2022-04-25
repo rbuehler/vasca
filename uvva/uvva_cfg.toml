@@ -2,7 +2,7 @@ authors = "UC science"
 commet = """Example configuration file"""
 
 [general]
-name          = "example_field"
+name          = "example_fields"
 out_dir       = "./examples/uvva_pipeline"                 # If "CWD" current work directory will be used
 log_level     = "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 log_file      = "uvva.log"                                 # Will be written into "out_dir"
