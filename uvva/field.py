@@ -363,7 +363,7 @@ class BaseField(TableCollection):
         self, bandwidth=None, cluster_all=True, add_upper_limits=True
     ):
         """
-        Apply _MeanShift clustering algorithm using to derive sources.
+        Apply _MeanShift clustering algorithm using to derive sources from selected detections.
 
         .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
 
@@ -389,9 +389,13 @@ class BaseField(TableCollection):
         """
         logger.info("Clustering sources")
 
+        # Selected detections
+        sel_det = self.tt_detections["sel"].astype(bool)
+
         # Get detection coordinates and run clustering
         coords = np.array(
-            list(zip(self.tt_detections["ra"].data, self.tt_detections["dec"].data))
+            list(zip(self.tt_detections[sel_det]["ra"].data,
+                 self.tt_detections[sel_det]["dec"].data))
         )
         if bandwidth is None:
             bandwidth = estimate_bandwidth(coords)
@@ -418,7 +422,7 @@ class BaseField(TableCollection):
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
-            self.tt_detections["src_id"] = ms.labels_
+            self.tt_detections[sel_det]["src_id"] = ms.labels_
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()

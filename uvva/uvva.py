@@ -92,8 +92,13 @@ if __name__ == '__main__':
     rg = Region.load_from_config(cfg["observations"])
     for field_id in rg.tt_fields["field_id"]:
         logger.info("Analysing field:"+str(field_id))
-        gf = GALEXField(obs_id=field_id,
-                        obs_filter=cfg["observations"]["obs_filter"])
+        gf = GALEXField.from_MAST(
+            obs_id=field_id, obs_filter=cfg["observations"]["obs_filter"])
+        field_file_name = cfg["general"]["out_dir"] + \
+            "/field_" + str(field_id)+".fits"
+        gf.write_to_fits(file_name=field_file_name)
+        # gf = GALEXField(obs_id=field_id,
+        #                obs_filter=cfg["observations"]["obs_filter"])
 
     rg.info()
 
