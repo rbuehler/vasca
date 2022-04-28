@@ -1,10 +1,11 @@
 import os
 from astropy import units as uu
-from astropy.table import Table
+from astropy.table import Table, Column
 from loguru import logger
 import h5py
 from astropy.io import fits
 from astropy.wcs import wcs
+import numpy as np
 
 
 dimless = uu.dimensionless_unscaled
@@ -415,7 +416,7 @@ class TableCollection(object):
         logger.debug(f"Created new table from template '{template_name}'.")
         return tt_out
 
-    def add_table(self, data, template_name):
+    def add_table(self, data, template_name, add_sel_col=True):
         """
         Add a UVVA table to the field.
 
@@ -428,6 +429,8 @@ class TableCollection(object):
             Identifier to select a table template. Templates are selected by
             setting the class key and a corresponding table key in one string
             separated by a colon, e.g. template_name=<class_key>:<table_key>.
+        add_sel_col: bool
+            Add a selection column to the table. Default is true.
 
         """
         logger.debug(f"Adding table '{template_name}'")
@@ -439,8 +442,14 @@ class TableCollection(object):
         else:
             self._table_names.append(table_key)
 
-        setattr(self, table_key, self.table_from_template(
-            data, template_name))
+        tt = self.table_from_template(data, template_name)
+        if(add_sel_col):
+            default_sel = np.ones(len(tt), dtype="uint8")
+            col = Column(data=default_sel, name='sel', dtype="uint8",
+                         unit="1", description="Selection of rows for UVVA analysis.")
+            tt.add_column(col)
+
+        setattr(self, table_key, tt)
 
     def write_to_fits(self, file_name="field_default.fits", overwrite=True):
         """
