@@ -1,10 +1,10 @@
 import inspect
 import itertools
 import os
-import warnings
 from collections import OrderedDict
 from datetime import datetime
 from itertools import cycle
+from pprint import pprint
 
 import healpy as hpy
 import matplotlib.dates as mdates
@@ -359,9 +359,7 @@ class BaseField(TableCollection):
             self.ref_wcs = wcs.WCS(ff[0].header)
             self.ref_img = ff[0].data
 
-    def cluster_meanshift(
-        self, bandwidth=None, cluster_all=True, add_upper_limits=True
-    ):
+    def cluster_meanshift(self, ms_kw=None, add_upper_limits=True):
         """
         Apply _MeanShift clustering algorithm using to derive sources.
 
@@ -369,13 +367,8 @@ class BaseField(TableCollection):
 
         Parameters
         ----------
-        bandwidth : float, optional
-            Bandwidth used in the RBF kernel, if set to None is is estimated
-            automatically. The default is None.
-        cluster_all : bool, optional
-            If true, then all points are clustered, even those orphans that are not
-            within any kernel. Orphans are assigned to the nearest kernel.
-            The default is True.
+        ms_kw : dict, optional
+            Keywords passed to the scikit MeanShift function.
         add_upper_limits : bool, optional
             Add upper limits to the tt_sources_lc, for visits with no detection.
             Upper limits are stored in the mag_err columns for none detections.
@@ -387,17 +380,13 @@ class BaseField(TableCollection):
         int
             Number of detected clusters.
         """
-        logger.info("Clustering sources")
+        logger.info("Clustering sources}")
 
         # Get detection coordinates and run clustering
         coords = table_to_array(self.tt_detections["ra", "dec"])
 
-        # If none is passed, estimate bandwidth used in the RBF kernel
-        if bandwidth is None:
-            bandwidth = estimate_bandwidth(coords)
-        logger.info(f"MeanShift with bandwidth '{bandwidth}'")
-
-        ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=cluster_all)
+        ms = MeanShift(**ms_kw if ms_kw else dict())
+        logger.debug(f"MeanShift with parameters '{ms.get_params()}'")
         ms.fit(coords)
 
         # Fill in data into field tables
