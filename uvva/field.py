@@ -24,7 +24,7 @@ from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from uvva.resource_manager import ResourceManager
 from uvva.tables import TableCollection
-from uvva.utils import get_time_delta, get_time_delta_mean, sky_sep2d
+from uvva.utils import get_time_delta, get_time_delta_mean, sky_sep2d, table_to_array
 
 # global paths
 # path to the dir. of this file
@@ -390,9 +390,9 @@ class BaseField(TableCollection):
         logger.info("Clustering sources")
 
         # Get detection coordinates and run clustering
-        coords = np.array(
-            list(zip(self.tt_detections["ra"].data, self.tt_detections["dec"].data))
-        )
+        coords = table_to_array(self.tt_detections["ra", "dec"])
+
+        # If none is passed, estimate bandwidth used in the RBF kernel
         if bandwidth is None:
             bandwidth = estimate_bandwidth(coords)
         logger.info(f"MeanShift with bandwidth '{bandwidth}'")
@@ -416,9 +416,7 @@ class BaseField(TableCollection):
         # Fill information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", UserWarning)
-            self.tt_detections["src_id"] = ms.labels_
+        self.tt_detections.replace_column("src_id", ms.labels_)
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
