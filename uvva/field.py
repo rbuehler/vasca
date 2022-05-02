@@ -423,7 +423,12 @@ class BaseField(TableCollection):
             Array of upper limits for each visit
 
         """
-        observatory = self.get_field_par("observatory", "tt_field")
+
+        observatory = (
+            self.observatory
+            if hasattr(self, "observatory")
+            else self.get_field_par("observatory", "tt_field")
+        )
         upper_limit = None
 
         # Call upper limit function according to observatory.
@@ -450,7 +455,10 @@ class BaseField(TableCollection):
         None.
 
         """
-        logger.info("Creating light curve table")
+        logger.info(
+            "Creating light curve table. "
+            f"Upper limits option set to {add_upper_limits}."
+        )
 
         # Create table
         nr_vis = len(self.tt_visits)
@@ -860,8 +868,6 @@ class GALEXField(BaseField):
             Array of upper limits for each visit
 
         """
-
-        logger.debug("Computing GALEX magnitude upper limit.")
 
         B_sky = 3e-3
         N_pix = 16 * np.pi
