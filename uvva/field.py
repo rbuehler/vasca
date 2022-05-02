@@ -23,8 +23,8 @@ from matplotlib.colors import LogNorm
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from uvva.resource_manager import ResourceManager
-from uvva.utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from uvva.tables import TableCollection
+from uvva.utils import get_time_delta, get_time_delta_mean, sky_sep2d
 
 # global paths
 # path to the dir. of this file
@@ -363,7 +363,7 @@ class BaseField(TableCollection):
         self, bandwidth=None, cluster_all=True, add_upper_limits=True
     ):
         """
-        Apply _MeanShift clustering algorithm using to derive sources from selected detections.
+        Apply _MeanShift clustering algorithm using to derive sources.
 
         .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
 
@@ -389,13 +389,9 @@ class BaseField(TableCollection):
         """
         logger.info("Clustering sources")
 
-        # Selected detections
-        sel_det = self.tt_detections["sel"].astype(bool)
-
         # Get detection coordinates and run clustering
         coords = np.array(
-            list(zip(self.tt_detections[sel_det]["ra"].data,
-                 self.tt_detections[sel_det]["dec"].data))
+            list(zip(self.tt_detections["ra"].data, self.tt_detections["dec"].data))
         )
         if bandwidth is None:
             bandwidth = estimate_bandwidth(coords)
@@ -422,7 +418,7 @@ class BaseField(TableCollection):
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
-            self.tt_detections[sel_det]["src_id"] = ms.labels_
+            self.tt_detections["src_id"] = ms.labels_
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
@@ -532,7 +528,7 @@ class BaseField(TableCollection):
 
                 # Save all detection but the closest for deletion
                 rm_det_ids.extend(tt_det["det_id"].data[:min_sep_idx])
-                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1:])
+                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1 :])
 
         if len(rm_det_ids) > 0:
 
@@ -699,7 +695,9 @@ class GALEXField(BaseField):
         """
 
         # check obs_filter name, default is "NUV"
-        if obs_filter is None:  # TODO: I think this is redundant, the default should then be "NUV"
+        if (
+            obs_filter is None
+        ):  # TODO: I think this is redundant, the default should then be "NUV"
             obs_filter = "NUV"
         elif not isinstance(obs_filter, str):
             raise TypeError(
@@ -802,7 +800,9 @@ class GALEXField(BaseField):
         return gf
 
     @classmethod
-    def from_MAST(cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs):
+    def from_MAST(
+        cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs
+    ):
         """
         Constructor to initialize a GALEXField instance either
         fresh from the MAST archive (refresh=True) or if available
