@@ -8,6 +8,14 @@ log_level     = "DEBUG"                                    #["NONE", "DEBUG", "I
 log_file      = "uvva.log"                                 # Will be written into "out_dir"
 data_source   = "MAST"                                     # Either "MAST" (cached or online) or "UVVA"
 
+[cluster_mean_shift]
+bandwidth     = "None"
+seeds         = "None"
+bin_seeding   = false
+min_bin_freq  = 1
+cluster_all   = true
+n_jobs        = "None"
+max_iter      = 300
          
 [observations]
 observatory = "GALEX"
