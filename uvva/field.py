@@ -1,10 +1,10 @@
 import inspect
 import itertools
 import os
-import warnings
 from collections import OrderedDict
 from datetime import datetime
 from itertools import cycle
+from pprint import pprint
 
 import healpy as hpy
 import matplotlib.dates as mdates
@@ -23,8 +23,8 @@ from matplotlib.colors import LogNorm
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from uvva.resource_manager import ResourceManager
-from uvva.utils import get_time_delta, get_time_delta_mean, sky_sep2d
 from uvva.tables import TableCollection
+from uvva.utils import get_time_delta, get_time_delta_mean, sky_sep2d, table_to_array
 
 # global paths
 # path to the dir. of this file
@@ -359,23 +359,16 @@ class BaseField(TableCollection):
             self.ref_wcs = wcs.WCS(ff[0].header)
             self.ref_img = ff[0].data
 
-    def cluster_meanshift(
-        self, bandwidth=None, cluster_all=True, add_upper_limits=True
-    ):
+    def cluster_meanshift(self, ms_kw=None, add_upper_limits=True):
         """
-        Apply _MeanShift clustering algorithm using to derive sources from selected detections.
+        Apply _MeanShift clustering algorithm using to derive sources.
 
         .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
 
         Parameters
         ----------
-        bandwidth : float, optional
-            Bandwidth used in the RBF kernel, if set to None is is estimated
-            automatically. The default is None.
-        cluster_all : bool, optional
-            If true, then all points are clustered, even those orphans that are not
-            within any kernel. Orphans are assigned to the nearest kernel.
-            The default is True.
+        ms_kw : dict, optional
+            Keywords passed to the scikit MeanShift function.
         add_upper_limits : bool, optional
             Add upper limits to the tt_sources_lc, for visits with no detection.
             Upper limits are stored in the mag_err columns for none detections.
@@ -387,21 +380,13 @@ class BaseField(TableCollection):
         int
             Number of detected clusters.
         """
-        logger.info("Clustering sources")
-
-        # Selected detections
-        sel_det = self.tt_detections["sel"].astype(bool)
+        logger.info("Clustering sources}")
 
         # Get detection coordinates and run clustering
-        coords = np.array(
-            list(zip(self.tt_detections[sel_det]["ra"].data,
-                 self.tt_detections[sel_det]["dec"].data))
-        )
-        if bandwidth is None:
-            bandwidth = estimate_bandwidth(coords)
-        logger.info(f"MeanShift with bandwidth '{bandwidth}'")
+        coords = table_to_array(self.tt_detections["ra", "dec"])
 
-        ms = MeanShift(bandwidth=bandwidth, bin_seeding=True, cluster_all=cluster_all)
+        ms = MeanShift(**ms_kw if ms_kw else dict())
+        logger.debug(f"MeanShift with parameters '{ms.get_params()}'")
         ms.fit(coords)
 
         # Fill in data into field tables
@@ -420,9 +405,7 @@ class BaseField(TableCollection):
         # Fill information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", UserWarning)
-            self.tt_detections[sel_det]["src_id"] = ms.labels_
+        self.tt_detections.replace_column("src_id", ms.labels_)
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
@@ -440,7 +423,12 @@ class BaseField(TableCollection):
             Array of upper limits for each visit
 
         """
-        observatory = self.get_field_par("observatory", "tt_field")
+
+        observatory = (
+            self.observatory
+            if hasattr(self, "observatory")
+            else self.get_field_par("observatory", "tt_field")
+        )
         upper_limit = None
 
         # Call upper limit function according to observatory.
@@ -467,7 +455,10 @@ class BaseField(TableCollection):
         None.
 
         """
-        logger.info("Creating light curve table")
+        logger.info(
+            "Creating light curve table. "
+            f"Upper limits option set to {add_upper_limits}."
+        )
 
         # Create table
         nr_vis = len(self.tt_visits)
@@ -532,7 +523,7 @@ class BaseField(TableCollection):
 
                 # Save all detection but the closest for deletion
                 rm_det_ids.extend(tt_det["det_id"].data[:min_sep_idx])
-                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1:])
+                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1 :])
 
         if len(rm_det_ids) > 0:
 
@@ -699,7 +690,9 @@ class GALEXField(BaseField):
         """
 
         # check obs_filter name, default is "NUV"
-        if obs_filter is None:  # TODO: I think this is redundant, the default should then be "NUV"
+        if (
+            obs_filter is None
+        ):  # TODO: I think this is redundant, the default should then be "NUV"
             obs_filter = "NUV"
         elif not isinstance(obs_filter, str):
             raise TypeError(
@@ -802,7 +795,9 @@ class GALEXField(BaseField):
         return gf
 
     @classmethod
-    def from_MAST(cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs):
+    def from_MAST(
+        cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs
+    ):
         """
         Constructor to initialize a GALEXField instance either
         fresh from the MAST archive (refresh=True) or if available
@@ -873,8 +868,6 @@ class GALEXField(BaseField):
             Array of upper limits for each visit
 
         """
-
-        logger.debug("Computing GALEX magnitude upper limit.")
 
         B_sky = 3e-3
         N_pix = 16 * np.pi
