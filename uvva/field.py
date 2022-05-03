@@ -359,7 +359,7 @@ class BaseField(TableCollection):
             self.ref_wcs = wcs.WCS(ff[0].header)
             self.ref_img = ff[0].data
 
-    def cluster_meanshift(self, ms_kw=None, add_upper_limits=True):
+    def cluster_meanshift(self, add_upper_limits=True, **ms_kw):
         """
         Apply _MeanShift clustering algorithm using to derive sources.
 
@@ -385,7 +385,7 @@ class BaseField(TableCollection):
         # Get detection coordinates and run clustering
         coords = table_to_array(self.tt_detections["ra", "dec"])
 
-        ms = MeanShift(**ms_kw if ms_kw else dict())
+        ms = MeanShift(**ms_kw)
         logger.debug(f"MeanShift with parameters '{ms.get_params()}'")
         ms.fit(coords)
 
@@ -523,7 +523,7 @@ class BaseField(TableCollection):
 
                 # Save all detection but the closest for deletion
                 rm_det_ids.extend(tt_det["det_id"].data[:min_sep_idx])
-                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1 :])
+                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1:])
 
         if len(rm_det_ids) > 0:
 
