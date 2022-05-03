@@ -372,24 +372,39 @@ class BaseField(TableCollection):
             Upper limits are stored in the mag_err columns for none detections.
             The default is True.
         ms_kw : dict, optional
-            Keywords passed to the scikit MeanShift function.
+            Keywords passed to the scikit MeanShift function. Note that the
+            bandwidth is assumed to be in units of arc seconds.
 
         Returns
         -------
         int
             Number of detected clusters.
         """
-        logger.info("Clustering sources}")
+        logger.info("Clustering sources with MeanShift")
 
         # Get detection coordinates and run clustering
         coords = table_to_array(self.tt_detections["ra", "dec"])
 
-        ms = MeanShift(**ms_kw)
-        logger.debug(f"MeanShift with parameters '{ms.get_params()}'")
+        # Do bandwidth determination "by hand" to print it out and convert
+        # bandwidth unit from arc seconds into degerees
+
+        dd_ms = ms_kw
+        if not "bandwidth" in ms_kw or ms_kw["bandwidth"] == None:
+            logger.debug(f"Estimating bandwidth")
+            dd_ms["bandwidth"] = estimate_bandwidth(coords, quantile=0.2, n_samples=500)
+        else:
+            dd_ms["bandwidth"] = (ms_kw["bandwidth"]*uu.arcsec).to(uu.deg).value
+
+        logger.debug(
+            f"MeanShift with parameters (bandwith in degrees): '{dd_ms}' ")
+        ms = MeanShift(**dd_ms)
+
         ms.fit(coords)
 
         # Fill in data into field tables
         src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+
+        print("l", len(ms.labels_))
 
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
@@ -400,6 +415,16 @@ class BaseField(TableCollection):
             "nr_det": det_cts,
             "flag": np.zeros(nr_srcs),
         }
+
+        print("a", len(src_ids), len(cluster_centers[:, 0]), len(
+            cluster_centers[:, 1]), len(det_cts), len(np.zeros(nr_srcs)))
+
+        # Write out to debug
+        # import csv
+        # with open('output.csv', 'w') as output:
+        #     writer = csv.writer(output)
+        #     for key, value in srcs_data.items():
+        #         writer.writerow([key, *value])
 
         # Fill information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
