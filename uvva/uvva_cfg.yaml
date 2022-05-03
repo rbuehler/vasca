@@ -10,7 +10,7 @@ general:
     data_source   : "MAST"                                     # Either "MAST" (cached or online) or "UVVA"
 
 cluster:
-    mean_shift:
+    meanshift:
         bandwidth     : null
         seeds         : null
         bin_seeding   : false

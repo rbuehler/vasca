@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
         # Run clustering
         gf.cluster_meanshift(cfg["cluster"]["add_upper_limits"],
-                             **cfg["cluster"]["mean_shift"])
+                             **cfg["cluster"]["meanshift"])
 
         # Write field out
         field_file_name = cfg["general"]["out_dir"] + \
