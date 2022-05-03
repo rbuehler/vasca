@@ -9,15 +9,17 @@ general:
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
     data_source   : "MAST"                                     # Either "MAST" (cached or online) or "UVVA"
 
-cluster_mean_shift:
-    bandwidth     : null
-    seeds         : null
-    bin_seeding   : false
-    min_bin_freq  : 1
-    cluster_all   : true
-    n_jobs        : 4
-    max_iter      : 300
-
+cluster:
+    mean_shift:
+        bandwidth     : null
+        seeds         : null
+        bin_seeding   : false
+        min_bin_freq  : 1
+        cluster_all   : true
+        n_jobs        : 4
+        max_iter      : 300
+    add_upper_limits  : true
+    
 observations:
     observatory : "GALEX"
     obs_filter : "NUV"

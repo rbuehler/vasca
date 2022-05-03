@@ -101,7 +101,8 @@ if __name__ == '__main__':
             obs_id=field_id, obs_filter=cfg["observations"]["obs_filter"])
 
         # Run clustering
-        gf.cluster_meanshift(**cfg["cluster_mean_shift"])
+        gf.cluster_meanshift(cfg["cluster"]["add_upper_limits"],
+                             **cfg["cluster"]["mean_shift"])
 
         # Write field out
         field_file_name = cfg["general"]["out_dir"] + \
