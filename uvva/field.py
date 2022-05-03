@@ -367,13 +367,12 @@ class BaseField(TableCollection):
 
         Parameters
         ----------
-        ms_kw : dict, optional
-            Keywords passed to the scikit MeanShift function.
         add_upper_limits : bool, optional
             Add upper limits to the tt_sources_lc, for visits with no detection.
             Upper limits are stored in the mag_err columns for none detections.
             The default is True.
-
+        ms_kw : dict, optional
+            Keywords passed to the scikit MeanShift function.
 
         Returns
         -------
