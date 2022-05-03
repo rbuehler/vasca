@@ -12,16 +12,17 @@ import os
 import argparse
 from uvva.region import Region
 from uvva.field import GALEXField
+import yaml
 
 
 def set_config(cfg_file):
     """
-    Setup pipeline configuration file from TOML
+    Setup pipeline configuration file from yaml
 
     Parameters
     ----------
     cfg_file : str
-        TOML configuration file name
+        yaml configuration file name
 
     Returns
     -------
@@ -29,7 +30,7 @@ def set_config(cfg_file):
         UVVA pipeline configuration dictionary
     """
     with open(cfg_file) as file:
-        cfg = toml.load(file)
+        cfg = yaml.safe_load(file)     # yaml.
 
     # Set output directory
     if cfg["general"]["out_dir"] == "CWD":
@@ -37,6 +38,8 @@ def set_config(cfg_file):
 
     # Store cfg file name in cfg dictionary
     cfg["cfg_file"] = cfg_file
+
+    print(cfg)
 
     return cfg
 
@@ -58,7 +61,7 @@ def set_logger(cfg):
     log_cfg = {
         "handlers": [
             {"sink": sys.stdout,
-             "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSSS}</green>"
+             "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSSS}</green> "
              "<cyan>{name}</cyan>:<cyan>{line}</cyan> |"
              "<level>{level}:</level> {message}",
              "level": cfg["general"]["log_level"], "colorize":True,
@@ -79,7 +82,7 @@ if __name__ == '__main__':
 
     # Argument parsing
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', type=str, default=os.getcwd()+'/uvva_cfg.toml')
+    parser.add_argument('--cfg', type=str, default=os.getcwd()+'/uvva_cfg.yaml')
     args = parser.parse_args()
 
     # Get UVVA configuration file
@@ -92,13 +95,18 @@ if __name__ == '__main__':
     rg = Region.load_from_config(cfg["observations"])
     for field_id in rg.tt_fields["field_id"]:
         logger.info("Analysing field:"+str(field_id))
+
+        # Load field
         gf = GALEXField.from_MAST(
             obs_id=field_id, obs_filter=cfg["observations"]["obs_filter"])
+
+        # Run clustering
+        gf.cluster_meanshift(**cfg["cluster_mean_shift"])
+
+        # Write field out
         field_file_name = cfg["general"]["out_dir"] + \
             "/field_" + str(field_id)+".fits"
         gf.write_to_fits(file_name=field_file_name)
-        # gf = GALEXField(obs_id=field_id,
-        #                obs_filter=cfg["observations"]["obs_filter"])
 
     rg.info()
 
@@ -108,6 +116,6 @@ if __name__ == '__main__':
     rg.write_to_fits(file_name=region_out_name)
 
     # Write used config file
-    toml_out_name = cfg["general"]["out_dir"] + "/uvva_ran_cfg.toml"
-    with open(toml_out_name, "w") as toml_file:
-        toml.dump(cfg, toml_file)
+    yaml_out_name = cfg["general"]["out_dir"] + "/uvva_ran_cfg.yaml"
+    with open(yaml_out_name, "w") as yaml_file:
+        yaml.dump(cfg, yaml_file)
