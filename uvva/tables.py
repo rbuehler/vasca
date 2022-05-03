@@ -1,12 +1,12 @@
 import os
-from astropy import units as uu
-from astropy.table import Table, Column
-from loguru import logger
-import h5py
-from astropy.io import fits
-from astropy.wcs import wcs
-import numpy as np
 
+import h5py
+import numpy as np
+from astropy import units as uu
+from astropy.io import fits
+from astropy.table import Column, Table
+from astropy.wcs import wcs
+from loguru import logger
 
 dimless = uu.dimensionless_unscaled
 
@@ -351,8 +351,7 @@ region = {
 # global, combined dictionary
 class_keys = ["base_field", "galex_field", "region"]
 class_dicts = [base_field, galex_field, region]
-dd_uvva_tables = {c_key: c_dict for c_key,
-                  c_dict in zip(class_keys, class_dicts)}
+dd_uvva_tables = {c_key: c_dict for c_key, c_dict in zip(class_keys, class_dicts)}
 
 
 class TableCollection(object):
@@ -365,7 +364,7 @@ class TableCollection(object):
 
         self._table_names = list()
 
-    @ staticmethod
+    @staticmethod
     def table_from_template(data, template_name):
         """
         Creates a new astropy table.
@@ -443,10 +442,15 @@ class TableCollection(object):
             self._table_names.append(table_key)
 
         tt = self.table_from_template(data, template_name)
-        if(add_sel_col):
+        if add_sel_col:
             default_sel = np.ones(len(tt), dtype="uint8")
-            col = Column(data=default_sel, name='sel', dtype="uint8",
-                         unit="1", description="Selection of rows for UVVA analysis.")
+            col = Column(
+                data=default_sel,
+                name="sel",
+                dtype="uint8",
+                unit="1",
+                description="Selection of rows for UVVA analysis.",
+            )
             tt.add_column(col)
 
         setattr(self, table_key, tt)
@@ -473,11 +477,10 @@ class TableCollection(object):
         hdup = fits.PrimaryHDU()
 
         # Check if image data is set and add to primary HDU
-        if hasattr(self, 'ref_img'):
+        if hasattr(self, "ref_img"):
             if self.ref_img is not None and self.ref_wcs is not None:
                 logger.debug("Storing image data'")
-                hdup = fits.PrimaryHDU(
-                    self.ref_img, header=self.ref_wcs.to_header())
+                hdup = fits.PrimaryHDU(self.ref_img, header=self.ref_wcs.to_header())
 
         hdus = [hdup]
         new_hdul = fits.HDUList([hdup])
@@ -524,14 +527,13 @@ class TableCollection(object):
                 logger.debug(f"Loading table '{name}'")
                 # add to table manifest
                 if name in self._table_names:
-                    logger.warning(
-                        f"Table '{name}' already exists, overwriting.")
+                    logger.warning(f"Table '{name}' already exists, overwriting.")
                 else:
                     self._table_names.append(name)
                 setattr(self, name, Table.read(file_name, hdu=name))
 
             # Load image data
-            if hasattr(self, 'ref_img'):
+            if hasattr(self, "ref_img"):
                 self.ref_img = ff[0].data
                 if self.ref_img is not None:
                     self.ref_wcs = wcs.WCS(ff[0].header)
@@ -601,8 +603,7 @@ class TableCollection(object):
             logger.debug(f"Loading table '{table}'")
             self._table_names.append(str(table))
             setattr(
-                self, str(table), Table.read(
-                    file_name, path="TABDATA/" + str(table))
+                self, str(table), Table.read(file_name, path="TABDATA/" + str(table))
             )
 
     def info(self):

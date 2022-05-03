@@ -120,4 +120,4 @@ def table_to_array(table):
     ), f"Expected same dtype '{dtype}' for all columns. {x.dtype}"
 
     # Creates view (not a copy) to return a regular numpy array
-    return x.view((float, len(x.dtype.names)))
+    return x.view((dtype, len(x.dtype.names)))
