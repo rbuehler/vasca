@@ -421,7 +421,7 @@ class BaseField(TableCollection):
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
-        # self.add_light_curve(add_upper_limits=add_upper_limits)
+        self.add_light_curve(add_upper_limits=add_upper_limits)
 
         return nr_srcs
 
@@ -472,29 +472,67 @@ class BaseField(TableCollection):
             f"Upper limits option set to {add_upper_limits}."
         )
 
-        # Create table
+        # Prepare visit info
         nr_vis = len(self.tt_visits)
         self.tt_visits.add_index("vis_id")
-        self.add_table(
-            self.tt_visits["time_bin_start", "time_bin_size"],
-            "base_field:tt_sources_lc",
-        )
+
+        # Create tables
+        self.add_table(None, "base_field:tt_sources_mag", add_sel_col=False)
+        self.add_table(None, "base_field:tt_sources_mag_err", add_sel_col=False)
+        if add_upper_limits:
+            self.add_table(None, "base_field:tt_sources_mag_ul", add_sel_col=False)
+
+        for vis_idx in range(0, nr_vis):
+
+            # Magnitude table
+            col0 = Column(
+                name="vis_"+str(vis_idx),
+                dtype="float64",
+                unit="1",
+                description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
+            )
+            self.tt_sources_mag.add_column(col0)
+
+            # Magnitude error table
+            col1 = Column(
+                name="vis_"+str(vis_idx),
+                dtype="float64",
+                unit="1",
+                description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
+            )
+            self.tt_sources_mag_err.add_column(col1)
+
+            if add_upper_limits:
+                # Upper limt table
+                col2 = Column(
+                    name="vis_"+str(vis_idx),
+                    dtype="float64",
+                    unit="1",
+                    description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
+                )
+                self.tt_sources_mag_ul.add_column(col2)
 
         # Loop over sources and add them to tables
         tt_det_grp = self.tt_detections.group_by(["src_id"])
         for tt_det in tt_det_grp.groups:
+
+            # Add detected magnitudes
             src_id = tt_det["src_id"][0]
             vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
+
             np_mag = np.zeros(nr_vis) - 1
             np_mag[vis_idxs] = tt_det["mag"]
-            self.tt_sources_lc.add_column(np_mag, name=f"src_{src_id}_mag")
+            self.tt_sources_mag.add_row([src_id] + np_mag.tolist())
+
+            np_mag_err = np.zeros(nr_vis) - 1
+            np_mag_err[vis_idxs] = tt_det["mag_err"]
+            self.tt_sources_mag_err.add_row([src_id] + np_mag_err.tolist())
+
             # Store upper limits if no detection in a visit
             # TODO: make this more general and not GALEX specific
-            np_mag_err = np.zeros(nr_vis) - 1
             if add_upper_limits:
-                np_mag_err = self.get_upper_limits()
-            np_mag_err[vis_idxs] = tt_det["mag_err"]
-            self.tt_sources_lc.add_column(np_mag_err, name=f"src_{src_id}_mag_err")
+                np_mag_ul = self.get_upper_limits()
+                self.tt_sources_mag_ul.add_row([src_id] + np_mag_ul.tolist())
 
     def remove_double_visit_detections(self):
         """

@@ -142,15 +142,35 @@ base_field = {
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
-    "tt_sources_lc": {
-        "names": ["time_start", "time_delta"],
-        "dtype": ["float64", "float64"],
-        "units": ["d", "s"],
+    "tt_sources_mag": {
+        "names": ["src_id"],
+        "dtype": ["int64"],
+        "units": ["1"],
         "descriptions": [
-            "Visit exposure start date and time in MJD",
-            "Visit exposure stop date and time in MJD",
+            "Source ID nr.",
         ],
-        "meta": {"INFO": "Light curve magnitude flux and error table"},
+        "meta": {"INFO": "Light curve magnitude flux. First column is src_id.\
+                 Negative values indicate no meassurement."},
+    },
+    "tt_sources_mag_err": {
+        "names": ["src_id"],
+        "dtype": ["int64"],
+        "units": ["1"],
+        "descriptions": [
+            "Source ID nr.",
+        ],
+        "meta": {"INFO": "Light curve magnitude flux error. Row index is src_id.\
+                 Negative values indicate no meassurement."},
+    },
+    "tt_sources_mag_ul": {
+        "names": ["src_id"],
+        "dtype": ["int64"],
+        "units": ["1"],
+        "descriptions": [
+            "Source ID nr.",
+        ],
+        "meta": {"INFO": "Light curve magnitude flux upper limits.\
+                 Row index is src_id. Negative values indicate no meassurement."},
     },
 }
 galex_field = {
