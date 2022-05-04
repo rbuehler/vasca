@@ -404,8 +404,6 @@ class BaseField(TableCollection):
         # Fill in data into field tables
         src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
 
-        print("l", len(ms.labels_))
-
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
         srcs_data = {
@@ -415,9 +413,6 @@ class BaseField(TableCollection):
             "nr_det": det_cts,
             "flag": np.zeros(nr_srcs),
         }
-
-        print("a", len(src_ids), len(cluster_centers[:, 0]), len(
-            cluster_centers[:, 1]), len(det_cts), len(np.zeros(nr_srcs)))
 
         # Fill information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
