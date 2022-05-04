@@ -20,3 +20,4 @@ build/*
 !uvva/test/resources/**/*.hdf5
 .coverage
 coverage.xmluvva/uvva.log
+uvva/output.csv

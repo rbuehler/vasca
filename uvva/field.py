@@ -420,11 +420,11 @@ class BaseField(TableCollection):
             cluster_centers[:, 1]), len(det_cts), len(np.zeros(nr_srcs)))
 
         # Write out to debug
-        # import csv
-        # with open('output.csv', 'w') as output:
-        #     writer = csv.writer(output)
-        #     for key, value in srcs_data.items():
-        #         writer.writerow([key, *value])
+        import csv
+        with open('output.csv', 'w') as output:
+            writer = csv.writer(output)
+            for key, value in srcs_data.items():
+                writer.writerow([key, *value])
 
         # Fill information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
@@ -433,7 +433,7 @@ class BaseField(TableCollection):
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
-        self.add_light_curve(add_upper_limits=add_upper_limits)
+        # self.add_light_curve(add_upper_limits=add_upper_limits)
 
         return nr_srcs
 
@@ -550,9 +550,10 @@ class BaseField(TableCollection):
                 rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1:])
 
         if len(rm_det_ids) > 0:
-
+            nr_rm_det = len(rm_det_ids)
+            perc_rm_det = 100*nr_rm_det/len(self.tt_detections)
             logger.warning(
-                "Removed Nr. double visit detections:" + str(len(rm_det_ids))
+                f"Removed double-visit detections: {nr_rm_det} ({perc_rm_det: .2f} %)"
             )
 
             # remove the doubled detections from tt_detections

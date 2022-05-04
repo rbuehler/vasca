@@ -4,15 +4,14 @@
 Script that runs the UVVA pipeline.
 """
 
-import toml
-from loguru import logger
+
 import sys
-import datetime
 import os
 import argparse
+import yaml
+from loguru import logger
 from uvva.region import Region
 from uvva.field import GALEXField
-import yaml
 
 
 def set_config(cfg_file):
@@ -46,7 +45,7 @@ def set_config(cfg_file):
 
 def set_logger(cfg):
     """
-    Setup logger 
+    Setup logger
 
     Parameters
     ----------
