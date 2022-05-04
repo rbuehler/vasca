@@ -419,13 +419,6 @@ class BaseField(TableCollection):
         print("a", len(src_ids), len(cluster_centers[:, 0]), len(
             cluster_centers[:, 1]), len(det_cts), len(np.zeros(nr_srcs)))
 
-        # Write out to debug
-        import csv
-        with open('output.csv', 'w') as output:
-            writer = csv.writer(output)
-            for key, value in srcs_data.items():
-                writer.writerow([key, *value])
-
         # Fill information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
@@ -564,7 +557,7 @@ class BaseField(TableCollection):
             src_ids, det_cts = np.unique(
                 self.tt_detections["src_id"], return_counts=True
             )
-            self.tt_sources["src_id"] = det_cts
+            self.tt_sources.replace_column("nr_det", det_cts)
 
         return rm_det_ids
 
