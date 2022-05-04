@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name          : "example_fields"
+    name          : "example_region"
     out_dir       : "./examples/uvva_pipeline"                 # If "CWD" current work directory will be used
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
@@ -11,9 +11,9 @@ general:
 
 cluster:
     meanshift:
-        bandwidth     : null               # In arcsec, to estimate it automatically specify "null"
+        bandwidth     : 6               # In arcsec, to estimate it automatically specify "null"
         seeds         : null
-        bin_seeding   : true
+        bin_seeding   : false
         min_bin_freq  : 1
         cluster_all   : true
         n_jobs        : 4
@@ -24,6 +24,5 @@ observations:
     observatory : "GALEX"
     obs_filter : "NUV"
     field_ids :
-        - 2604912508670050304  # PS_COSMOS_MOS21
-        - 2604982877414227968  # PS_COSMOS_MOS22
+        - 6388191295067652096
 

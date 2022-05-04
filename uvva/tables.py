@@ -7,6 +7,11 @@ from astropy.io import fits
 from astropy.table import Column, Table
 from astropy.wcs import wcs
 from loguru import logger
+#import warnings
+#from astropy.io.fits.verify import VerifyWarning
+
+# deactivate warnings
+#warnings.simplefilter('ignore', category=VerifyWarning)
 
 dimless = uu.dimensionless_unscaled
 
@@ -19,7 +24,7 @@ ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 base_field = {
     "tt_field": {
         "names": ["field_id", "name", "ra", "dec", "observatory", "obs_filter"],
-        "dtype": ["uint64", "S64", "float64", "float64", "S64", "S64"],
+        "dtype": ["int64", "S64", "float64", "float64", "S64", "S64"],
         "units": ["1", "", "degree", "degree", "", ""],
         "descriptions": [
             "Field ID nr.",
@@ -33,7 +38,7 @@ base_field = {
     },
     "tt_visits": {
         "names": ["vis_id", "time_bin_start", "time_bin_size"],
-        "dtype": ["uint64", "float64", "float64"],
+        "dtype": ["int64", "float64", "float64"],
         "units": ["1", "d", "s"],
         "descriptions": [
             "Visit ID nr.",
@@ -54,14 +59,14 @@ base_field = {
             "mag_err",
         ],
         "dtype": [
-            "uint64",
-            "uint64",
-            "uint64",
+            "int64",
+            "int64",
+            "int64",
             "float64",
             "float64",
             "float64",
-            "float32",
-            "float32",
+            "float64",
+            "float64",
         ],
         "units": [
             "1",
@@ -97,12 +102,12 @@ base_field = {
             "mag_err",
         ],
         "dtype": [
-            "uint64",
+            "int64",
             "float64",
             "float64",
-            "float32",
-            "float32",
-            "float32",
+            "float64",
+            "float64",
+            "float64",
         ],
         "units": [
             "1",
@@ -126,7 +131,7 @@ base_field = {
     },
     "tt_sources": {
         "names": ["src_id", "ra", "dec", "nr_det", "flag"],
-        "dtype": ["uint32", "float32", "float32", "uint32", "int32"],
+        "dtype": ["int64", "float64", "float64", "int64", "int64"],
         "units": ["1", "degree", "degree", "1", "1"],
         "descriptions": [
             "Source ID nr.",
@@ -193,10 +198,10 @@ galex_field = {
         ],
         "dtype": [
             *base_field["tt_detections"]["dtype"],
-            "float32",
-            "int32",
-            "float32",
-            "int32",
+            "float64",
+            "int64",
+            "float64",
+            "int64",
             "float64",
             "float64",
             "float64",
@@ -247,10 +252,10 @@ galex_field = {
         ],
         "dtype": [
             *base_field["tt_ref_sources"]["dtype"],
-            "float32",
-            "int32",
-            "float32",
-            "int32",
+            "float64",
+            "int64",
+            "float64",
+            "int64",
             "float64",
             "float64",
             "float64",
@@ -300,7 +305,7 @@ region = {
         "dtype": [
             *base_field["tt_field"]["dtype"],
             "float64",
-            "uint64",
+            "int64",
             "float64",
             "float64",
             "float64",
@@ -332,7 +337,7 @@ region = {
         ],
         "dtype": [
             *base_field["tt_visits"]["dtype"],
-            "uint64",
+            "int64",
         ],
         "units": [
             *base_field["tt_visits"]["units"],
@@ -443,11 +448,11 @@ class TableCollection(object):
 
         tt = self.table_from_template(data, template_name)
         if add_sel_col:
-            default_sel = np.ones(len(tt), dtype="uint8")
+            default_sel = np.ones(len(tt), dtype="int64")
             col = Column(
                 data=default_sel,
                 name="sel",
-                dtype="uint8",
+                dtype="int64",
                 unit="1",
                 description="Selection of rows for UVVA analysis.",
             )
@@ -455,7 +460,7 @@ class TableCollection(object):
 
         setattr(self, table_key, tt)
 
-    def write_to_fits(self, file_name="field_default.fits", overwrite=True):
+    def write_to_fits(self, file_name="tables.fits", overwrite=True, fits_verify="warn"):
         """
         Write tables and image of a field to a fits file.
 
@@ -465,6 +470,11 @@ class TableCollection(object):
             File name. The default is "field_default.fits".
         overwrite : bool, optional
             Overwrite existing file. The default is True.
+        fits_verfy: str, optional
+            Verify if output is compatible with FITS format. Options are:
+            'exception', 'ignore', 'fix', 'silentfix', 'warn'
+            See https://docs.astropy.org/en/stable/io/fits/api/verification.html
+            The default is 'warn'.
 
         Returns
         -------
@@ -484,7 +494,7 @@ class TableCollection(object):
 
         hdus = [hdup]
         new_hdul = fits.HDUList([hdup])
-        new_hdul.writeto(file_name, overwrite=overwrite)
+        new_hdul.writeto(file_name, overwrite=overwrite, output_verify=fits_verify)
 
         for key in self._table_names:
             if key in self.__dict__:
@@ -493,13 +503,15 @@ class TableCollection(object):
 
         # Rename extensions to table names
         ext_nr = 0
-        with fits.open(file_name, "update") as ff:
+        with fits.open(file_name, "update", output_verify=fits_verify) as ff:
             for key in self._table_names:
                 if key in self.__dict__:
                     ext_nr += 1
                     ff[ext_nr].header["EXTNAME"] = key
+                    ff.flush(output_verify=fits_verify)
+        ff.close()
 
-    def load_from_fits(self, file_name="field_default.fits"):
+    def load_from_fits(self, file_name="tables.fits"):
         """
         Loads field from a fits file
 
@@ -540,7 +552,7 @@ class TableCollection(object):
                 else:
                     self.ref_wcs = None
 
-    def write_to_hdf5(self, file_name="field_default.hdf5"):
+    def write_to_hdf5(self, file_name="tables.hdf5"):
         """
         Write tables of a field to a hdf5 file.
 
@@ -579,7 +591,7 @@ class TableCollection(object):
                         serialize_meta=True,
                     )
 
-    def load_from_hdf5(self, file_name="field_default.hdf5"):
+    def load_from_hdf5(self, file_name="tables.hdf5"):
         """
         Loads field from a hdf5 file
 
@@ -635,4 +647,5 @@ class TableCollection(object):
             if key in self.__dict__:
                 out_str += "\n" + self.__dict__[key].__str__()
 
+        return out_str
         return out_str
