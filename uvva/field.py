@@ -256,7 +256,7 @@ class BaseField(TableCollection):
 
     def plot_light_curve(
         self,
-        src_id_list,
+        src_ids,
         ax=None,
         ylim=[23.5, 16.5],
         legend_loc="upper right",
@@ -268,8 +268,8 @@ class BaseField(TableCollection):
 
         Parameters
         ----------
-        src_id_list : list
-            List of source IDs to plot.
+        src_ids : list or int
+            List or single source IDs to plot. 
         ax : axes, optional
                 Matplotlib axes to plot on. The default is None.
         legend_loc : string, optional
@@ -285,6 +285,10 @@ class BaseField(TableCollection):
             Used Matplotlib axes.
 
         """
+
+        # If only one src_id was passed create a list
+        if not hasattr(src_ids, '__iter__'):
+            src_ids = [src_ids]
 
         logger.debug("Plotting light curves'")
 
@@ -307,25 +311,28 @@ class BaseField(TableCollection):
         # Loop over selected sources and plot
         colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
         markers = cycle("osDd.<>^vpP*")
-        for src_id, col, mar in zip(src_id_list, colors, markers):
+        for src_id, col, mar in zip(src_ids, colors, markers):
+
+            # Get light curve
+            lc = self.get_light_curve(src_id)
 
             # Get arrays
             src_lab = "src_" + str(src_id)
-            uplims = np.zeros(len(self.tt_sources_lc))
-            sel = self.tt_sources_lc[src_lab + "_mag"] > 0
-            mags = self.tt_sources_lc[src_lab + "_mag"]
-            mags_err = self.tt_sources_lc[src_lab + "_mag_err"]
+            uplims = np.zeros(len(lc))
+            sel = lc["mag"] > 0
+            mags = lc["mag"]
+            mags_err = lc["mag_err"]
 
             # Modify arrays if upper limits are plotted
             if plot_upper_limits:
-                uplims = self.tt_sources_lc[src_lab + "_mag"] < 0
-                sel = np.ones(len(self.tt_sources_lc), dtype=bool)
+                uplims = lc["ul"] < 0
+                sel = np.ones(len(lc), dtype=bool)
                 mags = mags * ~uplims + mags_err * uplims
                 mags_err = mags_err * ~uplims + 1 * uplims
 
             # Plot
             plt.errorbar(
-                self.tt_sources_lc["time_start"][sel],
+                lc["time_start"][sel],  # TODO: Move this to the bin center
                 mags[sel],
                 yerr=mags_err[sel],
                 lolims=uplims[sel],
@@ -421,7 +428,7 @@ class BaseField(TableCollection):
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
-        # self.add_light_curve(add_upper_limits=add_upper_limits)
+        self.set_light_curve(add_upper_limits=add_upper_limits)
 
         return nr_srcs
 
@@ -450,7 +457,7 @@ class BaseField(TableCollection):
 
         return upper_limit
 
-    def add_light_curve(self, add_upper_limits=True):
+    def set_light_curve(self, add_upper_limits=True):
         """
         Helper function of cluster_meanshift().
         Adds detections information into tt_source_lc.
@@ -472,29 +479,130 @@ class BaseField(TableCollection):
             f"Upper limits option set to {add_upper_limits}."
         )
 
-        # Create table
+        # Prepare visit info
         nr_vis = len(self.tt_visits)
         self.tt_visits.add_index("vis_id")
-        self.add_table(
-            self.tt_visits["time_bin_start", "time_bin_size"],
-            "base_field:tt_sources_lc",
-        )
+
+        # Create tables
+        self.add_table(None, "base_field:tt_sources_mag", add_sel_col=False)
+        self.add_table(None, "base_field:tt_sources_mag_err", add_sel_col=False)
+        if add_upper_limits:
+            self.add_table(None, "base_field:tt_sources_mag_ul", add_sel_col=False)
+
+        for vis_idx in range(0, nr_vis):
+
+            # Magnitude table
+            col0 = Column(
+                name="vis_"+str(vis_idx),
+                dtype="float64",
+                unit="1",
+                description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
+            )
+            self.tt_sources_mag.add_column(col0)
+
+            # Magnitude error table
+            col1 = Column(
+                name="vis_"+str(vis_idx),
+                dtype="float64",
+                unit="1",
+                description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
+            )
+            self.tt_sources_mag_err.add_column(col1)
+
+            if add_upper_limits:
+                # Upper limt table
+                col2 = Column(
+                    name="vis_"+str(vis_idx),
+                    dtype="float64",
+                    unit="1",
+                    description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
+                )
+                self.tt_sources_mag_ul.add_column(col2)
 
         # Loop over sources and add them to tables
         tt_det_grp = self.tt_detections.group_by(["src_id"])
         for tt_det in tt_det_grp.groups:
+
+            # Add detected magnitudes
             src_id = tt_det["src_id"][0]
             vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
+
             np_mag = np.zeros(nr_vis) - 1
             np_mag[vis_idxs] = tt_det["mag"]
-            self.tt_sources_lc.add_column(np_mag, name=f"src_{src_id}_mag")
+            self.tt_sources_mag.add_row([src_id] + np_mag.tolist())
+
+            np_mag_err = np.zeros(nr_vis) - 1
+            np_mag_err[vis_idxs] = tt_det["mag_err"]
+            self.tt_sources_mag_err.add_row([src_id] + np_mag_err.tolist())
+
             # Store upper limits if no detection in a visit
             # TODO: make this more general and not GALEX specific
-            np_mag_err = np.zeros(nr_vis) - 1
             if add_upper_limits:
-                np_mag_err = self.get_upper_limits()
-            np_mag_err[vis_idxs] = tt_det["mag_err"]
-            self.tt_sources_lc.add_column(np_mag_err, name=f"src_{src_id}_mag_err")
+                np_mag_ul = self.get_upper_limits()
+                self.tt_sources_mag_ul.add_row([src_id] + np_mag_ul.tolist())
+
+    def get_light_curve(self, src_ids):
+        """
+        Get a light curve for one source or a list of sources.
+
+        Parameters
+        ----------
+        src_ids : list or int
+            Source ID(s) to return the light curve.
+
+        Returns
+        -------
+        lc_dict : list or table
+            Light curve as an astropy Table compatible
+            with astropy BinnedTimeSeries.
+
+        """
+        if not hasattr(src_ids, '__iter__'):
+            src_ids = [src_ids]
+
+        logger.debug(f"Getting lightcurve for src_ids: {src_ids}")
+
+        if "tt_sources_mag" not in self._table_names:
+            logger.error("Light curve does not exist, run 'set_light_curve()' first.")
+
+        # Get src_idx
+        self.tt_sources_mag.add_index("src_id")
+        src_idx_list = self.tt_sources_mag.loc_indices[src_ids]
+
+        if not hasattr(src_idx_list, '__iter__'):
+            src_idx_list = [src_idx_list]
+
+        # Dictionary to store light curve tables
+        lc_dict = dict()
+
+        self.tt_visits["time_bin_start", "time_bin_size"],
+
+        for src_idx in src_idx_list:
+
+            # Check if upper limits where produced
+            uls = np.zeros(len(self.tt_visits)+1) - 1
+            if "tt_sources_mag_ul" in self._table_names:
+                uls = self.tt_sources_mag_ul[src_idx]
+
+            # Build data dictionary
+            src_data = {"time_start": self.tt_visits["time_bin_start"].data,
+                        "time_delta": self.tt_visits["time_bin_size"].data,
+                        "mag": list(self.tt_sources_mag[src_idx])[1:],
+                        "mag_err": list(self.tt_sources_mag_err[src_idx])[1:],
+                        "ul": list(uls)[1:]}
+            print(src_data)
+
+            # Create ans store table
+            src_id = self.tt_sources_mag[src_idx][0]
+            tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
+            tt_lc.meta["src_id"] = src_id
+            lc_dict[src_id] = tt_lc
+
+        # If only one src_id was passed do not return as list
+        if len(lc_dict) == 1:
+            lc_dict = list(lc_dict.values())[0]
+
+        return lc_dict
 
     def remove_double_visit_detections(self):
         """
@@ -747,7 +855,7 @@ class GALEXField(BaseField):
         logger.debug(f"Field data path set to: '{self.data_path}'")
         logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
 
-    @classmethod
+    @ classmethod
     def from_UVVA(cls, obs_id, obs_filter="NUV", fits_path=None, **kwargs):
         """
         Constructor to initialize a GALEXField instance
@@ -807,7 +915,7 @@ class GALEXField(BaseField):
 
         return gf
 
-    @classmethod
+    @ classmethod
     def from_MAST(
         cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs
     ):
@@ -867,7 +975,7 @@ class GALEXField(BaseField):
 
         return gf
 
-    @staticmethod
+    @ staticmethod
     def get_visit_upper_limits(tt_visits):
         """
         Calculates upper limits on non-detections to the tt_visits table
