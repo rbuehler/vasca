@@ -32,6 +32,38 @@ class Region(TableCollection):
         # Sets skeleton
         super().__init__()
 
+    @staticmethod
+    def GALEXField_loader(field_id, obs):
+
+        # Loads field according to load method specification
+        # String matching is case insensitive (converts to all to lower case).
+        if obs["field_options"]["load_method"].casefold() == "MAST".casefold():
+            gf = GALEXField.from_MAST(
+                obs_id=field_id,
+                obs_filter=obs["obs_filter"],
+                **obs["field_options"]["load_kwargs"],
+            )
+        elif obs["field_options"]["load_method"].casefold() == "UVVA".casefold():
+            gf = GALEXField.from_UVVA(
+                obs_id=field_id,
+                obs_filter=obs["obs_filter"],
+                **obs["field_options"]["load_kwargs"],
+            )
+        elif obs["field_options"]["load_method"].casefold() == "auto".casefold():
+            pass
+            # TODO: Lookahead via rm to check data availability.
+            # Then "UVVA" is preferred for performance reasons.
+            # Fallback to "MAST" & refresh=True if "UVVA" fails for some reason
+            # (e.g. not complete set of tables stored in the fits file).
+        else:
+            raise ValueError(
+                "Expected GALEXField load method specification from "
+                "['MAST', 'UVVA', 'AUTO'], "
+                f"got {obs['field_options']['load_method']}."
+            )
+
+        return gf
+
     @classmethod
     def load_from_config(cls, obs):
         """
@@ -57,40 +89,13 @@ class Region(TableCollection):
             rg.add_table(None, "region:tt_fields")
             rg.add_table(None, "region:tt_visits")
 
+            # Temporary fix:
+            obs["field_options"]["load_kwargs"]["load_products"] = False
+
             # Loop over fields and store info
             for field_id in obs["field_ids"]:
 
-                # Loads field according to load method specification
-                # String matching is case insensitive (converts to all to lower case).
-                print(obs["field_options"]["load_method"])
-                if obs["field_options"]["load_method"].casefold() == "MAST".casefold():
-                    gf = GALEXField.from_MAST(
-                        obs_id=field_id,
-                        obs_filter=obs["obs_filter"],
-                        **obs["field_options"]["load_kwargs"],
-                    )
-                elif (
-                    obs["field_options"]["load_method"].casefold() == "UVVA".casefold()
-                ):
-                    gf = GALEXField.from_UVVA(
-                        obs_id=field_id,
-                        obs_filter=obs["obs_filter"],
-                        **obs["field_options"]["load_kwargs"],
-                    )
-                elif (
-                    obs["field_options"]["load_method"].casefold() == "auto".casefold()
-                ):
-                    pass
-                    # TODO: Lookahead via rm to check data availability.
-                    # Then "UVVA" is preferred for performance reasons.
-                    # Fallback to "MAST" & refresh=True if "UVVA" fails for some reason
-                    # (e.g. not complete set of tables stored in the fits file).
-                else:
-                    raise ValueError(
-                        "Expected GALEXField load method specification from "
-                        "['MAST', 'UVVA', 'AUTO'], "
-                        f"got {obs['field_options']['load_method']}."
-                    )
+                gf = Region.GALEXField_loader(field_id, obs)
                 field_info = dict(gf.tt_field[0])
                 field_info["size"] = 0.55
                 field_info["n_visits"] = gf.n_visits
