@@ -552,7 +552,7 @@ class BaseField(TableCollection):
 
         Returns
         -------
-        lc_dict : list or int
+        lc_dict : list or table
             Light curve as an astropy Table compatible
             with astropy BinnedTimeSeries.
 
