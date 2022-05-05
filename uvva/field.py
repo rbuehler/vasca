@@ -543,9 +543,7 @@ class BaseField(TableCollection):
 
     def get_light_curve(self, src_ids):
         """
-        Get a light curve for one source or a list of source. 
-        The light curve is returned as an astropy Table compatible
-        with astropy BinnedTimeSeries.
+        Get a light curve for one source or a list of sources.
 
         Parameters
         ----------
