@@ -172,6 +172,20 @@ base_field = {
         "meta": {"INFO": "Light curve magnitude flux upper limits.\
                  Row index is src_id. Negative values indicate no meassurement."},
     },
+    "tt_source_lc": {
+        "names": ["time_start", "time_delta", "mag", "mag_err", "ul"],
+        "dtype": ["float64", "float64", "float64", "float64", "float64"],
+        "units": ["d", "s", "1", "1", "1"],
+        "descriptions": [
+            "Visit exposure start date and time in MJD",
+            "Visit exposure stop date and time in MJD",
+            "Flux magnitude",
+            "Flux magnitude error",
+            "Flux magnitude upper limit",
+        ],
+        "meta": {"INFO": "Light curve magnitude flux table for one source"},
+    },
+
 }
 galex_field = {
     "tt_visits": {

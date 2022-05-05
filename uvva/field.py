@@ -421,7 +421,7 @@ class BaseField(TableCollection):
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
-        self.add_light_curve(add_upper_limits=add_upper_limits)
+        self.set_light_curve(add_upper_limits=add_upper_limits)
 
         return nr_srcs
 
@@ -450,7 +450,7 @@ class BaseField(TableCollection):
 
         return upper_limit
 
-    def add_light_curve(self, add_upper_limits=True):
+    def set_light_curve(self, add_upper_limits=True):
         """
         Helper function of cluster_meanshift().
         Adds detections information into tt_source_lc.
@@ -533,6 +533,45 @@ class BaseField(TableCollection):
             if add_upper_limits:
                 np_mag_ul = self.get_upper_limits()
                 self.tt_sources_mag_ul.add_row([src_id] + np_mag_ul.tolist())
+
+    def get_light_curve(self, src_id_list):
+
+        logger.debug(f"Getting lightcurve for src_ids: {src_id_list}")
+
+        if not "tt_sources_mag" in self._table_names:
+            logger.error("Light curve does not exist, run 'set_light_curve()' first.")
+
+        # Get src_idx
+        self.tt_sources_mag.add_index("src_id")
+        src_idx_list = self.tt_sources_mag.loc_indices[src_id_list]
+
+        # Dictionary to store light curve tables
+        lc_dict = dict()
+
+        self.tt_visits["time_bin_start", "time_bin_size"],
+
+        for src_idx in src_idx_list:
+
+            # Check if upper limits where produced
+            uls = np.zeros(len(self.tt_visits)+1) - 1
+            if "tt_sources_mag_ul" in self._table_names:
+                uls = self.tt_sources_mag_ul[src_idx]
+
+            # Build data dictionary
+            src_data = {"time_start": self.tt_visits["time_bin_start"].data,
+                        "time_delta": self.tt_visits["time_bin_size"].data,
+                        "mag": list(self.tt_sources_mag[src_idx])[1:],
+                        "mag_err": list(self.tt_sources_mag_err[src_idx])[1:],
+                        "ul": list(uls)[1:]}
+            print(src_data)
+
+            # Create ans store table
+            src_id = self.tt_sources_mag[src_idx][0]
+            tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
+            tt_lc.meta["src_id"] = src_id
+            lc_dict[src_id] = tt_lc
+
+        return lc_dict
 
     def remove_double_visit_detections(self):
         """
@@ -785,7 +824,7 @@ class GALEXField(BaseField):
         logger.debug(f"Field data path set to: '{self.data_path}'")
         logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
 
-    @classmethod
+    @ classmethod
     def from_UVVA(cls, obs_id, obs_filter="NUV", fits_path=None, **kwargs):
         """
         Constructor to initialize a GALEXField instance
@@ -845,7 +884,7 @@ class GALEXField(BaseField):
 
         return gf
 
-    @classmethod
+    @ classmethod
     def from_MAST(
         cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs
     ):
@@ -905,7 +944,7 @@ class GALEXField(BaseField):
 
         return gf
 
-    @staticmethod
+    @ staticmethod
     def get_visit_upper_limits(tt_visits):
         """
         Calculates upper limits on non-detections to the tt_visits table
