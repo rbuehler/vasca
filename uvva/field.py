@@ -256,7 +256,7 @@ class BaseField(TableCollection):
 
     def plot_light_curve(
         self,
-        src_id_list,
+        src_ids,
         ax=None,
         ylim=[23.5, 16.5],
         legend_loc="upper right",
@@ -268,8 +268,8 @@ class BaseField(TableCollection):
 
         Parameters
         ----------
-        src_id_list : list
-            List of source IDs to plot.
+        src_ids : list or int
+            List or single source IDs to plot. 
         ax : axes, optional
                 Matplotlib axes to plot on. The default is None.
         legend_loc : string, optional
@@ -285,6 +285,10 @@ class BaseField(TableCollection):
             Used Matplotlib axes.
 
         """
+
+        # If only one src_id was passed create a list
+        if not hasattr(src_ids, '__iter__'):
+            src_ids = [src_ids]
 
         logger.debug("Plotting light curves'")
 
@@ -307,25 +311,28 @@ class BaseField(TableCollection):
         # Loop over selected sources and plot
         colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
         markers = cycle("osDd.<>^vpP*")
-        for src_id, col, mar in zip(src_id_list, colors, markers):
+        for src_id, col, mar in zip(src_ids, colors, markers):
+
+            # Get light curve
+            lc = self.get_light_curve(src_id)
 
             # Get arrays
             src_lab = "src_" + str(src_id)
-            uplims = np.zeros(len(self.tt_sources_lc))
-            sel = self.tt_sources_lc[src_lab + "_mag"] > 0
-            mags = self.tt_sources_lc[src_lab + "_mag"]
-            mags_err = self.tt_sources_lc[src_lab + "_mag_err"]
+            uplims = np.zeros(len(lc))
+            sel = lc["mag"] > 0
+            mags = lc["mag"]
+            mags_err = lc["mag_err"]
 
             # Modify arrays if upper limits are plotted
             if plot_upper_limits:
-                uplims = self.tt_sources_lc[src_lab + "_mag"] < 0
-                sel = np.ones(len(self.tt_sources_lc), dtype=bool)
+                uplims = lc["ul"] < 0
+                sel = np.ones(len(lc), dtype=bool)
                 mags = mags * ~uplims + mags_err * uplims
                 mags_err = mags_err * ~uplims + 1 * uplims
 
             # Plot
             plt.errorbar(
-                self.tt_sources_lc["time_start"][sel],
+                lc["time_start"][sel],  # TODO: Move this to the bin center
                 mags[sel],
                 yerr=mags_err[sel],
                 lolims=uplims[sel],
@@ -534,16 +541,22 @@ class BaseField(TableCollection):
                 np_mag_ul = self.get_upper_limits()
                 self.tt_sources_mag_ul.add_row([src_id] + np_mag_ul.tolist())
 
-    def get_light_curve(self, src_id_list):
+    def get_light_curve(self, src_ids):
 
-        logger.debug(f"Getting lightcurve for src_ids: {src_id_list}")
+        if not hasattr(src_ids, '__iter__'):
+            src_ids = [src_ids]
 
-        if not "tt_sources_mag" in self._table_names:
+        logger.debug(f"Getting lightcurve for src_ids: {src_ids}")
+
+        if "tt_sources_mag" not in self._table_names:
             logger.error("Light curve does not exist, run 'set_light_curve()' first.")
 
         # Get src_idx
         self.tt_sources_mag.add_index("src_id")
-        src_idx_list = self.tt_sources_mag.loc_indices[src_id_list]
+        src_idx_list = self.tt_sources_mag.loc_indices[src_ids]
+
+        if not hasattr(src_idx_list, '__iter__'):
+            src_idx_list = [src_idx_list]
 
         # Dictionary to store light curve tables
         lc_dict = dict()
@@ -570,6 +583,10 @@ class BaseField(TableCollection):
             tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
             tt_lc.meta["src_id"] = src_id
             lc_dict[src_id] = tt_lc
+
+        # If only one src_id was passed do not return as list
+        if len(lc_dict) == 1:
+            lc_dict = list(lc_dict.values())[0]
 
         return lc_dict
 
