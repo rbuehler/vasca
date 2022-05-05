@@ -542,7 +542,23 @@ class BaseField(TableCollection):
                 self.tt_sources_mag_ul.add_row([src_id] + np_mag_ul.tolist())
 
     def get_light_curve(self, src_ids):
+        """
+        Get a light curve for one source or a list of source. 
+        The light curve is returned as an astropy Table compatible
+        with astropy BinnedTimeSeries.
 
+        Parameters
+        ----------
+        src_ids : list or int
+            Source ID(s) to return the light curve.
+
+        Returns
+        -------
+        lc_dict : list or int
+            Light curve as an astropy Table compatible
+            with astropy BinnedTimeSeries.
+
+        """
         if not hasattr(src_ids, '__iter__'):
             src_ids = [src_ids]
 
