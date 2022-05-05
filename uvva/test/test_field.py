@@ -13,6 +13,7 @@ from loguru import logger
 from uvva.field import BaseField, GALEXField
 from uvva.resource_manager import ResourceManager
 from uvva import uvva_pipe
+import uvva
 
 
 @pytest.fixture
@@ -136,7 +137,7 @@ def test_base_field_io_alt(tmp_path, new_field):
 
 
 def test_pipeline():
-    cfg_file = "./uvva_test_cfg.yaml"
+    cfg_file = uvva.__path__[0]+"/test/uvva_test_cfg.yaml"
     cfg = uvva_pipe.set_config(cfg_file)
     uvva_pipe.run(cfg)
 
