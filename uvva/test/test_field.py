@@ -139,6 +139,7 @@ def test_base_field_io_alt(tmp_path, new_field):
 def test_pipeline():
     cfg_file = uvva.__path__[0]+"/test/uvva_test_cfg.yaml"
     cfg = uvva_pipe.set_config(cfg_file)
+    cfg["general"]["out_dir"] = uvva.__path__[0]+"/test/out_pipe"
     uvva_pipe.run(cfg)
 
 
