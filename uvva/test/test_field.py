@@ -12,6 +12,7 @@ from loguru import logger
 
 from uvva.field import BaseField, GALEXField
 from uvva.resource_manager import ResourceManager
+from uvva import uvva_pipe
 
 
 @pytest.fixture
@@ -132,6 +133,12 @@ def test_base_field_io_alt(tmp_path, new_field):
     new_field.write_to_fits(file_path)
     # test if a fits file exists
     assert not glob.glob(f"{d.resolve}/*.fits")
+
+
+def test_pipeline():
+    cfg_file = "./uvva_test_cfg.yaml"
+    cfg = uvva_pipe.set_config(cfg_file)
+    uvva_pipe.run(cfg)
 
 
 def main():
