@@ -12,6 +12,7 @@ import yaml
 from loguru import logger
 from uvva.region import Region
 from uvva.field import GALEXField
+import matplotlib.pyplot as plt
 
 
 def set_config(cfg_file):
@@ -105,6 +106,10 @@ if __name__ == '__main__':
 
         # Get light curve
         lcs = gf.get_light_curve([0, 12])
+        print(lcs)
+
+        gf.plot_light_curve(12)
+        plt.show()
 
         # Write field out
         field_file_name = cfg["general"]["out_dir"] + \
