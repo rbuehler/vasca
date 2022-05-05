@@ -975,9 +975,13 @@ class GALEXField(BaseField):
         # Sets ``gf.tt_detections``, ``gf.tt_ref_sources`` and loads the ref image
         if load_products:
             gf._load_galex_archive_products(obs_id, obs_filter, refresh=refresh)
+            meta_only = "."
+        else:
+            meta_only = ", metadata-only."
 
         logger.info(
-            f"Loaded new GALEX field '{obs_id}' with obs_filter '{obs_filter}' from MAST data."
+            f"Loaded new GALEX field '{obs_id}' with obs_filter '{obs_filter}'"
+            f"from MAST data {meta_only}"
         )
 
         return gf

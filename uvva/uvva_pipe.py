@@ -5,14 +5,16 @@ Script that runs the UVVA pipeline.
 """
 
 
-import sys
-import os
 import argparse
+import os
+import sys
+
+import matplotlib.pyplot as plt
 import yaml
 from loguru import logger
-from uvva.region import Region
+
 from uvva.field import GALEXField
-import matplotlib.pyplot as plt
+from uvva.region import Region
 
 
 def set_config(cfg_file):
@@ -30,7 +32,7 @@ def set_config(cfg_file):
         UVVA pipeline configuration dictionary
     """
     with open(cfg_file) as file:
-        cfg = yaml.safe_load(file)     # yaml.
+        cfg = yaml.safe_load(file)  # yaml.
 
     # Set output directory
     if cfg["general"]["out_dir"] == "CWD":
@@ -60,22 +62,30 @@ def set_logger(cfg):
     """
     log_cfg = {
         "handlers": [
-            {"sink": sys.stdout,
-             "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSSS}</green> "
-             "<cyan>{name}</cyan>:<cyan>{line}</cyan> |"
-             "<level>{level}:</level> {message}",
-             "level": cfg["general"]["log_level"], "colorize":True,
-             "backtrace":True, "diagnose":True},
-            {"sink": cfg["general"]["out_dir"]+"/"+cfg["general"]["log_file"],
-             "serialize": True, "backtrace":True, "diagnose":True},
+            {
+                "sink": sys.stdout,
+                "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSSS}</green> "
+                "<cyan>{name}</cyan>:<cyan>{line}</cyan> |"
+                "<level>{level}:</level> {message}",
+                "level": cfg["general"]["log_level"],
+                "colorize": True,
+                "backtrace": True,
+                "diagnose": True,
+            },
+            {
+                "sink": cfg["general"]["out_dir"] + "/" + cfg["general"]["log_file"],
+                "serialize": True,
+                "backtrace": True,
+                "diagnose": True,
+            },
         ],
     }
     logger.configure(**log_cfg)
     logger.enable("uvva")
 
-    logger.info("Runing '"+__file__+"'")
-    logger.debug("Config. file: '"+cfg["cfg_file"]+"'")
-    logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"]+"'")
+    logger.info("Runing '" + __file__ + "'")
+    logger.debug("Config. file: '" + cfg["cfg_file"] + "'")
+    logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
 
 
 def run(cfg):
@@ -98,16 +108,20 @@ def run(cfg):
 
     # Load region fields
     rg = Region.load_from_config(cfg["observations"])
+
+    # Temporary fix:
+    cfg["observations"]["field_options"]["load_kwargs"]["load_products"] = True
+
     for field_id in rg.tt_fields["field_id"]:
-        logger.info("Analysing field:"+str(field_id))
+        logger.info("Analysing field:" + str(field_id))
 
         # Load field
-        gf = GALEXField.from_MAST(
-            obs_id=field_id, obs_filter=cfg["observations"]["obs_filter"])
+        gf = Region.GALEXField_loader(field_id, cfg["observations"])
 
         # Run clustering
-        gf.cluster_meanshift(cfg["cluster"]["add_upper_limits"],
-                             **cfg["cluster"]["meanshift"])
+        gf.cluster_meanshift(
+            cfg["cluster"]["add_upper_limits"], **cfg["cluster"]["meanshift"]
+        )
 
         # Get light curve
         lcs = gf.get_light_curve([0, 12])
@@ -117,15 +131,17 @@ def run(cfg):
         # plt.show()
 
         # Write field out
-        field_file_name = cfg["general"]["out_dir"] + \
-            "/field_" + str(field_id)+".fits"
+        field_file_name = (
+            cfg["general"]["out_dir"] + "/field_" + str(field_id) + ".fits"
+        )
         gf.write_to_fits(file_name=field_file_name)
 
     rg.info()
 
     # Write out regions
-    region_out_name = cfg["general"]["out_dir"] + \
-        "/region_" + cfg["general"]["name"]+".fits"
+    region_out_name = (
+        cfg["general"]["out_dir"] + "/region_" + cfg["general"]["name"] + ".fits"
+    )
     rg.write_to_fits(file_name=region_out_name)
 
     # Write used config file
@@ -134,11 +150,11 @@ def run(cfg):
         yaml.dump(cfg, yaml_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     # Argument parsing
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', type=str, default=os.getcwd()+'/uvva_cfg.yaml')
+    parser.add_argument("--cfg", type=str, default=os.getcwd() + "/uvva_cfg.yaml")
     args = parser.parse_args()
 
     # Get UVVA configuration file
