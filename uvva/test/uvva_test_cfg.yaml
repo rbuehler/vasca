@@ -1,0 +1,28 @@
+---
+authors : "UC science"
+comment : "Test configuration file"
+
+general:
+    name          : "test_region"
+    out_dir       : "./out_pipe"                               # If "CWD" current work directory will be used
+    log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    log_file      : "uvva.log"                                 # Will be written into "out_dir"
+    data_source   : "MAST"                                     # Either "MAST" (cached or online) or "UVVA"
+
+cluster:
+    meanshift:
+        bandwidth     : 6               # In arcsec, to estimate it automatically specify "null"
+        seeds         : null
+        bin_seeding   : false
+        min_bin_freq  : 1
+        cluster_all   : true
+        n_jobs        : 4
+        max_iter      : 300
+    add_upper_limits  : true
+    
+observations:
+    observatory : "GALEX"
+    obs_filter : "NUV"
+    field_ids :
+        - 6388191295067652096
+
