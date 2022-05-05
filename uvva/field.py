@@ -269,7 +269,7 @@ class BaseField(TableCollection):
         Parameters
         ----------
         src_ids : list or int
-            List or single source IDs to plot. 
+            List or single source IDs to plot.
         ax : axes, optional
                 Matplotlib axes to plot on. The default is None.
         legend_loc : string, optional
@@ -287,7 +287,7 @@ class BaseField(TableCollection):
         """
 
         # If only one src_id was passed create a list
-        if not hasattr(src_ids, '__iter__'):
+        if not hasattr(src_ids, "__iter__"):
             src_ids = [src_ids]
 
         logger.debug("Plotting light curves'")
@@ -400,10 +400,9 @@ class BaseField(TableCollection):
             logger.debug(f"Estimating bandwidth")
             dd_ms["bandwidth"] = estimate_bandwidth(coords, quantile=0.2, n_samples=500)
         else:
-            dd_ms["bandwidth"] = (ms_kw["bandwidth"]*uu.arcsec).to(uu.deg).value
+            dd_ms["bandwidth"] = (ms_kw["bandwidth"] * uu.arcsec).to(uu.deg).value
 
-        logger.debug(
-            f"MeanShift with parameters (bandwith in degrees): '{dd_ms}' ")
+        logger.debug(f"MeanShift with parameters (bandwith in degrees): '{dd_ms}' ")
         ms = MeanShift(**dd_ms)
 
         ms.fit(coords)
@@ -493,7 +492,7 @@ class BaseField(TableCollection):
 
             # Magnitude table
             col0 = Column(
-                name="vis_"+str(vis_idx),
+                name="vis_" + str(vis_idx),
                 dtype="float64",
                 unit="1",
                 description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
@@ -502,7 +501,7 @@ class BaseField(TableCollection):
 
             # Magnitude error table
             col1 = Column(
-                name="vis_"+str(vis_idx),
+                name="vis_" + str(vis_idx),
                 dtype="float64",
                 unit="1",
                 description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
@@ -512,7 +511,7 @@ class BaseField(TableCollection):
             if add_upper_limits:
                 # Upper limt table
                 col2 = Column(
-                    name="vis_"+str(vis_idx),
+                    name="vis_" + str(vis_idx),
                     dtype="float64",
                     unit="1",
                     description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
@@ -557,7 +556,7 @@ class BaseField(TableCollection):
             with astropy BinnedTimeSeries.
 
         """
-        if not hasattr(src_ids, '__iter__'):
+        if not hasattr(src_ids, "__iter__"):
             src_ids = [src_ids]
 
         logger.debug(f"Getting lightcurve for src_ids: {src_ids}")
@@ -569,7 +568,7 @@ class BaseField(TableCollection):
         self.tt_sources_mag.add_index("src_id")
         src_idx_list = self.tt_sources_mag.loc_indices[src_ids]
 
-        if not hasattr(src_idx_list, '__iter__'):
+        if not hasattr(src_idx_list, "__iter__"):
             src_idx_list = [src_idx_list]
 
         # Dictionary to store light curve tables
@@ -580,16 +579,18 @@ class BaseField(TableCollection):
         for src_idx in src_idx_list:
 
             # Check if upper limits where produced
-            uls = np.zeros(len(self.tt_visits)+1) - 1
+            uls = np.zeros(len(self.tt_visits) + 1) - 1
             if "tt_sources_mag_ul" in self._table_names:
                 uls = self.tt_sources_mag_ul[src_idx]
 
             # Build data dictionary
-            src_data = {"time_start": self.tt_visits["time_bin_start"].data,
-                        "time_delta": self.tt_visits["time_bin_size"].data,
-                        "mag": list(self.tt_sources_mag[src_idx])[1:],
-                        "mag_err": list(self.tt_sources_mag_err[src_idx])[1:],
-                        "ul": list(uls)[1:]}
+            src_data = {
+                "time_start": self.tt_visits["time_bin_start"].data,
+                "time_delta": self.tt_visits["time_bin_size"].data,
+                "mag": list(self.tt_sources_mag[src_idx])[1:],
+                "mag_err": list(self.tt_sources_mag_err[src_idx])[1:],
+                "ul": list(uls)[1:],
+            }
             print(src_data)
 
             # Create ans store table
@@ -643,11 +644,11 @@ class BaseField(TableCollection):
 
                 # Save all detection but the closest for deletion
                 rm_det_ids.extend(tt_det["det_id"].data[:min_sep_idx])
-                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1:])
+                rm_det_ids.extend(tt_det["det_id"].data[min_sep_idx + 1 :])
 
         if len(rm_det_ids) > 0:
             nr_rm_det = len(rm_det_ids)
-            perc_rm_det = 100*nr_rm_det/len(self.tt_detections)
+            perc_rm_det = 100 * nr_rm_det / len(self.tt_detections)
             logger.warning(
                 f"Removed double-visit detections: {nr_rm_det} ({perc_rm_det: .2f} %)"
             )
@@ -830,7 +831,13 @@ class GALEXField(BaseField):
 
         # Set root location of cloud-synced data associated with the field
         if data_path is not None:
-            self.data_path = data_path
+            # Sets the data path following the pattern <root_path>/<obs_id>
+            # If only <root_path> is passed, <obs_id> will be added
+            self.data_path = (
+                data_path
+                if data_path.rstrip(os.sep).endswith(str(obs_id))
+                else f"{data_path}/{obs_id}"
+            )
         if visits_data_path is not None:
             self.visits_data_path = visits_data_path
         if data_path is None or visits_data_path is None:
@@ -855,7 +862,7 @@ class GALEXField(BaseField):
         logger.debug(f"Field data path set to: '{self.data_path}'")
         logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
 
-    @ classmethod
+    @classmethod
     def from_UVVA(cls, obs_id, obs_filter="NUV", fits_path=None, **kwargs):
         """
         Constructor to initialize a GALEXField instance
@@ -915,7 +922,7 @@ class GALEXField(BaseField):
 
         return gf
 
-    @ classmethod
+    @classmethod
     def from_MAST(
         cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs
     ):
@@ -975,7 +982,7 @@ class GALEXField(BaseField):
 
         return gf
 
-    @ staticmethod
+    @staticmethod
     def get_visit_upper_limits(tt_visits):
         """
         Calculates upper limits on non-detections to the tt_visits table

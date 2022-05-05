@@ -25,4 +25,12 @@ observations:
     obs_filter : "NUV"
     field_ids :
         - 6388191295067652096
+    # Optional, observatory-specific configuration of the field initialization. See docs for a complete list of config arguments.
+    field_options:                      
+        load_method: "MAST"     # Allowed are ["MAST", "UVVA", "AUTO"]
+        load_kwargs:
+            refresh: False
+            load_products: True
+            data_path: null
+            visits_data_path: null            
 

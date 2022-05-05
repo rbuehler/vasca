@@ -2,29 +2,51 @@
 # -*- coding: utf-8 -*-
 
 import glob
+import os
 
 import astropy.units as uu
 import numpy as np
 import pytest
+import yaml
 from astropy.coordinates import SkyCoord
 from astropy.time import Time
 from loguru import logger
 
+from uvva import uvva_pipe
 from uvva.field import BaseField, GALEXField
 from uvva.resource_manager import ResourceManager
-from uvva import uvva_pipe
-import uvva
 
 
 @pytest.fixture
-def galex_test_field_from_MAST_online(tmp_path):
+def test_paths(tmp_path):
+    """
+    Returns dictionary with paths to static & cached test resources
+    as well as a path to a common temporary directory.
+    """
+    paths = dict()
+
+    # cached test resources
+    with ResourceManager() as rm:
+        paths["resource_root"] = rm.get_path("test_resources", "uvva")
+
+    paths["galex_visits"] = f"{paths['resource_root']}/GALEX_visits_list.fits"
+    paths["pipeline_cfg"] = f"{paths['resource_root']}/uvva_test_cfg.yaml"
+
+    # temporary directory
+    d = tmp_path
+    paths["temp_path"] = f"/{d.resolve()}"
+
+    return paths
+
+
+@pytest.fixture
+def galex_test_field_from_MAST_online(test_paths):
     field_id = 6381787756527353856  # AIS_309_1_28 2 visits (Crab pulsar)
     obs_filter = "NUV"
-    d = tmp_path
-    with ResourceManager() as rm:
-        test_resource_path = rm.get_path("test_resources", "uvva")
-        data_path = f"/{d.resolve()}"
-        visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
+
+    data_path = test_paths["temp_path"]
+    visits_data_path = test_paths["galex_visits"]
+
     gf = GALEXField.from_MAST(
         obs_id=field_id,
         obs_filter=obs_filter,
@@ -35,13 +57,13 @@ def galex_test_field_from_MAST_online(tmp_path):
 
 
 @pytest.fixture
-def galex_test_field_from_MAST_offline():
+def galex_test_field_from_MAST_offline(test_paths):
     field_id = 6388191295067652096  # NGC4993-GW170817 2 visits
     obs_filter = "NUV"
-    with ResourceManager() as rm:
-        test_resource_path = rm.get_path("test_resources", "uvva")
-        data_path = f"{test_resource_path}/{field_id}"
-        visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
+
+    test_resource_path = test_paths["resource_root"]
+    data_path = f"{test_resource_path}/{field_id}"
+    visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
     gf = GALEXField.from_MAST(
         obs_id=field_id,
         obs_filter=obs_filter,
@@ -136,10 +158,31 @@ def test_base_field_io_alt(tmp_path, new_field):
     assert not glob.glob(f"{d.resolve}/*.fits")
 
 
-def test_pipeline():
-    cfg_file = uvva.__path__[0]+"/test/uvva_test_cfg.yaml"
-    cfg = uvva_pipe.set_config(cfg_file)
-    cfg["general"]["out_dir"] = uvva.__path__[0]+"/test/out_pipe"
+def test_pipeline(test_paths):
+    # get pipeline config
+    with open(test_paths["pipeline_cfg"]) as f:
+        cfg = yaml.safe_load(f)
+
+    # temporary output directory
+    pipeline_out = f"{test_paths['temp_path']}/pipe_out"
+    os.mkdir(pipeline_out)
+
+    # edit paths
+    cfg["general"]["out_dir"] = pipeline_out
+    cfg["observations"]["field_options"]["load_kwargs"]["data_path"] = test_paths[
+        "resource_root"
+    ]
+    cfg["observations"]["field_options"]["load_kwargs"][
+        "visits_data_path"
+    ] = test_paths["galex_visits"]
+
+    # Write modified config file
+    cfg_mod = f"{pipeline_out}/uvva_test_cfg_modified.yaml"
+    with open(cfg_mod, "w") as f:
+        yaml.dump(cfg, f)
+
+    # run pipeline
+    cfg = uvva_pipe.set_config(cfg_mod)
     uvva_pipe.run(cfg)
 
 
