@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Apr 20 14:33:38 2022
-
-@author: buehler
-"""
-from uvva.field import BaseField, GALEXField
-from uvva.tables import TableCollection
-from uvva import tables
 from loguru import logger
+
+from uvva import tables
+from uvva.field import GALEXField
+from uvva.tables import TableCollection
 
 
 class Region(TableCollection):
     """
     :class: `~uvva.Region` defines a region in the sky as a
-    list of uvva.field objects. It provides funtionality to
+    list of uvva.field objects. It provides functionality to
     loop over fields to derive source lists, etc.
     """
 
@@ -45,7 +41,7 @@ class Region(TableCollection):
         ----------
         obs : dict
             Dictionary with region parameters derived from the uvva pipeline
-            TOML configuration file.
+            YAML configuration file.
 
         Returns
         -------
@@ -64,7 +60,8 @@ class Region(TableCollection):
             # Loop over fields and store info
             for field_id in obs["field_ids"]:
                 gf = GALEXField.from_MAST(
-                    obs_id=field_id, obs_filter=obs["obs_filter"], load_products=False)
+                    obs_id=field_id, obs_filter=obs["obs_filter"], load_products=False
+                )
                 field_info = dict(gf.tt_field[0])
                 field_info["size"] = 0.55
                 field_info["n_visits"] = gf.n_visits
@@ -80,6 +77,8 @@ class Region(TableCollection):
                     visits_info["field_id"] = field_id
                     rg.tt_visits.add_row(visits_info)
         else:
-            logger.waring("Selected observatory `"+obs["observatory"]+"` not supportet")
+            logger.waring(
+                "Selected observatory `" + obs["observatory"] + "` not supported"
+            )
 
         return rg
