@@ -125,7 +125,7 @@ class BaseField(TableCollection):
         plt_src_kwargs = {
             "marker": "o",
             "markerfacecolor": "None",
-            "markersize": 3,
+            "markersize": 1,
         }
         if src_kwargs is not None:
             plt_src_kwargs.update(src_kwargs)
@@ -134,7 +134,7 @@ class BaseField(TableCollection):
         plt_det_kwargs = {
             "marker": "s",
             "markerfacecolor": "None",
-            "markersize": 2,
+            "markersize": 0.5,
             "alpha": 0.3,
             "lw": 0,
         }

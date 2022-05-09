@@ -109,32 +109,24 @@ def run(cfg):
     # Load region fields
     rg = Region.load_from_config(cfg)
 
-    # Temporary fix:
-    cfg["ressources"]["load_kwargs"]["load_products"] = True
-
-    for field_id in rg.tt_fields["field_id"]:
+    for field_id, gf in rg.fields.items():
         logger.info("Analysing field:" + str(field_id))
-
-        # Load field
-        gf = GALEXField.load_from_cfg(field_id, cfg)
 
         # Run clustering
         gf.cluster_meanshift(
             cfg["cluster"]["add_upper_limits"], **cfg["cluster"]["meanshift"]
         )
 
-        # Get light curve
-        lcs = gf.get_light_curve([0, 12])
-        print(lcs)
-
+        # Plot results
+        fig_sky = gf.plot_sky()
+        fig_lc = fig = plt.figure()
         gf.plot_light_curve(12)
-        # plt.show()
 
         # Write field out
-        field_file_name = (
-            cfg["general"]["out_dir"] + "/field_" + str(field_id) + ".fits"
-        )
-        gf.write_to_fits(file_name=field_file_name)
+        field_file_name_base = cfg["general"]["out_dir"] + "/field_"
+        gf.write_to_fits(field_file_name_base + str(field_id) + ".fits")
+        fig_sky.savefig(field_file_name_base + str(field_id) + "_sky.pdf")
+        fig_lc.savefig(field_file_name_base + str(field_id) + "_lc.pdf")
 
     rg.info()
 

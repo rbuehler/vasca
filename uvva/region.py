@@ -32,6 +32,8 @@ class Region(TableCollection):
         # Sets skeleton
         super().__init__()
 
+        self.fields = {}  # dictionary of field IDs and objects
+
     @classmethod
     def load_from_config(cls, cfg):
         """
@@ -57,9 +59,6 @@ class Region(TableCollection):
             rg.add_table(None, "region:tt_fields")
             rg.add_table(None, "region:tt_visits")
 
-            # Temporary fix:
-            cfg["ressources"]["load_kwargs"]["load_products"] = False
-
             # Loop over fields and store info
             for field_id in cfg["observations"]["field_ids"]:
 
@@ -78,6 +77,10 @@ class Region(TableCollection):
                     visits_info = dict(gf.tt_visits[keys_store][0])
                     visits_info["field_id"] = field_id
                     rg.tt_visits.add_row(visits_info)
+                if cfg["ressources"]["load_kwargs"]["load_products"]:
+                    rg.fields[field_id] = gf
+                else:
+                    rg.fields[field_id] = None
         else:
             logger.waring(
                 "Selected observatory `"
