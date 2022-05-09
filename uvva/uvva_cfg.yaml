@@ -26,3 +26,11 @@ observations:
     field_ids :
         - 6388191295067652096
 
+ressources:                      
+    load_method: "MAST"     # Allowed are ["MAST", "UVVA", "AUTO"]
+    load_kwargs:
+        refresh: False
+        load_products: True
+        data_path: null
+        visits_data_path: null   
+

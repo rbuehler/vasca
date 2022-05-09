@@ -107,16 +107,16 @@ def run(cfg):
     set_logger(cfg)
 
     # Load region fields
-    rg = Region.load_from_config(cfg["observations"])
+    rg = Region.load_from_config(cfg)
 
     # Temporary fix:
-    cfg["observations"]["field_options"]["load_kwargs"]["load_products"] = True
+    cfg["ressources"]["load_kwargs"]["load_products"] = True
 
     for field_id in rg.tt_fields["field_id"]:
         logger.info("Analysing field:" + str(field_id))
 
         # Load field
-        gf = Region.GALEXField_loader(field_id, cfg["observations"])
+        gf = GALEXField.load_from_cfg(field_id, cfg)
 
         # Run clustering
         gf.cluster_meanshift(
