@@ -19,7 +19,11 @@ cluster:
         n_jobs        : 4
         max_iter      : 300
     add_upper_limits  : true
-    
+
+selection:
+    detections:
+        s2n: [4,.inf]  
+        
 observations:
     observatory : "GALEX"
     obs_filter : "NUV"
