@@ -7,7 +7,6 @@ general:
     out_dir       : "./uvva/test/out_pipe"                               # If "CWD" current work directory will be used
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
-    data_source   : "MAST"                                     # Either "MAST" (cached or online) or "UVVA"
 
 cluster:
     meanshift:
@@ -25,12 +24,13 @@ observations:
     obs_filter : "NUV"
     field_ids :
         - 6388191295067652096
-    # Optional, observatory-specific configuration of the field initialization. See docs for a complete list of config arguments.
-    field_options:                      
-        load_method: "MAST"     # Allowed are ["MAST", "UVVA", "AUTO"]
-        load_kwargs:
-            refresh: False
-            load_products: True
-            data_path: null
-            visits_data_path: null            
+
+# Optional, observatory-specific configuration of the field initialization. See docs for a complete list of config arguments.
+ressources:                      
+    load_method: "MAST"     # Allowed are ["MAST", "UVVA", "AUTO"]
+    load_kwargs:
+        refresh: False
+        load_products: True
+        data_path: null
+        visits_data_path: null            
 

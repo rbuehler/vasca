@@ -7,11 +7,12 @@ from astropy.io import fits
 from astropy.table import Column, Table
 from astropy.wcs import wcs
 from loguru import logger
-#import warnings
-#from astropy.io.fits.verify import VerifyWarning
+
+# import warnings
+# from astropy.io.fits.verify import VerifyWarning
 
 # deactivate warnings
-#warnings.simplefilter('ignore', category=VerifyWarning)
+# warnings.simplefilter('ignore', category=VerifyWarning)
 
 dimless = uu.dimensionless_unscaled
 
@@ -34,11 +35,22 @@ base_field = {
             "Telescope of the observation (e.g. GALEX)",
             "Filter of the observation (e.g. NUV)",
         ],
-        "meta": {"DATAPATH": "None", "INFO": "Field information table"},
+        "meta": {
+            "DATAPATH": "None",
+            "INFO": "Field information table",
+        },
     },
     "tt_visits": {
-        "names": ["vis_id", "time_bin_start", "time_bin_size"],
-        "dtype": ["int64", "float64", "float64"],
+        "names": [
+            "vis_id",
+            "time_bin_start",
+            "time_bin_size",
+        ],
+        "dtype": [
+            "int64",
+            "float64",
+            "float64",
+        ],
         "units": ["1", "d", "s"],
         "descriptions": [
             "Visit ID nr.",
@@ -57,11 +69,13 @@ base_field = {
             "pos_err",
             "mag",
             "mag_err",
+            "s2n",
         ],
         "dtype": [
             "int64",
             "int64",
             "int64",
+            "float64",
             "float64",
             "float64",
             "float64",
@@ -77,6 +91,7 @@ base_field = {
             "degree",
             "1",
             "1",
+            "1",
         ],
         "descriptions": [
             "Visit ID associated to the visit detection",
@@ -87,6 +102,7 @@ base_field = {
             "Visit position error",
             "Visit detection magnitude",
             "Visit detection magnitude error",
+            "Signal to noise",
         ],
         "meta": {
             "INFO": "Visit detections table",
@@ -100,9 +116,11 @@ base_field = {
             "pos_err",
             "mag",
             "mag_err",
+            "s2n",
         ],
         "dtype": [
             "int64",
+            "float64",
             "float64",
             "float64",
             "float64",
@@ -116,6 +134,7 @@ base_field = {
             "degree",
             "1",
             "1",
+            "1",
         ],
         "descriptions": [
             "Reference source ID nr.",
@@ -124,6 +143,7 @@ base_field = {
             "Reference position error",
             "Reference source magnitude",
             "Reference source magnitude error",
+            "Signal to noise",
         ],
         "meta": {
             "INFO": "Reference detections table",
@@ -149,8 +169,10 @@ base_field = {
         "descriptions": [
             "Source ID nr.",
         ],
-        "meta": {"INFO": "Light curve magnitude flux. First column is src_id.\
-                 Negative values indicate no meassurement."},
+        "meta": {
+            "INFO": "Light curve magnitude flux. First column is src_id.\
+                 Negative values indicate no meassurement."
+        },
     },
     "tt_sources_mag_err": {
         "names": ["src_id"],
@@ -159,8 +181,10 @@ base_field = {
         "descriptions": [
             "Source ID nr.",
         ],
-        "meta": {"INFO": "Light curve magnitude flux error. Row index is src_id.\
-                 Negative values indicate no meassurement."},
+        "meta": {
+            "INFO": "Light curve magnitude flux error. Row index is src_id.\
+                 Negative values indicate no meassurement."
+        },
     },
     "tt_sources_mag_ul": {
         "names": ["src_id"],
@@ -169,8 +193,10 @@ base_field = {
         "descriptions": [
             "Source ID nr.",
         ],
-        "meta": {"INFO": "Light curve magnitude flux upper limits.\
-                 Row index is src_id. Negative values indicate no meassurement."},
+        "meta": {
+            "INFO": "Light curve magnitude flux upper limits.\
+                 Row index is src_id. Negative values indicate no meassurement."
+        },
     },
     "tt_source_lc": {
         "names": ["time_start", "time_delta", "mag", "mag_err", "ul"],
@@ -185,7 +211,6 @@ base_field = {
         ],
         "meta": {"INFO": "Light curve magnitude flux table for one source"},
     },
-
 }
 galex_field = {
     "tt_visits": {
@@ -494,7 +519,9 @@ class TableCollection(object):
 
         setattr(self, table_key, tt)
 
-    def write_to_fits(self, file_name="tables.fits", overwrite=True, fits_verify="warn"):
+    def write_to_fits(
+        self, file_name="tables.fits", overwrite=True, fits_verify="warn"
+    ):
         """
         Write tables and image of a field to a fits file.
 
