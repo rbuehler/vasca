@@ -389,8 +389,11 @@ class BaseField(TableCollection):
         """
         logger.info("Clustering sources with MeanShift")
 
+        # Selection
+        sel = self.tt_detections["sel"]
+
         # Get detection coordinates and run clustering
-        coords = table_to_array(self.tt_detections["ra", "dec"])
+        coords = table_to_array(self.tt_detections[sel]["ra", "dec"])
 
         # Do bandwidth determination "by hand" to print it out and convert
         # bandwidth unit from arc seconds into degerees
@@ -423,7 +426,10 @@ class BaseField(TableCollection):
         # Fill information into tables.
         self.add_table(srcs_data, "base_field:tt_sources")
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
-        self.tt_detections.replace_column("src_id", ms.labels_)
+
+        # self.tt_detections.add_index("det_id")
+        # det_idx = self.tt_detections.loc_indices[self.tt_detections[sel]["det_id"]]
+        self.tt_detections["src_id"][sel] = ms.labels_
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
@@ -478,6 +484,9 @@ class BaseField(TableCollection):
             f"Upper limits option set to {add_upper_limits}."
         )
 
+        # Selection
+        sel = self.tt_detections["sel"]
+
         # Prepare visit info
         nr_vis = len(self.tt_visits)
         self.tt_visits.add_index("vis_id")
@@ -519,7 +528,7 @@ class BaseField(TableCollection):
                 self.tt_sources_mag_ul.add_column(col2)
 
         # Loop over sources and add them to tables
-        tt_det_grp = self.tt_detections.group_by(["src_id"])
+        tt_det_grp = self.tt_detections[sel].group_by(["src_id"])
         for tt_det in tt_det_grp.groups:
 
             # Add detected magnitudes
@@ -618,15 +627,22 @@ class BaseField(TableCollection):
 
         """
         logger.debug("Scanning for doubled visit detections")
+
+        # Selection
+        sel = self.tt_detections["sel"]
+
+        # Index tables
         self.tt_sources.add_index("src_id")
         self.tt_detections.add_index("det_id")
 
         # Determine detection_id of srcs with more than one detection in one visit
         rm_det_ids = []
-        tt_det_grp = self.tt_detections.group_by(["vis_id", "src_id"])
+        tt_det_grp = self.tt_detections[sel].group_by(["vis_id", "src_id"])
 
         for tt_det in tt_det_grp.groups:
             if len(tt_det) > 1:
+
+                print(tt_det)
 
                 # Get source coordinate
                 src_id = tt_det["src_id"].data[0]
@@ -648,7 +664,7 @@ class BaseField(TableCollection):
 
         if len(rm_det_ids) > 0:
             nr_rm_det = len(rm_det_ids)
-            perc_rm_det = 100 * nr_rm_det / len(self.tt_detections)
+            perc_rm_det = 100 * nr_rm_det / len(self.tt_detections[sel])
             logger.warning(
                 f"Removed double-visit detections: {nr_rm_det} ({perc_rm_det: .2f} %)"
             )
@@ -659,7 +675,7 @@ class BaseField(TableCollection):
 
             # Update detection count in tt_sources
             src_ids, det_cts = np.unique(
-                self.tt_detections["src_id"], return_counts=True
+                self.tt_detections[sel]["src_id"], return_counts=True
             )
             self.tt_sources.replace_column("nr_det", det_cts)
 

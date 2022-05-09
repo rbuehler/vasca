@@ -112,6 +112,16 @@ def run(cfg):
     for field_id, gf in rg.fields.items():
         logger.info("Analysing field:" + str(field_id))
 
+        # Apply selections
+        logger.info("Applying selection detection")
+        sel = gf.tt_detections["sel"]
+        for var, vals in cfg["selection"]["detections"].items():
+            logger.debug(f"On variable '{var}' between {vals}")
+            if len(vals) == 2:
+                sel = sel * (gf.tt_detections[var] > vals[0])
+                sel = sel * (gf.tt_detections[var] < vals[1])
+        gf.tt_detections.replace_column("sel", sel.astype(bool))
+
         # Run clustering
         gf.cluster_meanshift(
             cfg["cluster"]["add_upper_limits"], **cfg["cluster"]["meanshift"]

@@ -25,6 +25,10 @@ observations:
     field_ids :
         - 6388191295067652096
 
+selection:
+    detections:
+        s2n: [4,.inf] 
+        
 # Optional, observatory-specific configuration of the field initialization. See docs for a complete list of config arguments.
 ressources:                      
     load_method: "MAST"     # Allowed are ["MAST", "UVVA", "AUTO"]
