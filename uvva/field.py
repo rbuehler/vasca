@@ -397,7 +397,6 @@ class BaseField(TableCollection):
 
         # Do bandwidth determination "by hand" to print it out and convert
         # bandwidth unit from arc seconds into degerees
-
         dd_ms = ms_kw
         if not "bandwidth" in ms_kw or ms_kw["bandwidth"] == None:
             logger.debug(f"Estimating bandwidth")
@@ -427,8 +426,7 @@ class BaseField(TableCollection):
         self.add_table(srcs_data, "base_field:tt_sources")
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
 
-        # self.tt_detections.add_index("det_id")
-        # det_idx = self.tt_detections.loc_indices[self.tt_detections[sel]["det_id"]]
+        # Update src_id entries
         self.tt_detections["src_id"][sel] = ms.labels_
 
         # Fill light curve data into tables
@@ -600,7 +598,6 @@ class BaseField(TableCollection):
                 "mag_err": list(self.tt_sources_mag_err[src_idx])[1:],
                 "ul": list(uls)[1:],
             }
-            print(src_data)
 
             # Create ans store table
             src_id = self.tt_sources_mag[src_idx][0]
@@ -641,8 +638,6 @@ class BaseField(TableCollection):
 
         for tt_det in tt_det_grp.groups:
             if len(tt_det) > 1:
-
-                print(tt_det)
 
                 # Get source coordinate
                 src_id = tt_det["src_id"].data[0]
