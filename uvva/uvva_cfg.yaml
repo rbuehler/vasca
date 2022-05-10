@@ -22,7 +22,18 @@ cluster:
 
 selection:
     detections:
-        s2n: [4,.inf]  
+        range:
+            s2n            : [4,.inf]
+            r_fov          : [0.0,0.5]
+            point_src_prob : [0.95,1.0]
+            bright_match   : [-0.5,0.5]
+            mag            : [14,26]
+            mag_err        : [0,0.5]
+        bitmask:
+            # Specify the ones to ignore (=keep row).
+            # For GALEX a description is at the end of this document
+            artifacts : [1,8,16,32,64,128,256,512]    
+        
         
 observations:
     observatory : "GALEX"
@@ -33,8 +44,21 @@ observations:
 ressources:                      
     load_method: "MAST"     # Allowed are ["MAST", "UVVA", "AUTO"]
     load_kwargs:
-        refresh: false
-        load_products: true
-        data_path: null
-        visits_data_path: null   
+        refresh          : false
+        load_products    : true
+        data_path        : null
+        visits_data_path : null   
 
+
+# GALEX artifact flags
+# ( 1): edge; Detector bevel edge reflection (NUV only).
+# ( 2): window; Detector window reflection (NUV only).
+# ( 4): dichroic; Dichroic reflection.
+# ( 8): varpix; Varible pixel based on time slices.
+# ( 16): brtedge; Bright star near field edge (NUV only)
+# ( 32): Detector rim(annulus); proximity(>0.6 deg fld ctr)
+# ( 64): dimask; dichroic reflection artifact mask flag
+# (128): varmask; Masked pixel determined by varpix.
+# (256): hotmask; Detector hot spots.
+# (512): yaghost; Possible ghost image from YA slope.
+# http://www.galex.caltech.edu/wiki/GCAT_Manual#Flags
