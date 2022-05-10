@@ -121,17 +121,17 @@ def run(cfg):
         )
 
         # Plot results
-        fig_sky = gf.plot_sky()
+        fig_sky = gf.plot_sky(plot_detections=False)
+        # plt.tight_layout()
+        # plt.show()
         fig_lc = fig = plt.figure()
         gf.plot_light_curve(12)
 
         # Write field out
         field_file_name_base = cfg["general"]["out_dir"] + "/field_"
         gf.write_to_fits(field_file_name_base + str(field_id) + ".fits")
-        fig_sky.savefig(field_file_name_base + str(field_id) + "_sky.pdf")
-        fig_lc.savefig(field_file_name_base + str(field_id) + "_lc.pdf")
-
-    rg.info()
+        fig_sky.savefig(field_file_name_base + str(field_id) + "_sky.png", dpi=fig.dpi)
+        fig_lc.savefig(field_file_name_base + str(field_id) + "_lc.png", dpi=fig.dpi)
 
     # Write out regions
     region_out_name = (
