@@ -125,7 +125,7 @@ class BaseField(TableCollection):
         plt_src_kwargs = {
             "marker": "o",
             "markersize": 5.0,
-            "alpha": 0.8,
+            "alpha": 0.4,
             "lw": 0,
             "markeredgewidth": 1.0,
             "fillstyle": "none",
@@ -135,9 +135,9 @@ class BaseField(TableCollection):
 
         # Set marker properties for detections
         plt_det_kwargs = {
-            "marker": "+",
-            "markersize": 4.0,
-            "alpha": 0.8,
+            "marker": ".",
+            "markersize": 2.0,
+            "alpha": 0.4,
             "lw": 0,
         }
         if det_kwargs is not None:
