@@ -124,47 +124,44 @@ class BaseField(TableCollection):
         # Set marker properties for sources
         plt_src_kwargs = {
             "marker": "o",
-            "markerfacecolor": "None",
-            "markersize": 1,
+            "markersize": 5.0,
+            "alpha": 0.8,
+            "lw": 0,
+            "markeredgewidth": 1.0,
+            "fillstyle": "none",
         }
         if src_kwargs is not None:
             plt_src_kwargs.update(src_kwargs)
 
         # Set marker properties for detections
         plt_det_kwargs = {
-            "marker": "s",
-            "markerfacecolor": "None",
-            "markersize": 0.5,
-            "alpha": 0.3,
+            "marker": "+",
+            "markersize": 4.0,
+            "alpha": 0.8,
             "lw": 0,
         }
         if det_kwargs is not None:
             plt_det_kwargs.update(det_kwargs)
 
         # Prepare data
-        det_src_ids = self.tt_detections["src_id"].data
-        src_ids = self.tt_sources["src_id"].data
-        det_poss = np.array(
-            list(zip(self.tt_detections["ra"].data, self.tt_detections["dec"].data))
-        )
-        src_poss = np.dstack((self.tt_sources["ra"].data, self.tt_sources["dec"].data))[
-            0
-        ]
-        nr_srcs = len(src_ids)
+        tt_src = self.tt_sources
+        tt_det = self.tt_detections
+        tt_det.add_index("src_id")
 
         # Loop over all srcs and plot
         colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
-        for kk, col in zip(range(nr_srcs), colors):
-            sel_dets = det_src_ids == kk
-            src_pos = src_poss[kk]
+        for src, col in zip(tt_src, colors):
             if plot_detections:
+                # det = tt_det.loc["src_id", src["src_id"]]
+                det_idx = tt_det.loc_indices["src_id", src["src_id"]]
+                # print(idx)
                 ax.plot(
-                    det_poss[sel_dets, 0],
-                    det_poss[sel_dets, 1],
-                    markeredgecolor=col,
+                    tt_det[det_idx]["ra"].data,
+                    tt_det[det_idx]["dec"].data,
+                    color=col,
                     **plt_det_kwargs,
                 )
-            ax.plot(src_pos[0], src_pos[1], markeredgecolor=col, **plt_src_kwargs)
+            ax.plot(src["ra"], src["dec"], color=col, **plt_src_kwargs)
         return ax
 
     def plot_sky_map(self, ax=None, **img_kwargs):
@@ -227,8 +224,9 @@ class BaseField(TableCollection):
 
         logger.debug("Plotting sky map and/or sources'")
 
-        fig = plt.figure()
+        fig = plt.figure(figsize=(8, 7))
         plt.clf()
+
         if self.ref_wcs is not None:
             ax = plt.subplot(projection=self.ref_wcs)  #
             ax.coords["ra"].set_major_formatter("d.dd")
@@ -240,17 +238,16 @@ class BaseField(TableCollection):
             graph = self.plot_sky_map(ax)
             fig.colorbar(graph, label="Intensity [a.u.]")
 
-        if plot_detections:
-            if plot_map:
-                plot_arg = {"transform": ax.get_transform("world")}
-                self.plot_sky_sources(
-                    ax,
-                    plot_detections=plot_detections,
-                    src_kwargs=plot_arg,
-                    det_kwargs=plot_arg,
-                )
-            else:
-                self.plot_sky_sources(plot_detections=plot_detections)
+        if plot_map:
+            plot_arg = {"transform": ax.get_transform("world")}
+            self.plot_sky_sources(
+                ax,
+                plot_detections=plot_detections,
+                src_kwargs=plot_arg,
+                det_kwargs=plot_arg,
+            )
+        else:
+            self.plot_sky_sources(plot_detections=plot_detections)
 
         return fig
 
@@ -531,7 +528,7 @@ class BaseField(TableCollection):
 
             # Add detected magnitudes
             src_id = tt_det["src_id"][0]
-            vis_idxs = self.tt_visits.loc_indices[tt_det["vis_id"]]
+            vis_idxs = self.tt_visits.loc_indices["vis_id", tt_det["vis_id"]]
 
             np_mag = np.zeros(nr_vis) - 1
             np_mag[vis_idxs] = tt_det["mag"]
@@ -573,7 +570,7 @@ class BaseField(TableCollection):
 
         # Get src_idx
         self.tt_sources_mag.add_index("src_id")
-        src_idx_list = self.tt_sources_mag.loc_indices[src_ids]
+        src_idx_list = self.tt_sources_mag.loc_indices["src_id", src_ids]
 
         if not hasattr(src_idx_list, "__iter__"):
             src_idx_list = [src_idx_list]
@@ -641,7 +638,7 @@ class BaseField(TableCollection):
 
                 # Get source coordinate
                 src_id = tt_det["src_id"].data[0]
-                src_idx = self.tt_sources.loc_indices[src_id]
+                src_idx = self.tt_sources.loc_indices["src_id", src_id]
                 src_ra = self.tt_sources["ra"].quantity[src_idx]
                 src_dec = self.tt_sources["dec"].quantity[src_idx]
                 src_coord = SkyCoord(src_ra, src_dec, frame="icrs")
@@ -665,7 +662,7 @@ class BaseField(TableCollection):
             )
 
             # remove the doubled detections from tt_detections
-            rm_idx = self.tt_detections.loc_indices[rm_det_ids]
+            rm_idx = self.tt_detections.loc_indices["det_id", rm_det_ids]
             self.tt_detections.remove_rows(rm_idx)
 
             # Update detection count in tt_sources
