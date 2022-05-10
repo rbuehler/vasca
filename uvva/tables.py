@@ -6,6 +6,7 @@ from astropy import units as uu
 from astropy.io import fits
 from astropy.table import Column, Table
 from astropy.wcs import wcs
+from astropy.nddata import bitmask
 from loguru import logger
 
 # import warnings
@@ -511,7 +512,7 @@ class TableCollection(object):
             col = Column(
                 data=default_sel,
                 name="sel",
-                dtype="int64",
+                dtype="bool",
                 unit="1",
                 description="Selection of rows for UVVA analysis.",
             )
@@ -710,3 +711,59 @@ class TableCollection(object):
 
         return out_str
         return out_str
+
+    def select_rows(self, tablename, selections=dict(), remove_unselected=False):
+        """
+        Apply selection to a passed table.
+
+        Parameters
+        ----------
+        tablename : str
+            Name of the table to apply selection on
+        selections : dict
+            Dictionary with selection variables and cut valsues
+        remove_unselected: bool
+            Remove table rows with entry False in 'sel' table.
+
+        Returns
+        -------
+        None.
+
+        """
+        logger.info(f"Applying selection on table '{tablename}'")
+
+        # Get table and check if selection column is available
+        if tablename not in self.__dict__.keys():
+            logger.error("Table does not exist, it need to be created beforehand.")
+        tt = self.__dict__[tablename]
+        if "sel" not in tt.colnames:
+            logger.error("Table does not have selection column")
+
+        sel = tt["sel"].data.astype("bool")
+        nr_sel = sel.sum()
+        logger.info(
+            f"Applying selection on table '{tablename}' with {nr_sel} selected rows"
+        )
+
+        # Apply min/max cuts
+        if "range" in selections.keys():
+            for var, vals in selections["range"].items():
+                sel = sel * (tt[var] > vals[0]) * (tt[var] < vals[1])
+                logger.info(
+                    f"Selecting '{var}' {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
+                )
+
+        # Apply bitmask cuts
+        if "bitmask" in selections.keys():
+            for var, vals in selections["bitmask"].items():
+                no_art = sel * (tt[var].data.astype("int") == 0)
+                bit = bitmask.bitfield_to_boolean_mask(tt[var], ignore_flags=vals)
+                sel = sel * (no_art + bit)
+                logger.info(
+                    f"Selecting '{var}' keep {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
+                )
+
+        tt.replace_column("sel", sel.astype("bool"))
+
+        if remove_unselected:
+            tt.remove_rows(~sel)
