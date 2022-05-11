@@ -169,7 +169,7 @@ def test_pipeline(test_paths):
     os.mkdir(pipeline_out)
 
     # edit paths
-    cfg["general"]["out_dir"] = pipeline_out
+    cfg["general"]["out_dir_base"] = pipeline_out
     cfg["ressources"]["load_kwargs"]["data_path"] = test_paths["resource_root"]
     cfg["ressources"]["load_kwargs"]["visits_data_path"] = test_paths["galex_visits"]
 
