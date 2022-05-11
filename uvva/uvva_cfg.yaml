@@ -3,8 +3,8 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name          : "example_region"
-    out_dir       : "./examples/uvva_pipeline"                 # If "CWD" current work directory will be used
+    name          : "TDS_COSMOS"
+    out_dir_base  : "./examples/uvva_pipeline"                 # If "CWD" current work directory will be used.
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
     data_source   : "MAST"                                     # Either "MAST" (cached or online) or "UVVA"
@@ -16,7 +16,7 @@ cluster:
         bin_seeding   : false
         min_bin_freq  : 1
         cluster_all   : true
-        n_jobs        : 4
+        n_jobs        : 3
         max_iter      : 300
     add_upper_limits  : true
 
@@ -26,7 +26,7 @@ selection:
             s2n            : [4,.inf]
             r_fov          : [0.0,0.5]
             point_src_prob : [0.95,1.0]
-            bright_match   : [-0.5,0.5]
+            bright_match   : [-0.5,0.4]
             mag            : [14,26]
             mag_err        : [0,0.5]
         bitmask:
@@ -39,7 +39,8 @@ observations:
     observatory : "GALEX"
     obs_filter : "NUV"
     field_ids :
-        - 6388191295067652096
+        - 2604912508670050304
+        - 2604982877414227968
 
 ressources:                      
     load_method: "MAST"     # Allowed are ["MAST", "UVVA", "AUTO"]
@@ -62,3 +63,33 @@ ressources:
 # (256): hotmask; Detector hot spots.
 # (512): yaghost; Possible ghost image from YA slope.
 # http://www.galex.caltech.edu/wiki/GCAT_Manual#Flags
+
+# List of fields
+# 2552663716076191744 NGS 32 visits
+# 2424979629631602688 MIS 5 visits
+# 2508155485249601536 DIS 5 visits
+# 6388191295067652096 NGC4993-GW170817 2 visits
+# 6381787756527353856 AIS_309_1_28 2 visits (Crab pulsar)
+
+# TDS fields
+# 2593653509626789888 PS_CDFS_MOS00 DIS 114 visits 
+# 2594075722091855872 PS_CDFS_MOS06 DIS 29 visits 
+# 2607375414741434368 PS_GROTH_MOS06 DIS 18 visits
+
+# target_name   t_exptime        obs_id 
+# PS_COSMOS_MOS21   28075.8 2604912508670050304
+# PS_COSMOS_MOS22   27164.4 2604982877414227968
+# PS_COSMOS_MOS23  39526.05 2605053246158405632
+# PS_COSMOS_MOS24  38478.85 2605123614902583296
+# PS_COSMOS_MOS25   25040.5 2605193983646760960
+# PS_COSMOS_MOS26   43563.8 2605264352416104448
+# PS_COSMOS_MOS27   42569.4 2605334721135116288
+        # - 2604912508670050304
+        # - 2604982877414227968
+        # - 2605053246158405632
+        # - 2605123614902583296
+        # - 2605193983646760960
+        # - 2605264352416104448
+        # - 2605334721135116288
+
+

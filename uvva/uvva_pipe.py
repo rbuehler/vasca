@@ -35,8 +35,8 @@ def set_config(cfg_file):
         cfg = yaml.safe_load(file)  # yaml.
 
     # Set output directory
-    if cfg["general"]["out_dir"] == "CWD":
-        cfg["general"]["out_dir"] = os.getcwd()
+    if cfg["general"]["out_dir_base"] == "CWD":
+        cfg["general"]["out_dir_base"] = os.getcwd()
 
     # Store cfg file name in cfg dictionary
     cfg["cfg_file"] = cfg_file
@@ -60,6 +60,10 @@ def set_logger(cfg):
     None.
 
     """
+    log_dir = cfg["general"]["out_dir_base"] + "/" + cfg["general"]["name"] + "/"
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
     log_cfg = {
         "handlers": [
             {
@@ -73,7 +77,7 @@ def set_logger(cfg):
                 "diagnose": True,
             },
             {
-                "sink": cfg["general"]["out_dir"] + "/" + cfg["general"]["log_file"],
+                "sink": log_dir + cfg["general"]["log_file"],
                 "serialize": True,
                 "backtrace": True,
                 "diagnose": True,
@@ -112,6 +116,20 @@ def run(cfg):
     for field_id, gf in rg.fields.items():
         logger.info("Analysing field:" + str(field_id))
 
+        # Create directory structure for fields
+        field_dir = (
+            cfg["general"]["out_dir_base"]
+            + "/"
+            + cfg["general"]["name"]
+            + "/"
+            + str(field_id)
+            + "/"
+        )
+
+        # Create folder
+        if not os.path.exists(field_dir):
+            os.makedirs(field_dir)
+
         # Apply selections
         gf.select_rows("tt_detections", cfg["selection"]["detections"])
 
@@ -121,26 +139,25 @@ def run(cfg):
         )
 
         # Plot results
-        fig_sky = gf.plot_sky(plot_detections=False)
+        fig_sky = gf.plot_sky(plot_detections=True)
 
         # plt.show()
         fig_lc = fig = plt.figure()
         gf.plot_light_curve(12)
 
         # Write field out
-        field_file_name_base = cfg["general"]["out_dir"] + "/field_"
-        gf.write_to_fits(field_file_name_base + str(field_id) + ".fits")
-        fig_sky.savefig(field_file_name_base + str(field_id) + "_sky.png", dpi=300)
-        fig_lc.savefig(field_file_name_base + str(field_id) + "_lc.png", dpi=fig.dpi)
+        gf.write_to_fits(field_dir + "field_" + str(field_id) + ".fits")
+        fig_sky.savefig(field_dir + "sky_map_hr_" + str(field_id) + ".png", dpi=3000)
+        # fig_lc.savefig(field_dir + str(field_id) + "_lc.png", dpi=fig.dpi)
 
     # Write out regions
-    region_out_name = (
-        cfg["general"]["out_dir"] + "/region_" + cfg["general"]["name"] + ".fits"
+    region_dir = cfg["general"]["out_dir_base"] + "/" + cfg["general"]["name"] + "/"
+    rg.write_to_fits(
+        file_name=region_dir + "/region_" + cfg["general"]["name"] + ".fits"
     )
-    rg.write_to_fits(file_name=region_out_name)
 
     # Write used config file
-    yaml_out_name = cfg["general"]["out_dir"] + "/uvva_ran_cfg.yaml"
+    yaml_out_name = region_dir + "/uvva_ran_cfg.yaml"
     with open(yaml_out_name, "w") as yaml_file:
         yaml.dump(cfg, yaml_file)
 

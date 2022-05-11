@@ -124,10 +124,10 @@ class BaseField(TableCollection):
         # Set marker properties for sources
         plt_src_kwargs = {
             "marker": "o",
-            "markersize": 5.0,
-            "alpha": 0.4,
+            "markersize": 2.5,
+            "alpha": 0.5,
             "lw": 0,
-            "markeredgewidth": 1.0,
+            "markeredgewidth": 0.5,
             "fillstyle": "none",
         }
         if src_kwargs is not None:
@@ -136,8 +136,9 @@ class BaseField(TableCollection):
         # Set marker properties for detections
         plt_det_kwargs = {
             "marker": ".",
-            "markersize": 2.0,
-            "alpha": 0.4,
+            "markersize": 0.2,
+            "alpha": 0.5,
+            "markeredgewidth": 0.0,
             "lw": 0,
         }
         if det_kwargs is not None:
@@ -666,6 +667,7 @@ class BaseField(TableCollection):
             self.tt_detections.remove_rows(rm_idx)
 
             # Update detection count in tt_sources
+            sel = self.tt_detections["sel"]
             src_ids, det_cts = np.unique(
                 self.tt_detections[sel]["src_id"], return_counts=True
             )
