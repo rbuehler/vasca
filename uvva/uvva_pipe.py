@@ -143,7 +143,7 @@ def run(cfg):
 
         # plt.show()
         fig_lc = fig = plt.figure()
-        gf.plot_light_curve(12)
+        # gf.plot_light_curve(12)
 
         # Write field out
         gf.write_to_fits(field_dir + "field_" + str(field_id) + ".fits")
