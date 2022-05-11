@@ -139,7 +139,7 @@ def run(cfg):
         )
 
         # Plot results
-        # fig_sky = gf.plot_sky(plot_detections=True)
+        fig_sky = gf.plot_sky(plot_detections=True)
 
         # plt.show()
         # fig_lc = fig = plt.figure()
@@ -147,7 +147,9 @@ def run(cfg):
 
         # Write field out
         gf.write_to_fits(field_dir + "field_" + str(field_id) + ".fits")
-        # fig_sky.savefig(field_dir + "sky_map_hr_" + str(field_id) + ".png", dpi=3000)
+        fig_sky.savefig(
+            field_dir + "sky_map_hr_" + str(field_id) + ".png"
+        )  # , dpi=3000
         # fig_lc.savefig(field_dir + str(field_id) + "_lc.png", dpi=fig.dpi)
 
     # Write out regions
