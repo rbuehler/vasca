@@ -161,8 +161,7 @@ def test_base_field_io_alt(test_paths, new_field):
 
 def test_pipeline(test_paths):
     # get pipeline config
-    with open(test_paths["pipeline_cfg"]) as f:
-        cfg = yaml.safe_load(f)
+    cfg = uvva_pipe.set_config(test_paths["pipeline_cfg"])
 
     # temporary output directory
     pipeline_out = f"{test_paths['temp_path']}/pipe_out"
@@ -173,13 +172,7 @@ def test_pipeline(test_paths):
     cfg["ressources"]["load_kwargs"]["data_path"] = test_paths["resource_root"]
     cfg["ressources"]["load_kwargs"]["visits_data_path"] = test_paths["galex_visits"]
 
-    # Write modified config file
-    cfg_mod = f"{pipeline_out}/uvva_test_cfg_modified.yaml"
-    with open(cfg_mod, "w") as f:
-        yaml.dump(cfg, f)
-
     # run pipeline
-    cfg = uvva_pipe.set_config(cfg_mod)
     uvva_pipe.run(cfg)
 
 
