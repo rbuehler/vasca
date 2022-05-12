@@ -139,7 +139,6 @@ def run(cfg):
         # Plot results
         fig_sky = gf.plot_sky(plot_detections=True)
 
-        # plt.show()
         fig_lc = fig = plt.figure()
         gf.plot_light_curve(range(0, 10))
 
@@ -147,12 +146,12 @@ def run(cfg):
         gf.write_to_fits(field_dir + "field_" + str(field_id) + ".fits")
         if cfg["general"]["hd_img_out"]:
             fig_sky.savefig(
-                field_dir + "sky_map_hr_" + str(field_id) + ".png", dpi=3000
+                field_dir + "sky_map_hr_" + str(field_id) + ".pdf", dpi=3000
             )
         else:
-            fig_sky.savefig(field_dir + "sky_map_hr_" + str(field_id) + ".png", dpi=150)
+            fig_sky.savefig(field_dir + "sky_map_hr_" + str(field_id) + ".pdf", dpi=150)
 
-        fig_lc.savefig(field_dir + str(field_id) + "_lc.png", dpi=150)
+        fig_lc.savefig(field_dir + str(field_id) + "_lc.pdf", dpi=150)
 
     # Write out regions
     region_dir = cfg["general"]["out_dir_base"] + "/" + cfg["general"]["name"] + "/"
