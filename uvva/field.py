@@ -124,10 +124,10 @@ class BaseField(TableCollection):
         # Set marker properties for sources
         plt_src_kwargs = {
             "marker": "o",
-            "markersize": 2.5,
+            "markersize": 1.5,
             "alpha": 0.5,
             "lw": 0,
-            "markeredgewidth": 0.5,
+            "markeredgewidth": 0.3,
             "fillstyle": "none",
         }
         if src_kwargs is not None:
@@ -867,7 +867,7 @@ class GALEXField(BaseField):
             os.makedirs(self.data_path)
 
         # File name prefix for UVVA/GALEXField outputs
-        self.uvva_file_prefix = f"UVVA_GALEX_{obs_id}_{filter}"
+        self.uvva_file_prefix = f"UVVA_GALEX_{obs_id}_{obs_filter}"
 
         logger.debug(f"Field data path set to: '{self.data_path}'")
         logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
@@ -934,7 +934,13 @@ class GALEXField(BaseField):
 
     @classmethod
     def from_MAST(
-        cls, obs_id, obs_filter="NUV", refresh=False, load_products=True, **kwargs
+        cls,
+        obs_id,
+        obs_filter="NUV",
+        refresh=False,
+        load_products=True,
+        write_uvva_table=True,
+        **kwargs,
     ):
         """
         Constructor to initialize a GALEXField instance either
@@ -959,6 +965,9 @@ class GALEXField(BaseField):
         load_products : bool, optional
             Selects if data products shall be loaded. Othervise only field and
             visit information is loaded.
+        write_uvva_table: bool, optional
+            If load_products is enabled, store the data as UVVA table in the cloud
+            for faster loading in the future. Defaut is True.
         **kwargs
             All additional keyword arguments are passed to `~GALEXField.__init__()`
 
@@ -986,6 +995,9 @@ class GALEXField(BaseField):
         if load_products:
             gf._load_galex_archive_products(obs_id, obs_filter, refresh=refresh)
             meta_only = "."
+            if write_uvva_table:
+                fits_name = f"{gf.data_path}/{gf.uvva_file_prefix}_field_data.fits"
+                gf.write_to_fits(fits_name)
         else:
             meta_only = ", metadata-only."
 
@@ -1019,20 +1031,33 @@ class GALEXField(BaseField):
             DESCRIPTION.
 
         """
+        logger.info(
+            f"Loading data for field {field_id} with method {cfg['ressources']['load_method']}"
+        )
 
         # Loads field according to load method specification
         # String matching is case insensitive (converts to all to lower case).
-        if cfg["ressources"]["load_method"].casefold() == "MAST".casefold():
+        if cfg["ressources"]["load_method"].casefold() == "MAST_SERVER".casefold():
             gf = GALEXField.from_MAST(
                 obs_id=field_id,
                 obs_filter=cfg["observations"]["obs_filter"],
-                **cfg["ressources"]["load_kwargs"],
+                refresh=True,
+                load_products=cfg["ressources"]["load_products"],
+                **cfg["ressources"]["field_kwargs"],
+            )
+        if cfg["ressources"]["load_method"].casefold() == "MAST_CLOUD".casefold():
+            gf = GALEXField.from_MAST(
+                obs_id=field_id,
+                obs_filter=cfg["observations"]["obs_filter"],
+                refresh=False,
+                load_products=cfg["ressources"]["load_products"],
+                **cfg["ressources"]["field_kwargs"],
             )
         elif cfg["ressources"]["load_method"].casefold() == "UVVA".casefold():
             gf = GALEXField.from_UVVA(
                 obs_id=field_id,
                 obs_filter=cfg["observations"]["obs_filter"],
-                **cfg["ressources"]["load_kwargs"],
+                **cfg["ressources"]["field_kwargs"],
             )
         elif cfg["ressources"]["load_method"].casefold() == "auto".casefold():
             pass

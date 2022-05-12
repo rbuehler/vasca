@@ -77,7 +77,7 @@ class Region(TableCollection):
                     visits_info = dict(gf.tt_visits[keys_store][0])
                     visits_info["field_id"] = field_id
                     rg.tt_visits.add_row(visits_info)
-                if cfg["ressources"]["load_kwargs"]["load_products"]:
+                if cfg["ressources"]["load_products"]:
                     rg.fields[field_id] = gf
                 else:
                     rg.fields[field_id] = None
