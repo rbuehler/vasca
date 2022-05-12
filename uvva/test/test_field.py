@@ -169,8 +169,8 @@ def test_pipeline(test_paths):
 
     # edit paths
     cfg["general"]["out_dir_base"] = pipeline_out
-    cfg["ressources"]["load_kwargs"]["data_path"] = test_paths["resource_root"]
-    cfg["ressources"]["load_kwargs"]["visits_data_path"] = test_paths["galex_visits"]
+    cfg["ressources"]["field_kwargs"]["data_path"] = test_paths["resource_root"]
+    cfg["ressources"]["field_kwargs"]["visits_data_path"] = test_paths["galex_visits"]
 
     # run pipeline
     uvva_pipe.run(cfg)

@@ -41,8 +41,6 @@ def set_config(cfg_file):
     # Store cfg file name in cfg dictionary
     cfg["cfg_file"] = cfg_file
 
-    print(cfg)
-
     return cfg
 
 
@@ -142,15 +140,19 @@ def run(cfg):
         fig_sky = gf.plot_sky(plot_detections=True)
 
         # plt.show()
-        # fig_lc = fig = plt.figure()
-        # gf.plot_light_curve(12)
+        fig_lc = fig = plt.figure()
+        gf.plot_light_curve(range(0, 10))
 
         # Write field out
         gf.write_to_fits(field_dir + "field_" + str(field_id) + ".fits")
-        fig_sky.savefig(
-            field_dir + "sky_map_hr_" + str(field_id) + ".png"
-        )  # , dpi=3000
-        # fig_lc.savefig(field_dir + str(field_id) + "_lc.png", dpi=fig.dpi)
+        if cfg["general"]["hd_img_out"]:
+            fig_sky.savefig(
+                field_dir + "sky_map_hr_" + str(field_id) + ".png", dpi=3000
+            )
+        else:
+            fig_sky.savefig(field_dir + "sky_map_hr_" + str(field_id) + ".png", dpi=150)
+
+        fig_lc.savefig(field_dir + str(field_id) + "_lc.png", dpi=150)
 
     # Write out regions
     region_dir = cfg["general"]["out_dir_base"] + "/" + cfg["general"]["name"] + "/"
