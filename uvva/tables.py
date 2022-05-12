@@ -587,7 +587,7 @@ class TableCollection(object):
         None.
 
         """
-        logger.info(f"Loading file with name '{file_name}'")
+        logger.debug(f"Loading file with name '{file_name}'")
         with fits.open(file_name) as ff:
             # Load tables
             # get available table names
@@ -741,9 +741,6 @@ class TableCollection(object):
 
         sel = tt["sel"].data.astype("bool")
         nr_sel = sel.sum()
-        logger.info(
-            f"Applying selection on table '{tablename}' with {nr_sel} selected rows"
-        )
 
         # Apply min/max cuts
         if "range" in selections.keys():

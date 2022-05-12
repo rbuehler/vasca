@@ -94,7 +94,12 @@ class BaseField(TableCollection):
         self.ref_wcs = None
 
     def plot_sky_sources(
-        self, ax=None, plot_detections=True, src_kwargs=None, det_kwargs=None
+        self,
+        ax=None,
+        plot_detections=True,
+        plot_src_id=True,
+        src_kwargs=None,
+        det_kwargs=None,
     ):
         """
         Plot the sources and (optinally) the visit detections on the sky.
@@ -105,6 +110,8 @@ class BaseField(TableCollection):
             Matplotlib axes to plot on. The default is None.
         plot_detections : bool, optional
             Plot the visit detections below the sources. The default is True.
+        plot_src_ids: bool, optional
+            Write the source ID next to its marker. Default is True.
         src_kwargs : dict, optional
             Keyword arguments for pyplot.plot of the sources. The default is None.
         det_kwargs : dict, optional
@@ -163,6 +170,17 @@ class BaseField(TableCollection):
                     **plt_det_kwargs,
                 )
             ax.plot(src["ra"], src["dec"], color=col, **plt_src_kwargs)
+
+            ax.text(
+                src["ra"] + 0.005,
+                src["dec"] + 0.004,
+                str(src["src_id"]),
+                transform=plt_src_kwargs["transform"],
+                fontsize=1,
+                color=col,
+                alpha=0.5,
+            )
+
         return ax
 
     def plot_sky_map(self, ax=None, **img_kwargs):
