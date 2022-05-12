@@ -41,8 +41,9 @@ selection:
             artifacts : [1,8,16,32,64,128,256,512]    
 
 ressources:                      
-    load_method      : "UVVA"     # Allowed are ["MAST_SERVER", "MAST_CLOUD", "UVVA", "AUTO"]
+    load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null
         visits_data_path : null 
+        write            : false
