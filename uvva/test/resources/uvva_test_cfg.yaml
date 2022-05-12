@@ -3,27 +3,28 @@ authors : "UC science"
 comment : "Test configuration file"
 
 general:
-    name          : "test_region"
+    name          : "NGC4993"
     out_dir_base  : "./uvva/test/out_pipe"                               # If "CWD" current work directory will be used
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
+    hd_img_out    : false
 
-cluster:
-    meanshift:
-        bandwidth     : 6               # In arcsec, to estimate it automatically specify "null"
-        seeds         : null
-        bin_seeding   : false
-        min_bin_freq  : 1
-        cluster_all   : true
-        n_jobs        : 4
-        max_iter      : 300
-    add_upper_limits  : true
-    
 observations:
     observatory : "GALEX"
     obs_filter : "NUV"
     field_ids :
         - 6388191295067652096
+        
+cluster:
+    meanshift:
+        bandwidth     : 5               # In arcsec, to estimate it automatically specify "null"
+        seeds         : null
+        bin_seeding   : false
+        min_bin_freq  : 1
+        cluster_all   : true
+        n_jobs        : 3
+        max_iter      : 300
+    add_upper_limits  : true
 
 selection:
     detections:
@@ -36,14 +37,12 @@ selection:
             mag_err        : [0,0.5]
         bitmask:
             # Specify the ones to ignore (=keep row).
-            artifacts : [1,8,16,32,64,128,256,512]   
-        
-# Optional, observatory-specific configuration of the field initialization. See docs for a complete list of config arguments.
-ressources:                      
-    load_method: "MAST"     # Allowed are ["MAST", "UVVA", "AUTO"]
-    load_kwargs:
-        refresh: false
-        load_products: true
-        data_path: null
-        visits_data_path: null            
+            # For GALEX a description is at the end of this document
+            artifacts : [1,8,16,32,64,128,256,512]    
 
+ressources:                      
+    load_method      : "UVVA"     # Allowed are ["MAST_SERVER", "MAST_CLOUD", "UVVA", "AUTO"]
+    load_products    : true             # Get data products from MAST, if false only meta data is loaded
+    field_kwargs:
+        data_path        : null
+        visits_data_path : null 

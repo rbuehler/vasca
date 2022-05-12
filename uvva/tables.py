@@ -749,7 +749,7 @@ class TableCollection(object):
         if "range" in selections.keys():
             for var, vals in selections["range"].items():
                 sel = sel * (tt[var] > vals[0]) * (tt[var] < vals[1])
-                logger.info(
+                logger.debug(
                     f"Selecting '{var}' {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
                 )
 
@@ -759,7 +759,7 @@ class TableCollection(object):
                 no_art = sel * (tt[var].data.astype("int") == 0)
                 bit = bitmask.bitfield_to_boolean_mask(tt[var], ignore_flags=vals)
                 sel = sel * (no_art + bit)
-                logger.info(
+                logger.debug(
                     f"Selecting '{var}' keep {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
                 )
 
