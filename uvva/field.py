@@ -562,6 +562,40 @@ class BaseField(TableCollection):
             if add_upper_limits:
                 np_mag_ul = self.get_upper_limits()
                 self.tt_sources_mag_ul.add_row([src_id] + np_mag_ul.tolist())
+        # self.set_var_stats()
+
+    def set_var_stats(self):
+        logger.debug(f"Calculating source variability statistics.")
+
+        if "tt_sources_mag" not in self._table_names:
+            logger.error("Light curve does not exist, run 'set_light_curve()' first.")
+
+        # Get lightcurve as numpy arrays to calculate stats
+        mag = np.array(self.tt_sources_mag.as_array().tolist())[:, 1:]
+        mag_err = np.array(self.tt_sources_mag_err.as_array().tolist())[:, 1:]
+
+        # Ignore entries with no magniture or valid error
+        mask_mag = mag < 0.0
+        mask_mag_err = mag_err < 0.0
+        mask = mask_mag + mask_mag_err
+
+        mag[mask] = np.nan
+        mag_err[mask] = np.nan
+
+        nr_mags = (~np.isnan(mag)).sum(axis=1)
+
+        mag_mean = np.nanmean(mag, axis=1)
+        mag_err_mean2 = np.nanmean(mag_err * mag_err, axis=1)
+        mag_std = np.nanstd(mag, axis=1)
+
+        rchiq_const = mag_std * mag_std / mag_err_mean2
+
+        print("MM ", mag[10:15])
+        print("MM ", mag_mean[10:15])
+        print("MS ", mag_std[10:15])
+        print("NR ", nr_mags[10:15])
+        print("EM2", mag_err_mean2[10:15])
+        print("RCH", rchiq_const[10:15])
 
     def get_light_curve(self, src_ids):
         """
