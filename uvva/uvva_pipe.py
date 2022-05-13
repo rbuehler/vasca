@@ -139,8 +139,9 @@ def run(cfg):
         # Plot results
         fig_sky = gf.plot_sky(plot_detections=True)
 
-        fig_lc = fig = plt.figure()
-        gf.plot_light_curve(range(0, 10))
+        fig_lc = plt.figure(figsize=(10, 4))
+        gf.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
+        plt.tight_layout()
 
         # Write field out
         gf.write_to_fits(field_dir + "field_" + str(field_id) + ".fits")
