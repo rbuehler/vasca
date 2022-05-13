@@ -435,7 +435,12 @@ class BaseField(TableCollection):
             "ra": cluster_centers[:, 0],
             "dec": cluster_centers[:, 1],
             "nr_det": det_cts,
-            "flag": np.zeros(nr_srcs),
+            "nr_det_meas": np.zeros(nr_srcs),
+            "mag_mean": np.zeros(nr_srcs) - 1,
+            "mag_var": np.zeros(nr_srcs) - 1,
+            "mag_rchiq": np.zeros(nr_srcs) - 1,
+            "mag_delta_max": np.zeros(nr_srcs) - 1,
+            "mag_ulim_frac": np.zeros(nr_srcs) - 1,
         }
 
         # Fill information into tables.
@@ -562,9 +567,19 @@ class BaseField(TableCollection):
             if add_upper_limits:
                 np_mag_ul = self.get_upper_limits()
                 self.tt_sources_mag_ul.add_row([src_id] + np_mag_ul.tolist())
-        # self.set_var_stats()
+        self.set_var_stats()
 
     def set_var_stats(self):
+        """
+        Calculates source variability parameters and stores them
+        in the source table (tt_source).
+
+        Returns
+        -------
+        None.
+
+        """
+
         logger.debug(f"Calculating source variability statistics.")
 
         if "tt_sources_mag" not in self._table_names:
@@ -582,20 +597,24 @@ class BaseField(TableCollection):
         mag[mask] = np.nan
         mag_err[mask] = np.nan
 
+        # Calculate variability parameters
         nr_mags = (~np.isnan(mag)).sum(axis=1)
-
         mag_mean = np.nanmean(mag, axis=1)
         mag_err_mean2 = np.nanmean(mag_err * mag_err, axis=1)
-        mag_std = np.nanstd(mag, axis=1)
+        mag_var = np.nanvar(mag, axis=1)
+        rchiq_const = mag_var / mag_err_mean2
 
-        rchiq_const = mag_std * mag_std / mag_err_mean2
+        # Write them into tt_sources
+        src_ids = self.tt_sources_mag["src_id"]
+        self.tt_sources.add_index("src_id")
+        src_idx = self.tt_sources.loc_indices["src_id", src_ids]
 
-        print("MM ", mag[10:15])
-        print("MM ", mag_mean[10:15])
-        print("MS ", mag_std[10:15])
-        print("NR ", nr_mags[10:15])
-        print("EM2", mag_err_mean2[10:15])
-        print("RCH", rchiq_const[10:15])
+        self.tt_sources["nr_det_meas"][src_idx] = nr_mags
+        self.tt_sources["mag_mean"][src_idx] = mag_mean
+        self.tt_sources["mag_var"][src_idx] = mag_var
+        self.tt_sources["mag_rchiq"][src_idx] = rchiq_const
+        # self.tt_sources["mag_delta_max"]
+        # self.tt_sources["mag_ulim_frac"]
 
     def get_light_curve(self, src_ids):
         """
