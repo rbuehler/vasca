@@ -588,6 +588,7 @@ class BaseField(TableCollection):
         # Get lightcurve as numpy arrays to calculate stats
         mag = np.array(self.tt_sources_mag.as_array().tolist())[:, 1:]
         mag_err = np.array(self.tt_sources_mag_err.as_array().tolist())[:, 1:]
+        mag_ul = np.array(self.tt_sources_mag_ul.as_array().tolist())[:, 1:]
 
         # Ignore entries with no magniture or valid error
         mask_mag = mag < 0.0
@@ -604,6 +605,14 @@ class BaseField(TableCollection):
         mag_var = np.nanvar(mag, axis=1)
         rchiq_const = mag_var / mag_err_mean2
 
+        # Get the maximum flux variation from the mean
+        dmag_max = np.abs(np.nanmax(mag, axis=1) - mag_mean)
+        dmag_min = np.abs(np.nanmin(mag, axis=1) - mag_mean)
+        dmag = (dmag_max >= dmag_min) * dmag_max + (dmag_max < dmag_min) * dmag_min
+
+        # Nr of upper limits below the mean flux (in magnitudes greater)
+        # nr_ulmean = np.less(mag_mean, mag_ul).sum(axis=1)
+
         # Write them into tt_sources
         src_ids = self.tt_sources_mag["src_id"]
         self.tt_sources.add_index("src_id")
@@ -613,8 +622,8 @@ class BaseField(TableCollection):
         self.tt_sources["mag_mean"][src_idx] = mag_mean
         self.tt_sources["mag_var"][src_idx] = mag_var
         self.tt_sources["mag_rchiq"][src_idx] = rchiq_const
-        # self.tt_sources["mag_delta_max"]
-        # self.tt_sources["mag_ulim_frac"]
+        self.tt_sources["mag_delta_max"][src_idx] = dmag
+        # self.tt_sources["mag_ul_mean"][src_idx] = nr_ulmean
 
     def get_light_curve(self, src_ids):
         """
