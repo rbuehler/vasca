@@ -161,7 +161,7 @@ base_field = {
             "mag_var",
             "mag_rchiq",
             "mag_delta_max",
-            "mag_ulim_frac",
+            "nr_ul_mean",
         ],
         "dtype": [
             "int64",
@@ -186,7 +186,7 @@ base_field = {
             "Flux magnitude variace",
             "Flux magnitude reduced chisquared of the constant mean",
             "Maximum magnitude flux variation compared to average",
-            "Fraction of flux magnitude upper limits below the mean flux",
+            "Number of visits with upper limit magnitude greater than mean magnitude",
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
