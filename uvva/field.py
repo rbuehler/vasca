@@ -1097,24 +1097,52 @@ class GALEXField(BaseField):
         **field_kwargs,
     ):
         """
-        Load GALEX field data according to a given method.
+        Loads GALEX field data according to a given method and
+        returns a GALEXField instance.
 
         Parameters
         ----------
-        field_id : TYPE
-            DESCRIPTION.
-        cfg : TYPE
-            DESCRIPTION.
+        field_id : int
+            GALEX field ID
+        obs_filter : str, optional
+            Selects the GALEX obs_filter for which the corresponding
+            observation data is loaded. Needs to be either from:
+            'FUV' -> 135-175 nm
+            'NUV' -> 175-280 nm  (default)
+        method : str, optional
+            Specification of the load method. Four methods are implemented:
+            MAST_REMOTE: Standard method to query data from MAST archives. This requires
+            an internet connection to the MAST servers. Local data will be overwritten
+            MAST_LOCAL: Dafault. Builds a new GALEXfield instance based on MAST
+            archival data cached on local disc. If no data is found,
+            the fallback is MAST_REMOTE.
+            UVVA: Builds a new GALEXField based on a UVVA-generated field data file.
+            AUTO: Attempts to load field data by using UVVA as method and
+            falls back to MAST_LOCAL if no UVVA file is found on disc.
+
+            The default directory where field data availability is checked is
+            defined by the "data_path" attribute of GALEXField and can be passed
+            explicitly via the "field_kwargs".
+        load_products : bool, optional
+            Specifies if GALEXField should be loaded completely with the
+            full set of data products (default) or just containing metadata (False).
+        field_kwargs
+            All additional keyword arguments are passed to the load methods
+            `~GALEXField.from_MAST()` and `~GALEXField.from_UVVA()`,
+            as well as to `~GALEXField.__init__()`.
 
         Raises
         ------
+        TypeError
+            If the specified load method is not a string.
         ValueError
-            DESCRIPTION.
+            If the specified load method is not one of
+            '["mast_remote", "mast_local", "uvva", "auto"]'. String matching is
+            case insensitive.
 
         Returns
         -------
-        gf : TYPE
-            DESCRIPTION.
+        uvva.field.GALEXField
 
         """
         logger.info(f"Loading data for field '{field_id}' with method '{method}'.")
