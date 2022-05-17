@@ -1019,7 +1019,7 @@ class GALEXField(BaseField):
         obs_filter="NUV",
         refresh=False,
         load_products=True,
-        write_uvva_table=True,
+        write=True,
         **kwargs,
     ):
         """
@@ -1045,9 +1045,9 @@ class GALEXField(BaseField):
         load_products : bool, optional
             Selects if data products shall be loaded. Othervise only field and
             visit information is loaded.
-        write_uvva_table: bool, optional
-            If load_products is enabled, store the data as UVVA table in the cloud
-            for faster loading in the future. Defaut is True.
+        write: bool, optional
+            If load_products is enabled, stores the data as UVVA tables in the cloud
+            for faster loading in the future. Default is True.
         **kwargs
             All additional keyword arguments are passed to `~GALEXField.__init__()`
 
@@ -1075,7 +1075,7 @@ class GALEXField(BaseField):
         if load_products:
             gf._load_galex_archive_products(obs_id, obs_filter, refresh=refresh)
             meta_only = "."
-            if write_uvva_table:
+            if write:
                 fits_name = f"{gf.data_path}/{gf.uvva_file_prefix}_field_data.fits"
                 gf.write_to_fits(fits_name)
         else:
@@ -1089,9 +1089,15 @@ class GALEXField(BaseField):
         return gf
 
     @staticmethod
-    def load_from_cfg(field_id, cfg):
+    def load(
+        field_id,
+        obs_filter="NUV",
+        method="MAST_LOCAL",
+        load_products=True,
+        **field_kwargs,
+    ):
         """
-        Load GALEX field from configuration dictionary
+        Load GALEX field data according to a given method.
 
         Parameters
         ----------
@@ -1111,46 +1117,55 @@ class GALEXField(BaseField):
             DESCRIPTION.
 
         """
-        logger.info(
-            f"Loading data for field {field_id} with method {cfg['ressources']['load_method']}"
-        )
+        logger.info(f"Loading data for field '{field_id}' with method '{method}'.")
+
+        # Checks method argument
+        # String matching is case insensitive (converts to all to lower case).
+        if not isinstance(method, str):
+            raise TypeError(
+                "Expected string type for load method specification, "
+                f"got '{type(method).__name__}'."
+            )
+
+        method = method.casefold()  # ensures all-lower-case string
+        method_spec = ["mast_remote", "mast_local", "uvva", "auto"]
+        if method not in method_spec:
+            raise ValueError(
+                "Expected load method specification from {method_spec}, "
+                "got '{method}'."
+            )
+
+        # Sets refresh option for MAST methods
+        if method == "mast_remote":
+            refresh = field_kwargs.pop("refresh", True)
+        else:
+            refresh = field_kwargs.pop("refresh", False)
 
         # Loads field according to load method specification
-        # String matching is case insensitive (converts to all to lower case).
-        if cfg["ressources"]["load_method"].casefold() == "MAST_SERVER".casefold():
+        if method in ["mast_remote", "mast_local"]:
             gf = GALEXField.from_MAST(
                 obs_id=field_id,
-                obs_filter=cfg["observations"]["obs_filter"],
-                refresh=True,
-                load_products=cfg["ressources"]["load_products"],
-                **cfg["ressources"]["field_kwargs"],
+                obs_filter=obs_filter,
+                refresh=refresh,
+                load_products=load_products,
+                **field_kwargs,
             )
-        if cfg["ressources"]["load_method"].casefold() == "MAST_CLOUD".casefold():
-            gf = GALEXField.from_MAST(
-                obs_id=field_id,
-                obs_filter=cfg["observations"]["obs_filter"],
-                refresh=False,
-                load_products=cfg["ressources"]["load_products"],
-                **cfg["ressources"]["field_kwargs"],
-            )
-        elif cfg["ressources"]["load_method"].casefold() == "UVVA".casefold():
+        elif method == "uvva":
+            # removes unused options
+            field_kwargs.pop("refresh", None)
+            field_kwargs.pop("write", None)
+
             gf = GALEXField.from_UVVA(
                 obs_id=field_id,
-                obs_filter=cfg["observations"]["obs_filter"],
-                **cfg["ressources"]["field_kwargs"],
+                obs_filter=obs_filter,
+                **field_kwargs,
             )
-        elif cfg["ressources"]["load_method"].casefold() == "auto".casefold():
+        elif method == "auto":
             pass
             # TODO: Lookahead via rm to check data availability.
             # Then "UVVA" is preferred for performance reasons.
             # Fallback to "MAST" & refresh=True if "UVVA" fails for some reason
             # (e.g. not complete set of tables stored in the fits file).
-        else:
-            raise ValueError(
-                "Expected GALEXField load method specification from "
-                "['MAST', 'UVVA', 'AUTO'], "
-                f"got {cfg['field_options']['load_method']}."
-            )
 
         return gf
 
