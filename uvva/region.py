@@ -62,7 +62,13 @@ class Region(TableCollection):
             # Loop over fields and store info
             for field_id in cfg["observations"]["field_ids"]:
 
-                gf = GALEXField.load_from_cfg(field_id, cfg)
+                gf = GALEXField.load(
+                    field_id,
+                    obs_filter=cfg["observations"]["obs_filter"],
+                    method=cfg["ressources"]["load_method"],
+                    load_products=cfg["ressources"]["load_products"],
+                    **cfg["ressources"]["field_kwargs"],
+                )
                 field_info = dict(gf.tt_field[0])
                 field_info["size"] = 0.55
                 field_info["n_visits"] = gf.n_visits

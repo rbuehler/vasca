@@ -52,6 +52,7 @@ def galex_test_field_from_MAST_online(test_paths):
         obs_filter=obs_filter,
         data_path=data_path,
         visits_data_path=visits_data_path,
+        write=False,
     )
     return gf
 
@@ -69,6 +70,7 @@ def galex_test_field_from_MAST_offline(test_paths):
         obs_filter=obs_filter,
         data_path=data_path,
         visits_data_path=visits_data_path,
+        write=False,
     )
     return gf
 
