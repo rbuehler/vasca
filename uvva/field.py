@@ -440,7 +440,7 @@ class BaseField(TableCollection):
             "mag_var": np.zeros(nr_srcs) - 1,
             "mag_rchiq": np.zeros(nr_srcs) - 1,
             "mag_delta_max": np.zeros(nr_srcs) - 1,
-            "mag_ulim_frac": np.zeros(nr_srcs) - 1,
+            "nr_ul_mean": np.zeros(nr_srcs) - 1,
         }
 
         # Fill information into tables.
@@ -611,7 +611,7 @@ class BaseField(TableCollection):
         dmag = (dmag_max >= dmag_min) * dmag_max + (dmag_max < dmag_min) * dmag_min
 
         # Nr of upper limits below the mean flux (in magnitudes greater)
-        # nr_ulmean = np.less(mag_mean, mag_ul).sum(axis=1)
+        nr_ulmean = (mag_mean[:, None] < mag_ul).sum(axis=1)
 
         # Write them into tt_sources
         src_ids = self.tt_sources_mag["src_id"]
@@ -623,7 +623,7 @@ class BaseField(TableCollection):
         self.tt_sources["mag_var"][src_idx] = mag_var
         self.tt_sources["mag_rchiq"][src_idx] = rchiq_const
         self.tt_sources["mag_delta_max"][src_idx] = dmag
-        # self.tt_sources["mag_ul_mean"][src_idx] = nr_ulmean
+        self.tt_sources["nr_ul_mean"][src_idx] = nr_ulmean
 
     def get_light_curve(self, src_ids):
         """
