@@ -8,13 +8,14 @@ general:
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
     hd_img_out    : false
-    nr_cpus       : 1
+    nr_cpus       : 2
 
 observations:
     observatory : "GALEX"
     obs_filter : "NUV"
     field_ids :
         - 2604912508670050304
+        - 2604982877414227968
         
 cluster:
     meanshift:
