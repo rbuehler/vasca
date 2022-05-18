@@ -16,6 +16,9 @@ from loguru import logger
 from uvva.field import GALEXField
 from uvva.region import Region
 
+# from multiprocessing import Pool
+from multiprocessing import Pool
+
 
 def set_config(cfg_file):
     """
@@ -32,6 +35,7 @@ def set_config(cfg_file):
         UVVA pipeline configuration dictionary
     """
     with open(cfg_file) as file:
+        global cfg
         cfg = yaml.safe_load(file)  # yaml.
 
     # Set output directory
@@ -44,14 +48,9 @@ def set_config(cfg_file):
     return cfg
 
 
-def set_logger(cfg):
+def set_logger():
     """
-    Setup logger
-
-    Parameters
-    ----------
-    cfg : dict
-        UVVA pipeline configuration dictionary
+    Setup logger. Gets configuration from global config cariable cfg set with set_config
 
     Returns
     -------
@@ -90,6 +89,69 @@ def set_logger(cfg):
     logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
 
 
+def run_field(field):
+    """
+    Run analysis on a single field
+
+    Parameters
+    ----------
+    field : uvva.field
+        Field to run analysis on.
+
+    Returns
+    -------
+    field : uvva.field
+        Modified field with results
+
+    """
+
+    logger.info("Analysing field:" + str(field.field_id))
+
+    # Create directory structure for fields
+    field_dir = (
+        cfg["general"]["out_dir_base"]
+        + "/"
+        + cfg["general"]["name"]
+        + "/"
+        + str(field.field_id)
+        + "/"
+    )
+
+    # Create folder
+    if not os.path.exists(field_dir):
+        os.makedirs(field_dir)
+
+    # Apply selections
+    field.select_rows("tt_detections", cfg["selection"]["detections"])
+
+    # Run clustering
+    field.cluster_meanshift(
+        cfg["cluster"]["add_upper_limits"], **cfg["cluster"]["meanshift"]
+    )
+
+    # Plot results
+    fig_sky = field.plot_sky(plot_detections=True)
+
+    fig_lc = plt.figure(figsize=(10, 4))
+    field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
+    plt.tight_layout()
+
+    # Write field out
+    field.write_to_fits(field_dir + "field_" + str(field.field_id) + ".fits")
+    if cfg["general"]["hd_img_out"]:
+        fig_sky.savefig(
+            field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=3000
+        )
+    else:
+        fig_sky.savefig(
+            field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=150
+        )
+
+    fig_lc.savefig(field_dir + str(field.field_id) + "_lc.pdf", dpi=150)
+
+    return field
+
+
 def run(cfg):
     """
     Runs the UVVA pipeline
@@ -106,53 +168,22 @@ def run(cfg):
     """
 
     # Setup logger
-    set_logger(cfg)
+    set_logger()
 
     # Load region fields
     rg = Region.load_from_config(cfg)
 
-    for field_id, gf in rg.fields.items():
-        logger.info("Analysing field:" + str(field_id))
+    # Run each field in a separate process in parallel
+    with Pool(cfg["general"]["nr_cpus"]) as pool:
+        pool_return = pool.map(run_field, list(rg.fields.values()))
 
-        # Create directory structure for fields
-        field_dir = (
-            cfg["general"]["out_dir_base"]
-            + "/"
-            + cfg["general"]["name"]
-            + "/"
-            + str(field_id)
-            + "/"
-        )
+    # update region fields
+    for field in pool_return:
+        rg.fields[field.field_id] = field
 
-        # Create folder
-        if not os.path.exists(field_dir):
-            os.makedirs(field_dir)
-
-        # Apply selections
-        gf.select_rows("tt_detections", cfg["selection"]["detections"])
-
-        # Run clustering
-        gf.cluster_meanshift(
-            cfg["cluster"]["add_upper_limits"], **cfg["cluster"]["meanshift"]
-        )
-
-        # Plot results
-        fig_sky = gf.plot_sky(plot_detections=True)
-
-        fig_lc = plt.figure(figsize=(10, 4))
-        gf.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
-        plt.tight_layout()
-
-        # Write field out
-        gf.write_to_fits(field_dir + "field_" + str(field_id) + ".fits")
-        if cfg["general"]["hd_img_out"]:
-            fig_sky.savefig(
-                field_dir + "sky_map_hr_" + str(field_id) + ".pdf", dpi=3000
-            )
-        else:
-            fig_sky.savefig(field_dir + "sky_map_hr_" + str(field_id) + ".pdf", dpi=150)
-
-        fig_lc.savefig(field_dir + str(field_id) + "_lc.pdf", dpi=150)
+    rg.add_table_from_fields("tt_ref_sources")
+    rg.add_table_from_fields("tt_sources")
+    rg.add_table_from_fields("tt_detections", only_selected=True)
 
     # Write out regions
     region_dir = cfg["general"]["out_dir_base"] + "/" + cfg["general"]["name"] + "/"
@@ -174,6 +205,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Get UVVA configuration file
-    cfg = set_config(args.cfg)
-
+    set_config(args.cfg)
     run(cfg)

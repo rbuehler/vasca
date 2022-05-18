@@ -7,13 +7,20 @@ general:
     out_dir_base  : "./examples/uvva_pipeline"                 # If "CWD" current work directory will be used.
     log_level     : "INFO"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
-    hd_img_out    : true                                       # Write out high definition images
+    hd_img_out    : true                                      # Write out high definition images
+    nr_cpus       : null                                       #Number of CPUs to use. If "null" all available are used.
 
 observations:
     observatory : "GALEX"
     obs_filter : "NUV"
     field_ids :
         - 2604912508670050304
+        - 2604982877414227968
+        - 2605053246158405632
+        - 2605123614902583296
+        - 2605193983646760960
+        - 2605264352416104448
+        - 2605334721135116288
         
 cluster:
     meanshift:
@@ -22,7 +29,7 @@ cluster:
         bin_seeding   : false
         min_bin_freq  : 1
         cluster_all   : true
-        n_jobs        : 3
+        n_jobs        : null
         max_iter      : 300
     add_upper_limits  : true
 

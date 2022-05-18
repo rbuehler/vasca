@@ -3,17 +3,19 @@ authors : "UC science"
 comment : "Test configuration file"
 
 general:
-    name          : "NGC4993"
+    name          : "TDS_COSMOS_21-22"
     out_dir_base  : "./uvva/test/out_pipe"                               # If "CWD" current work directory will be used
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
     hd_img_out    : false
+    nr_cpus       : null
 
 observations:
     observatory : "GALEX"
     obs_filter : "NUV"
     field_ids :
-        - 6388191295067652096
+        - 2604912508670050304
+        - 2604982877414227968
         
 cluster:
     meanshift:
@@ -22,7 +24,7 @@ cluster:
         bin_seeding   : false
         min_bin_freq  : 1
         cluster_all   : true
-        n_jobs        : 3
+        n_jobs        : null
         max_iter      : 300
     add_upper_limits  : true
 
