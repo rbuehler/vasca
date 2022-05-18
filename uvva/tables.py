@@ -530,8 +530,7 @@ class TableCollection(object):
 
         if table_key in self._table_names:
             logger.warning(f"Table '{table_key}' already exists, overwriting")
-        else:
-            self._table_names.append(table_key)
+        self._table_names.append(table_key)
 
         tt = self.table_from_template(data, template_name)
         if add_sel_col:

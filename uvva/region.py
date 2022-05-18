@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 from loguru import logger
 
+import numpy as np
 from uvva import tables
 from uvva.field import GALEXField
 from uvva.tables import TableCollection
+from astropy.table import Column, vstack
 
 
 class Region(TableCollection):
@@ -32,6 +34,10 @@ class Region(TableCollection):
         # Sets skeleton
         super().__init__()
 
+        # Setup empty tables to fill
+        self.add_table(None, "region:tt_fields")
+        self.add_table(None, "region:tt_visits")
+
         self.fields = {}  # dictionary of field IDs and objects
 
     @classmethod
@@ -56,8 +62,6 @@ class Region(TableCollection):
         logger.debug("Loading fields from config file")
 
         if cfg["observations"]["observatory"] == "GALEX":
-            rg.add_table(None, "region:tt_fields")
-            rg.add_table(None, "region:tt_visits")
 
             # Loop over fields and store info
             for field_id in cfg["observations"]["field_ids"]:
@@ -95,3 +99,52 @@ class Region(TableCollection):
             )
 
         return rg
+
+    def add_table_from_fields(self, table_name, only_selected=False):
+        """
+        Add tables from the fields to the region by stacking them,
+        adding the field_id column.
+
+        Parameters
+        ----------
+        table_name : str
+            Table to be added
+        only_selected : bool, optional
+            Only selected rows from the field tables are copied over to the region.
+            The default is False.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        ll_tt = []
+
+        for field_id, field in self.fields.items():
+
+            tt = field.__dict__[table_name]
+
+            field_id_col = np.ones(len(tt), dtype="int64") * field_id
+            col = Column(
+                data=field_id_col,
+                name="field_id",
+                dtype="int64",
+                unit="1",
+                description="Field ID nr.",
+            )
+            tt.add_column(col)
+
+            # Apply row selection
+            sel = np.ones(len(tt), dtype="bool")
+            if only_selected:
+                sel = tt["sel"]
+
+            ll_tt.append(tt[sel])
+
+        # Add stacked table
+        tt_data = vstack(ll_tt)
+        if table_name in self._table_names:
+            logger.warning(f"Table '{table_name}' already exists, overwriting")
+        self._table_names.append(table_name)
+        setattr(self, table_name, tt_data)
