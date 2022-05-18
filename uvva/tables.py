@@ -745,7 +745,7 @@ class TableCollection(object):
         Parameters
         ----------
         selections : dict
-            Dictionary with selection variables and cut valsues
+            Dictionary with selection table, variables and cut values
         remove_unselected: bool
             Remove table rows with entry False in 'sel' table.
 
