@@ -8,14 +8,13 @@ general:
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
     hd_img_out    : false
-    nr_cpus       : null
+    nr_cpus       : 1
 
 observations:
     observatory : "GALEX"
     obs_filter : "NUV"
     field_ids :
         - 2604912508670050304
-        - 2604982877414227968
         
 cluster:
     meanshift:
@@ -29,7 +28,9 @@ cluster:
     add_upper_limits  : true
 
 selection:
-    detections:
+    det_quality:
+        table    : "tt_detections"
+        sel_type : "and"  # These are all AND selections
         range:
             s2n            : [4,.inf]
             r_fov          : [0.0,0.5]
@@ -38,9 +39,20 @@ selection:
             mag            : [14,26]
             mag_err        : [0,0.5]
         bitmask:
-            # Specify the ones to ignore (=keep row).
-            # For GALEX a description is at the end of this document
-            artifacts : [1,8,16,32,64,128,256,512]    
+            artifacts : [1,8,16,32,64,128,256,512]
+    src_quality:
+        table    : "tt_sources"
+        sel_type : "and"    # These are OR selections
+        range:
+            nr_det          : [1,.inf]
+            nr_det_meas     : [1,.inf]            
+    src_variability:
+        table    : "tt_sources"
+        sel_type : "or"
+        range:        
+            mag_rchiq       : [0.1,.inf]
+            mag_delta_max   : [0.05,.inf]
+            nr_ul_mean      : [1,.inf]  
 
 ressources:                      
     load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]

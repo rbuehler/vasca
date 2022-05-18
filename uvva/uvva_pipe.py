@@ -122,12 +122,16 @@ def run_field(field):
         os.makedirs(field_dir)
 
     # Apply selections
-    field.select_rows("tt_detections", cfg["selection"]["detections"])
+    field.select_rows(cfg["selection"]["det_quality"])
 
     # Run clustering
     field.cluster_meanshift(
         cfg["cluster"]["add_upper_limits"], **cfg["cluster"]["meanshift"]
     )
+
+    # Source selection
+    field.select_rows(cfg["selection"]["src_quality"])
+    field.select_rows(cfg["selection"]["src_variability"])
 
     # Plot results
     fig_sky = field.plot_sky(plot_detections=True)

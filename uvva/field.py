@@ -677,7 +677,7 @@ class BaseField(TableCollection):
                 "ul": list(uls)[1:],
             }
 
-            # Create ans store table
+            # Create and store table
             src_id = self.tt_sources_mag[src_idx][0]
             tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
             tt_lc.meta["src_id"] = src_id
