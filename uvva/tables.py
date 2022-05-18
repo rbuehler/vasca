@@ -738,14 +738,12 @@ class TableCollection(object):
         return out_str
         return out_str
 
-    def select_rows(self, tablename, selections=dict(), remove_unselected=False):
+    def select_rows(self, selections, remove_unselected=False):
         """
         Apply selection to a passed table.
 
         Parameters
         ----------
-        tablename : str
-            Name of the table to apply selection on
         selections : dict
             Dictionary with selection variables and cut valsues
         remove_unselected: bool
@@ -756,9 +754,10 @@ class TableCollection(object):
         None.
 
         """
-        logger.info(f"Applying selection on table '{tablename}'")
 
         # Get table and check if selection column is available
+        tablename = selections["table"]
+        logger.info(f"Applying selection on table '{tablename}'")
         if tablename not in self.__dict__.keys():
             logger.error("Table does not exist, it need to be created beforehand.")
         tt = self.__dict__[tablename]
@@ -767,24 +766,40 @@ class TableCollection(object):
 
         sel = tt["sel"].data.astype("bool")
         nr_sel = sel.sum()
+        sel = tt["sel"].data.astype("bool")
+        nr_sel = sel.sum()
 
-        # Apply min/max cuts
-        if "range" in selections.keys():
-            for var, vals in selections["range"].items():
-                sel = sel * (tt[var] > vals[0]) * (tt[var] < vals[1])
-                logger.debug(
-                    f"Selecting '{var}' {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
-                )
+        if selections["sel_type"] == "and":
 
-        # Apply bitmask cuts
-        if "bitmask" in selections.keys():
-            for var, vals in selections["bitmask"].items():
-                no_art = sel * (tt[var].data.astype("int") == 0)
-                bit = bitmask.bitfield_to_boolean_mask(tt[var], ignore_flags=vals)
-                sel = sel * (no_art + bit)
-                logger.debug(
-                    f"Selecting '{var}' keep {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
-                )
+            # Apply min/max cuts
+            if "range" in selections.keys():
+                for var, vals in selections["range"].items():
+                    sel = sel * (tt[var] >= vals[0]) * (tt[var] <= vals[1])
+                    logger.debug(
+                        f"AND selecting '{var}' {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
+                    )
+
+            # Apply bitmask cuts
+            if "bitmask" in selections.keys():
+                for var, vals in selections["bitmask"].items():
+                    no_art = sel * (tt[var].data.astype("int") == 0)
+                    bit = bitmask.bitfield_to_boolean_mask(tt[var], ignore_flags=vals)
+                    sel = sel * (no_art + bit)
+                    logger.debug(
+                        f"AND selecting bitmask '{var}' keep {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
+                    )
+        elif selections["sel_type"] == "or":
+            sel_or = np.zeros(len(sel))
+
+            if "range" in selections.keys():
+                for var, vals in selections["range"].items():
+                    sel_or = sel_or + (tt[var] >= vals[0]) * (tt[var] <= vals[1])
+                    logger.debug(
+                        f"OR selecting '{var}' {vals}, kept: {100*sel_or.sum()/nr_sel : .4f}%"
+                    )
+                sel = sel * sel_or
+        else:
+            logger.error("Unkown selection type.")
 
         tt.replace_column("sel", sel.astype("bool"))
 
