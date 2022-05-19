@@ -102,7 +102,7 @@ class BaseField(TableCollection):
         det_kwargs=None,
     ):
         """
-        Plot the sources and (optinally) the visit detections on the sky.
+        Plot the selected sources and (optinally) the visit detections on the sky.
 
         Parameters
         ----------
@@ -152,7 +152,8 @@ class BaseField(TableCollection):
             plt_det_kwargs.update(det_kwargs)
 
         # Prepare data
-        tt_src = self.tt_sources
+        sel = self.tt_sources["sel"]
+        tt_src = self.tt_sources[sel]
         tt_det = self.tt_detections
         tt_det.add_index("src_id")
 
@@ -439,7 +440,8 @@ class BaseField(TableCollection):
             "mag_mean": np.zeros(nr_srcs) - 1,
             "mag_var": np.zeros(nr_srcs) - 1,
             "mag_rchiq": np.zeros(nr_srcs) - 1,
-            "mag_delta_max": np.zeros(nr_srcs) - 1,
+            "mag_dmax": np.zeros(nr_srcs) - 1,
+            "mag_dmax_sig": np.zeros(nr_srcs) - 1,
             "nr_ul_mean": np.zeros(nr_srcs) - 1,
         }
 
@@ -591,8 +593,8 @@ class BaseField(TableCollection):
         mag_ul = np.array(self.tt_sources_mag_ul.as_array().tolist())[:, 1:]
 
         # Ignore entries with no magniture or valid error
-        mask_mag = mag < 0.0
-        mask_mag_err = mag_err < 0.0
+        mask_mag = mag < 1e-6
+        mask_mag_err = mag_err < 1e-6
         mask = mask_mag + mask_mag_err
 
         mag[mask] = np.nan
@@ -610,6 +612,9 @@ class BaseField(TableCollection):
         dmag_min = np.abs(np.nanmin(mag, axis=1) - mag_mean)
         dmag = (dmag_max >= dmag_min) * dmag_max + (dmag_max < dmag_min) * dmag_min
 
+        # Get maximum significance of flux variation compared to mean
+        dmag_max_sig = np.nanmax(np.abs((mag - mag_mean[:, None]) / mag_err), axis=1)
+
         # Nr of upper limits below the mean flux (in magnitudes greater)
         nr_ulmean = (mag_mean[:, None] < mag_ul).sum(axis=1)
 
@@ -622,7 +627,8 @@ class BaseField(TableCollection):
         self.tt_sources["mag_mean"][src_idx] = mag_mean
         self.tt_sources["mag_var"][src_idx] = mag_var
         self.tt_sources["mag_rchiq"][src_idx] = rchiq_const
-        self.tt_sources["mag_delta_max"][src_idx] = dmag
+        self.tt_sources["mag_dmax"][src_idx] = dmag
+        self.tt_sources["mag_dmax_sig"][src_idx] = dmag_max_sig
         self.tt_sources["nr_ul_mean"][src_idx] = nr_ulmean
 
     def get_light_curve(self, src_ids):
