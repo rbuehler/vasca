@@ -160,7 +160,8 @@ base_field = {
             "mag_mean",
             "mag_var",
             "mag_rchiq",
-            "mag_delta_max",
+            "mag_dmax",
+            "mag_dmax_sig",
             "nr_ul_mean",
         ],
         "dtype": [
@@ -174,8 +175,9 @@ base_field = {
             "float64",
             "float64",
             "float64",
+            "float64",
         ],
-        "units": ["1", "degree", "degree", "1", "1", "1", "1", "1", "1", "1"],
+        "units": ["1", "degree", "degree", "1", "1", "1", "1", "1", "1", "1", "1"],
         "descriptions": [
             "Source ID nr.",
             "Source RA (J2000)",
@@ -186,6 +188,7 @@ base_field = {
             "Flux magnitude variace",
             "Flux magnitude reduced chisquared of the constant mean",
             "Maximum magnitude flux variation compared to average",
+            "Maximum magnitude flux variation compared to average divided by magnitude error",
             "Number of visits with upper limit magnitude greater than mean magnitude",
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
