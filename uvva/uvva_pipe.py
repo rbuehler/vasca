@@ -68,9 +68,9 @@ def diagnostic(tc, table_name):
         det_vars["mag_mean"] = {}
         det_vars["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
         det_vars["mag_dmax"] = {}
-        det_vars["mag_dmax_sig"] = {}
+        det_vars["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
         det_vars["nr_ul_mean"] = {}
-        det_vars["mag_var"] = {}
+        det_vars["mag_var"] = {"logx": True, "range": [-3, 0]}
         fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
     else:
         logger.warning("Table '{table_name}' does not exist")
@@ -235,10 +235,16 @@ def run(cfg):
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=True)
 
+    fig_diag_rgsrcs = diagnostic(rg, "tt_sources")
+
     # Write out regions
     region_dir = cfg["general"]["out_dir_base"] + "/" + cfg["general"]["name"] + "/"
     rg.write_to_fits(
         file_name=region_dir + "/region_" + cfg["general"]["name"] + ".fits"
+    )
+    fig_diag_rgsrcs.savefig(
+        region_dir + "/region_" + cfg["general"]["name"] + "_diagnostic_srcs.pdf",
+        dpi=150,
     )
 
     # Write used config file
