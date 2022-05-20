@@ -2,6 +2,7 @@ import os
 
 import h5py
 import numpy as np
+import matplotlib.pyplot as plt
 from astropy import units as uu
 from astropy.io import fits
 from astropy.table import Column, Table
@@ -808,3 +809,33 @@ class TableCollection(object):
 
         if remove_unselected:
             tt.remove_rows(~sel)
+
+    def plot_hist(self, table_name=True, var=True, ax=None, logx=False, **hist_kwargs):
+
+        logger.debug("Plotting histogram of variable '{var}' in table '{table_name}'")
+
+        if ax is None:
+            ax = plt.gca()
+
+        # Set marker properties for sources
+        plot_kwargs = {"bins": "auto", "histtype": "stepfilled", "log": True}
+        if hist_kwargs is not None:
+            plot_kwargs.update(hist_kwargs)
+
+        tt = self.__dict__[table_name]
+        col = tt[var]
+        sel = tt["sel"]
+        data = [col[sel], col[~sel]]
+        xlabel = var + " [" + str(col.unit) + "]"
+        if str(col.unit) == "None":
+            xlabel = var
+        if logx:
+            data = [np.log10(data[0]), np.log10(data[1])]
+            xlabel = "log10( " + xlabel + " )"
+
+        ax.hist(data, label=["selected", "unselected"], **plot_kwargs)
+
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel("Counts")
+
+        return ax
