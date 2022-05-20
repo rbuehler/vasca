@@ -827,7 +827,7 @@ class TableCollection(object):
         sel = tt["sel"]
         data = [col[sel], col[~sel]]
         xlabel = var + " [" + str(col.unit) + "]"
-        if str(col.unit) == "None":
+        if str(col.unit) == "None" or str(col.unit) == "":
             xlabel = var
         if logx:
             data = [np.log10(data[0]), np.log10(data[1])]
