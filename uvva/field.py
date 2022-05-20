@@ -1,25 +1,18 @@
-import inspect
-import itertools
 import os
-from collections import OrderedDict
 from datetime import datetime
 from itertools import cycle
-from pprint import pprint
 
-import healpy as hpy
-import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import Column, Table, conf, hstack, unique, vstack
+from astropy.table import Column, Table, conf, vstack
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
 from loguru import logger
-from matplotlib import cm, colorbar, colors
-from matplotlib.colors import LogNorm
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from uvva.resource_manager import ResourceManager

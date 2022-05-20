@@ -13,11 +13,12 @@ import matplotlib.pyplot as plt
 import yaml
 from loguru import logger
 
-from uvva.field import GALEXField
 from uvva.region import Region
 
 # from multiprocessing import Pool
 from multiprocessing import Pool
+
+from collections import OrderedDict
 
 
 def set_config(cfg_file):
@@ -46,6 +47,32 @@ def set_config(cfg_file):
     cfg["cfg_file"] = cfg_file
 
     return cfg
+
+
+# TODO: there are some GALEX specific variables, will need to be adapted to other missions
+def diagnostic(tc, table_name):
+
+    # Detections diagnostic
+    if table_name == "tt_detections":
+        det_vars = OrderedDict()
+        det_vars["s2n"] = {"logx": True}
+        det_vars["mag"] = {"range": [13.0, 25.0]}
+        det_vars["mag_err"] = {"range": [0.0, 3.0]}
+        det_vars["r_fov"] = {"range": [0.0, 0.7]}
+        det_vars["point_src_prob"] = {}
+        det_vars["artifacts"] = {"histtype": "step"}
+
+    fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
+    axs = axs.flatten()
+
+    ax_ctr = 0
+    for var, hist_arg in det_vars.items():
+        tc.plot_hist(table_name, var, axs[ax_ctr], **hist_arg)
+        ax_ctr += 1
+
+    plt.tight_layout()
+    plt.legend()
+    return fig
 
 
 def set_logger():
@@ -136,6 +163,8 @@ def run_field(field):
     # Plot results
     fig_sky = field.plot_sky(plot_detections=True)
 
+    fig_diag_sel = diagnostic(field, "tt_detections")
+
     fig_lc = plt.figure(figsize=(10, 4))
     field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
     plt.tight_layout()
@@ -151,6 +180,9 @@ def run_field(field):
             field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=150
         )
 
+    fig_diag_sel.savefig(
+        field_dir + str(field.field_id) + "_diagnostic_det.pdf", dpi=150
+    )
     fig_lc.savefig(field_dir + str(field.field_id) + "_lc.pdf", dpi=150)
 
     return field
