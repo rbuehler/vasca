@@ -53,18 +53,29 @@ def set_config(cfg_file):
 def diagnostic(tc, table_name):
 
     # Detections diagnostic
+    det_vars = OrderedDict()
     if table_name == "tt_detections":
-        det_vars = OrderedDict()
         det_vars["s2n"] = {"logx": True}
         det_vars["mag"] = {"range": [13.0, 25.0]}
         det_vars["mag_err"] = {"range": [0.0, 3.0]}
         det_vars["r_fov"] = {"range": [0.0, 0.7]}
         det_vars["point_src_prob"] = {}
         det_vars["artifacts"] = {"histtype": "step"}
+        fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
+    elif table_name == "tt_sources":
+        det_vars["nr_det"] = {}
+        det_vars["nr_det_meas"] = {}
+        det_vars["mag_mean"] = {}
+        det_vars["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
+        det_vars["mag_dmax"] = {}
+        det_vars["mag_dmax_sig"] = {}
+        det_vars["nr_ul_mean"] = {}
+        det_vars["mag_var"] = {}
+        fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
+    else:
+        logger.warning("Table '{table_name}' does not exist")
 
-    fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
     axs = axs.flatten()
-
     ax_ctr = 0
     for var, hist_arg in det_vars.items():
         tc.plot_hist(table_name, var, axs[ax_ctr], **hist_arg)
@@ -164,6 +175,7 @@ def run_field(field):
     fig_sky = field.plot_sky(plot_detections=True)
 
     fig_diag_sel = diagnostic(field, "tt_detections")
+    fig_diag_srcs = diagnostic(field, "tt_sources")
 
     fig_lc = plt.figure(figsize=(10, 4))
     field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
@@ -179,9 +191,11 @@ def run_field(field):
         fig_sky.savefig(
             field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=150
         )
-
     fig_diag_sel.savefig(
         field_dir + str(field.field_id) + "_diagnostic_det.pdf", dpi=150
+    )
+    fig_diag_srcs.savefig(
+        field_dir + str(field.field_id) + "_diagnostic_srcs.pdf", dpi=150
     )
     fig_lc.savefig(field_dir + str(field.field_id) + "_lc.pdf", dpi=150)
 
