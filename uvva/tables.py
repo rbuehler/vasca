@@ -923,7 +923,7 @@ class TableCollection(object):
         xlabel = varx + " [" + str(tt[varx].unit) + "]"
         if str(tt[varx].unit) == "None" or str(tt[varx].unit) == "":
             xlabel = varx
-        ylabel = varx + " [" + str(tt[varx].unit) + "]"
+        ylabel = vary + " [" + str(tt[vary].unit) + "]"
         if str(tt[vary].unit) == "None" or str(tt[vary].unit) == "":
             ylabel = vary
         ax.set_xlabel(xlabel)
