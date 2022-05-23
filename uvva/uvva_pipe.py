@@ -50,35 +50,54 @@ def set_config(cfg_file):
 
 
 # TODO: there are some GALEX specific variables, will need to be adapted to other missions
-def diagnostic(tc, table_name):
+def diagnostic(tc, table_name, plot_type):
 
-    # Detections diagnostic
     det_vars = OrderedDict()
-    if table_name == "tt_detections":
-        det_vars["s2n"] = {"logx": True}
-        det_vars["mag"] = {"range": [13.0, 25.0]}
-        det_vars["mag_err"] = {"range": [0.0, 3.0]}
-        det_vars["r_fov"] = {"range": [0.0, 0.7]}
-        det_vars["point_src_prob"] = {}
-        det_vars["artifacts"] = {"histtype": "step"}
-        fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
-    elif table_name == "tt_sources":
-        det_vars["nr_det"] = {}
-        det_vars["nr_det_meas"] = {}
-        det_vars["mag_mean"] = {}
-        det_vars["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
-        det_vars["mag_dmax"] = {}
-        det_vars["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
-        det_vars["nr_ul_mean"] = {}
-        det_vars["mag_var"] = {"logx": True, "range": [-3, 0]}
-        fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
+    if plot_type == "hist":
+        # Detections diagnostic
+        if table_name == "tt_detections":
+            det_vars["s2n"] = {"logx": True}
+            det_vars["mag"] = {"range": [13.0, 25.0]}
+            det_vars["mag_err"] = {"range": [0.0, 3.0]}
+            det_vars["r_fov"] = {"range": [0.0, 0.7]}
+            det_vars["point_src_prob"] = {}
+            det_vars["artifacts"] = {"histtype": "step"}
+            fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
+        elif table_name == "tt_sources":
+            det_vars["nr_det"] = {}
+            det_vars["nr_det_meas"] = {}
+            det_vars["mag_mean"] = {}
+            det_vars["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
+            det_vars["mag_dmax"] = {}
+            det_vars["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
+            det_vars["nr_ul_mean"] = {}
+            det_vars["mag_var"] = {"logx": True, "range": [-3, 0]}
+            fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
+        else:
+            logger.warning("Diegnostic for table '{table_name}' not defined")
+
+    elif plot_type == "scatter":
+        # Detections diagnostic
+        if table_name == "tt_detections":
+            det_vars[("s2n", "mag")] = {"ylim": [13.0, 25.0]}
+            det_vars[("r_fov", "mag")] = {"ylim": [13.0, 25.0]}
+            det_vars[("point_src_prob", "mag")] = {"ylim": [13.0, 25.0]}
+            det_vars[("artifacts", "mag")] = {"ylim": [13.0, 25.0]}
+            det_vars[("r_fov", "artifacts")] = {}
+            det_vars[("mag_err", "mag")] = {"ylim": [13.0, 25.0]}
+            fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
+        else:
+            logger.warning("Diegnostic for table '{table_name}' not defined")
     else:
-        logger.warning("Table '{table_name}' does not exist")
+        logger.warning("Plot type '{plot_type}' unknown")
 
     axs = axs.flatten()
     ax_ctr = 0
-    for var, hist_arg in det_vars.items():
-        tc.plot_hist(table_name, var, axs[ax_ctr], **hist_arg)
+    for var, plot_arg in det_vars.items():
+        if plot_type == "hist":
+            tc.plot_hist(table_name, var, axs[ax_ctr], **plot_arg)
+        elif plot_type == "scatter":
+            tc.plot_scatter(table_name, var[0], var[1], axs[ax_ctr], **plot_arg)
         ax_ctr += 1
 
     plt.tight_layout()
@@ -176,8 +195,9 @@ def run_field(field):
     # Plot results
     fig_sky = field.plot_sky(plot_detections=True)
 
-    fig_diag_sel = diagnostic(field, "tt_detections")
-    fig_diag_srcs = diagnostic(field, "tt_sources")
+    fig_diag_det_hist = diagnostic(field, "tt_detections", "hist")
+    fig_diag_srcs_hist = diagnostic(field, "tt_sources", "hist")
+    fig_diag_det_scat = diagnostic(field, "tt_detections", "scatter")
 
     fig_lc = plt.figure(figsize=(10, 4))
     field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
@@ -193,13 +213,16 @@ def run_field(field):
         fig_sky.savefig(
             field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=150
         )
-    fig_diag_sel.savefig(
-        field_dir + str(field.field_id) + "_diagnostic_det.pdf", dpi=150
+    fig_diag_det_hist.savefig(
+        field_dir + str(field.field_id) + "_diagnostic_det_hist.png", dpi=150
     )
-    fig_diag_srcs.savefig(
-        field_dir + str(field.field_id) + "_diagnostic_srcs.pdf", dpi=150
+    fig_diag_det_scat.savefig(
+        field_dir + str(field.field_id) + "_diagnostic_det_scat.png", dpi=150
     )
-    fig_lc.savefig(field_dir + str(field.field_id) + "_lc.pdf", dpi=150)
+    fig_diag_srcs_hist.savefig(
+        field_dir + str(field.field_id) + "_diagnostic_srcs.png", dpi=150
+    )
+    fig_lc.savefig(field_dir + str(field.field_id) + "_lc.png", dpi=150)
 
     return field
 
@@ -237,7 +260,7 @@ def run(uvva_cfg):
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=True)
 
-    fig_diag_rgsrcs = diagnostic(rg, "tt_sources")
+    fig_diag_rgsrcs = diagnostic(rg, "tt_sources", "hist")
 
     # Write out regions
     region_dir = (
