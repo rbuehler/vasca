@@ -830,7 +830,8 @@ class TableCollection(object):
         if str(col.unit) == "None" or str(col.unit) == "":
             xlabel = var
         if logx:
-            data = [np.log10(data[0]), np.log10(data[1])]
+            with np.errstate(divide="ignore", invalid="ignore"):
+                data = [np.log10(data[0]), np.log10(data[1])]
             xlabel = "log10( " + xlabel + " )"
 
         ax.hist(data, label=["selected", "unselected"], **plot_kwargs)

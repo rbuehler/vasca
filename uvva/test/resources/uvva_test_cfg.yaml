@@ -14,8 +14,9 @@ observations:
     observatory : "GALEX"
     obs_filter : "NUV"
     field_ids :
-        - 2604912508670050304
-        - 2604982877414227968
+        - 6388191295067652096
+        - 6381787756527353856
+#        - 2604982877414227968
         
 cluster:
     meanshift:

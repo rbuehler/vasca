@@ -41,13 +41,13 @@ class Region(TableCollection):
         self.fields = {}  # dictionary of field IDs and objects
 
     @classmethod
-    def load_from_config(cls, cfg):
+    def load_from_config(cls, uvva_cfg):
         """
         Loads region from configuration from dictionary
 
         Parameters
         ----------
-        cfg : dict
+        uvva_cfg : dict
             Dictionary with region parameters derived from the uvva pipeline
             YAML configuration file.
 
@@ -61,17 +61,17 @@ class Region(TableCollection):
 
         logger.debug("Loading fields from config file")
 
-        if cfg["observations"]["observatory"] == "GALEX":
+        if uvva_cfg["observations"]["observatory"] == "GALEX":
 
             # Loop over fields and store info
-            for field_id in cfg["observations"]["field_ids"]:
+            for field_id in uvva_cfg["observations"]["field_ids"]:
 
                 gf = GALEXField.load(
                     field_id,
-                    obs_filter=cfg["observations"]["obs_filter"],
-                    method=cfg["ressources"]["load_method"],
-                    load_products=cfg["ressources"]["load_products"],
-                    **cfg["ressources"]["field_kwargs"],
+                    obs_filter=uvva_cfg["observations"]["obs_filter"],
+                    method=uvva_cfg["ressources"]["load_method"],
+                    load_products=uvva_cfg["ressources"]["load_products"],
+                    **uvva_cfg["ressources"]["field_kwargs"],
                 )
                 field_info = dict(gf.tt_field[0])
                 field_info["size"] = 0.55
@@ -87,14 +87,14 @@ class Region(TableCollection):
                     visits_info = dict(gf.tt_visits[keys_store][0])
                     visits_info["field_id"] = field_id
                     rg.tt_visits.add_row(visits_info)
-                if cfg["ressources"]["load_products"]:
+                if uvva_cfg["ressources"]["load_products"]:
                     rg.fields[field_id] = gf
                 else:
                     rg.fields[field_id] = None
         else:
             logger.waring(
                 "Selected observatory `"
-                + cfg["observations"]["observatory"]
+                + uvva_cfg["observations"]["observatory"]
                 + "` not supported"
             )
 

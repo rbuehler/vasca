@@ -163,19 +163,21 @@ def test_base_field_io_alt(test_paths, new_field):
 
 def test_pipeline(test_paths):
     # get pipeline config
-    cfg = uvva_pipe.set_config(test_paths["pipeline_cfg"])
+    uvva_cfg = uvva_pipe.set_config(test_paths["pipeline_cfg"])
 
     # temporary output directory
     pipeline_out = f"{test_paths['temp_path']}/pipe_out"
     os.mkdir(pipeline_out)
 
     # edit paths
-    cfg["general"]["out_dir_base"] = pipeline_out
-    cfg["ressources"]["field_kwargs"]["data_path"] = test_paths["resource_root"]
-    cfg["ressources"]["field_kwargs"]["visits_data_path"] = test_paths["galex_visits"]
+    uvva_cfg["general"]["out_dir_base"] = pipeline_out
+    uvva_cfg["ressources"]["field_kwargs"]["data_path"] = test_paths["resource_root"]
+    uvva_cfg["ressources"]["field_kwargs"]["visits_data_path"] = test_paths[
+        "galex_visits"
+    ]
 
     # run pipeline
-    uvva_pipe.run(cfg)
+    uvva_pipe.run(uvva_cfg)
 
 
 def main():

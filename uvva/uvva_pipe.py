@@ -32,21 +32,21 @@ def set_config(cfg_file):
 
     Returns
     -------
-    cfg : dict
+    uvva_cfg : dict
         UVVA pipeline configuration dictionary
     """
     with open(cfg_file) as file:
-        global cfg
-        cfg = yaml.safe_load(file)  # yaml.
+        global uvva_cfg
+        uvva_cfg = yaml.safe_load(file)  # yaml.
 
     # Set output directory
-    if cfg["general"]["out_dir_base"] == "CWD":
-        cfg["general"]["out_dir_base"] = os.getcwd()
+    if uvva_cfg["general"]["out_dir_base"] == "CWD":
+        uvva_cfg["general"]["out_dir_base"] = os.getcwd()
 
-    # Store cfg file name in cfg dictionary
-    cfg["cfg_file"] = cfg_file
+    # Store uvva_cfg file name in uvva_cfg dictionary
+    uvva_cfg["cfg_file"] = cfg_file
 
-    return cfg
+    return uvva_cfg
 
 
 # TODO: there are some GALEX specific variables, will need to be adapted to other missions
@@ -88,14 +88,16 @@ def diagnostic(tc, table_name):
 
 def set_logger():
     """
-    Setup logger. Gets configuration from global config cariable cfg set with set_config
+    Setup logger. Gets configuration from global config variable set with set_config
 
     Returns
     -------
     None.
 
     """
-    log_dir = cfg["general"]["out_dir_base"] + "/" + cfg["general"]["name"] + "/"
+    log_dir = (
+        uvva_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
+    )
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
@@ -106,13 +108,13 @@ def set_logger():
                 "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSSS}</green> "
                 "<cyan>{name}</cyan>:<cyan>{line}</cyan> |"
                 "<level>{level}:</level> {message}",
-                "level": cfg["general"]["log_level"],
+                "level": uvva_cfg["general"]["log_level"],
                 "colorize": True,
                 "backtrace": True,
                 "diagnose": True,
             },
             {
-                "sink": log_dir + cfg["general"]["log_file"],
+                "sink": log_dir + uvva_cfg["general"]["log_file"],
                 "serialize": True,
                 "backtrace": True,
                 "diagnose": True,
@@ -123,7 +125,7 @@ def set_logger():
     logger.enable("uvva")
 
     logger.info("Runing '" + __file__ + "'")
-    logger.debug("Config. file: '" + cfg["cfg_file"] + "'")
+    logger.debug("Config. file: '" + uvva_cfg["cfg_file"] + "'")
     logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
 
 
@@ -147,9 +149,9 @@ def run_field(field):
 
     # Create directory structure for fields
     field_dir = (
-        cfg["general"]["out_dir_base"]
+        uvva_cfg["general"]["out_dir_base"]
         + "/"
-        + cfg["general"]["name"]
+        + uvva_cfg["general"]["name"]
         + "/"
         + str(field.field_id)
         + "/"
@@ -160,16 +162,16 @@ def run_field(field):
         os.makedirs(field_dir)
 
     # Apply selections
-    field.select_rows(cfg["selection"]["det_quality"])
+    field.select_rows(uvva_cfg["selection"]["det_quality"])
 
     # Run clustering
     field.cluster_meanshift(
-        cfg["cluster"]["add_upper_limits"], **cfg["cluster"]["meanshift"]
+        uvva_cfg["cluster"]["add_upper_limits"], **uvva_cfg["cluster"]["meanshift"]
     )
 
     # Source selection
-    field.select_rows(cfg["selection"]["src_quality"])
-    field.select_rows(cfg["selection"]["src_variability"])
+    field.select_rows(uvva_cfg["selection"]["src_quality"])
+    field.select_rows(uvva_cfg["selection"]["src_variability"])
 
     # Plot results
     fig_sky = field.plot_sky(plot_detections=True)
@@ -183,7 +185,7 @@ def run_field(field):
 
     # Write field out
     field.write_to_fits(field_dir + "field_" + str(field.field_id) + ".fits")
-    if cfg["general"]["hd_img_out"]:
+    if uvva_cfg["general"]["hd_img_out"]:
         fig_sky.savefig(
             field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=3000
         )
@@ -202,13 +204,13 @@ def run_field(field):
     return field
 
 
-def run(cfg):
+def run(uvva_cfg):
     """
     Runs the UVVA pipeline
 
     Parameters
     ----------
-    cfg : dict
+    uvva_cfg : dict
         UVVA pipeline configuration dictionary
 
     Returns
@@ -221,10 +223,10 @@ def run(cfg):
     set_logger()
 
     # Load region fields
-    rg = Region.load_from_config(cfg)
+    rg = Region.load_from_config(uvva_cfg)
 
     # Run each field in a separate process in parallel
-    with Pool(cfg["general"]["nr_cpus"]) as pool:
+    with Pool(uvva_cfg["general"]["nr_cpus"]) as pool:
         pool_return = pool.map(run_field, list(rg.fields.values()))
 
     # update region fields
@@ -238,19 +240,21 @@ def run(cfg):
     fig_diag_rgsrcs = diagnostic(rg, "tt_sources")
 
     # Write out regions
-    region_dir = cfg["general"]["out_dir_base"] + "/" + cfg["general"]["name"] + "/"
+    region_dir = (
+        uvva_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
+    )
     rg.write_to_fits(
-        file_name=region_dir + "/region_" + cfg["general"]["name"] + ".fits"
+        file_name=region_dir + "/region_" + uvva_cfg["general"]["name"] + ".fits"
     )
     fig_diag_rgsrcs.savefig(
-        region_dir + "/region_" + cfg["general"]["name"] + "_diagnostic_srcs.pdf",
+        region_dir + "/region_" + uvva_cfg["general"]["name"] + "_diagnostic_srcs.pdf",
         dpi=150,
     )
 
     # Write used config file
     yaml_out_name = region_dir + "/uvva_ran_cfg.yaml"
     with open(yaml_out_name, "w") as yaml_file:
-        yaml.dump(cfg, yaml_file)
+        yaml.dump(uvva_cfg, yaml_file)
 
 
 if __name__ == "__main__":
@@ -262,4 +266,4 @@ if __name__ == "__main__":
 
     # Get UVVA configuration file
     set_config(args.cfg)
-    run(cfg)
+    run(uvva_cfg)
