@@ -810,8 +810,29 @@ class TableCollection(object):
         if remove_unselected:
             tt.remove_rows(~sel)
 
-    def plot_hist(self, table_name=True, var=True, ax=None, logx=False, **hist_kwargs):
+    def plot_hist(self, table_name, var, ax=None, logx=False, **hist_kwargs):
+        """
+        Plot histogram for passed table variable
 
+        Parameters
+        ----------
+        table_name : str
+            Table name.
+        var : str, optional
+            Variable name
+        ax : matplotlib.axes, optional
+            Axes to draw on. The default is None.
+        logx : bool, optional
+            Histoogram of log10(var) instead of var. The default is False.
+        **hist_kwargs : dict
+            Key word arguments passed tu plt.hist
+
+        Returns
+        -------
+        ax : matplotlix.axes
+            Axes that where used to draw.
+
+        """
         logger.debug("Plotting histogram of variable '{var}' in table '{table_name}'")
 
         if ax is None:
@@ -838,5 +859,83 @@ class TableCollection(object):
 
         ax.set_xlabel(xlabel)
         ax.set_ylabel("Counts")
+
+        return ax
+
+    def plot_scatter(
+        self,
+        table_name,
+        varx,
+        vary,
+        ax=None,
+        xlim=None,
+        ylim=None,
+        xscale="linear",
+        yscale="linear",
+        **scatter_kwargs,
+    ):
+        """
+        Plot sctter plot for passed table variable
+
+        Parameters
+        ----------
+        table_name : str
+            Table name.
+        varx : str
+            Variable name on X-axis
+        vary : str
+            Variable name on Y-axis
+        ax : matplotlib.axes, optional
+            Axes to draw on. The default is None.
+        xlim : list, optional
+            List with [xmin, xmax] axis value. Default is None.
+        ylim : list, optional
+            List with [ymin, ymax] axis value. Default is None.
+        xscale : str, optional
+            Type of x-scale ("log", "linear"). Default is "linear".
+        yscale : str, optional
+            Type of y-scale ("log", "linear"). Default is "linear".
+        **scatter_kwargs : dict
+            Key word arguments passed tu plt.scatter
+
+        Returns
+        -------
+        ax : matplotlix.axes
+            Axes that where used to draw.
+
+        """
+        logger.debug("Plotting histogram of variable '{var}' in table '{table_name}'")
+
+        if ax is None:
+            ax = plt.gca()
+
+        # Set marker properties for sources
+        plot_kwargs = {"s": 0.5}
+        if scatter_kwargs is not None:
+            plot_kwargs.update(scatter_kwargs)
+
+        tt = self.__dict__[table_name]
+        sel = tt["sel"]
+        ax.scatter(tt[varx][~sel], tt[vary][~sel], label="selected", **plot_kwargs)
+        ax.scatter(tt[varx][sel], tt[vary][sel], label="unselected", **plot_kwargs)
+
+        # Set labels
+        xlabel = varx + " [" + str(tt[varx].unit) + "]"
+        if str(tt[varx].unit) == "None" or str(tt[varx].unit) == "":
+            xlabel = varx
+        ylabel = varx + " [" + str(tt[varx].unit) + "]"
+        if str(tt[vary].unit) == "None" or str(tt[vary].unit) == "":
+            ylabel = vary
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+
+        # Set axis limits
+        if xlim is not None:
+            ax.set_xlim(xlim)
+        if ylim is not None:
+            ax.set_ylim(ylim)
+
+        ax.set_xscale(xscale)
+        ax.set_yscale(yscale)
 
         return ax
