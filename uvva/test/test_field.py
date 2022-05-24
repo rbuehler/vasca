@@ -121,7 +121,7 @@ def test_set_field_attr_type(new_field):
         "observatory": "obs",
         "obs_filter": "obs_filter",
         "center": SkyCoord(1, 1, unit="deg"),
-        "n_visits": 1,
+        "nr_vis": 1,
         "time_bin_size_sum": 42.0 * uu.s,
         "time_start": Time(54520.248125, format="mjd"),
         "time_stop": Time(54520.248125, format="mjd"),
