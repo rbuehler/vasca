@@ -73,7 +73,7 @@ class BaseField(TableCollection):
                 "center",
             ],
             "tt_visits": [
-                "n_visits",
+                "nr_vis",
                 "time_bin_size_sum",
                 "time_start",
                 "time_stop",
@@ -822,7 +822,7 @@ class BaseField(TableCollection):
                 self.get_field_par("dec", "tt_field"),
                 frame="icrs",
             )
-        elif par_name == "n_visits":
+        elif par_name == "nr_vis":
             par = len(self.tt_visits)
         elif par_name == "time_bin_size_sum":
             par = self.tt_visits["time_bin_size"].sum() * uu.s

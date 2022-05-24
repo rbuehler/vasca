@@ -387,8 +387,8 @@ region = {
     "tt_fields": {
         "names": [
             *base_field["tt_field"]["names"],
-            "size",  # TODO: Add sky angle for ULTRASAT squared FoV
-            "n_visits",
+            "fov_diam",  # TODO: Add sky angle for ULTRASAT squared FoV
+            "nr_vis",
             "time_bin_size_sum",
             "time_start",
             "time_stop",
@@ -440,6 +440,22 @@ region = {
         ],
         "meta": {
             **base_field["tt_visits"]["meta"],
+        },
+    },
+    "tt_coverage_hp": {
+        "names": ["pix_id", "nr_vis", "exp"],
+        "dtype": ["uint32", "uint32", "float32"],
+        "units": ["1", "1", "1"],
+        "descriptions": [
+            "Healpix ID",
+            "Nr of visits",
+            "Total exposure",
+        ],
+        "meta": {
+            "DATAPATH": "None",
+            "INFO": "Reion properties in healpix binning.\
+                     RING ordering and equatorial coordinates",
+            "NSIDE": "None",
         },
     },
 }
