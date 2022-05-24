@@ -3,10 +3,13 @@
 from loguru import logger
 
 import numpy as np
+import healpy as hpy
+from astropy.table import Column, vstack
+from astropy import units as uu
+
 from uvva import tables
 from uvva.field import GALEXField
 from uvva.tables import TableCollection
-from astropy.table import Column, vstack
 
 
 class Region(TableCollection):
@@ -74,8 +77,8 @@ class Region(TableCollection):
                     **uvva_cfg["ressources"]["field_kwargs"],
                 )
                 field_info = dict(gf.tt_field[0])
-                field_info["size"] = 0.55
-                field_info["n_visits"] = gf.n_visits
+                field_info["fov_diam"] = 0.55
+                field_info["nr_vis"] = gf.nr_vis
                 field_info["time_bin_size_sum"] = gf.time_bin_size_sum
                 field_info["time_start"] = gf.time_start.mjd
                 field_info["time_stop"] = gf.time_stop.mjd
@@ -148,3 +151,37 @@ class Region(TableCollection):
             logger.warning(f"Table '{table_name}' already exists, overwriting")
         self._table_names.append(table_name)
         setattr(self, table_name, tt_data)
+
+    def add_coverage_hp(self, nside=4096):
+
+        npix = hpy.nside2npix(nside)
+        pix_diam = hpy.nside2resol(nside, arcmin=True) / 60 * uu.deg
+
+        logger.debug(
+            f"Healpix NSIDE: {nside}, NPIX: {npix}, pixel diameter: {pix_diam}"
+        )
+        pix_nrs = np.arange(npix)
+        hp_vis = np.zeros(npix)
+        hp_exp = np.zeros(npix)
+        for field in self.tt_fields:
+            pos_vec = hpy.ang2vec(field["ra"], field["dec"], lonlat=True)
+            rdisc = field["fov_diam"] / 2.0
+            print(rdisc)
+            # TODO: Here a more general querry_polygon will have to be done for ULTRASAT
+            ipix_disc = hpy.query_disc(
+                nside=nside, vec=pos_vec, radius=np.radians(rdisc)
+            )
+
+            hp_vis[ipix_disc] += field["nr_vis"]
+            hp_exp[ipix_disc] += field["time_bin_size_sum"]
+
+        # Write to table
+        sel_pix = hp_vis > 0
+        self.add_table(
+            [pix_nrs[sel_pix], hp_vis[sel_pix], hp_exp[sel_pix]],
+            "region:tt_coverage_hp",
+            add_sel_col=False,
+        )
+        self.tt_coverage_hp.meta["NSIDE"] = nside
+
+        return hp_vis, hp_exp
