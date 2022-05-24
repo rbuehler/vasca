@@ -870,6 +870,8 @@ class TableCollection(object):
         ax=None,
         xlim=None,
         ylim=None,
+        invert_xaxis=None,
+        invert_yaxis=None,
         xscale="linear",
         yscale="linear",
         **scatter_kwargs,
@@ -937,5 +939,10 @@ class TableCollection(object):
 
         ax.set_xscale(xscale)
         ax.set_yscale(yscale)
+
+        if invert_xaxis:
+            ax.invert_xaxis()
+        if invert_yaxis:
+            ax.invert_yaxis()
 
         return ax

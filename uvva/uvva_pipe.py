@@ -57,7 +57,7 @@ def diagnostic(tc, table_name, plot_type):
         # Detections diagnostic
         if table_name == "tt_detections":
             det_vars["s2n"] = {"logx": True}
-            det_vars["mag"] = {"range": [13.0, 25.0]}
+            det_vars["mag"] = {"range": [14.5, 26.5]}
             det_vars["mag_err"] = {"range": [0.0, 3.0]}
             det_vars["r_fov"] = {"range": [0.0, 0.7]}
             det_vars["point_src_prob"] = {}
@@ -79,13 +79,53 @@ def diagnostic(tc, table_name, plot_type):
     elif plot_type == "scatter":
         # Detections diagnostic
         if table_name == "tt_detections":
-            det_vars[("s2n", "mag")] = {"ylim": [13.0, 25.0]}
-            det_vars[("r_fov", "mag")] = {"ylim": [13.0, 25.0]}
-            det_vars[("point_src_prob", "mag")] = {"ylim": [13.0, 25.0]}
-            det_vars[("artifacts", "mag")] = {"ylim": [13.0, 25.0]}
+            det_vars[("s2n", "mag")] = {
+                "invert_yaxis": True,
+                "xlim": [1, 100],
+                "ylim": [14.5, 26.5],
+            }
+            det_vars[("r_fov", "mag")] = {"invert_yaxis": True, "ylim": [15.5, 26.5]}
+            det_vars[("point_src_prob", "mag")] = {
+                "invert_yaxis": True,
+                "ylim": [14.5, 26.5],
+            }
+            det_vars[("artifacts", "mag")] = {
+                "invert_yaxis": True,
+                "ylim": [14.5, 26.5],
+            }
             det_vars[("r_fov", "artifacts")] = {}
-            det_vars[("mag_err", "mag")] = {"ylim": [13.0, 25.0]}
-            fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
+            det_vars[("mag_err", "mag")] = {
+                "xlim": [0.01, 3],
+                "invert_yaxis": True,
+                "ylim": [14.5, 26.5],
+            }
+            fig, axs = plt.subplots(3, 2, figsize=(14, 12), squeeze=False)
+        elif table_name == "tt_sources":
+            det_vars[("nr_det", "mag_mean")] = {
+                "invert_yaxis": True,
+                "ylim": [17.5, 24.5],
+            }
+            det_vars[("nr_det_meas", "nr_det")] = {}
+            det_vars[("mag_rchiq", "mag_mean")] = {
+                "xscale": "log",
+                "invert_yaxis": True,
+                "ylim": [17.5, 24.5],
+            }
+            det_vars[("mag_dmax", "mag_var")] = {}
+            det_vars[("mag_dmax_sig", "mag_mean")] = {
+                "invert_yaxis": True,
+                "ylim": [17.5, 24.5],
+            }
+            det_vars[("nr_ul_mean", "mag_mean")] = {
+                "invert_yaxis": True,
+                "ylim": [17.5, 24.5],
+            }
+            det_vars[("mag_dmax_sig", "mag_dmax")] = {}
+            det_vars[("mag_var", "mag_mean")] = {
+                "invert_yaxis": True,
+                "ylim": [17.5, 24.5],
+            }
+            fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
     else:
@@ -171,7 +211,7 @@ def run_field(field):
         uvva_cfg["general"]["out_dir_base"]
         + "/"
         + uvva_cfg["general"]["name"]
-        + "/"
+        + "/fields/"
         + str(field.field_id)
         + "/"
     )
@@ -194,16 +234,6 @@ def run_field(field):
 
     # Plot results
     fig_sky = field.plot_sky(plot_detections=True)
-
-    fig_diag_det_hist = diagnostic(field, "tt_detections", "hist")
-    fig_diag_srcs_hist = diagnostic(field, "tt_sources", "hist")
-    fig_diag_det_scat = diagnostic(field, "tt_detections", "scatter")
-
-    fig_lc = plt.figure(figsize=(10, 4))
-    field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
-    plt.tight_layout()
-
-    # Write field out
     field.write_to_fits(field_dir + "field_" + str(field.field_id) + ".fits")
     if uvva_cfg["general"]["hd_img_out"]:
         fig_sky.savefig(
@@ -213,15 +243,25 @@ def run_field(field):
         fig_sky.savefig(
             field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=150
         )
-    fig_diag_det_hist.savefig(
-        field_dir + str(field.field_id) + "_diagnostic_det_hist.png", dpi=150
-    )
-    fig_diag_det_scat.savefig(
-        field_dir + str(field.field_id) + "_diagnostic_det_scat.png", dpi=150
-    )
-    fig_diag_srcs_hist.savefig(
-        field_dir + str(field.field_id) + "_diagnostic_srcs.png", dpi=150
-    )
+
+    # Make field diagnostocs
+    diags = [
+        ("detections", "hist"),
+        ("sources", "hist"),
+        ("detections", "scatter"),
+        ("sources", "scatter"),
+    ]
+    for diag in diags:
+        fig_diag = diagnostic(field, "tt_" + diag[0], diag[1])
+        fig_diag.savefig(
+            field_dir + str(field.field_id) + "_" + diag[0] + "_" + diag[1] + ".png",
+            dpi=150,
+        )
+
+    # Make sample lightcurve
+    fig_lc = plt.figure(figsize=(10, 4))
+    field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
+    plt.tight_layout()
     fig_lc.savefig(field_dir + str(field.field_id) + "_lc.png", dpi=150)
 
     return field
@@ -260,8 +300,6 @@ def run(uvva_cfg):
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=True)
 
-    fig_diag_rgsrcs = diagnostic(rg, "tt_sources", "hist")
-
     # Write out regions
     region_dir = (
         uvva_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
@@ -269,8 +307,22 @@ def run(uvva_cfg):
     rg.write_to_fits(
         file_name=region_dir + "/region_" + uvva_cfg["general"]["name"] + ".fits"
     )
-    fig_diag_rgsrcs.savefig(
-        region_dir + "/region_" + uvva_cfg["general"]["name"] + "_diagnostic_srcs.pdf",
+
+    # Make diagnostics
+    fig_diag_rgsrcs_hist = diagnostic(rg, "tt_sources", "hist")
+    fig_diag_rgsrcs_scat = diagnostic(rg, "tt_sources", "scatter")
+    fig_diag_rgsrcs_hist.savefig(
+        region_dir
+        + "/region_"
+        + uvva_cfg["general"]["name"]
+        + "_diagnostic_srcs_hist.png",
+        dpi=150,
+    )
+    fig_diag_rgsrcs_scat.savefig(
+        region_dir
+        + "/region_"
+        + uvva_cfg["general"]["name"]
+        + "_diagnostic_srcs_scat.png",
         dpi=150,
     )
 
