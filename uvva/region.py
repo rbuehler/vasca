@@ -161,12 +161,11 @@ class Region(TableCollection):
             f"Healpix NSIDE: {nside}, NPIX: {npix}, pixel diameter: {pix_diam}"
         )
         pix_nrs = np.arange(npix)
-        hp_vis = np.zeros(npix)
-        hp_exp = np.zeros(npix)
+        hp_vis = np.zeros(npix, dtype="float32")
+        hp_exp = np.zeros(npix, dtype="float32")
         for field in self.tt_fields:
             pos_vec = hpy.ang2vec(field["ra"], field["dec"], lonlat=True)
             rdisc = field["fov_diam"] / 2.0
-            print(rdisc)
             # TODO: Here a more general querry_polygon will have to be done for ULTRASAT
             ipix_disc = hpy.query_disc(
                 nside=nside, vec=pos_vec, radius=np.radians(rdisc)
@@ -183,5 +182,8 @@ class Region(TableCollection):
             add_sel_col=False,
         )
         self.tt_coverage_hp.meta["NSIDE"] = nside
+
+        hp_exp[hp_exp < 1e-6] = hpy.UNSEEN
+        hp_vis[hp_vis < 1e-6] = hpy.UNSEEN
 
         return hp_vis, hp_exp

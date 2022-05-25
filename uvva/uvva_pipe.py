@@ -8,6 +8,7 @@ Script that runs the UVVA pipeline.
 import argparse
 import os
 import sys
+import healpy as hpy
 
 import matplotlib.pyplot as plt
 import yaml
@@ -288,6 +289,24 @@ def run(uvva_cfg):
     # Load region fields
     rg = Region.load_from_config(uvva_cfg)
 
+    # Setup output directors
+    region_dir = (
+        uvva_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
+    )
+
+    # Write our helpix coverage maps
+
+    hp_vis, hp_exp = rg.add_coverage_hp(nside=4096)
+
+    hpy.fitsfunc.write_map(
+        region_dir + "/region_" + uvva_cfg["general"]["name"] + "_coverage_hp.fits",
+        [hp_vis, hp_exp],
+        coord="C",
+        column_names=["nr_vis", "exposure"],
+        overwrite=True,
+        partial=True,
+    )
+
     # Run each field in a separate process in parallel
     with Pool(uvva_cfg["general"]["nr_cpus"]) as pool:
         pool_return = pool.map(run_field, list(rg.fields.values()))
@@ -301,9 +320,6 @@ def run(uvva_cfg):
     rg.add_table_from_fields("tt_detections", only_selected=True)
 
     # Write out regions
-    region_dir = (
-        uvva_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
-    )
     rg.write_to_fits(
         file_name=region_dir + "/region_" + uvva_cfg["general"]["name"] + ".fits"
     )
