@@ -849,7 +849,7 @@ class TableCollection(object):
             Axes that where used to draw.
 
         """
-        logger.debug("Plotting histogram of variable '{var}' in table '{table_name}'")
+        logger.debug(f"Plotting histogram of variable '{var}' in table '{table_name}'")
 
         if ax is None:
             ax = plt.gca()
