@@ -435,7 +435,7 @@ class BaseField(TableCollection):
             "mag_rchiq": np.zeros(nr_srcs) - 1,
             "mag_dmax": np.zeros(nr_srcs) - 1,
             "mag_dmax_sig": np.zeros(nr_srcs) - 1,
-            "nr_ul_mean": np.zeros(nr_srcs) - 1,
+            "perc_ul_mean": np.zeros(nr_srcs) - 1,
         }
 
         # Fill information into tables.
@@ -622,7 +622,9 @@ class BaseField(TableCollection):
         self.tt_sources["mag_rchiq"][src_idx] = rchiq_const
         self.tt_sources["mag_dmax"][src_idx] = dmag
         self.tt_sources["mag_dmax_sig"][src_idx] = dmag_max_sig
-        self.tt_sources["nr_ul_mean"][src_idx] = nr_ulmean
+        self.tt_sources["perc_ul_mean"][src_idx] = (
+            100.0 * nr_ulmean / len(self.tt_visits)
+        )
 
     def get_light_curve(self, src_ids):
         """

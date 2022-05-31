@@ -163,7 +163,7 @@ base_field = {
             "mag_rchiq",
             "mag_dmax",
             "mag_dmax_sig",
-            "nr_ul_mean",
+            "perc_ul_mean",
         ],
         "dtype": [
             "int64",
@@ -190,7 +190,7 @@ base_field = {
             "Flux magnitude reduced chisquared of the constant mean",
             "Maximum magnitude flux variation compared to average",
             "Maximum magnitude flux variation compared to average divided by magnitude error",
-            "Number of visits with upper limit magnitude greater than mean magnitude",
+            "Percentage of visits with upper limit magnitude greater than mean magnitude",
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
@@ -855,14 +855,19 @@ class TableCollection(object):
             ax = plt.gca()
 
         # Set marker properties for sources
-        plot_kwargs = {"bins": "auto", "histtype": "stepfilled", "log": True}
+        plot_kwargs = {
+            "bins": "auto",
+            "histtype": "stepfilled",
+            "log": True,
+            "alpha": 0.5,
+        }
         if hist_kwargs is not None:
             plot_kwargs.update(hist_kwargs)
 
         tt = self.__dict__[table_name]
         col = tt[var]
         sel = tt["sel"]
-        data = [col[sel], col[~sel]]
+        data = [col[~sel], col[sel]]
         xlabel = var + " [" + str(col.unit) + "]"
         if str(col.unit) == "None" or str(col.unit) == "":
             xlabel = var
@@ -871,7 +876,7 @@ class TableCollection(object):
                 data = [np.log10(data[0]), np.log10(data[1])]
             xlabel = "log10( " + xlabel + " )"
 
-        ax.hist(data, label=["selected", "unselected"], **plot_kwargs)
+        ax.hist(data, label=["unselected", "selected"], **plot_kwargs)
 
         ax.set_xlabel(xlabel)
         ax.set_ylabel("Counts")
@@ -893,7 +898,7 @@ class TableCollection(object):
         **scatter_kwargs,
     ):
         """
-        Plot sctter plot for passed table variable
+        Plot scatter plot for passed table variable
 
         Parameters
         ----------
@@ -922,20 +927,31 @@ class TableCollection(object):
             Axes that where used to draw.
 
         """
-        logger.debug("Plotting histogram of variable '{var}' in table '{table_name}'")
+        logger.debug(
+            f"Plotting of variables '{varx}' and '{vary}' in table '{table_name}'"
+        )
 
         if ax is None:
             ax = plt.gca()
 
         # Set marker properties for sources
-        plot_kwargs = {"s": 0.5}
+        plot_kwargs = {"s": 0.5, "alpha": 0.5}
         if scatter_kwargs is not None:
             plot_kwargs.update(scatter_kwargs)
 
         tt = self.__dict__[table_name]
         sel = tt["sel"]
-        ax.scatter(tt[varx][~sel], tt[vary][~sel], label="selected", **plot_kwargs)
-        ax.scatter(tt[varx][sel], tt[vary][sel], label="unselected", **plot_kwargs)
+        str_nrsel = str(sel.sum())
+        str_nrnotsel = str(~sel.sum())
+        ax.scatter(
+            tt[varx][~sel],
+            tt[vary][~sel],
+            label="unselected_" + str_nrnotsel,
+            **plot_kwargs,
+        )
+        ax.scatter(
+            tt[varx][sel], tt[vary][sel], label="selected_" + str_nrsel, **plot_kwargs
+        )
 
         # Set labels
         xlabel = varx + " [" + str(tt[varx].unit) + "]"
