@@ -17,11 +17,11 @@ observations:
 #        - 6388191295067652096
         - 2604912508670050304
         - 2604982877414227968
-        - 2605053246158405632
-        - 2605123614902583296
-        - 2605193983646760960
-        - 2605264352416104448
-        - 2605334721135116288
+#        - 2605053246158405632
+#        - 2605123614902583296
+#        - 2605193983646760960
+#        - 2605264352416104448
+#        - 2605334721135116288
         
 cluster:
     meanshift:
@@ -59,13 +59,13 @@ selection:
         table    : "tt_sources"
         sel_type : "or"
         range:        
-            mag_rchiq     : [1.0,.inf]
-            mag_dmax      : [0.2,.inf]
+            mag_rchiq     : [2.0,.inf]
+#            mag_dmax      : [0.2,.inf]
             mag_dmax_sig  : [5.0,.inf]
-            nr_ul_mean    : [1,.inf]
+            perc_ul_mean    : [10,.inf]
 
 ressources:                      
-    load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
+    load_method      : "UVVA"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null
