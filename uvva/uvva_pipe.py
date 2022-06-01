@@ -102,17 +102,9 @@ def diagnostic(tc, table_name, plot_type):
             }
             fig, axs = plt.subplots(3, 2, figsize=(14, 12), squeeze=False)
         elif table_name == "tt_sources":
-            det_vars[("nr_det", "mag_mean")] = {
-                "invert_yaxis": True,
-                "ylim": [17.5, 24.5],
-            }
-            det_vars[("nr_det_meas", "nr_det")] = {}
-            det_vars[("mag_rchiq", "mag_mean")] = {
-                "xscale": "log",
-                "invert_yaxis": True,
-                "ylim": [17.5, 24.5],
-            }
-            det_vars[("mag_dmax", "mag_var")] = {}
+            det_vars[("mag_rchiq", "mag_dmax_sig")] = {"xscale": "log"}
+            det_vars[("mag_rchiq", "perc_ul_mean")] = {"xscale": "log"}
+            det_vars[("mag_dmax_sig", "perc_ul_mean")] = {}
             det_vars[("mag_dmax_sig", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
@@ -121,8 +113,16 @@ def diagnostic(tc, table_name, plot_type):
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            det_vars[("mag_dmax_sig", "mag_dmax")] = {}
+            det_vars[("mag_rchiq", "mag_mean")] = {
+                "xscale": "log",
+                "invert_yaxis": True,
+                "ylim": [17.5, 24.5],
+            }
             det_vars[("mag_var", "mag_mean")] = {
+                "invert_yaxis": True,
+                "ylim": [17.5, 24.5],
+            }
+            det_vars[("nr_det_meas", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
