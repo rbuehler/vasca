@@ -867,6 +867,8 @@ class TableCollection(object):
         tt = self.__dict__[table_name]
         col = tt[var]
         sel = tt["sel"]
+        str_nrsel = str(sel.sum())
+        str_nrnotsel = str((~sel).sum())
         data = [col[~sel], col[sel]]
         xlabel = var + " [" + str(col.unit) + "]"
         if str(col.unit) == "None" or str(col.unit) == "":
@@ -876,7 +878,11 @@ class TableCollection(object):
                 data = [np.log10(data[0]), np.log10(data[1])]
             xlabel = "log10( " + xlabel + " )"
 
-        ax.hist(data, label=["unselected", "selected"], **plot_kwargs)
+        ax.hist(
+            data,
+            label=["unselected_" + str_nrnotsel, "selected_" + str_nrsel],
+            **plot_kwargs,
+        )
 
         ax.set_xlabel(xlabel)
         ax.set_ylabel("Counts")
@@ -935,14 +941,14 @@ class TableCollection(object):
             ax = plt.gca()
 
         # Set marker properties for sources
-        plot_kwargs = {"s": 0.5, "alpha": 0.5}
+        plot_kwargs = {"s": 2.0, "alpha": 0.5}
         if scatter_kwargs is not None:
             plot_kwargs.update(scatter_kwargs)
 
         tt = self.__dict__[table_name]
-        sel = tt["sel"]
+        sel = tt["sel"].astype(bool)
         str_nrsel = str(sel.sum())
-        str_nrnotsel = str(~sel.sum())
+        str_nrnotsel = str((~sel).sum())
         ax.scatter(
             tt[varx][~sel],
             tt[vary][~sel],

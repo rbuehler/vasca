@@ -71,8 +71,8 @@ def diagnostic(tc, table_name, plot_type):
             det_vars["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
             det_vars["mag_dmax"] = {}
             det_vars["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
-            det_vars["perc_ul_mean"] = {"bins": 100}
             det_vars["mag_var"] = {"logx": True, "range": [-3, 0]}
+            det_vars["perc_ul_mean"] = {"bins": 100}
             fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
