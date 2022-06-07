@@ -458,6 +458,19 @@ region = {
             "NSIDE": "None",
         },
     },
+    "ta_sources_lc": {
+        "names": ["field_id", "src_id", "mag", "mag_err", "ul"],
+        "dtype": ["int64", "int64", np.object_, np.object_, np.object_],
+        "units": ["1", "1", "1", "1", "1"],
+        "descriptions": [
+            "Field ID Nr.",
+            "Source ID Nr.",
+            "Flux magnitude",
+            "Flux magnitude error",
+            "Flux magnitude upper limit",
+        ],
+        "meta": {"INFO": "Light curve magnitude flux table for one sources"},
+    },
 }
 
 # global, combined dictionary
@@ -522,6 +535,7 @@ class TableCollection(object):
 
         # Create table
         tt_out = Table(data=data, **templates[class_key][table_key])
+        tt_out.meta["template"] = template_name
 
         # logging
         logger.debug(f"Created new table from template '{template_name}'.")
@@ -607,7 +621,27 @@ class TableCollection(object):
         for key in self._table_names:
             if key in self.__dict__:
                 logger.debug(f"Writing table '{key}'")
-                self.__dict__[key].write(file_name, append=True)
+                if not key.startswith("ta_"):
+                    self.__dict__[key].write(file_name, append=True)
+                # Write table with vector entries, currently not supportet by astropy.Table
+                else:
+                    cols = list()
+                    for colname in self.__dict__[key].colnames:
+                        coldata = self.__dict__[key][colname].data
+
+                        col_for = "PE()"
+                        if colname == "field_id" or colname == "src_id":
+                            col_for = "K"
+                        col = fits.Column(
+                            name=colname,
+                            format=col_for,
+                            array=coldata,
+                        )
+                        cols.append(col)
+
+                    hdu_ta = fits.BinTableHDU.from_columns(cols)
+                    with fits.open(file_name, mode="append") as hdula:
+                        hdula.append(hdu_ta)
 
         # Rename extensions to table names
         ext_nr = 0

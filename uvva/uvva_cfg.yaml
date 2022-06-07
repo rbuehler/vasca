@@ -9,19 +9,6 @@ general:
     log_file        : "uvva.log"                                 # Will be written into "out_dir"
     hd_img_out      : true                                      # Write out high definition images
     nr_cpus         : 4                                       #Number of CPUs to use. If "null" all available are used.
-
-observations:
-    observatory : "GALEX"
-    obs_filter : "NUV"
-    field_ids :
-#        - 6388191295067652096
-        - 2604912508670050304
-        - 2604982877414227968
-#        - 2605053246158405632
-#        - 2605123614902583296
-#        - 2605193983646760960
-#        - 2605264352416104448
-#        - 2605334721135116288
         
 cluster:
     meanshift:
@@ -71,6 +58,19 @@ ressources:
         data_path        : null
         visits_data_path : null   
 
+observations:
+    observatory : "GALEX"
+    obs_filter : "NUV"
+    field_ids :
+        - 6388191295067652096
+        - 6381787756527353856
+        #- 2604912508670050304
+        # - 2604982877414227968
+        # - 2605053246158405632
+        # - 2605123614902583296
+        # - 2605193983646760960
+        # - 2605264352416104448
+        # - 2605334721135116288
 
 # GALEX artifact flags
 # ( 1): edge; Detector bevel edge reflection (NUV only).
