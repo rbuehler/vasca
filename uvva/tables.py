@@ -630,6 +630,7 @@ class TableCollection(object):
                         coldata = self.__dict__[key][colname].data
 
                         col_for = "PE()"
+                        # TODO: Make this more general
                         if colname == "field_id" or colname == "src_id":
                             col_for = "K"
                         col = fits.Column(
