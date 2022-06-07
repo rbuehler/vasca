@@ -319,6 +319,8 @@ def run(uvva_cfg):
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=True)
 
+    rg.add_lcs_from_fields()
+
     # Write out regions
     rg.write_to_fits(
         file_name=region_dir + "/region_" + uvva_cfg["general"]["name"] + ".fits"
