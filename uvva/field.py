@@ -479,7 +479,7 @@ class BaseField(TableCollection):
     def set_light_curve(self, add_upper_limits=True):
         """
         Helper function of cluster_meanshift().
-        Adds detections information into tt_source_lc.
+        Adds detections information into ta_sources_lc.
 
         Parameters
         ----------
@@ -505,63 +505,42 @@ class BaseField(TableCollection):
         nr_vis = len(self.tt_visits)
         self.tt_visits.add_index("vis_id")
 
-        # Create tables
-        self.add_table(None, "base_field:tt_sources_mag", add_sel_col=False)
-        self.add_table(None, "base_field:tt_sources_mag_err", add_sel_col=False)
-        if add_upper_limits:
-            self.add_table(None, "base_field:tt_sources_mag_ul", add_sel_col=False)
+        # Dictionary to collect lightcurve data
+        tdata = {
+            "src_id": list(),
+            "mag": list(),
+            "mag_err": list(),
+            "ul": list(),
+        }
 
-        for vis_idx in range(0, nr_vis):
-
-            # Magnitude table
-            col0 = Column(
-                name="vis_" + str(vis_idx),
-                dtype="float64",
-                unit="1",
-                description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
-            )
-            self.tt_sources_mag.add_column(col0)
-
-            # Magnitude error table
-            col1 = Column(
-                name="vis_" + str(vis_idx),
-                dtype="float64",
-                unit="1",
-                description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
-            )
-            self.tt_sources_mag_err.add_column(col1)
-
-            if add_upper_limits:
-                # Upper limt table
-                col2 = Column(
-                    name="vis_" + str(vis_idx),
-                    dtype="float64",
-                    unit="1",
-                    description="vis_id = " + str(self.tt_visits[vis_idx]["vis_id"]),
-                )
-                self.tt_sources_mag_ul.add_column(col2)
-
-        # Loop over sources and add them to tables
+        # Loop over sources and add them to dictionary
         tt_det_grp = self.tt_detections[sel].group_by(["src_id"])
         for tt_det in tt_det_grp.groups:
 
-            # Add detected magnitudes
+            # Add src id
             src_id = tt_det["src_id"][0]
+            tdata["src_id"].append(src_id.tolist())
             vis_idxs = self.tt_visits.loc_indices["vis_id", tt_det["vis_id"]]
 
             np_mag = np.zeros(nr_vis) - 1
             np_mag[vis_idxs] = tt_det["mag"]
-            self.tt_sources_mag.add_row([src_id] + np_mag.tolist())
+            tdata["mag"].append(np_mag.tolist())
 
             np_mag_err = np.zeros(nr_vis) - 1
             np_mag_err[vis_idxs] = tt_det["mag_err"]
-            self.tt_sources_mag_err.add_row([src_id] + np_mag_err.tolist())
+            tdata["mag_err"].append(np_mag_err.tolist())
 
             # Store upper limits if no detection in a visit
             # TODO: make this more general and not GALEX specific
             if add_upper_limits:
                 np_mag_ul = self.get_upper_limits()
-                self.tt_sources_mag_ul.add_row([src_id] + np_mag_ul.tolist())
+                tdata["ul"].append(np_mag_ul.tolist())
+
+        # Add light curve table
+        tdata["mag"] = np.array(tdata["mag"], dtype=np.object_)
+        tdata["mag_err"] = np.array(tdata["mag_err"], dtype=np.object_)
+        tdata["ul"] = np.array(tdata["ul"], dtype=np.object_)
+        self.add_table(tdata, "base_field:ta_sources_lc", add_sel_col=False)
         self.set_var_stats()
 
     def set_var_stats(self):
@@ -577,13 +556,15 @@ class BaseField(TableCollection):
 
         logger.debug(f"Calculating source variability statistics.")
 
-        if "tt_sources_mag" not in self._table_names:
-            logger.error("Light curve does not exist, run 'set_light_curve()' first.")
+        if "ta_sources_lc" not in self._table_names:
+            logger.error(
+                "Light curve table does not exist, run 'set_light_curve()' first."
+            )
 
         # Get lightcurve as numpy arrays to calculate stats
-        mag = np.array(self.tt_sources_mag.as_array().tolist())[:, 1:]
-        mag_err = np.array(self.tt_sources_mag_err.as_array().tolist())[:, 1:]
-        mag_ul = np.array(self.tt_sources_mag_ul.as_array().tolist())[:, 1:]
+        mag = np.array((self.ta_sources_lc["mag"].data).tolist())
+        mag_err = np.array((self.ta_sources_lc["mag_err"].data).tolist())
+        mag_ul = np.array((self.ta_sources_lc["ul"].data).tolist())
 
         # Ignore entries with no magniture or valid error
         mask_mag = mag < 1e-6
@@ -596,6 +577,7 @@ class BaseField(TableCollection):
         # Calculate variability parameters
         nr_mags = (~np.isnan(mag)).sum(axis=1)
         mag_mean = np.nanmean(mag, axis=1)
+
         mag_err_mean2 = np.nanmean(mag_err * mag_err, axis=1)
         mag_var = np.nanvar(mag, axis=1)
         rchiq_const = mag_var / mag_err_mean2
@@ -612,7 +594,7 @@ class BaseField(TableCollection):
         nr_ulmean = (mag_mean[:, None] < mag_ul).sum(axis=1)
 
         # Write them into tt_sources
-        src_ids = self.tt_sources_mag["src_id"]
+        src_ids = self.ta_sources_lc["src_id"]
         self.tt_sources.add_index("src_id")
         src_idx = self.tt_sources.loc_indices["src_id", src_ids]
 

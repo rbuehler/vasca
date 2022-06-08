@@ -194,42 +194,6 @@ base_field = {
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
-    "tt_sources_mag": {
-        "names": ["src_id"],
-        "dtype": ["int64"],
-        "units": ["1"],
-        "descriptions": [
-            "Source ID nr.",
-        ],
-        "meta": {
-            "INFO": "Light curve magnitude flux. First column is src_id.\
-                 Negative values indicate no meassurement."
-        },
-    },
-    "tt_sources_mag_err": {
-        "names": ["src_id"],
-        "dtype": ["int64"],
-        "units": ["1"],
-        "descriptions": [
-            "Source ID nr.",
-        ],
-        "meta": {
-            "INFO": "Light curve magnitude flux error. Row index is src_id.\
-                 Negative values indicate no meassurement."
-        },
-    },
-    "tt_sources_mag_ul": {
-        "names": ["src_id"],
-        "dtype": ["int64"],
-        "units": ["1"],
-        "descriptions": [
-            "Source ID nr.",
-        ],
-        "meta": {
-            "INFO": "Light curve magnitude flux upper limits.\
-                 Row index is src_id. Negative values indicate no meassurement."
-        },
-    },
     "tt_source_lc": {
         "names": ["time_start", "time_delta", "mag", "mag_err", "ul"],
         "dtype": ["float64", "float64", "float64", "float64", "float64"],
@@ -242,6 +206,18 @@ base_field = {
             "Flux magnitude upper limit",
         ],
         "meta": {"INFO": "Light curve magnitude flux table for one source"},
+    },
+    "ta_sources_lc": {
+        "names": ["src_id", "mag", "mag_err", "ul"],
+        "dtype": ["int64", np.object_, np.object_, np.object_],
+        "units": ["1", "1", "1", "1"],
+        "descriptions": [
+            "Source ID Nr.",
+            "Flux magnitude",
+            "Flux magnitude error",
+            "Flux magnitude upper limit",
+        ],
+        "meta": {"INFO": "Light curve magnitude flux table"},
     },
 }
 galex_field = {
@@ -459,17 +435,25 @@ region = {
         },
     },
     "ta_sources_lc": {
-        "names": ["field_id", "src_id", "mag", "mag_err", "ul"],
-        "dtype": ["int64", "int64", np.object_, np.object_, np.object_],
-        "units": ["1", "1", "1", "1", "1"],
-        "descriptions": [
-            "Field ID Nr.",
-            "Source ID Nr.",
-            "Flux magnitude",
-            "Flux magnitude error",
-            "Flux magnitude upper limit",
+        "names": [
+            *base_field["ta_sources_lc"]["names"],
+            "field_id",
         ],
-        "meta": {"INFO": "Light curve magnitude flux table for one sources"},
+        "dtype": [
+            *base_field["ta_sources_lc"]["dtype"],
+            "int64",
+        ],
+        "units": [
+            *base_field["ta_sources_lc"]["units"],
+            "1",
+        ],
+        "descriptions": [
+            *base_field["ta_sources_lc"]["descriptions"],
+            "Field ID nr.",
+        ],
+        "meta": {
+            **base_field["ta_sources_lc"]["meta"],
+        },
     },
 }
 
@@ -711,12 +695,16 @@ class TableCollection(object):
 
                 # Load table data into dictionary
                 ta_data = {}
-                for col_name in ff[ta_name].columns.names:
+                col_names = ff[ta_name].columns.names
+                for col_name in col_names:
                     ta_data[col_name] = ff[ta_name].data[col_name]
 
-                # TODO make loading more general, assume table in region template.
+                # TODO make loading more general.
                 # Expect astropy handling of fits vecotors to simplify this in the future
-                self.add_table(ta_data, "region:" + ta_name, add_sel_col=False)
+                if "field_id" in col_names:
+                    self.add_table(ta_data, "region:" + ta_name, add_sel_col=False)
+                else:
+                    self.add_table(ta_data, "base_field:" + ta_name, add_sel_col=False)
 
     def write_to_hdf5(self, file_name="tables.hdf5"):
         """

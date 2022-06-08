@@ -187,34 +187,3 @@ class Region(TableCollection):
         hp_vis[hp_vis < 1e-6] = hpy.UNSEEN
 
         return hp_vis, hp_exp
-
-    def add_lcs_from_fields(self):
-
-        tdata = {
-            "field_id": list(),
-            "src_id": list(),
-            "mag": list(),
-            "mag_err": list(),
-            "ul": list(),
-        }
-
-        for field_id, field in self.fields.items():
-
-            mag = np.array(field.tt_sources_mag.as_array().tolist())[:, 1:]
-
-            mag_err = np.array(field.tt_sources_mag_err.as_array().tolist())[:, 1:]
-            ul = np.array(field.tt_sources_mag_ul.as_array().tolist())[:, 1:]
-            src_id = np.array(field.tt_sources_mag_ul.as_array().tolist())[:, 0]
-            fields = np.ones(len(src_id)) * field_id
-
-            tdata["mag"].extend(mag.tolist())
-            tdata["mag_err"].extend(mag_err.tolist())
-            tdata["ul"].extend(ul.tolist())
-            tdata["src_id"].extend(src_id.tolist())
-            tdata["field_id"].extend(fields.tolist())
-
-        tdata["mag"] = np.array(tdata["mag"], dtype=np.object_)
-        tdata["mag_err"] = np.array(tdata["mag_err"], dtype=np.object_)
-        tdata["ul"] = np.array(tdata["ul"], dtype=np.object_)
-
-        self.add_table(tdata, "region:ta_sources_lc", add_sel_col=False)
