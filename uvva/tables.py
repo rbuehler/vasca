@@ -739,7 +739,10 @@ class TableCollection(object):
 
         ii = 0
         for key in self._table_names:
-            if key in self.__dict__:
+            # TODO: Make hdf5 work with numpy.dtype.object objects
+            if key.startswith("ta_"):
+                logger.warning(f"Not writing vector table '{key}'")
+            elif key in self.__dict__:
                 logger.debug(f"Writing table '{key}'")
                 ii += 1
                 if ii == 1:
