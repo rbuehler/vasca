@@ -672,20 +672,20 @@ class TableCollection(object):
         with fits.open(file_name) as ff:
             # Load tables
             # get available table names
-            table_names = [
+            tt_names = [
                 hdu.header["EXTNAME"]
                 for hdu in ff[1:]
                 if hdu.header["EXTNAME"].startswith("tt_")
             ]
             # loop over tables
-            for name in table_names:
-                logger.debug(f"Loading table '{name}'")
+            for tt_name in tt_names:
+                logger.debug(f"Loading table '{tt_name}'")
                 # add to table manifest
-                if name in self._table_names:
-                    logger.warning(f"Table '{name}' already exists, overwriting.")
+                if tt_name in self._table_names:
+                    logger.warning(f"Table '{tt_name}' already exists, overwriting.")
                 else:
-                    self._table_names.append(name)
-                setattr(self, name, Table.read(file_name, hdu=name))
+                    self._table_names.append(tt_name)
+                setattr(self, tt_name, Table.read(file_name, hdu=tt_name))
 
             # Load image data
             if hasattr(self, "ref_img"):
@@ -694,6 +694,29 @@ class TableCollection(object):
                     self.ref_wcs = wcs.WCS(ff[0].header)
                 else:
                     self.ref_wcs = None
+
+            # Load tables with vectors
+            ta_names = [
+                hdu.header["EXTNAME"]
+                for hdu in ff[1:]
+                if hdu.header["EXTNAME"].startswith("ta_")
+            ]
+            for ta_name in ta_names:
+                logger.debug(f"Loading table '{ta_name}'")
+                # add to table manifest
+                if ta_name in self._table_names:
+                    logger.warning(f"Table '{ta_name}' already exists, overwriting.")
+                else:
+                    self._table_names.append(ta_name)
+
+                # Load table data into dictionary
+                ta_data = {}
+                for col_name in ff[ta_name].columns.names:
+                    ta_data[col_name] = ff[ta_name].data[col_name]
+
+                # TODO make loading more general, assume table in region template.
+                # Expect astropy handling of fits vecotors to simplify this in the future
+                self.add_table(ta_data, "region:" + ta_name, add_sel_col=False)
 
     def write_to_hdf5(self, file_name="tables.hdf5"):
         """
