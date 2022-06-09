@@ -84,12 +84,6 @@ class Region(TableCollection):
                 field_info["time_stop"] = gf.time_stop.mjd
                 rg.tt_fields.add_row(field_info)
 
-                # Loop over visits and store info
-                keys_store = tables.dd_uvva_tables["base_field"]["tt_visits"]["names"]
-                for ii in range(0, len(gf.tt_visits)):
-                    visits_info = dict(gf.tt_visits[keys_store][0])
-                    visits_info["field_id"] = field_id
-                    rg.tt_visits.add_row(visits_info)
                 if uvva_cfg["ressources"]["load_products"]:
                     rg.fields[field_id] = gf
                 else:

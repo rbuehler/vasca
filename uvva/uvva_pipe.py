@@ -260,10 +260,10 @@ def run_field(field):
         )
 
     # Make sample lightcurve
-    # fig_lc = plt.figure(figsize=(10, 4))
-    # field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
-    # plt.tight_layout()
-    # fig_lc.savefig(field_dir + str(field.field_id) + "_lc.png", dpi=150)
+    fig_lc = plt.figure(figsize=(10, 4))
+    field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
+    plt.tight_layout()
+    fig_lc.savefig(field_dir + str(field.field_id) + "_lc.png", dpi=150)
 
     return field
 
@@ -288,6 +288,7 @@ def run(uvva_cfg):
 
     # Load region fields
     rg = Region.load_from_config(uvva_cfg)
+    rg.add_table_from_fields("tt_visits")
 
     # Setup output directors
     region_dir = (

@@ -1033,3 +1033,88 @@ class TableCollection(object):
             ax.invert_yaxis()
 
         return ax
+
+    def get_light_curve(self, src_ids, field_ids=None):
+        """
+        Get a light curve for one source or a list of sources.
+
+        Parameters
+        ----------
+        src_ids : list or int
+            Source ID(s) to return the light curve.
+        field_ids: list or int
+            Field IDs. Array length has to match source IDs. If None
+            assumes field_id from current field. Default is None.
+
+        Returns
+        -------
+        lc_dict : list or table
+            Light curve as an astropy Table compatible
+            with astropy BinnedTimeSeries.
+
+        """
+        if not hasattr(src_ids, "__iter__"):
+            src_ids = [src_ids]
+        if not hasattr(field_ids, "__iter__"):
+            field_ids = [field_ids]
+
+        logger.debug(
+            f"Getting lightcurve for src_ids: {src_ids} , field_ids: {field_ids}"
+        )
+
+        if "ta_sources_lc" not in self._table_names:
+            logger.error(
+                "Light curve table does not exist, run 'set_light_curve()' first."
+            )
+
+        # Dictionary to store light curve tables
+        lc_dict = dict()
+
+        # Loop over sources and get lc info
+        # If called from a field no field ID is passed
+        if field_ids[0] == None:
+            for src_id in src_ids:
+                sel = self.ta_sources_lc["src_id"] == src_id
+                src_data = {
+                    "time_start": self.tt_visits["time_bin_start"].data,
+                    "time_delta": self.tt_visits["time_bin_size"].data,
+                    "mag": self.ta_sources_lc[sel]["mag"].data[0].astype(np.float64),
+                    "mag_err": self.ta_sources_lc[sel]["mag_err"]
+                    .data[0]
+                    .astype(np.float64),
+                    "ul": self.ta_sources_lc[sel]["ul"].data[0].astype(np.float64),
+                }
+                # Create and store table
+                tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
+                tt_lc.meta["src_id"] = src_id
+                lc_dict[src_id] = tt_lc
+        # If called froma region field_id needs to be matched too
+        else:
+            self.tt_visits.add_index("field_id")
+            for src_id, field_id in zip(src_ids, field_ids):
+                sel = (self.ta_sources_lc["src_id"] == src_id) * (
+                    self.ta_sources_lc["field_id"] == field_id
+                )
+                vis_idx = self.tt_visits.loc_indices["field_id", field_id]
+                print(vis_idx)
+                print(self.tt_visits[vis_idx]["time_bin_start"].data)
+                src_data = {
+                    "time_start": self.tt_visits[vis_idx]["time_bin_start"].data,
+                    "time_delta": self.tt_visits[vis_idx]["time_bin_size"].data,
+                    "mag": self.ta_sources_lc[sel]["mag"].data[0],
+                    "mag_err": self.ta_sources_lc[sel]["mag_err"].data[0],
+                    "ul": self.ta_sources_lc[sel]["ul"].data[0],
+                }
+                # print(src_data)
+
+                # Create and store table
+                tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
+                tt_lc.meta["src_id"] = src_id
+                tt_lc.meta["field_id"] = src_id
+                lc_dict[src_id] = tt_lc
+
+        # If only one src_id was passed do not return as list
+        if len(lc_dict) == 1:
+            lc_dict = list(lc_dict.values())[0]
+
+        return lc_dict
