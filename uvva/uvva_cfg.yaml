@@ -8,7 +8,7 @@ general:
     log_level       : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "uvva.log"                                 # Will be written into "out_dir"
     hd_img_out      : true                                      # Write out high definition images
-    nr_cpus         : 4                                       #Number of CPUs to use. If "null" all available are used.
+    nr_cpus         : 3                                       #Number of CPUs to use. If "null" all available are used.
         
 cluster:
     meanshift:
@@ -64,7 +64,7 @@ observations:
     field_ids :
         - 6388191295067652096
         - 6381787756527353856
-        # - 2604912508670050304
+        - 2604912508670050304
         # - 2604982877414227968
         # - 2605053246158405632
         # - 2605123614902583296

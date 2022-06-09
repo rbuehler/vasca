@@ -519,7 +519,7 @@ class TableCollection(object):
 
         # Create table
         tt_out = Table(data=data, **templates[class_key][table_key])
-        tt_out.meta["template"] = template_name
+        # tt_out.meta["template"] = template_name
 
         # logging
         logger.debug(f"Created new table from template '{template_name}'.")
