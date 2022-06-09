@@ -3,6 +3,7 @@ import os
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
+from itertools import cycle
 from astropy import units as uu
 from astropy.io import fits
 from astropy.table import Column, Table
@@ -1118,3 +1119,104 @@ class TableCollection(object):
             lc_dict = list(lc_dict.values())[0]
 
         return lc_dict
+
+    def plot_light_curve(
+        self,
+        src_ids,
+        field_ids=None,
+        ax=None,
+        ylim=[23.5, 16.5],
+        legend_loc="upper right",
+        plot_upper_limits=True,
+        **errorbar_kwargs,
+    ):
+        """
+        Plot the magnitude light curves of the passed sources.
+
+        Parameters
+        ----------
+        src_ids : list or int
+            List or single source IDs to plot.
+        field_ids: list or int
+            Field IDs. Array length has to match source IDs. If None
+            assumes field_id from current field. Default is None.
+        ax : axes, optional
+                Matplotlib axes to plot on. The default is None.
+        legend_loc : string, optional
+            Position of the legend in the figure. The default is "upper right".
+        plot_upper_limits : bool
+            Plot upper limits to the lightcurve. The default is True.
+        **errorbar_kwargs : TYPE
+            Key word arguments for pyplot.errorbars plotting.
+
+        Returns
+        -------
+        ax : axes
+            Used Matplotlib axes.
+
+        """
+
+        # If only one src_id/field_id was passed create a list
+        if not hasattr(src_ids, "__iter__"):
+            src_ids = [src_ids]
+        if not hasattr(field_ids, "__iter__"):
+            field_ids = [field_ids]
+        if field_ids[0] == None:
+            field_ids = [None] * len(src_ids)
+
+        logger.debug("Plotting light curves'")
+
+        # Setup plotting parameters
+        if ax is None:
+            ax = plt.gca()
+        ax.invert_yaxis()
+        ax.set_ylim(ylim)
+
+        plt_errorbar_kwargs = {
+            "markersize": 6,
+            "capsize": 2,
+            "lw": 0.2,
+            "linestyle": "dotted",
+            "elinewidth": 1,
+        }
+        if errorbar_kwargs is not None:
+            plt_errorbar_kwargs.update(errorbar_kwargs)
+
+        # Loop over selected sources and plot
+        colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
+        markers = cycle("osDd.<>^vpP*")
+        for src_id, field_id, col, mar in zip(src_ids, field_ids, colors, markers):
+
+            # Get light curve
+            lc = self.get_light_curve(src_id, field_id)
+
+            # Get arrays
+            src_lab = "src_" + str(src_id)
+            uplims = np.zeros(len(lc))
+            sel = lc["mag"] > 0
+            mags = lc["mag"]
+            mags_err = lc["mag_err"]
+
+            # Modify arrays if upper limits are plotted
+            if plot_upper_limits:
+                uplims = lc["ul"] < 0
+                sel = np.ones(len(lc), dtype=bool)
+                mags = mags * ~uplims + mags_err * uplims
+                mags_err = mags_err * ~uplims + 1 * uplims
+
+            # Plot
+            plt.errorbar(
+                lc["time_start"][sel],  # TODO: Move this to the bin center
+                mags[sel],
+                yerr=mags_err[sel],
+                lolims=uplims[sel],
+                color=col,
+                marker=mar,
+                label=src_lab,
+                **plt_errorbar_kwargs,
+            )
+        ax.legend(loc=legend_loc)
+        ax.set_xlabel("MJD")
+        ax.set_ylabel("Magnitude")
+
+        return ax
