@@ -150,7 +150,6 @@ class Region(TableCollection):
 
             # Create empty data structure
             dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
-            print(dd_data)
 
             for tt in ll_tt:
                 for colname in colnames:

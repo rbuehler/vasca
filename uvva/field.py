@@ -154,9 +154,7 @@ class BaseField(TableCollection):
         colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
         for src, col in zip(tt_src, colors):
             if plot_detections:
-                # det = tt_det.loc["src_id", src["src_id"]]
                 det_idx = tt_det.loc_indices["src_id", src["src_id"]]
-                # print(idx)
                 ax.plot(
                     tt_det[det_idx]["ra"].data,
                     tt_det[det_idx]["dec"].data,
