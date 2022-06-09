@@ -39,7 +39,6 @@ class Region(TableCollection):
 
         # Setup empty tables to fill
         self.add_table(None, "region:tt_fields")
-        self.add_table(None, "region:tt_visits")
 
         self.fields = {}  # dictionary of field IDs and objects
 
@@ -139,12 +138,30 @@ class Region(TableCollection):
 
             ll_tt.append(tt[sel])
 
-        # Add stacked table
-        tt_data = vstack(ll_tt)
-        if table_name in self._table_names:
-            logger.warning(f"Table '{table_name}' already exists, overwriting")
-        self._table_names.append(table_name)
-        setattr(self, table_name, tt_data)
+        # Add stacked table, for tables with vecotr entries this needs to be done by hand
+        if table_name.startswith("tt_"):
+            tt_data = vstack(ll_tt)
+            if table_name in self._table_names:
+                logger.warning(f"Table '{table_name}' already exists, overwriting")
+            self._table_names.append(table_name)
+            setattr(self, table_name, tt_data)
+        elif table_name.startswith("ta_"):
+            colnames = ll_tt[0].colnames
+
+            # Create empty data structure
+            dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
+            print(dd_data)
+
+            for tt in ll_tt:
+                for colname in colnames:
+                    dd_data[colname].extend(tt[colname].tolist())
+
+            # For vector columns convert to numpy arrays of type object
+            for colname in colnames:
+                if len(np.array(dd_data[colname]).shape) > 1:
+                    dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
+
+            self.add_table(dd_data, "region:" + table_name, add_sel_col=False)
 
     def add_coverage_hp(self, nside=4096):
 
