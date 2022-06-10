@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from itertools import cycle
 from astropy import units as uu
 from astropy.io import fits
-from astropy.table import Column, Table
+from astropy.table import unique, Column, Table
 from astropy.wcs import wcs
 from astropy.nddata import bitmask
 from loguru import logger
@@ -1059,9 +1059,7 @@ class TableCollection(object):
         if not hasattr(field_ids, "__iter__"):
             field_ids = [field_ids]
 
-        logger.debug(
-            f"Getting lightcurve for src_ids: {src_ids} , field_ids: {field_ids}"
-        )
+        logger.debug(f"Getting lightcurve for Nr src: {len(src_ids)}")
 
         if "ta_sources_lc" not in self._table_names:
             logger.error(
@@ -1089,26 +1087,28 @@ class TableCollection(object):
                 tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
                 tt_lc.meta["src_id"] = src_id
                 lc_dict[src_id] = tt_lc
-        # If called froma region field_id needs to be matched too
+        # If called from a region field_id needs to be matched too
         else:
             self.tt_visits.add_index("field_id")
             for src_id, field_id in zip(src_ids, field_ids):
                 sel = (self.ta_sources_lc["src_id"] == src_id) * (
                     self.ta_sources_lc["field_id"] == field_id
                 )
+
+                # Get visit info and sort it
                 vis_idx = self.tt_visits.loc_indices["field_id", field_id]
-                print(vis_idx)
-                print(self.tt_visits[vis_idx]["time_bin_start"].data)
+                tt_vis = unique(self.tt_visits[vis_idx], "time_bin_start")
+
+                # Store data
                 src_data = {
-                    "time_start": self.tt_visits[vis_idx]["time_bin_start"].data,
-                    "time_delta": self.tt_visits[vis_idx]["time_bin_size"].data,
+                    "time_start": tt_vis["time_bin_start"].data,
+                    "time_delta": tt_vis["time_bin_size"].data,
                     "mag": self.ta_sources_lc[sel]["mag"].data[0],
                     "mag_err": self.ta_sources_lc[sel]["mag_err"].data[0],
                     "ul": self.ta_sources_lc[sel]["ul"].data[0],
                 }
-                # print(src_data)
 
-                # Create and store table
+                # Create table
                 tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
                 tt_lc.meta["src_id"] = src_id
                 tt_lc.meta["field_id"] = src_id
@@ -1125,7 +1125,7 @@ class TableCollection(object):
         src_ids,
         field_ids=None,
         ax=None,
-        ylim=[23.5, 16.5],
+        ylim=None,
         legend_loc="upper right",
         plot_upper_limits=True,
         **errorbar_kwargs,
@@ -1142,6 +1142,8 @@ class TableCollection(object):
             assumes field_id from current field. Default is None.
         ax : axes, optional
                 Matplotlib axes to plot on. The default is None.
+        ylim : list, optional
+            Limits of the y axis. Default is None
         legend_loc : string, optional
             Position of the legend in the figure. The default is "upper right".
         plot_upper_limits : bool
@@ -1170,12 +1172,13 @@ class TableCollection(object):
         if ax is None:
             ax = plt.gca()
         ax.invert_yaxis()
-        ax.set_ylim(ylim)
+        if hasattr(ylim, "__iter__"):
+            ax.set_ylim(ylim)
 
         plt_errorbar_kwargs = {
-            "markersize": 6,
+            "markersize": 3,
             "capsize": 2,
-            "lw": 0.2,
+            "lw": 0.1,
             "linestyle": "dotted",
             "elinewidth": 1,
         }
@@ -1196,13 +1199,14 @@ class TableCollection(object):
             sel = lc["mag"] > 0
             mags = lc["mag"]
             mags_err = lc["mag_err"]
+            ul = lc["ul"]
 
             # Modify arrays if upper limits are plotted
             if plot_upper_limits:
-                uplims = lc["ul"] < 0
+                uplims = lc["mag"] < 0
                 sel = np.ones(len(lc), dtype=bool)
-                mags = mags * ~uplims + mags_err * uplims
-                mags_err = mags_err * ~uplims + 1 * uplims
+                mags = mags * ~uplims + ul * uplims
+                mags_err = mags_err * ~uplims + 0.2 * uplims
 
             # Plot
             plt.errorbar(
