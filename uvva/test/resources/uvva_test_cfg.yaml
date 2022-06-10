@@ -49,15 +49,15 @@ selection:
         sel_type : "and"    # These are OR selections
         range:
             nr_det        : [1,.inf]
-            nr_det_meas   : [1,.inf]            
+            nr_uls   : [1,.inf]            
     src_variability:
         table    : "tt_sources"
         sel_type : "or"
         range:        
-            mag_rchiq     : [1.0,.inf]
+            mag_rchiq     : [2.0,.inf]
 #            mag_dmax      : [0.2,.inf]
             mag_dmax_sig  : [5.0,.inf]
-            perc_ul_mean    : [10,.inf]
+            ul_weight     : [1.5,.inf]
 
 ressources:                      
     load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
