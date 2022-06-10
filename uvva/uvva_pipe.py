@@ -66,13 +66,13 @@ def diagnostic(tc, table_name, plot_type):
             fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
         elif table_name == "tt_sources":
             det_vars["nr_det"] = {}
-            det_vars["nr_det_meas"] = {}
+            det_vars["nr_uls"] = {}
             det_vars["mag_mean"] = {}
             det_vars["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
             det_vars["mag_dmax"] = {}
             det_vars["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
             det_vars["mag_var"] = {"logx": True, "range": [-3, 0]}
-            det_vars["perc_ul_mean"] = {"bins": 100}
+            det_vars["ul_weight"] = {"bins": 100}
             fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
@@ -103,13 +103,13 @@ def diagnostic(tc, table_name, plot_type):
             fig, axs = plt.subplots(3, 2, figsize=(14, 12), squeeze=False)
         elif table_name == "tt_sources":
             det_vars[("mag_rchiq", "mag_dmax_sig")] = {"xscale": "log"}
-            det_vars[("mag_rchiq", "perc_ul_mean")] = {"xscale": "log"}
-            det_vars[("mag_dmax_sig", "perc_ul_mean")] = {}
+            det_vars[("mag_rchiq", "ul_weight")] = {"xscale": "log"}
+            det_vars[("mag_dmax_sig", "ul_weight")] = {}
             det_vars[("mag_dmax_sig", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            det_vars[("perc_ul_mean", "mag_mean")] = {
+            det_vars[("ul_weight", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
@@ -122,7 +122,7 @@ def diagnostic(tc, table_name, plot_type):
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            det_vars[("nr_det_meas", "mag_mean")] = {
+            det_vars[("nr_uls", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }

@@ -334,13 +334,13 @@ class BaseField(TableCollection):
             "ra": cluster_centers[:, 0],
             "dec": cluster_centers[:, 1],
             "nr_det": det_cts,
-            "nr_det_meas": np.zeros(nr_srcs),
+            "nr_uls": np.zeros(nr_srcs),
             "mag_mean": np.zeros(nr_srcs) - 1,
             "mag_var": np.zeros(nr_srcs) - 1,
             "mag_rchiq": np.zeros(nr_srcs) - 1,
             "mag_dmax": np.zeros(nr_srcs) - 1,
             "mag_dmax_sig": np.zeros(nr_srcs) - 1,
-            "perc_ul_mean": np.zeros(nr_srcs) - 1,
+            "ul_weight": np.zeros(nr_srcs) - 1,
         }
 
         # Fill information into tables.
@@ -478,6 +478,7 @@ class BaseField(TableCollection):
 
         mag[mask] = np.nan
         mag_err[mask] = np.nan
+        mag_ul[~mask_mag] = np.nan
 
         # Calculate variability parameters
         nr_mags = (~np.isnan(mag)).sum(axis=1)
@@ -497,21 +498,21 @@ class BaseField(TableCollection):
 
         # Nr of upper limits below the mean flux (in magnitudes greater)
         nr_ulmean = (mag_mean[:, None] < mag_ul).sum(axis=1)
+        nr_uls = mask_mag.sum(axis=1)
+        ul_weight = nr_ulmean / np.sqrt(nr_uls)
 
         # Write them into tt_sources
         src_ids = self.ta_sources_lc["src_id"]
         self.tt_sources.add_index("src_id")
         src_idx = self.tt_sources.loc_indices["src_id", src_ids]
 
-        self.tt_sources["nr_det_meas"][src_idx] = nr_mags
+        self.tt_sources["nr_uls"][src_idx] = nr_uls
         self.tt_sources["mag_mean"][src_idx] = mag_mean
         self.tt_sources["mag_var"][src_idx] = mag_var
         self.tt_sources["mag_rchiq"][src_idx] = rchiq_const
         self.tt_sources["mag_dmax"][src_idx] = dmag
         self.tt_sources["mag_dmax_sig"][src_idx] = dmag_max_sig
-        self.tt_sources["perc_ul_mean"][src_idx] = (
-            100.0 * nr_ulmean / len(self.tt_visits)
-        )
+        self.tt_sources["ul_weight"][src_idx] = ul_weight
 
     def remove_double_visit_detections(self):
         """
