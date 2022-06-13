@@ -499,7 +499,8 @@ class BaseField(TableCollection):
         # Nr of upper limits below the mean flux (in magnitudes greater)
         nr_ulmean = (mag_mean[:, None] < mag_ul).sum(axis=1)
         nr_uls = mask_mag.sum(axis=1)
-        ul_weight = nr_ulmean / np.sqrt(nr_uls)
+
+        ul_weight = nr_ulmean / np.sqrt(nr_uls + (nr_uls == 0) * 1e-6)
 
         # Write them into tt_sources
         src_ids = self.ta_sources_lc["src_id"]

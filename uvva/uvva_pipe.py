@@ -259,9 +259,10 @@ def run_field(field):
     for diag in diags:
         fig_diag = diagnostic(field, "tt_" + diag[0], diag[1])
         fig_diag.savefig(
-            field_dir + str(field.field_id) + "_" + diag[0] + "_" + diag[1] + ".png",
+            field_dir + diag[1] + "_" + diag[0] + "_" + str(field.field_id) + ".png",
             dpi=150,
         )
+        plt.close(fig_diag)
 
     # Draw selected  lightcurve
     sel_srcs = field.tt_sources["sel"]
@@ -275,7 +276,7 @@ def run_field(field):
             fig_lc = plt.figure(figsize=(10, 10))
             src_ids_chunk = np.array(src_ids_chunk, dtype=np.int64).flatten()
             src_ids_chunk = np.delete(src_ids_chunk, np.where(src_ids_chunk == -1))
-            field.plot_light_curve(src_ids_chunk)
+            field.plot_light_curve(src_ids_chunk, ylim=[24.5, 15.5])
             plt.tight_layout()
             srcs_name = "_".join([str(elem) for elem in src_ids_chunk])
 
@@ -283,6 +284,7 @@ def run_field(field):
                 field_dir + "lcs/lc_" + str(field.field_id) + "_" + srcs_name + ".png",
                 dpi=150,
             )
+            plt.close(fig_lc)
 
     return field
 
