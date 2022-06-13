@@ -157,7 +157,7 @@ class Region(TableCollection):
 
             # For vector columns convert to numpy arrays of type object
             for colname in colnames:
-                if len(np.array(dd_data[colname]).shape) > 1:
+                if len(np.array(dd_data[colname], dtype=object).shape) > 1:
                     dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
 
             self.add_table(dd_data, "region:" + table_name, add_sel_col=False)

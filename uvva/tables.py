@@ -1126,7 +1126,7 @@ class TableCollection(object):
         field_ids=None,
         ax=None,
         ylim=None,
-        legend_loc="upper right",
+        legend_loc="upper center",
         plot_upper_limits=True,
         **errorbar_kwargs,
     ):
@@ -1166,7 +1166,7 @@ class TableCollection(object):
         if field_ids[0] == None:
             field_ids = [None] * len(src_ids)
 
-        logger.debug("Plotting light curves'")
+        logger.info("Plotting light curves")
 
         # Setup plotting parameters
         if ax is None:
@@ -1176,25 +1176,33 @@ class TableCollection(object):
             ax.set_ylim(ylim)
 
         plt_errorbar_kwargs = {
-            "markersize": 3,
-            "capsize": 2,
+            "markersize": 4,
+            "alpha": 0.6,
+            "capsize": 0,
             "lw": 0.1,
             "linestyle": "dotted",
-            "elinewidth": 1,
+            "elinewidth": 0.6,
         }
         if errorbar_kwargs is not None:
             plt_errorbar_kwargs.update(errorbar_kwargs)
 
         # Loop over selected sources and plot
         colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
-        markers = cycle("osDd.<>^vpP*")
+        markers = cycle("osDd<>^v")
+        ctr = 0
         for src_id, field_id, col, mar in zip(src_ids, field_ids, colors, markers):
+
+            # Every 8 markers plot open symbols
+            ctr += 1
+            mfc = col
+            if ctr > 8:
+                mfc = "None"
 
             # Get light curve
             lc = self.get_light_curve(src_id, field_id)
 
             # Get arrays
-            src_lab = "src_" + str(src_id)
+            src_lab = str(src_id)
             uplims = np.zeros(len(lc))
             sel = lc["mag"] > 0
             mags = lc["mag"]
@@ -1206,7 +1214,7 @@ class TableCollection(object):
                 uplims = lc["mag"] < 0
                 sel = np.ones(len(lc), dtype=bool)
                 mags = mags * ~uplims + ul * uplims
-                mags_err = mags_err * ~uplims + 0.2 * uplims
+                mags_err = mags_err * ~uplims + 0.1 * uplims
 
             # Plot
             plt.errorbar(
@@ -1215,12 +1223,23 @@ class TableCollection(object):
                 yerr=mags_err[sel],
                 lolims=uplims[sel],
                 color=col,
+                markeredgecolor=col,
+                markerfacecolor=mfc,
                 marker=mar,
                 label=src_lab,
                 **plt_errorbar_kwargs,
             )
-        ax.legend(loc=legend_loc)
+        ax.legend(loc=legend_loc, ncol=7, fontsize="small", handletextpad=0.05)
         ax.set_xlabel("MJD")
         ax.set_ylabel("Magnitude")
+
+        if field_ids[0] == None:
+            uniq_field_ids = [self.field_id]
+        else:
+            uniq_field_ids = np.unique(field_ids)
+        fig_title = "Field id:"
+        for fid in uniq_field_ids:
+            fig_title += " " + str(fid)
+        ax.set_title(fig_title, fontsize="small", loc="left")
 
         return ax

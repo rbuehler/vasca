@@ -8,8 +8,10 @@ Script that runs the UVVA pipeline.
 import argparse
 import os
 import sys
-import healpy as hpy
+from itertools import zip_longest
 
+import numpy as np
+import healpy as hpy
 import matplotlib.pyplot as plt
 import yaml
 from loguru import logger
@@ -220,6 +222,8 @@ def run_field(field):
     # Create folder
     if not os.path.exists(field_dir):
         os.makedirs(field_dir)
+    if not os.path.exists(field_dir + "lcs/"):
+        os.makedirs(field_dir + "lcs/")
 
     # Apply selections
     field.select_rows(uvva_cfg["selection"]["det_quality"])
@@ -259,11 +263,26 @@ def run_field(field):
             dpi=150,
         )
 
-    # Make sample lightcurve
-    fig_lc = plt.figure(figsize=(10, 4))
-    field.plot_light_curve(range(0, 10), ylim=[25.5, 13.5])
-    plt.tight_layout()
-    fig_lc.savefig(field_dir + str(field.field_id) + "_lc.png", dpi=150)
+    # Draw selected  lightcurve
+    sel_srcs = field.tt_sources["sel"]
+    if sel_srcs.sum() > 0:
+        all_srcs_ids = field.tt_sources[sel_srcs]["src_id"].data
+
+        # Loop over list in chuks of 14
+        for src_ids_chunk in zip_longest(
+            *([np.nditer(all_srcs_ids)]) * 14, fillvalue=-1
+        ):
+            fig_lc = plt.figure(figsize=(10, 10))
+            src_ids_chunk = np.array(src_ids_chunk, dtype=np.int64).flatten()
+            src_ids_chunk = np.delete(src_ids_chunk, np.where(src_ids_chunk == -1))
+            field.plot_light_curve(src_ids_chunk)
+            plt.tight_layout()
+            srcs_name = "_".join([str(elem) for elem in src_ids_chunk])
+
+            fig_lc.savefig(
+                field_dir + "lcs/lc_" + str(field.field_id) + "_" + srcs_name + ".png",
+                dpi=150,
+            )
 
     return field
 
