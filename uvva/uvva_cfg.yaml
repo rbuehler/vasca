@@ -46,10 +46,10 @@ selection:
         table    : "tt_sources"
         sel_type : "or"
         range:        
-            mag_rchiq     : [2.0,.inf]
+            mag_rchiq     : [4.0,.inf]
 #            mag_dmax      : [0.2,.inf]
             mag_dmax_sig  : [5.0,.inf]
-            ul_weight    : [1.5,.inf]
+            ul_weight    : [2.0,.inf]
 
 ressources:                      
     load_method      : "UVVA"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]

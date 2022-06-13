@@ -317,7 +317,6 @@ def run(uvva_cfg):
     )
 
     # Write our helpix coverage maps
-
     hp_vis, hp_exp = rg.add_coverage_hp(nside=4096)
 
     hpy.fitsfunc.write_map(
@@ -371,13 +370,15 @@ def run(uvva_cfg):
         yaml.dump(uvva_cfg, yaml_file)
 
 
+def run_from_file(file_name="./uvva_cfg.yaml"):
+    set_config(file_name)
+    run(uvva_cfg)
+
+
 if __name__ == "__main__":
 
     # Argument parsing
     parser = argparse.ArgumentParser()
     parser.add_argument("--cfg", type=str, default=os.getcwd() + "/uvva_cfg.yaml")
     args = parser.parse_args()
-
-    # Get UVVA configuration file
-    set_config(args.cfg)
-    run(uvva_cfg)
+    run_from_file(args.cfg)
