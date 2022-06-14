@@ -9,6 +9,7 @@ general:
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
     hd_img_out    : false
     nr_cpus       : 2
+    mpl_backend     : "SYSTEM" 
 
 observations:
     observatory : "GALEX"
