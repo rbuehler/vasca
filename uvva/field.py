@@ -168,7 +168,7 @@ class BaseField(TableCollection):
                 src["dec"] + 0.004,
                 str(src["src_id"]),
                 transform=plt_src_kwargs["transform"],
-                fontsize=1,
+                fontsize=2,
                 color=col,
                 alpha=0.5,
             )
@@ -688,6 +688,23 @@ class BaseField(TableCollection):
                 par = par * unit
 
         return par
+
+    def load_from_fits(self, file_name="tables.fits"):
+        """
+        Loads field from a fits file and sets field attibutes.
+
+        Parameters
+        ----------
+        file_name : str, optional
+            File name. The default is "field_default.fits".
+
+        Returns
+        -------
+        None.
+
+        """
+        super().load_from_fits(file_name)
+        self.set_field_attr()
 
 
 class GALEXField(BaseField):

@@ -12,6 +12,7 @@ from itertools import zip_longest
 
 import numpy as np
 import healpy as hpy
+import matplotlib
 import matplotlib.pyplot as plt
 import yaml
 from loguru import logger
@@ -206,7 +207,6 @@ def run_field(field):
         Modified field with results
 
     """
-
     logger.info("Analysing field:" + str(field.field_id))
 
     # Create directory structure for fields
@@ -242,12 +242,15 @@ def run_field(field):
     field.write_to_fits(field_dir + "field_" + str(field.field_id) + ".fits")
     if uvva_cfg["general"]["hd_img_out"]:
         fig_sky.savefig(
-            field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=3000
+            field_dir + "sky_map_hr_" + str(field.field_id) + ".png",
+            dpi=3000,
         )
     else:
         fig_sky.savefig(
-            field_dir + "sky_map_hr_" + str(field.field_id) + ".pdf", dpi=150
+            field_dir + "sky_map_lr_" + str(field.field_id) + ".png",
+            dpi=150,
         )
+    plt.close(fig_sky)
 
     # Make field diagnostocs
     diags = [
@@ -307,6 +310,13 @@ def run(uvva_cfg):
     # Setup logger
     set_logger()
 
+    # Set matplotlib backend
+    if uvva_cfg["general"]["mpl_backend"] != "SYSTEM":
+        logger.info(
+            f'setting matplotlib backend to {uvva_cfg["general"]["mpl_backend"]}'
+        )
+        matplotlib.use(uvva_cfg["general"]["mpl_backend"])
+
     # Load region fields
     rg = Region.load_from_config(uvva_cfg)
     rg.add_table_from_fields("tt_visits")
@@ -324,6 +334,7 @@ def run(uvva_cfg):
         [hp_vis, hp_exp],
         coord="C",
         column_names=["nr_vis", "exposure"],
+        dtype=[np.float32, np.float32],
         overwrite=True,
         partial=True,
     )
@@ -348,7 +359,6 @@ def run(uvva_cfg):
 
     # Make diagnostics
     fig_diag_rgsrcs_hist = diagnostic(rg, "tt_sources", "hist")
-    fig_diag_rgsrcs_scat = diagnostic(rg, "tt_sources", "scatter")
     fig_diag_rgsrcs_hist.savefig(
         region_dir
         + "/region_"
@@ -356,6 +366,9 @@ def run(uvva_cfg):
         + "_diagnostic_srcs_hist.png",
         dpi=150,
     )
+    plt.close(fig_diag_rgsrcs_hist)
+
+    fig_diag_rgsrcs_scat = diagnostic(rg, "tt_sources", "scatter")
     fig_diag_rgsrcs_scat.savefig(
         region_dir
         + "/region_"
@@ -363,6 +376,7 @@ def run(uvva_cfg):
         + "_diagnostic_srcs_scat.png",
         dpi=150,
     )
+    plt.close(fig_diag_rgsrcs_scat)
 
     # Write used config file
     yaml_out_name = region_dir + "/uvva_ran_cfg.yaml"
@@ -370,7 +384,12 @@ def run(uvva_cfg):
         yaml.dump(uvva_cfg, yaml_file)
 
 
-def run_from_file(file_name="./uvva_cfg.yaml"):
+def run_from_file(file_name=os.getcwd() + "/uvva_cfg.yaml"):
+    print(
+        50 * "-"
+        + f"\n Running uvva_pipe.py with configuration file:\n {file_name}\n"
+        + 50 * "-"
+    )
     set_config(file_name)
     run(uvva_cfg)
 
