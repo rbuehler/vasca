@@ -4,7 +4,7 @@ standalone-install-test:
   script:
     - pip install .
     - echo -e "UC_SAS_UVVARCAT='/dev/null'\nUC_LUSTRE_UVVARCAT='/dev/null'\nUC_UVVA_TEST_RESOURCES='.'"  > .env
-    - coverage run -m pytest -v
+    - pytest -v --cov=uvva
     - coverage report
     - coverage xml
   artifacts:
