@@ -826,11 +826,11 @@ class TableCollection(object):
         """
 
         # Get table and check if selection column is available
-        tablename = selections["table"]
-        logger.info(f"Applying selection on table '{tablename}'")
-        if tablename not in self.__dict__.keys():
+        table_name = selections["table"]
+        logger.info(f"Applying selection on table '{table_name}'")
+        if table_name not in self.__dict__.keys():
             logger.error("Table does not exist, it need to be created beforehand.")
-        tt = self.__dict__[tablename]
+        tt = self.__dict__[table_name]
         if "sel" not in tt.colnames:
             logger.error("Table does not have selection column")
 
@@ -871,10 +871,11 @@ class TableCollection(object):
         else:
             logger.error("Unkown selection type.")
 
-        tt.replace_column("sel", sel.astype("bool"))
+        sel = sel.astype("bool")
+        tt.replace_column("sel", sel)
 
         if remove_unselected:
-            tt.remove_rows(~sel)
+            tt = tt[sel]
 
     def plot_hist(self, table_name, var, ax=None, logx=False, **hist_kwargs):
         """

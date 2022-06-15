@@ -237,13 +237,15 @@ def run_field(field):
     field.select_rows(uvva_cfg["selection"]["src_quality"])
     field.select_rows(uvva_cfg["selection"]["src_variability"])
 
-    # Plot results
-    fig_sky = field.plot_sky(plot_detections=True)
+    # Write out field
     field.write_to_fits(field_dir + "field_" + str(field.field_id) + ".fits")
+
+    # Plot sky maps
+    fig_sky = field.plot_sky(plot_detections=True)
     if uvva_cfg["general"]["hd_img_out"]:
         fig_sky.savefig(
             field_dir + "sky_map_hr_" + str(field.field_id) + ".png",
-            dpi=3000,
+            dpi=2500,
         )
     else:
         fig_sky.savefig(
@@ -267,7 +269,7 @@ def run_field(field):
         )
         plt.close(fig_diag)
 
-    # Draw selected  lightcurve
+    # Draw selected  light curves
     sel_srcs = field.tt_sources["sel"]
     if sel_srcs.sum() > 0:
         all_srcs_ids = field.tt_sources[sel_srcs]["src_id"].data
@@ -288,6 +290,12 @@ def run_field(field):
                 dpi=150,
             )
             plt.close(fig_lc)
+
+    # Remove some items which are not further needed to free memory
+    del field.__dict__["tt_detections"]
+    field._table_names.remove("tt_detections")
+    field.ref_img = None
+    field.ref_wcs = None
 
     return field
 
