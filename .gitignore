@@ -190,3 +190,4 @@ uvva/output.csv
 /uvva/examples/uvva_pipeline/TDS_COSMOS/fields/6388191295067652096/scatter_detections_6388191295067652096.png
 /uvva/examples/uvva_pipeline/TDS_COSMOS/fields/6388191295067652096/scatter_sources_6388191295067652096.png
 /uvva/examples/uvva_pipeline/TDS_COSMOS/fields/6388191295067652096/sky_map_hr_6388191295067652096.png
+uvva/examples/uvva_pipe_example/*

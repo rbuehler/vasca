@@ -1,0 +1,77 @@
+# To run this analysis example type the following from this directory: 
+# 'uvva_pipe --cfg uvva_pipe_example_cfg.yaml'
+#
+# You can further analyse the results using the notebook
+# 'uvva_pipe_example_analysis.ipynb'
+#
+# The pipeline analyses two TDS_COSMOS fields of the GALEX TDS survey
+#
+
+---
+authors : "UC science"
+comment : "Example configuration file"
+
+general:
+    name            : "uvva_pipe_example"
+    out_dir_base    : "CWD"                             # If "CWD" current work directory will be used.
+    log_level       : "INFO"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    log_file        : "uvva.log"                        # Will be written into "out_dir"
+    hd_img_out      : true                              # Write out high definition images
+    nr_cpus         : 2                                 # Number of CPUs to use. If "null" all available are used.
+    mpl_backend     : "SYSTEM"                          # Backend of matplotlib to show / store figures ("SYSTEM", "AGG", "TkAgg", ..).
+
+cluster:
+    meanshift:
+        bandwidth     : 5               # In arcsec, to estimate it automatically specify "null"
+        seeds         : null
+        bin_seeding   : false
+        min_bin_freq  : 1
+        cluster_all   : true
+        n_jobs        : null
+        max_iter      : 300
+    add_upper_limits  : true
+
+selection:
+    det_quality:
+        table    : "tt_detections"
+        sel_type : "and"  # These are all AND selections
+        range:
+            s2n            : [4,.inf]
+            r_fov          : [0.0,0.55]
+            point_src_prob : [0.95,1.0]
+            bright_match   : [-0.5,0.5]
+            mag            : [18,26]
+            mag_err        : [0,0.5]
+        bitmask:
+            # Specify the ones to ignore (=keep row).
+            # For GALEX a description is at the end of this document
+            artifacts : [1,8,16,32,64,128,256,512]
+    src_quality:
+        table    : "tt_sources"
+        sel_type : "and"    # These are OR selections
+        range:
+            nr_det        : [1,.inf]
+            nr_uls   : [1,.inf]            
+    src_variability:
+        table    : "tt_sources"
+        sel_type : "or"
+        range:        
+            mag_rchiq     : [2.0,.inf]
+            mag_dmax_sig  : [5.0,.inf]
+            ul_weight    : [2.0,.inf]
+
+ressources:                      
+    load_method      : "UVVA"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
+    load_products    : true             # Get data products from MAST, if false only meta data is loaded
+    field_kwargs:
+        data_path        : null
+        visits_data_path : null   
+
+observations:
+    observatory : "GALEX"
+    obs_filter : "NUV"
+    field_ids :
+        - 2604912508670050304
+        - 2604982877414227968
+
+
