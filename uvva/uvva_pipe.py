@@ -350,6 +350,7 @@ def run(uvva_cfg):
     # Run each field in a separate process in parallel
     with Pool(uvva_cfg["general"]["nr_cpus"]) as pool:
         pool_return = pool.map(run_field, list(rg.fields.values()))
+    pool.join()
 
     # update region fields
     for field in pool_return:
