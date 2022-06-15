@@ -394,19 +394,20 @@ def run(uvva_cfg):
 
 
 def run_from_file(file_name=os.getcwd() + "/uvva_cfg.yaml"):
-    print(
-        50 * "-"
-        + f"\n Running uvva_pipe.py with configuration file:\n {file_name}\n"
-        + 50 * "-"
-    )
-    set_config(file_name)
-    run(uvva_cfg)
-
-
-if __name__ == "__main__":
 
     # Argument parsing
     parser = argparse.ArgumentParser()
     parser.add_argument("--cfg", type=str, default=os.getcwd() + "/uvva_cfg.yaml")
     args = parser.parse_args()
-    run_from_file(args.cfg)
+
+    print(
+        50 * "-"
+        + f"\n Running uvva_pipe.py with configuration file:\n {args.cfg}\n"
+        + 50 * "-"
+    )
+    set_config(args.cfg)
+    run(uvva_cfg)
+
+
+if __name__ == "__main__":
+    run_from_file()
