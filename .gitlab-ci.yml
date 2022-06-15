@@ -1,11 +1,14 @@
 standalone-install-test:
   image: python:3.9-bullseye
+  coverage: '/^TOTAL.*\s+(\d+\%)$/'
   script:
     - pip install .
     - echo -e "UC_SAS_UVVARCAT='/dev/null'\nUC_LUSTRE_UVVARCAT='/dev/null'\nUC_UVVA_TEST_RESOURCES='.'"  > .env
-    - coverage run -m pytest -v
+    - pytest -v --cov=uvva
     - coverage report
     - coverage xml
   artifacts:
     reports:
-      cobertura: coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
