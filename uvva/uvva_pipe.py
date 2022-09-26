@@ -337,15 +337,16 @@ def run(uvva_cfg):
     # Write our helpix coverage maps
     hp_vis, hp_exp = rg.add_coverage_hp(nside=4096)
 
-    hpy.fitsfunc.write_map(
-        region_dir + "/region_" + uvva_cfg["general"]["name"] + "_coverage_hp.fits",
-        [hp_vis, hp_exp],
-        coord="C",
-        column_names=["nr_vis", "exposure"],
-        dtype=[np.float32, np.float32],
-        overwrite=True,
-        partial=True,
-    )
+    if uvva_cfg["general"]["hp_coverage_out"]:
+        hpy.fitsfunc.write_map(
+            region_dir + "/region_" + uvva_cfg["general"]["name"] + "_coverage_hp.fits",
+            [hp_vis, hp_exp],
+            coord="C",
+            column_names=["nr_vis", "exposure"],
+            dtype=[np.float32, np.float32],
+            overwrite=True,
+            partial=True,
+        )
 
     # Run each field in a separate process in parallel
     with Pool(uvva_cfg["general"]["nr_cpus"]) as pool:

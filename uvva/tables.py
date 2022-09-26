@@ -218,7 +218,9 @@ base_field = {
             "Flux magnitude error",
             "Flux magnitude upper limit",
         ],
-        "meta": {"INFO": "Light curve magnitude flux table"},
+        "meta": {
+            "INFO": "Light curve table for many sources. Stored in a variable-length-array format."
+        },
     },
 }
 galex_field = {
@@ -430,7 +432,7 @@ region = {
         ],
         "meta": {
             "DATAPATH": "None",
-            "INFO": "Reion properties in healpix binning.\
+            "INFO": "Region observations properties in healpix binning.\
                      RING ordering and equatorial coordinates",
             "NSIDE": "None",
         },

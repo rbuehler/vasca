@@ -8,6 +8,7 @@ general:
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file      : "uvva.log"                                 # Will be written into "out_dir"
     hd_img_out    : false
+    hp_coverage_out : false                                   # Write out visti& exposure of fields in a separate fits file
     nr_cpus       : 2
     mpl_backend     : "SYSTEM" 
 
