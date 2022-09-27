@@ -202,6 +202,28 @@ class Region(TableCollection):
     def plot_sky_gnomeview(
         self, ra, dec, sel_srcs=True, gw_kwargs=None, ps_kwargs=None
     ):
+        """
+        Plot the nr visits and optionally (selected) sources (optinally) on the sky.
+
+        Parameters
+        ----------
+        ra : float
+            RA of the center of the sky figure.
+        dec: float
+            DEC of the center of the sky figure.
+        sel_srcs : bool, optional
+            Show only selected sources. The default is True.
+        gw_kwargs : dict, optional
+            Keyword arguments for healpy..gnomview. The default is None.
+        ps_kwargs : dict, optional
+            Keyword arguments for healpy.projscatter. The default is None.
+
+        Returns
+        -------
+        ax : axes
+            Used Matplotlib axes.
+
+        """
 
         # Get healpix map of Nr of visits
         nside = self.tt_coverage_hp.meta["NSIDE"]
@@ -235,9 +257,9 @@ class Region(TableCollection):
                 sel = np.ones(len(sel)).astype(bool)
             hpy.projscatter(tt[sel]["ra"], tt[sel]["dec"], **plt_ps_kwargs)
 
-        hpy.projscatter(
-            [ra], [dec], lonlat=True, marker="o", s=4.0
-        )  # Mark center of gnomeview
+        # hpy.projscatter(
+        #    [ra], [dec], lonlat=True, marker="o", s=4.0
+        # )  # Mark center of gnomeview
         return plt.gca()
         # print(rg.tt_sources["ra", "dec"])
         # plt.scatter()
