@@ -260,9 +260,6 @@ class Region(TableCollection):
         # hpy.projscatter(
         #    [ra], [dec], lonlat=True, marker="o", s=4.0
         # )  # Mark center of gnomeview
-        return plt.gca()
-        # print(rg.tt_sources["ra", "dec"])
-        # plt.scatter()
         # hpy.mollview(hp_map, title="Nr. of visits in log10",nest=False,cmap="nipy_spectral",xsize=4800)
         # hpy.graticule(local=False,coord="C",dpar=1.0, color="white") # show graticules every 0.5 deg
-        # plt.show()
+        return plt.gca()

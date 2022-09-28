@@ -11,7 +11,8 @@ general:
     hp_coverage_out : false                                   # Write out visti& exposure of fields in a separate fits file
     nr_cpus       : 2
     mpl_backend     : "SYSTEM" 
-
+    save_dets       : "selected"                        # Store detections into region file, options are ["selected","all","none"]
+    
 observations:
     observatory : "GALEX"
     obs_filter : "NUV"

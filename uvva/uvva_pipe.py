@@ -292,10 +292,10 @@ def run_field(field):
             plt.close(fig_lc)
 
     # Remove some items which are not further needed to free memory
-    del field.__dict__["tt_detections"]
-    field._table_names.remove("tt_detections")
-    field.ref_img = None
-    field.ref_wcs = None
+    # del field.__dict__["tt_detections"]
+    # field._table_names.remove("tt_detections")
+    # field.ref_img = None
+    # field.ref_wcs = None
 
     return field
 
@@ -360,7 +360,13 @@ def run(uvva_cfg):
     rg.add_table_from_fields("tt_ref_sources")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("ta_sources_lc")
-    # rg.add_table_from_fields("tt_detections", only_selected=True)
+
+    if uvva_cfg["general"]["save_dets"] == "selected":
+        rg.add_table_from_fields("tt_detections", only_selected=True)
+    elif uvva_cfg["general"]["save_dets"] == "all":
+        rg.add_table_from_fields("tt_detections", only_selected=False)
+    else:
+        logger.info("Not saving detection table into region")
 
     # Write out regions
     rg.write_to_fits(
