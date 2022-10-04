@@ -223,6 +223,8 @@ base_field = {
         },
     },
 }
+# For GALEX data products mcat descriptions see
+# http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1
 galex_field = {
     "tt_visits": {
         "names": [
@@ -294,8 +296,8 @@ galex_field = {
             *base_field["tt_detections"]["descriptions"],
             "Distance from center of FOV in degrees",
             "Logical OR of artifact flags",
-            "Point-source probability: 0.0 (resolved), 1.0 (unresolved)",
-            "Detection matched to a known star (bright_match=1)",
+            "Point-source probability: 0.0 (resolved), 1.0 (unresolved, mcat file filter_CLASS_STAR variable)",
+            "Detection matched to a known star (bright_match=1, mcat file chkobj_type variable)",
             "Flux in a fixed circular 6.0 arcsec radius aperture in cts/sec",
             "Flux error in a fixed circular 6.0 arcsec radius aperture in cts/sec",
             "Flux in a fixed circular 3.8 arcsec radius aperture in cts/sec",
