@@ -209,14 +209,23 @@ base_field = {
         "meta": {"INFO": "Light curve magnitude flux table for one source"},
     },
     "ta_sources_lc": {
-        "names": ["src_id", "mag", "mag_err", "ul"],
-        "dtype": ["int64", np.object_, np.object_, np.object_],
-        "units": ["1", "1", "1", "1"],
+        "names": [
+            "src_id",
+            "mag",
+            "mag_err",
+            "ul",
+            "time_bin_start",
+            "time_bin_size",
+        ],
+        "dtype": ["int64", np.object_, np.object_, np.object_, np.object_, np.object_],
+        "units": ["1", "1", "1", "1", "d", "s"],
         "descriptions": [
             "Source ID Nr.",
             "Flux magnitude",
             "Flux magnitude error",
             "Flux magnitude upper limit",
+            "Visit exposure start date and time in MJD",
+            "Visit exposure time in s",
         ],
         "meta": {
             "INFO": "Light curve table for many sources. Stored in a variable-length-array format."

@@ -416,6 +416,8 @@ class BaseField(TableCollection):
             "mag": list(),
             "mag_err": list(),
             "ul": list(),
+            "time_bin_start": list(),
+            "time_bin_size": list(),
         }
 
         # Loop over sources and add them to dictionary
@@ -425,15 +427,22 @@ class BaseField(TableCollection):
             # Add src id
             src_id = tt_det["src_id"][0]
             tdata["src_id"].append(src_id.tolist())
-            vis_idxs = self.tt_visits.loc_indices["vis_id", tt_det["vis_id"]]
 
-            np_mag = np.zeros(nr_vis) - 1
+            # Add magnitudes and errors, array has length of Nr of visits.
+            # Values is 0, except for detections.
+            vis_idxs = self.tt_visits.loc_indices["vis_id", tt_det["vis_id"]]
+            np_mag = np.zeros(nr_vis)
             np_mag[vis_idxs] = tt_det["mag"]
             tdata["mag"].append(np_mag.tolist())
-
-            np_mag_err = np.zeros(nr_vis) - 1
+            np_mag_err = np.zeros(nr_vis)
             np_mag_err[vis_idxs] = tt_det["mag_err"]
             tdata["mag_err"].append(np_mag_err.tolist())
+            tdata["time_bin_start"].append(
+                np.array(self.tt_visits["time_bin_start"]).tolist()
+            )
+            tdata["time_bin_size"].append(
+                np.array(self.tt_visits["time_bin_size"]).tolist()
+            )
 
             # Store upper limits if no detection in a visit
             # TODO: make this more general and not GALEX specific
@@ -441,10 +450,13 @@ class BaseField(TableCollection):
                 np_mag_ul = self.get_upper_limits()
                 tdata["ul"].append(np_mag_ul.tolist())
 
-        # Add light curve table
+        # Add light curve table, convert type to allow for variable length array
         tdata["mag"] = np.array(tdata["mag"], dtype=np.object_)
         tdata["mag_err"] = np.array(tdata["mag_err"], dtype=np.object_)
         tdata["ul"] = np.array(tdata["ul"], dtype=np.object_)
+        tdata["time_bin_start"] = np.array(tdata["time_bin_start"], dtype=np.object_)
+        tdata["time_bin_size"] = np.array(tdata["time_bin_size"], dtype=np.object_)
+
         self.add_table(tdata, "base_field:ta_sources_lc", add_sel_col=False)
         self.set_var_stats()
 
