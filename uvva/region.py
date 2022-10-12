@@ -102,6 +102,7 @@ class Region(TableCollection):
         Add tables from the fields to the region by stacking them,
         adding the field_id column.
 
+
         Parameters
         ----------
         table_name : str
@@ -116,52 +117,46 @@ class Region(TableCollection):
 
         """
 
-        ll_tt = []
+        logger.debug(f"Adding table from fields: {table_name}")
+        if table_name in self._table_names:
+            logger.warning(f"Table '{table_name}' already exists, overwriting")
 
+        # Loop over fields and add field_id column and field id table
+        ll_tt = []  # List of "table_name" tables for all fields
         for field_id, field in self.fields.items():
-
             tt = field.__dict__[table_name]
-
-            field_id_col = np.ones(len(tt), dtype="int64") * field_id
-            col = Column(
-                data=field_id_col,
-                name="field_id",
-                dtype="int64",
-                unit="1",
-                description="Field ID nr.",
-            )
-            tt.add_column(col)
 
             # Apply row selection
             sel = np.ones(len(tt), dtype="bool")
             if only_selected:
                 sel = tt["sel"]
 
+            field_id_col = np.ones(len(tt[sel]), dtype="int64") * field_id
+
             ll_tt.append(tt[sel])
 
         # Add stacked table, for tables with vecotr entries this needs to be done by hand
-        if table_name.startswith("tt_"):
-            tt_data = vstack(ll_tt)
-            if table_name in self._table_names:
-                logger.warning(f"Table '{table_name}' already exists, overwriting")
-            self._table_names.append(table_name)
-            setattr(self, table_name, tt_data)
-        elif table_name.startswith("ta_"):
-            colnames = ll_tt[0].colnames
+        # if table_name.startswith("tt_"):
+        #    tt_data = vstack(ll_tt)
 
-            # Create empty data structure
-            dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
+        #    self._table_names.append(table_name)
+        # Tables with variable table entries. Do this separatelly, as vstack above does
+        # not work with variable vector entries in Astropy v5.0.4
+        # elif table_name.startswith("ta_"):
+        colnames = ll_tt[0].colnames
 
-            for tt in ll_tt:
-                for colname in colnames:
-                    dd_data[colname].extend(tt[colname].tolist())
-
-            # For vector columns convert to numpy arrays of type object
+        # Create empty data structure and then fill it with field tables
+        dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
+        for tt in ll_tt:
             for colname in colnames:
-                if len(np.array(dd_data[colname], dtype=object).shape) > 1:
-                    dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
+                dd_data[colname].extend(tt[colname].tolist())
 
-            self.add_table(dd_data, "region:" + table_name, add_sel_col=False)
+        # For vector columns convert to numpy arrays of type object_
+        # This is needed for correct writing to fits in Astropy v5.0.4
+        for colname in colnames:
+            if len(np.array(dd_data[colname], dtype=object).shape) > 1:
+                dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
+        self.add_table(dd_data, "region:" + table_name, add_sel_col=False)
 
     def add_coverage_hp(self, nside=4096):
 

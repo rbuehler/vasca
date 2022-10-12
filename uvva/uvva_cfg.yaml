@@ -5,7 +5,7 @@ comment : "Example configuration file"
 general:
     name            : "TDS_COSMOS"
     out_dir_base    : "./examples/uvva_pipeline"        # If "CWD" current work directory will be used.
-    log_level       : "INFO"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "uvva.log"                        # Will be written into "out_dir"
     hd_img_out      : true                              # Write out high definition images
     hp_coverage_out : false                             # Write out visti& exposure of fields in a separate fits file
