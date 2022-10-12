@@ -17,21 +17,22 @@ authors = [
     {name = "Andrea Porelli", email = "andrea.porelli@desy.de"},
 ]
 dependencies = [
-  "astropy ~= 5.0.2",
+  "astropy ~= 5.1",
   "astroquery ~= 0.4.6",
-  "coverage ~= 6.3.2",
-  "healpy ~= 1.15.2",
+  "coverage ~= 6.5.0",
+  "healpy ~= 1.16.1",
+  "h5py ~= 3.7.0",
   "loguru ~= 0.6.0",
-  "matplotlib ~= 3.5.1",
-  "numpy ~= 1.22.3",
-  "pandas ~= 1.4.1",
-  "pytest ~= 7.1.1",
-  "pytest-cov ~= 3.0.0",
-  "python-dotenv ~= 0.19.2",
+  "matplotlib ~= 3.6.1",
+  "numpy ~= 1.23.2",
+  "pandas ~= 1.5.0",
+  "pytest ~= 7.1.3",
+  "pytest-cov ~= 4.0.0",
+  "python-dotenv ~= 0.21.0",
   "PyYAML ~= 6.0",
   "scikit_learn ~= 1.0.2",
-  "setuptools ~= 58.0.4",
-  "h5py ~= 3.6.0",
+  "setuptools ~= 65.4.1",
+
 ]
 
 [project.urls]
