@@ -335,12 +335,6 @@ class BaseField(TableCollection):
             "dec": cluster_centers[:, 1],
             "nr_det": det_cts,
             "nr_uls": np.zeros(nr_srcs),
-            "mag_mean": np.zeros(nr_srcs) - 1,
-            "mag_var": np.zeros(nr_srcs) - 1,
-            "mag_rchiq": np.zeros(nr_srcs) - 1,
-            "mag_dmax": np.zeros(nr_srcs) - 1,
-            "mag_dmax_sig": np.zeros(nr_srcs) - 1,
-            "ul_weight": np.zeros(nr_srcs) - 1,
         }
 
         # Fill information into tables.
@@ -457,7 +451,7 @@ class BaseField(TableCollection):
         tdata["time_bin_start"] = np.array(tdata["time_bin_start"], dtype=np.object_)
         tdata["time_bin_size"] = np.array(tdata["time_bin_size"], dtype=np.object_)
 
-        self.add_table(tdata, "base_field:ta_sources_lc", add_sel_col=False)
+        self.add_table(tdata, "base_field:ta_sources_lc")
         self.set_var_stats()
 
     def set_var_stats(self):

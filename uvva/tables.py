@@ -11,7 +11,7 @@ from astropy.wcs import wcs
 from astropy.nddata import bitmask
 from loguru import logger
 
-from uvva.tables_dict import base_field, galex_field, region
+from uvva.tables_dict import dd_uvva_tables
 
 # import warnings
 # from astropy.io.fits.verify import VerifyWarning
@@ -26,11 +26,6 @@ dimless = uu.dimensionless_unscaled
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 
-# global, combined dictionary
-class_keys = ["base_field", "galex_field", "region"]
-class_dicts = [base_field, galex_field, region]
-dd_uvva_tables = {c_key: c_dict for c_key, c_dict in zip(class_keys, class_dicts)}
-
 
 class TableCollection(object):
     def __init__(self):
@@ -38,20 +33,18 @@ class TableCollection(object):
         # adds the class name as an extra key; accessible vie the handler format
         logger.configure(extra={"classname": self.__class__.__name__})
 
-        self.combined_templates = dd_uvva_tables
-
         self._table_names = list()
 
     @staticmethod
-    def table_from_template(data, template_name):
+    def table_from_template(dd_data, template_name):
         """
         Creates a new astropy table.
 
         Parameters
         ----------
-        data : list, array-like
-            Data of the table with shape (n, n_cols) or as dictionaty with the
-            key corresponding to the templates columns.
+        dd_data : dict
+            Data dictionaty with the key corresponding to the templates columns.
+            Id data==None an empty template table is returned.
         template_name : str
             Identifier to select a table template. Templates are selected by
             setting the class key and a corresponding table key in one string
@@ -86,15 +79,32 @@ class TableCollection(object):
                 f"Unknown table key '{table_key}'. Choose one from {table_keys}"
             )
 
-        # Create table
-        tt_out = Table(data=data, **templates[class_key][table_key])
+        # print(data)
+
+        # Get template just for the required table
+        template_copy = templates[class_key][table_key].copy()
+
+        # Check if data misses columns and in case fill with default values
+        if not dd_data == None:
+            len_data_cols = len(dd_data[list(dd_data.keys())[0]])
+            for col in template_copy["names"]:
+                if not col in dd_data.keys():
+                    idx = template_copy["names"].index(col)
+                    dd_data[col] = [template_copy["defaults"][idx]] * len_data_cols
+
+        # print("u", dd_data)
+
+        # Create table, delete defaults enty first, as astropy Table does not support this
+        del template_copy["defaults"]
+        tt_out = Table(data=dd_data, **template_copy)
         # tt_out.meta["template"] = template_name
 
         # logging
+        # Remove "defaults" from templates dictionary, as astropy.Table does not support this
         logger.debug(f"Created new table from template '{template_name}'.")
         return tt_out
 
-    def add_table(self, data, template_name, add_sel_col=True):
+    def add_table(self, data, template_name):
         """
         Add a UVVA table to the field.
 
@@ -107,8 +117,6 @@ class TableCollection(object):
             Identifier to select a table template. Templates are selected by
             setting the class key and a corresponding table key in one string
             separated by a colon, e.g. template_name=<class_key>:<table_key>.
-        add_sel_col: bool
-            Add a selection column to the table. Default is true.
 
         """
         logger.debug(f"Adding table '{template_name}'")
@@ -120,16 +128,6 @@ class TableCollection(object):
         self._table_names.append(table_key)
 
         tt = self.table_from_template(data, template_name)
-        if add_sel_col:
-            default_sel = np.ones(len(tt), dtype="int64")
-            col = Column(
-                data=default_sel,
-                name="sel",
-                dtype="bool",
-                unit="1",
-                description="Selection of rows for UVVA analysis.",
-            )
-            tt.add_column(col)
 
         setattr(self, table_key, tt)
 
@@ -271,9 +269,9 @@ class TableCollection(object):
                 # TODO make loading more general.
                 # Expect astropy handling of fits vecotors to simplify this in the future
                 if "field_id" in col_names:
-                    self.add_table(ta_data, "region:" + ta_name, add_sel_col=False)
+                    self.add_table(ta_data, "region:" + ta_name)
                 else:
-                    self.add_table(ta_data, "base_field:" + ta_name, add_sel_col=False)
+                    self.add_table(ta_data, "base_field:" + ta_name)
 
     def write_to_hdf5(self, file_name="tables.hdf5"):
         """
