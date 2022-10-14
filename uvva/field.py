@@ -14,6 +14,7 @@ from astropy.wcs import wcs
 from astroquery.mast import Observations
 from loguru import logger
 from sklearn.cluster import MeanShift, estimate_bandwidth
+from collections import OrderedDict
 
 from uvva.resource_manager import ResourceManager
 from uvva.tables import TableCollection
@@ -1071,23 +1072,45 @@ class GALEXField(BaseField):
     def _load_galex_field_info(self, obs_id, obs_filter, col_names=None, refresh=False):
         """
         Loads the archival metadata associated to a given field ID.
+
+        Parameters
+        ----------
+        obs_id : int
+            GALEX field ID
+        obs_filter : str, optional
+            Selects the GALEX filter for which the corresponding
+            observation data is loaded. Needs to be either from:
+            'FUV' -> 135-175 nm
+            'NUV' -> 175-280 nm  (default)
+        col_names : dict
+            Dictionary with keys of MAST column names to load, and values the
+            corresponding UVVA table column names. Default in None.
+        refresh : bool, optional
+            Selects if data is freshly loaded from MAST (refresh=True) or
+            from cashed data on disc (refresh=False, default).
+
         """
+
         # Uses default columns if not otherwise specified
         # Already sets the order in which columns are added later on
         if col_names is None:
-            col_names = [
-                "obs_id",
-                "target_name",
-                "s_ra",
-                "s_dec",
-                "instrument_name",
-                "filters",
-            ]
-        elif not isinstance(col_names, list):
+            # values represent variables in UVVA, keys the variable names in the MAST database
+            col_names = {
+                "obs_id": "field_id",
+                "target_name": "name",
+                "s_ra": "ra",
+                "s_dec": "dec",
+                "instrument_name": "observatory",
+                "filters": "obs_filter",
+            }
+
+        elif not isinstance(col_names, dict):
             raise TypeError(
                 "Expected list type for argument 'col_names', "
                 f"got '{type(col_names).__name__}'."
             )
+
+        mast_col_names = list(col_names.keys())
 
         # Path to store raw data
         path_tt_coadd = f"{self.data_path}/MAST_{obs_id}_{obs_filter}_coadd.fits"
@@ -1118,24 +1141,44 @@ class GALEXField(BaseField):
         logger.debug("Constructing 'tt_field'.")
         # Selects columns and strip mask
         if tt_coadd.masked is True:
-            tt_coadd_select = Table(tt_coadd[col_names].as_array().data)
+            tt_coadd_select = Table(tt_coadd[mast_col_names].as_array().data)
         else:
-            tt_coadd_select = tt_coadd[col_names]
+            tt_coadd_select = tt_coadd[mast_col_names]
         # Converts field id dtype from unicode ('U19') to bytestring ('S64')
         if tt_coadd_select["obs_id"].dtype.kind == "U":
             tt_coadd_select.replace_column(
                 "obs_id",
                 tt_coadd_select["obs_id"].astype(np.dtype("S64")),
             )
-        # Sets table as class attribute
-        self.add_table(tt_coadd_select, "base_field:tt_field")
+        # Convert into dictionay with correct uvva column names
+        dd_coadd_select = {}
+        for col in mast_col_names:
+            dd_coadd_select[col_names[col]] = tt_coadd_select[col].data
+
+        self.add_table(dd_coadd_select, "base_field:tt_field")
 
     def _load_galex_visits_info(self, obs_id, obs_filter, col_names=None):
+        """
+        Loads the archival metadata associated to a given visit ID.
+
+        Parameters
+        ----------
+        obs_id : int
+            GALEX field ID
+        obs_filter : str, optional
+            Selects the GALEX filter for which the corresponding
+            observation data is loaded. Needs to be either from:
+            'FUV' -> 135-175 nm
+            'NUV' -> 175-280 nm  (default)
+        col_names : dict
+            Dictionary with keys of MAST column names to load, and values the
+            corresponding UVVA table column names. Default in None.
+        """
 
         # Uses default columns if not otherwise specified
         # Already sets the order in which columns are added later on
         if col_names is None:
-            col_names = [
+            mast_col_names = [
                 "imgRunID",
                 "minPhotoObsDate",
                 "nexptime" if obs_filter == "NUV" else "fexptime",
@@ -1143,11 +1186,23 @@ class GALEXField(BaseField):
                 "RATileCenter",
                 "DECTileCenter",
             ]
-        elif not isinstance(col_names, list):
+            uvva_col_names = [
+                "vis_id",
+                "time_bin_start",
+                "time_bin_size",
+                "time_bin_size_alt_filt",
+                "ra",
+                "dec",
+            ]
+            col_names = dict(zip(mast_col_names, uvva_col_names))
+        elif not isinstance(col_names, dict):
             raise TypeError(
                 "Expected list type for argument 'col_names', "
                 f"got '{type(col_names).__name__}'."
             )
+
+        mast_col_names = list(col_names.keys())
+
         # Reads cached file if found on disc
         logger.debug(
             "Reading archive visit info from cashed file " f"'{self.visits_data_path}'"
@@ -1157,7 +1212,7 @@ class GALEXField(BaseField):
         logger.debug("Constructing 'tt_visits'.")
         # Filters for visits corresponding to field id and selects specified columns
         tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == obs_id][
-            col_names
+            mast_col_names
         ]
         # Converts string time format to mjd
         for key in ["minPhotoObsDate"]:
@@ -1174,8 +1229,13 @@ class GALEXField(BaseField):
                 }
             )
 
+        # Convert into dictionay with correct uvva column names
+        dd_visits_raw_select = {}
+        for col in mast_col_names:
+            dd_visits_raw_select[col_names[col]] = tt_visits_raw_select[col].data
+
         # Sets table as class attribute
-        self.add_table(tt_visits_raw_select, "galex_field:tt_visits")
+        self.add_table(dd_visits_raw_select, "galex_field:tt_visits")
 
     def _load_galex_archive_products(
         self,
@@ -1390,7 +1450,7 @@ class GALEXField(BaseField):
 
         # Add to tables as class attributes
         if col_names is None:
-            col_names = [
+            mast_col_names = [
                 "visit_id",
                 "source_id",
                 "ggoid_dec",
@@ -1410,15 +1470,50 @@ class GALEXField(BaseField):
                 f"{obs_filter}_FLUXERR_APER_3",
                 "E_bv",
             ]
-        elif not isinstance(col_names, list):
+
+            uvva_col_names = [
+                "vis_id",
+                "src_id",
+                "det_id",
+                "ra",
+                "dec",
+                "pos_err",
+                "mag",
+                "mag_err",
+                "s2n",
+                "r_fov",
+                "artifacts",
+                "point_src_prob",
+                "bright_match",
+                "flux_f60",
+                "flux_f60_err",
+                "flux_f38",
+                "flux_f38_err",
+                "E_bv",
+            ]
+
+            col_names = dict(zip(mast_col_names, uvva_col_names))
+        elif not isinstance(col_names, dict):
             raise TypeError(
-                "Expected list type for argument 'col_names', "
+                "Expected dict type for argument 'col_names', "
                 f"got '{type(col_names).__name__}'."
             )
+        mast_col_names = list(col_names.keys())
+
         # set data as class attributes
-        self.add_table(tt_detections_raw[col_names], "galex_field:tt_detections")
+
+        # Convert into dictionay with correct uvva column names
+        dd_detections_raw = {}
+        for col in mast_col_names:
+            dd_detections_raw[col_names[col]] = tt_detections_raw[col].data
+        self.add_table(dd_detections_raw, "galex_field:tt_detections")
         logger.debug("Constructed 'tt_detections'.")
-        self.add_table(tt_ref_sources_raw[col_names[2:]], "galex_field:tt_ref_sources")
+
+        dd_ref_sources_raw = {}
+        for col in mast_col_names[2:]:
+            dd_ref_sources_raw[col_names[col]] = tt_ref_sources_raw[col].data
+
+        self.add_table(dd_ref_sources_raw, "galex_field:tt_ref_sources")
         logger.debug("Constructed 'tt_ref_sources'.")
 
         # Intensity maps
