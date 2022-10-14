@@ -55,6 +55,10 @@ class TableCollection(object):
         astropy.table.Table
         """
 
+        # Check dd_data type
+        if not (isinstance(dd_data, dict) or (dd_data == None)):
+            logger.error(f"Passed data format not supported: {type(dd_data)}")
+
         # Takes pre-defined template dictionary
         templates = dd_uvva_tables
 
@@ -79,8 +83,6 @@ class TableCollection(object):
                 f"Unknown table key '{table_key}'. Choose one from {table_keys}"
             )
 
-        # print(data)
-
         # Get template just for the required table
         template_copy = templates[class_key][table_key].copy()
 
@@ -91,8 +93,6 @@ class TableCollection(object):
                 if not col in dd_data.keys():
                     idx = template_copy["names"].index(col)
                     dd_data[col] = [template_copy["defaults"][idx]] * len_data_cols
-
-        # print("u", dd_data)
 
         # Create table, delete defaults enty first, as astropy Table does not support this
         del template_copy["defaults"]

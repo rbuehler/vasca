@@ -135,24 +135,12 @@ class Region(TableCollection):
             tt_sel["field_id"] = np.ones(len(tt_sel), dtype="int64") * field_id
             ll_tt.append(tt_sel)
 
-        # Add stacked table, for tables with vecotr entries this needs to be done by hand
-        # if table_name.startswith("tt_"):
-        #    tt_data = vstack(ll_tt)
-
-        #    self._table_names.append(table_name)
-        # Tables with variable table entries. Do this separatelly, as vstack above does
-        # not work with variable vector entries in Astropy v5.0.4
-        # elif table_name.startswith("ta_"):
         colnames = dd_uvva_tables["region"][table_name]["names"]
-        print("s", colnames)
 
         # Create empty data structure and then fill it with field tables
         dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
         for tt in ll_tt:
             for colname in colnames:
-                # if table_name.startswith("tt_"):
-                #     dd_data[colname].append(*tt[colname].tolist())
-                # elif table_name.startswith("ta_"):
                 dd_data[colname].extend(tt[colname].tolist())
 
         # For vector columns convert to numpy arrays of type object_
@@ -161,8 +149,6 @@ class Region(TableCollection):
             if len(np.array(dd_data[colname], dtype=object).shape) > 1:
                 dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
 
-        # copy_colnames = dd_uvva_tables["region"][table_name].keys()
-        # print("g",copy_colnames)
         self.add_table(dd_data, "region:" + table_name)
 
     def add_coverage_hp(self, nside=4096):

@@ -55,7 +55,7 @@ selection:
             ul_weight    : [2.0,.inf]
 
 ressources:                      
-    load_method      : "UVVA"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
+    load_method      : "MAST_REMOTE"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null
