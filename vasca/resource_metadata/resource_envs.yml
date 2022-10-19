@@ -11,15 +11,15 @@
 # Note: Names for `storage` and `project` are required to match 
 # the names used in `resource_catalog.yml`!
 #
-UC_SAS_UVVARCAT:
+UC_SAS_VASCARCAT:
     storage: sas_cloud
-    project: uvvarcat
-    description: 'Resources for the UV variability catalog project on DESY Sync & Share. Remote directory: ULTRASAT-data/uc_science/uvvarcat'
-UC_LUSTRE_UVVARCAT:
+    project: vascarcat
+    description: 'Resources for the UV variability catalog project on DESY Sync & Share. Remote directory: ULTRASAT-data/uc_science/vascarcat'
+UC_LUSTRE_VASCARCAT:
     storage: lustre
-    project: uvvarcat
+    project: vascarcat
     description: "Resoruces for the UV variability catalog project on DESY LUSTRE. Not used at the moment."
-UC_UVVA_TEST_RESOURCES:
-    storage: uvva
-    project: uvva
-    description: "Resources needed for unit testing of the UVVA module."
+UC_VASCA_TEST_RESOURCES:
+    storage: vasca
+    project: vasca
+    description: "Resources needed for unit testing of the VASCA module."

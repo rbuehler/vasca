@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script that runs the UVVA pipeline.
+Script that runs the VASCA pipeline.
 """
 
 
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import yaml
 from loguru import logger
 
-from uvva.region import Region
+from vasca.region import Region
 
 # from multiprocessing import Pool
 from multiprocessing import Pool
@@ -36,21 +36,21 @@ def set_config(cfg_file):
 
     Returns
     -------
-    uvva_cfg : dict
-        UVVA pipeline configuration dictionary
+    vasca_cfg : dict
+        VASCA pipeline configuration dictionary
     """
     with open(cfg_file) as file:
-        global uvva_cfg
-        uvva_cfg = yaml.safe_load(file)  # yaml.
+        global vasca_cfg
+        vasca_cfg = yaml.safe_load(file)  # yaml.
 
     # Set output directory
-    if uvva_cfg["general"]["out_dir_base"] == "CWD":
-        uvva_cfg["general"]["out_dir_base"] = os.getcwd()
+    if vasca_cfg["general"]["out_dir_base"] == "CWD":
+        vasca_cfg["general"]["out_dir_base"] = os.getcwd()
 
-    # Store uvva_cfg file name in uvva_cfg dictionary
-    uvva_cfg["cfg_file"] = cfg_file
+    # Store vasca_cfg file name in uvva_cfg dictionary
+    vasca_cfg["cfg_file"] = cfg_file
 
-    return uvva_cfg
+    return vasca_cfg
 
 
 # TODO: there are some GALEX specific variables, will need to be adapted to other missions
@@ -159,7 +159,7 @@ def set_logger():
 
     """
     log_dir = (
-        uvva_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
+        vasca_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
     )
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -171,13 +171,13 @@ def set_logger():
                 "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSSS}</green> "
                 "<cyan>{name}</cyan>:<cyan>{line}</cyan> |"
                 "<level>{level}:</level> {message}",
-                "level": uvva_cfg["general"]["log_level"],
+                "level": vasca_cfg["general"]["log_level"],
                 "colorize": True,
                 "backtrace": True,
                 "diagnose": True,
             },
             {
-                "sink": log_dir + uvva_cfg["general"]["log_file"],
+                "sink": log_dir + vasca_cfg["general"]["log_file"],
                 "serialize": True,
                 "backtrace": True,
                 "diagnose": True,
@@ -185,10 +185,10 @@ def set_logger():
         ],
     }
     logger.configure(**log_cfg)
-    logger.enable("uvva")
+    logger.enable("vasca")
 
     logger.info("Runing '" + __file__ + "'")
-    logger.debug("Config. file: '" + uvva_cfg["cfg_file"] + "'")
+    logger.debug("Config. file: '" + vasca_cfg["cfg_file"] + "'")
     logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
 
 
@@ -198,12 +198,12 @@ def run_field(field):
 
     Parameters
     ----------
-    field : uvva.field
+    field : vasca.field
         Field to run analysis on.
 
     Returns
     -------
-    field : uvva.field
+    field : vasca.field
         Modified field with results
 
     """
@@ -211,9 +211,9 @@ def run_field(field):
 
     # Create directory structure for fields
     field_dir = (
-        uvva_cfg["general"]["out_dir_base"]
+        vasca_cfg["general"]["out_dir_base"]
         + "/"
-        + uvva_cfg["general"]["name"]
+        + vasca_cfg["general"]["name"]
         + "/fields/"
         + str(field.field_id)
         + "/"
@@ -226,23 +226,23 @@ def run_field(field):
         os.makedirs(field_dir + "lcs/")
 
     # Apply selections
-    field.select_rows(uvva_cfg["selection"]["det_quality"])
+    field.select_rows(vasca_cfg["selection"]["det_quality"])
 
     # Run clustering
     field.cluster_meanshift(
-        uvva_cfg["cluster"]["add_upper_limits"], **uvva_cfg["cluster"]["meanshift"]
+        vasca_cfg["cluster"]["add_upper_limits"], **uvva_cfg["cluster"]["meanshift"]
     )
 
     # Source selection
-    field.select_rows(uvva_cfg["selection"]["src_quality"])
-    field.select_rows(uvva_cfg["selection"]["src_variability"])
+    field.select_rows(vasca_cfg["selection"]["src_quality"])
+    field.select_rows(vasca_cfg["selection"]["src_variability"])
 
     # Write out field
     field.write_to_fits(field_dir + "field_" + str(field.field_id) + ".fits")
 
     # Plot sky maps
     fig_sky = field.plot_sky(plot_detections=True)
-    if uvva_cfg["general"]["hd_img_out"]:
+    if vasca_cfg["general"]["hd_img_out"]:
         fig_sky.savefig(
             field_dir + "sky_map_hr_" + str(field.field_id) + ".png",
             dpi=2500,
@@ -300,14 +300,14 @@ def run_field(field):
     return field
 
 
-def run(uvva_cfg):
+def run(vasca_cfg):
     """
-    Runs the UVVA pipeline
+    Runs the VASCA pipeline
 
     Parameters
     ----------
-    uvva_cfg : dict
-        UVVA pipeline configuration dictionary
+    vasca_cfg : dict
+        VASCA pipeline configuration dictionary
 
     Returns
     -------
@@ -319,27 +319,27 @@ def run(uvva_cfg):
     set_logger()
 
     # Set matplotlib backend
-    if uvva_cfg["general"]["mpl_backend"] != "SYSTEM":
+    if vasca_cfg["general"]["mpl_backend"] != "SYSTEM":
         logger.info(
-            f'setting matplotlib backend to {uvva_cfg["general"]["mpl_backend"]}'
+            f'setting matplotlib backend to {vasca_cfg["general"]["mpl_backend"]}'
         )
-        matplotlib.use(uvva_cfg["general"]["mpl_backend"])
+        matplotlib.use(vasca_cfg["general"]["mpl_backend"])
 
     # Load region fields
-    rg = Region.load_from_config(uvva_cfg)
+    rg = Region.load_from_config(vasca_cfg)
     rg.add_table_from_fields("tt_visits")
 
     # Setup output directors
     region_dir = (
-        uvva_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
+        vasca_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
     )
 
     # Write our helpix coverage maps
     hp_vis, hp_exp = rg.add_coverage_hp(nside=4096)
 
-    if uvva_cfg["general"]["hp_coverage_out"]:
+    if vasca_cfg["general"]["hp_coverage_out"]:
         hpy.fitsfunc.write_map(
-            region_dir + "/region_" + uvva_cfg["general"]["name"] + "_coverage_hp.fits",
+            region_dir + "/region_" + vasca_cfg["general"]["name"] + "_coverage_hp.fits",
             [hp_vis, hp_exp],
             coord="C",
             column_names=["nr_vis", "exposure"],
@@ -349,7 +349,7 @@ def run(uvva_cfg):
         )
 
     # Run each field in a separate process in parallel
-    with Pool(uvva_cfg["general"]["nr_cpus"]) as pool:
+    with Pool(vasca_cfg["general"]["nr_cpus"]) as pool:
         pool_return = pool.map(run_field, list(rg.fields.values()))
     pool.join()
 
@@ -361,16 +361,16 @@ def run(uvva_cfg):
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("ta_sources_lc")
 
-    if uvva_cfg["general"]["save_dets"] == "selected":
+    if vasca_cfg["general"]["save_dets"] == "selected":
         rg.add_table_from_fields("tt_detections", only_selected=True)
-    elif uvva_cfg["general"]["save_dets"] == "all":
+    elif vasca_cfg["general"]["save_dets"] == "all":
         rg.add_table_from_fields("tt_detections", only_selected=False)
     else:
         logger.info("Not saving detection table into region")
 
     # Write out regions
     rg.write_to_fits(
-        file_name=region_dir + "/region_" + uvva_cfg["general"]["name"] + ".fits"
+        file_name=region_dir + "/region_" + vasca_cfg["general"]["name"] + ".fits"
     )
 
     # Make diagnostics
@@ -378,7 +378,7 @@ def run(uvva_cfg):
     fig_diag_rgsrcs_hist.savefig(
         region_dir
         + "/region_"
-        + uvva_cfg["general"]["name"]
+        + vasca_cfg["general"]["name"]
         + "_diagnostic_srcs_hist.png",
         dpi=150,
     )
@@ -388,32 +388,32 @@ def run(uvva_cfg):
     fig_diag_rgsrcs_scat.savefig(
         region_dir
         + "/region_"
-        + uvva_cfg["general"]["name"]
+        + vasca_cfg["general"]["name"]
         + "_diagnostic_srcs_scat.png",
         dpi=150,
     )
     plt.close(fig_diag_rgsrcs_scat)
 
     # Write used config file
-    yaml_out_name = region_dir + "/uvva_ran_cfg.yaml"
+    yaml_out_name = region_dir + "/vasca_ran_cfg.yaml"
     with open(yaml_out_name, "w") as yaml_file:
-        yaml.dump(uvva_cfg, yaml_file)
+        yaml.dump(vasca_cfg, yaml_file)
 
 
-def run_from_file(file_name=os.getcwd() + "/uvva_cfg.yaml"):
+def run_from_file(file_name=os.getcwd() + "/vasca_cfg.yaml"):
 
     # Argument parsing
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cfg", type=str, default=os.getcwd() + "/uvva_cfg.yaml")
+    parser.add_argument("--cfg", type=str, default=os.getcwd() + "/vasca_cfg.yaml")
     args = parser.parse_args()
 
     print(
         50 * "-"
-        + f"\n Running uvva_pipe.py with configuration file:\n {args.cfg}\n"
+        + f"\n Running vasca_pipe.py with configuration file:\n {args.cfg}\n"
         + 50 * "-"
     )
     set_config(args.cfg)
-    run(uvva_cfg)
+    run(vasca_cfg)
 
 
 if __name__ == "__main__":

@@ -18,25 +18,25 @@ sas_cloud:
         name: gal_visits_list
         description: 'Complete list of all GALEX visits.'
         type: file
-        project: uvvarcat
+        project: vascarcat
         path: /GALEX_visits_list/GALEX_visits_list.fits
     1:
         name: gal_fields
         description: 'Collection of GALEX dataproducts for fileds of interest.'
         type: directory
-        project: uvvarcat
+        project: vascarcat
         path: /GALEX_fields
 lustre:
     0:
         name: foo
         description: bar
         type: file
-        project: uvvarcat
+        project: vascarcat
         path: /path/of/no/return
-uvva:
+vasca:
     0:
         name: test_resources
-        description: 'Data used for UVVA development'
+        description: 'Data used for VASCA development'
         type: directory
-        project: uvva
-        path: '/uvva/test/resources'
+        project: vasca
+        path: '/vasca/test/resources'

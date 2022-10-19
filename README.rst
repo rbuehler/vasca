@@ -1,16 +1,16 @@
 Ultraviolet Variability Analysis
 ================================
 
-The Ultraviolet Variability Analysis (UVVA) is an astronomy pipeline
+The Ultraviolet Variability Analysis (VASCA) is an astronomy pipeline
 for time-variable sources. Its main purpose is to create a source catalog
 based on GALEX data.
 
-.. image:: https://gitlab.desy.de/ultrasat-camera/uc_uvva/badges/main/pipeline.svg
-    :target: https://gitlab.desy.de/ultrasat-camera/uc_uvva/-/commits/main
+.. image:: https://gitlab.desy.de/ultrasat-camera/uc_vasca/badges/main/pipeline.svg
+    :target: https://gitlab.desy.de/ultrasat-camera/uc_vasca/-/commits/main
     :alt: pipeline status
     
-.. image:: https://gitlab.desy.de/ultrasat-camera/uc_uvva/badges/main/coverage.svg
-    :target: https://gitlab.desy.de/ultrasat-camera/uc_uvva/-/commits/main
+.. image:: https://gitlab.desy.de/ultrasat-camera/uc_vasca/badges/main/coverage.svg
+    :target: https://gitlab.desy.de/ultrasat-camera/uc_vasca/-/commits/main
     :alt: coverage report
 
 Installation
@@ -20,20 +20,20 @@ Installation
 
 .. code:: bash
 
-   git clone https://gitlab.desy.de/ultrasat-camera/uc_uvva.git
+   git clone https://gitlab.desy.de/ultrasat-camera/uc_vasca.git
  
-2. Install the ``UVVA`` package:
+2. Install the ``VASCA`` package:
 
 .. code:: bash
 
-  cd ./uc_uvva
+  cd ./uc_vasca
   pip install -e .
 
 3. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
 
 **Prototyping and functional examples**
 
-We use `Jupyter lab <https://github.com/jupyterlab/jupyterlab>`__ for prototyping and for functional examples given in ``uvva/examples``.
+We use `Jupyter lab <https://github.com/jupyterlab/jupyterlab>`__ for prototyping and for functional examples given in ``vasca/examples``.
 Follow these `instructions <https://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html/>`__ to add  a pyenv-generated virtual environment as a Jupyter kernel. Jupyter lab extensions can be used to enable interactive Matoplotlib figures: First install the `ipywidgets <https://github.com/jupyter-widgets/ipywidgets>`__ extension and then the `ipympl <https://github.com/matplotlib/ipympl>`__ extension.
 
 Coding guidelines

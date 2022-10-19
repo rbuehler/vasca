@@ -5,7 +5,7 @@ Created on Thu Oct  6 13:46:31 2022
 
 @author: buehler
 
-Defines the tables used by uvva.tables.TableCollection 
+Defines the tables used by vasca.tables.TableCollection 
 """
 
 import numpy as np
@@ -25,7 +25,7 @@ base_field = {
             "Center Dec of the field (J2000)",
             "Telescope of the observation (e.g. GALEX)",
             "Filter of the observation (e.g. NUV)",
-            "Selection of rows for UVVA analysis.",
+            "Selection of rows for VASCA analysis.",
         ],
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
     },
@@ -38,7 +38,7 @@ base_field = {
             "Visit ID nr.",
             "Visit exposure start date and time in MJD",
             "Visit exposure time in s",
-            "Selection of rows for UVVA analysis.",
+            "Selection of rows for VASCA analysis.",
         ],
         "meta": {"INFO": "Visit information table"},
     },
@@ -90,7 +90,7 @@ base_field = {
             "Visit detection magnitude",
             "Visit detection magnitude error",
             "Signal to noise",
-            "Selection of rows for UVVA analysis.",
+            "Selection of rows for VASCA analysis.",
         ],
         "meta": {"INFO": "Visit detections table"},
     },
@@ -116,7 +116,7 @@ base_field = {
             "Reference source magnitude",
             "Reference source magnitude error",
             "Signal to noise",
-            "Selection of rows for UVVA analysis.",
+            "Selection of rows for VASCA analysis.",
         ],
         "meta": {"INFO": "Reference detections table"},
     },
@@ -163,7 +163,7 @@ base_field = {
             "Maximum magnitude flux variation compared to average",
             "Maximum magnitude flux variation compared to average divided by magnitude error",
             "Nr of upper limits magnitude greater than mean magnitude divided by srt(nr_det)",
-            "Selection of rows for UVVA analysis.",
+            "Selection of rows for VASCA analysis.",
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
@@ -456,4 +456,4 @@ region = {
 # global, combined dictionary
 class_keys = ["base_field", "galex_field", "region"]
 class_dicts = [base_field, galex_field, region]
-dd_uvva_tables = {c_key: c_dict for c_key, c_dict in zip(class_keys, class_dicts)}
+dd_vasca_tables = {c_key: c_dict for c_key, c_dict in zip(class_keys, class_dicts)}

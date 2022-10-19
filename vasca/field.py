@@ -16,9 +16,9 @@ from loguru import logger
 from sklearn.cluster import MeanShift, estimate_bandwidth
 from collections import OrderedDict
 
-from uvva.resource_manager import ResourceManager
-from uvva.tables import TableCollection
-from uvva.utils import get_time_delta, get_time_delta_mean, sky_sep2d, table_to_array
+from vasca.resource_manager import ResourceManager
+from vasca.tables import TableCollection
+from vasca.utils import get_time_delta, get_time_delta_mean, sky_sep2d, table_to_array
 
 # global paths
 # path to the dir. of this file
@@ -31,7 +31,7 @@ conf.replace_warnings = ["always"]
 
 class BaseField(TableCollection):
     """
-    :class: `~uvva.field.BaseField` provides class that defines the basic data structure
+    :class: `~vasca.field.BaseField` provides class that defines the basic data structure
     for field-based analysis. One *field* is generally the area in the sky covered
     by a telescope in one observation. A field is generally composed of several
     *visits* of the telescope at different times.
@@ -39,7 +39,7 @@ class BaseField(TableCollection):
     This class contains the main functionality for source
     detection and drawing. To be inherited by field analysis classes,
     which can then be tailored to the needs of the observatories supported
-    by the UVVA pipeline.
+    by the VASCA pipeline.
     """
 
     def __init__(self):
@@ -48,7 +48,7 @@ class BaseField(TableCollection):
         Notes
         -----
         Many class attributes are stored in astropy.table.Tables_. To see a
-        description of each of their columns run :meth: `~uvva.field.BaseField.info`.
+        description of each of their columns run :meth: `~vasca.field.BaseField.info`.
 
         .. _astropy.table.Tables: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
 
@@ -629,7 +629,7 @@ class BaseField(TableCollection):
         Raises
         ------
         AssertionError
-            If :attr: `~uvva.field.BaseField.tt_field` has not exactly one row
+            If :attr: `~vasca.field.BaseField.tt_field` has not exactly one row
 
         """
         # Check data availability
@@ -722,7 +722,7 @@ class GALEXField(BaseField):
     def __init__(self, obs_id, obs_filter=None, data_path=None, visits_data_path=None):
         """
         Initializes a new GALEXField instance with
-        skeleton UVVA data structure.
+        skeleton VASCA data structure.
 
         Parameters
         ----------
@@ -746,9 +746,9 @@ class GALEXField(BaseField):
             Path to root location of cloud-synced data associated with the GALEX field
         visits_data_path : str
             Path to a pre-downloaded table holding the complete list of GALEX visits
-        uvva_file_prefix : str
-            File name prefix following UVVA naming convention:
-            'UVVA_<observatory>_<filed_id>_<obs_filter>'
+        vasca_file_prefix : str
+            File name prefix following VASCA naming convention:
+            'VASCA_<observatory>_<filed_id>_<obs_filter>'
         """
 
         # check obs_filter name, default is "NUV"
@@ -792,21 +792,21 @@ class GALEXField(BaseField):
                 if visits_data_path is None:
                     self.visits_data_path = rm.get_path("gal_visits_list", "sas_cloud")
 
-        # Create and check existence of directory that holds field data and UVVA outputs
+        # Create and check existence of directory that holds field data and VASCA outputs
         if not os.path.isdir(self.data_path):
             os.makedirs(self.data_path)
 
-        # File name prefix for UVVA/GALEXField outputs
-        self.uvva_file_prefix = f"UVVA_GALEX_{obs_id}_{obs_filter}"
+        # File name prefix for VASCA/GALEXField outputs
+        self.vasca_file_prefix = f"VASCA_GALEX_{obs_id}_{obs_filter}"
 
         logger.debug(f"Field data path set to: '{self.data_path}'")
         logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
 
     @classmethod
-    def from_UVVA(cls, obs_id, obs_filter="NUV", fits_path=None, **kwargs):
+    def from_VASCA(cls, obs_id, obs_filter="NUV", fits_path=None, **kwargs):
         """
         Constructor to initialize a GALEXField instance
-        from a UVVA-generated FITS file
+        from a VASCA-generated FITS file
 
         Parameters
         ----------
@@ -824,21 +824,21 @@ class GALEXField(BaseField):
 
         Returns
         -------
-        uvva.field.GALEXField
+        vasca.field.GALEXField
         """
         # Bootstrap the initialization procedure using the base class
         gf = cls(obs_id, obs_filter, **kwargs)  # new GALEXField instance
 
         if fits_path is None:
             # Construct the file name from field ID and filter
-            fits_path = f"{gf.data_path}/{gf.uvva_file_prefix}_field_data.fits"
+            fits_path = f"{gf.data_path}/{gf.vasca_file_prefix}_field_data.fits"
         # Check if file exists
         if not os.path.isfile(fits_path):
             raise FileNotFoundError(
-                "Wrong file or file path to UVVA data "
+                "Wrong file or file path to VASCA data "
                 f"for GALEX field '{obs_id}' with obs_filter '{obs_filter}'."
             )
-        # Reads the UVVA-generated field data
+        # Reads the VASCA-generated field data
         gf.load_from_fits(fits_path)
         # Sets convenience class attributes
         gf.set_field_attr()
@@ -857,7 +857,7 @@ class GALEXField(BaseField):
             )
 
         logger.info(
-            f"Loaded UVVA data for GALEX field '{obs_id}' with obs_filter '{obs_filter}'."
+            f"Loaded VASCA data for GALEX field '{obs_id}' with obs_filter '{obs_filter}'."
         )
 
         return gf
@@ -877,7 +877,7 @@ class GALEXField(BaseField):
         fresh from the MAST archive (refresh=True) or if available
         from cached raw data (refresh=False).
 
-        The procedure uses uvva.resource_manager.ResourceManager
+        The procedure uses vasca.resource_manager.ResourceManager
         to handle file locations.
 
         Parameters
@@ -896,14 +896,14 @@ class GALEXField(BaseField):
             Selects if data products shall be loaded. Othervise only field and
             visit information is loaded.
         write: bool, optional
-            If load_products is enabled, stores the data as UVVA tables in the cloud
+            If load_products is enabled, stores the data as VASCA tables in the cloud
             for faster loading in the future. Default is True.
         **kwargs
             All additional keyword arguments are passed to `~GALEXField.__init__()`
 
         Returns
         -------
-        uvva.field.GALEXField
+        vasca.field.GALEXField
 
         """
         # Checks
@@ -926,7 +926,7 @@ class GALEXField(BaseField):
             gf._load_galex_archive_products(obs_id, obs_filter, refresh=refresh)
             meta_only = "."
             if write:
-                fits_name = f"{gf.data_path}/{gf.uvva_file_prefix}_field_data.fits"
+                fits_name = f"{gf.data_path}/{gf.vasca_file_prefix}_field_data.fits"
                 gf.write_to_fits(fits_name)
         else:
             meta_only = ", metadata-only."
@@ -966,9 +966,9 @@ class GALEXField(BaseField):
             MAST_LOCAL: Dafault. Builds a new GALEXfield instance based on MAST
             archival data cached on local disc. If no data is found,
             the fallback is MAST_REMOTE.
-            UVVA: Builds a new GALEXField based on a UVVA-generated field data file.
-            AUTO: Attempts to load field data by using UVVA as method and
-            falls back to MAST_LOCAL if no UVVA file is found on disc.
+            VASCA: Builds a new GALEXField based on a UVVA-generated field data file.
+            AUTO: Attempts to load field data by using VASCA as method and
+            falls back to MAST_LOCAL if no VASCA file is found on disc.
 
             The default directory where field data availability is checked is
             defined by the "data_path" attribute of GALEXField and can be passed
@@ -978,7 +978,7 @@ class GALEXField(BaseField):
             full set of data products (default) or just containing metadata (False).
         field_kwargs
             All additional keyword arguments are passed to the load methods
-            `~GALEXField.from_MAST()` and `~GALEXField.from_UVVA()`,
+            `~GALEXField.from_MAST()` and `~GALEXField.from_VASCA()`,
             as well as to `~GALEXField.__init__()`.
 
         Raises
@@ -987,12 +987,12 @@ class GALEXField(BaseField):
             If the specified load method is not a string.
         ValueError
             If the specified load method is not one of
-            '["mast_remote", "mast_local", "uvva", "auto"]'. String matching is
+            '["mast_remote", "mast_local", "vasca", "auto"]'. String matching is
             case insensitive.
 
         Returns
         -------
-        uvva.field.GALEXField
+        vasca.field.GALEXField
 
         """
         logger.info(f"Loading data for field '{field_id}' with method '{method}'.")
@@ -1006,7 +1006,7 @@ class GALEXField(BaseField):
             )
 
         method = method.casefold()  # ensures all-lower-case string
-        method_spec = ["mast_remote", "mast_local", "uvva", "auto"]
+        method_spec = ["mast_remote", "mast_local", "vasca", "auto"]
         if method not in method_spec:
             raise ValueError(
                 "Expected load method specification from {method_spec}, "
@@ -1028,12 +1028,12 @@ class GALEXField(BaseField):
                 load_products=load_products,
                 **field_kwargs,
             )
-        elif method == "uvva":
+        elif method == "vasca":
             # removes unused options
             field_kwargs.pop("refresh", None)
             field_kwargs.pop("write", None)
 
-            gf = GALEXField.from_UVVA(
+            gf = GALEXField.from_VASCA(
                 obs_id=field_id,
                 obs_filter=obs_filter,
                 **field_kwargs,
@@ -1041,8 +1041,8 @@ class GALEXField(BaseField):
         elif method == "auto":
             pass
             # TODO: Lookahead via rm to check data availability.
-            # Then "UVVA" is preferred for performance reasons.
-            # Fallback to "MAST" & refresh=True if "UVVA" fails for some reason
+            # Then "VASCA" is preferred for performance reasons.
+            # Fallback to "MAST" & refresh=True if "VASCA" fails for some reason
             # (e.g. not complete set of tables stored in the fits file).
 
         return gf
@@ -1084,7 +1084,7 @@ class GALEXField(BaseField):
             'NUV' -> 175-280 nm  (default)
         col_names : dict
             Dictionary with keys of MAST column names to load, and values the
-            corresponding UVVA table column names. Default in None.
+            corresponding VASCA table column names. Default in None.
         refresh : bool, optional
             Selects if data is freshly loaded from MAST (refresh=True) or
             from cashed data on disc (refresh=False, default).
@@ -1094,7 +1094,7 @@ class GALEXField(BaseField):
         # Uses default columns if not otherwise specified
         # Already sets the order in which columns are added later on
         if col_names is None:
-            # values represent variables in UVVA, keys the variable names in the MAST database
+            # values represent variables in VASCA, keys the variable names in the MAST database
             col_names = {
                 "obs_id": "field_id",
                 "target_name": "name",
@@ -1150,7 +1150,7 @@ class GALEXField(BaseField):
                 "obs_id",
                 tt_coadd_select["obs_id"].astype(np.dtype("S64")),
             )
-        # Convert into dictionay with correct uvva column names
+        # Convert into dictionay with correct vasca column names
         dd_coadd_select = {}
         for col in mast_col_names:
             dd_coadd_select[col_names[col]] = tt_coadd_select[col].data
@@ -1172,7 +1172,7 @@ class GALEXField(BaseField):
             'NUV' -> 175-280 nm  (default)
         col_names : dict
             Dictionary with keys of MAST column names to load, and values the
-            corresponding UVVA table column names. Default in None.
+            corresponding VASCA table column names. Default in None.
         """
 
         # Uses default columns if not otherwise specified
@@ -1186,7 +1186,7 @@ class GALEXField(BaseField):
                 "RATileCenter",
                 "DECTileCenter",
             ]
-            uvva_col_names = [
+            vasca_col_names = [
                 "vis_id",
                 "time_bin_start",
                 "time_bin_size",
@@ -1194,7 +1194,7 @@ class GALEXField(BaseField):
                 "ra",
                 "dec",
             ]
-            col_names = dict(zip(mast_col_names, uvva_col_names))
+            col_names = dict(zip(mast_col_names, vasca_col_names))
         elif not isinstance(col_names, dict):
             raise TypeError(
                 "Expected list type for argument 'col_names', "
@@ -1229,7 +1229,7 @@ class GALEXField(BaseField):
                 }
             )
 
-        # Convert into dictionay with correct uvva column names
+        # Convert into dictionay with correct vasca column names
         dd_visits_raw_select = {}
         for col in mast_col_names:
             dd_visits_raw_select[col_names[col]] = tt_visits_raw_select[col].data
@@ -1471,7 +1471,7 @@ class GALEXField(BaseField):
                 "E_bv",
             ]
 
-            uvva_col_names = [
+            vasca_col_names = [
                 "vis_id",
                 "src_id",
                 "det_id",
@@ -1492,7 +1492,7 @@ class GALEXField(BaseField):
                 "E_bv",
             ]
 
-            col_names = dict(zip(mast_col_names, uvva_col_names))
+            col_names = dict(zip(mast_col_names, vasca_col_names))
         elif not isinstance(col_names, dict):
             raise TypeError(
                 "Expected dict type for argument 'col_names', "
@@ -1502,7 +1502,7 @@ class GALEXField(BaseField):
 
         # set data as class attributes
 
-        # Convert into dictionay with correct uvva column names
+        # Convert into dictionay with correct vasca column names
         dd_detections_raw = {}
         for col in mast_col_names:
             dd_detections_raw[col_names[col]] = tt_detections_raw[col].data

@@ -12,9 +12,9 @@ from astropy.coordinates import SkyCoord
 from astropy.time import Time
 from loguru import logger
 
-from uvva import uvva_pipe
-from uvva.field import BaseField, GALEXField
-from uvva.resource_manager import ResourceManager
+from vasca import uvva_pipe
+from vasca.field import BaseField, GALEXField
+from vasca.resource_manager import ResourceManager
 
 
 @pytest.fixture
@@ -27,10 +27,10 @@ def test_paths(tmp_path):
 
     # cached test resources
     with ResourceManager() as rm:
-        paths["resource_root"] = rm.get_path("test_resources", "uvva")
+        paths["resource_root"] = rm.get_path("test_resources", "vasca")
 
     paths["galex_visits"] = f"{paths['resource_root']}/GALEX_visits_list.fits"
-    paths["pipeline_cfg"] = f"{paths['resource_root']}/uvva_test_cfg.yaml"
+    paths["pipeline_cfg"] = f"{paths['resource_root']}/vasca_test_cfg.yaml"
 
     # temporary directory
     d = tmp_path
@@ -157,8 +157,8 @@ def test_base_field_io_alt(test_paths, new_field):
     d = f"{test_paths['temp_path']}/fits_out_dir"
     os.mkdir(d)
     # get path to the fits file
-    file_path = f"{d}/uvva_tables_output.fits"
-    # writ out uvva field file
+    file_path = f"{d}/vasca_tables_output.fits"
+    # writ out vasca field file
     new_field.info()  # debugging
     new_field.write_to_fits(file_path)
     # test if a fits file exists
@@ -167,26 +167,26 @@ def test_base_field_io_alt(test_paths, new_field):
 
 def test_pipeline(test_paths):
     # get pipeline config
-    uvva_cfg = uvva_pipe.set_config(test_paths["pipeline_cfg"])
+    vasca_cfg = uvva_pipe.set_config(test_paths["pipeline_cfg"])
 
     # temporary output directory
     pipeline_out = f"{test_paths['temp_path']}/pipe_out"
     os.mkdir(pipeline_out)
 
     # edit paths
-    uvva_cfg["general"]["out_dir_base"] = pipeline_out
-    uvva_cfg["ressources"]["field_kwargs"]["data_path"] = test_paths["resource_root"]
-    uvva_cfg["ressources"]["field_kwargs"]["visits_data_path"] = test_paths[
+    vasca_cfg["general"]["out_dir_base"] = pipeline_out
+    vasca_cfg["ressources"]["field_kwargs"]["data_path"] = test_paths["resource_root"]
+    vasca_cfg["ressources"]["field_kwargs"]["visits_data_path"] = test_paths[
         "galex_visits"
     ]
 
     # run pipeline
-    uvva_pipe.run(uvva_cfg)
+    vasca_pipe.run(uvva_cfg)
 
 
 def main():
     # logging
-    logger.enable("uvva")
+    logger.enable("vasca")
     logger.level("DEBUG")
 
     bf = BaseField()
