@@ -26,7 +26,7 @@ Installation
 
 .. code:: bash
 
-  cd ./uc_vasca
+  cd ./vasca
   pip install -e .
 
 3. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
