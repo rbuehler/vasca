@@ -4,7 +4,7 @@ requires = ["setuptools", "wheel"]  # PEP 508 specifications.
 
 [project]
 # Project metadata, following PEP 621 specifications.
-name = "uvva"
+name = "vasca"
 version = "0.0.1"
 description = "Ultraviolet Variability Analysis is an astronomy pipeline for time-variable sources."
 readme = "README.rst"
@@ -38,17 +38,17 @@ dependencies = [
 [project.urls]
 homepage = "https://tbd.desy.de"
 documentation = "https://tbd.desy.de"
-repository = "https://gitlab.desy.de/ultrasat-camera/uc_uvva"
+repository = "https://gitlab.desy.de/ultrasat-camera/uc_vasca"
 changelog = "https://tbd.desy.de"
 
 [tool.setuptools]
-packages = ["uvva"]
+packages = ["vasca"]
 
 [tool.pytest.ini_options]
 # Pytest settings (https://docs.pytest.org/en/6.2.x/reference.html#configuration-options)
 minversion = "6.0"
 addopts = "-v"
-testpaths = ["uvva/test"]
+testpaths = ["vasca/test"]
 # log_file = "logs/pytest-logs.txt"
 # log_file_level = "INFO"
 log_cli = true

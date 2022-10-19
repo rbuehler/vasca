@@ -11,7 +11,7 @@ from astropy.wcs import wcs
 from astropy.nddata import bitmask
 from loguru import logger
 
-from uvva.tables_dict import dd_uvva_tables
+from vasca.tables_dict import dd_uvva_tables
 
 # import warnings
 # from astropy.io.fits.verify import VerifyWarning
@@ -60,7 +60,7 @@ class TableCollection(object):
             logger.error(f"Passed data format not supported: {type(dd_data)}")
 
         # Takes pre-defined template dictionary
-        templates = dd_uvva_tables
+        templates = dd_vasca_tables
 
         # Parse template identifier keys
         if template_name is not None:
@@ -106,7 +106,7 @@ class TableCollection(object):
 
     def add_table(self, data, template_name):
         """
-        Add a UVVA table to the field.
+        Add a VASCA table to the field.
 
         Parameters
         ----------

@@ -4,9 +4,9 @@ comment : "Test configuration file"
 
 general:
     name          : "TDS_COSMOS_21-22"
-    out_dir_base  : "./uvva/test/out_pipe"                               # If "CWD" current work directory will be used
+    out_dir_base  : "./vasca/test/out_pipe"                               # If "CWD" current work directory will be used
     log_level     : "DEBUG"                                    #["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-    log_file      : "uvva.log"                                 # Will be written into "out_dir"
+    log_file      : "vasca.log"                                 # Will be written into "out_dir"
     hd_img_out    : false
     hp_coverage_out : false                                   # Write out visti& exposure of fields in a separate fits file
     nr_cpus       : 2
@@ -63,7 +63,7 @@ selection:
             ul_weight     : [1.5,.inf]
 
 ressources:                      
-    load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
+    load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null

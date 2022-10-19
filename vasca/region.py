@@ -8,16 +8,16 @@ import healpy as hpy
 from astropy.table import Column, vstack
 from astropy import units as uu
 
-from uvva import tables
-from uvva.field import GALEXField
-from uvva.tables import TableCollection
-from uvva.tables_dict import dd_uvva_tables
+from vasca import tables
+from vasca.field import GALEXField
+from vasca.tables import TableCollection
+from vasca.tables_dict import dd_uvva_tables
 
 
 class Region(TableCollection):
     """
-    :class: `~uvva.Region` defines a region in the sky as a
-    list of uvva.field objects. It provides functionality to
+    :class: `~vasca.Region` defines a region in the sky as a
+    list of vasca.field objects. It provides functionality to
     loop over fields to derive source lists, etc.
     """
 
@@ -27,7 +27,7 @@ class Region(TableCollection):
         Notes
         -----
         Many class attributes are stored in astropy.table.Tables_. To see a
-        description of each of their columns run :meth: `~uvva.Regions.info`.
+        description of each of their columns run :meth: `~vasca.Regions.info`.
 
         .. _astropy.table.Tables: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
 
@@ -45,14 +45,14 @@ class Region(TableCollection):
         self.fields = {}  # dictionary of field IDs and objects
 
     @classmethod
-    def load_from_config(cls, uvva_cfg):
+    def load_from_config(cls, vasca_cfg):
         """
         Loads region from configuration from dictionary
 
         Parameters
         ----------
-        uvva_cfg : dict
-            Dictionary with region parameters derived from the uvva pipeline
+        vasca_cfg : dict
+            Dictionary with region parameters derived from the vasca pipeline
             YAML configuration file.
 
         Returns
@@ -65,17 +65,17 @@ class Region(TableCollection):
 
         logger.debug("Loading fields from config file")
 
-        if uvva_cfg["observations"]["observatory"] == "GALEX":
+        if vasca_cfg["observations"]["observatory"] == "GALEX":
 
             # Loop over fields and store info
-            for field_id in uvva_cfg["observations"]["field_ids"]:
+            for field_id in vasca_cfg["observations"]["field_ids"]:
 
                 gf = GALEXField.load(
                     field_id,
-                    obs_filter=uvva_cfg["observations"]["obs_filter"],
-                    method=uvva_cfg["ressources"]["load_method"],
-                    load_products=uvva_cfg["ressources"]["load_products"],
-                    **uvva_cfg["ressources"]["field_kwargs"],
+                    obs_filter=vasca_cfg["observations"]["obs_filter"],
+                    method=vasca_cfg["ressources"]["load_method"],
+                    load_products=vasca_cfg["ressources"]["load_products"],
+                    **vasca_cfg["ressources"]["field_kwargs"],
                 )
                 field_info = dict(gf.tt_field[0])
                 field_info["fov_diam"] = 1.10
@@ -85,14 +85,14 @@ class Region(TableCollection):
                 field_info["time_stop"] = gf.time_stop.mjd
                 rg.tt_fields.add_row(field_info)
 
-                if uvva_cfg["ressources"]["load_products"]:
+                if vasca_cfg["ressources"]["load_products"]:
                     rg.fields[field_id] = gf
                 else:
                     rg.fields[field_id] = None
         else:
             logger.waring(
                 "Selected observatory `"
-                + uvva_cfg["observations"]["observatory"]
+                + vasca_cfg["observations"]["observatory"]
                 + "` not supported"
             )
 
@@ -135,7 +135,7 @@ class Region(TableCollection):
             tt_sel["field_id"] = np.ones(len(tt_sel), dtype="int64") * field_id
             ll_tt.append(tt_sel)
 
-        colnames = dd_uvva_tables["region"][table_name]["names"]
+        colnames = dd_vasca_tables["region"][table_name]["names"]
 
         # Create empty data structure and then fill it with field tables
         dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
