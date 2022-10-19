@@ -11,6 +11,7 @@ from astropy import units as uu
 from uvva import tables
 from uvva.field import GALEXField
 from uvva.tables import TableCollection
+from uvva.tables_dict import dd_uvva_tables
 
 
 class Region(TableCollection):
@@ -102,6 +103,7 @@ class Region(TableCollection):
         Add tables from the fields to the region by stacking them,
         adding the field_id column.
 
+
         Parameters
         ----------
         table_name : str
@@ -116,52 +118,38 @@ class Region(TableCollection):
 
         """
 
-        ll_tt = []
+        logger.debug(f"Adding table from fields: {table_name}")
+        if table_name in self._table_names:
+            logger.warning(f"Table '{table_name}' already exists, overwriting")
 
+        # Loop over fields and add field_id column and field id table
+        ll_tt = []  # List of "table_name" tables for all fields
         for field_id, field in self.fields.items():
-
             tt = field.__dict__[table_name]
-
-            field_id_col = np.ones(len(tt), dtype="int64") * field_id
-            col = Column(
-                data=field_id_col,
-                name="field_id",
-                dtype="int64",
-                unit="1",
-                description="Field ID nr.",
-            )
-            tt.add_column(col)
 
             # Apply row selection
             sel = np.ones(len(tt), dtype="bool")
             if only_selected:
                 sel = tt["sel"]
+            tt_sel = tt[sel]
+            tt_sel["field_id"] = np.ones(len(tt_sel), dtype="int64") * field_id
+            ll_tt.append(tt_sel)
 
-            ll_tt.append(tt[sel])
+        colnames = dd_uvva_tables["region"][table_name]["names"]
 
-        # Add stacked table, for tables with vecotr entries this needs to be done by hand
-        if table_name.startswith("tt_"):
-            tt_data = vstack(ll_tt)
-            if table_name in self._table_names:
-                logger.warning(f"Table '{table_name}' already exists, overwriting")
-            self._table_names.append(table_name)
-            setattr(self, table_name, tt_data)
-        elif table_name.startswith("ta_"):
-            colnames = ll_tt[0].colnames
-
-            # Create empty data structure
-            dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
-
-            for tt in ll_tt:
-                for colname in colnames:
-                    dd_data[colname].extend(tt[colname].tolist())
-
-            # For vector columns convert to numpy arrays of type object
+        # Create empty data structure and then fill it with field tables
+        dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
+        for tt in ll_tt:
             for colname in colnames:
-                if len(np.array(dd_data[colname], dtype=object).shape) > 1:
-                    dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
+                dd_data[colname].extend(tt[colname].tolist())
 
-            self.add_table(dd_data, "region:" + table_name, add_sel_col=False)
+        # For vector columns convert to numpy arrays of type object_
+        # This is needed for correct writing to fits in Astropy v5.0.4
+        for colname in colnames:
+            if len(np.array(dd_data[colname], dtype=object).shape) > 1:
+                dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
+
+        self.add_table(dd_data, "region:" + table_name)
 
     def add_coverage_hp(self, nside=4096):
 
@@ -187,11 +175,10 @@ class Region(TableCollection):
 
         # Write to table
         sel_pix = hp_vis > 0
-        self.add_table(
-            [pix_nrs[sel_pix], hp_vis[sel_pix], hp_exp[sel_pix]],
-            "region:tt_coverage_hp",
-            add_sel_col=False,
-        )
+        keys_data = ["pix_id", "nr_vis", "exp"]
+        ll_data = [pix_nrs[sel_pix], hp_vis[sel_pix], hp_exp[sel_pix]]
+        dd_data = dict(zip(keys_data, ll_data))
+        self.add_table(dd_data, "region:tt_coverage_hp")
         self.tt_coverage_hp.meta["NSIDE"] = nside
 
         hp_exp[hp_exp < 1e-6] = hpy.UNSEEN
