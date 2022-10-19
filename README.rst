@@ -1,7 +1,7 @@
-Ultraviolet Variability Analysis
+Variable Source Cluster Analysis
 ================================
 
-The Ultraviolet Variability Analysis (VASCA) is an astronomy pipeline
+The VAriable Source Cluster Analysis (VASCA) is an astronomy pipeline
 for time-variable sources. Its main purpose is to create a source catalog
 based on GALEX data.
 
@@ -20,7 +20,7 @@ Installation
 
 .. code:: bash
 
-   git clone https://gitlab.desy.de/ultrasat-camera/uc_vasca.git
+   git clone git@gitlab.desy.de:ultrasat-camera/vasca.git
  
 2. Install the ``VASCA`` package:
 
