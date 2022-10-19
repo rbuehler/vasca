@@ -3,8 +3,8 @@ standalone-install-test:
   coverage: '/^TOTAL.*\s+(\d+\%)$/'
   script:
     - pip install .
-    - echo -e "UC_SAS_UVVARCAT='/dev/null'\nUC_LUSTRE_UVVARCAT='/dev/null'\nUC_UVVA_TEST_RESOURCES='.'"  > .env
-    - pytest -v --cov=uvva
+    - echo -e "UC_SAS_VASCARCAT='/dev/null'\nUC_LUSTRE_VASCARCAT='/dev/null'\nUC_VASCA_TEST_RESOURCES='.'"  > .env
+    - pytest -v --cov=vasca
     - coverage report
     - coverage xml
   artifacts:
