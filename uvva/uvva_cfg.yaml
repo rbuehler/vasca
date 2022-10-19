@@ -5,7 +5,7 @@ comment : "Example configuration file"
 general:
     name            : "TDS_COSMOS"
     out_dir_base    : "./examples/uvva_pipeline"        # If "CWD" current work directory will be used.
-    log_level       : "INFO"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "uvva.log"                        # Will be written into "out_dir"
     hd_img_out      : true                              # Write out high definition images
     hp_coverage_out : false                             # Write out visti& exposure of fields in a separate fits file
@@ -55,7 +55,7 @@ selection:
             ul_weight    : [2.0,.inf]
 
 ressources:                      
-    load_method      : "UVVA"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
+    load_method      : "MAST_REMOTE"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null
@@ -67,7 +67,7 @@ observations:
     field_ids :
         - 6388191295067652096
         - 6381787756527353856
-        - 2604912508670050304
+        #- 2604912508670050304
         # - 2604982877414227968
         # - 2605053246158405632
         # - 2605123614902583296

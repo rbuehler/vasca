@@ -93,21 +93,25 @@ def test_galex_field_from_MAST(galex_test_field_from_MAST):
 
 @pytest.fixture
 def new_field():
-    field_data = [
-        2605053246158405632,
-        "PS_COSMOS_MOS23",
-        151.00379402274802,
-        2.20171000810559,
-        "GALEX",
-        "NUV",
-    ]
-    visits_data = [
-        [2605053108543291392, 54510.66210648148, 1705.0],
-        [2605053108576845824, 54520.248125, 837.05],
-    ]
+
+    field_data = {
+        "field_id": [2605053246158405632],
+        "name": ["PS_COSMOS_MOS23"],
+        "ra": [151.00379402274802],
+        "dec": [2.20171000810559],
+        "observatory": ["GALEX"],
+        "obs_filter": ["NUV"],
+    }
+
+    visits_data = {
+        "vis_id": [2605053108543291392, 2605053108576845824],
+        "time_bin_start": [54510.66210648148, 54520.248125],
+        "time_bin_size": [1705.0, 837.05],
+    }
+
     bf = BaseField()
-    bf.add_table(np.asarray(field_data), "base_field:tt_field")
-    bf.add_table(np.asarray(visits_data), "base_field:tt_visits")
+    bf.add_table(field_data, "base_field:tt_field")
+    bf.add_table(visits_data, "base_field:tt_visits")
     return bf
 
 
