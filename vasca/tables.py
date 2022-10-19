@@ -11,7 +11,7 @@ from astropy.wcs import wcs
 from astropy.nddata import bitmask
 from loguru import logger
 
-from vasca.tables_dict import dd_uvva_tables
+from vasca.tables_dict import dd_vasca_tables
 
 # import warnings
 # from astropy.io.fits.verify import VerifyWarning

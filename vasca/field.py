@@ -966,7 +966,7 @@ class GALEXField(BaseField):
             MAST_LOCAL: Dafault. Builds a new GALEXfield instance based on MAST
             archival data cached on local disc. If no data is found,
             the fallback is MAST_REMOTE.
-            VASCA: Builds a new GALEXField based on a UVVA-generated field data file.
+            VASCA: Builds a new GALEXField based on a VASCA-generated field data file.
             AUTO: Attempts to load field data by using VASCA as method and
             falls back to MAST_LOCAL if no VASCA file is found on disc.
 

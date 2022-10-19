@@ -47,7 +47,7 @@ def set_config(cfg_file):
     if vasca_cfg["general"]["out_dir_base"] == "CWD":
         vasca_cfg["general"]["out_dir_base"] = os.getcwd()
 
-    # Store vasca_cfg file name in uvva_cfg dictionary
+    # Store vasca_cfg file name in vasca_cfg dictionary
     vasca_cfg["cfg_file"] = cfg_file
 
     return vasca_cfg
@@ -159,7 +159,7 @@ def set_logger():
 
     """
     log_dir = (
-        vasca_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
+        vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"] + "/"
     )
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -230,7 +230,7 @@ def run_field(field):
 
     # Run clustering
     field.cluster_meanshift(
-        vasca_cfg["cluster"]["add_upper_limits"], **uvva_cfg["cluster"]["meanshift"]
+        vasca_cfg["cluster"]["add_upper_limits"], **vasca_cfg["cluster"]["meanshift"]
     )
 
     # Source selection
@@ -331,7 +331,7 @@ def run(vasca_cfg):
 
     # Setup output directors
     region_dir = (
-        vasca_cfg["general"]["out_dir_base"] + "/" + uvva_cfg["general"]["name"] + "/"
+        vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"] + "/"
     )
 
     # Write our helpix coverage maps

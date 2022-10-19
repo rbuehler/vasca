@@ -12,7 +12,7 @@ from astropy.coordinates import SkyCoord
 from astropy.time import Time
 from loguru import logger
 
-from vasca import uvva_pipe
+from vasca import vasca_pipe
 from vasca.field import BaseField, GALEXField
 from vasca.resource_manager import ResourceManager
 
@@ -167,7 +167,7 @@ def test_base_field_io_alt(test_paths, new_field):
 
 def test_pipeline(test_paths):
     # get pipeline config
-    vasca_cfg = uvva_pipe.set_config(test_paths["pipeline_cfg"])
+    vasca_cfg = vasca_pipe.set_config(test_paths["pipeline_cfg"])
 
     # temporary output directory
     pipeline_out = f"{test_paths['temp_path']}/pipe_out"
@@ -181,7 +181,7 @@ def test_pipeline(test_paths):
     ]
 
     # run pipeline
-    vasca_pipe.run(uvva_cfg)
+    vasca_pipe.run(vasca_cfg)
 
 
 def main():
