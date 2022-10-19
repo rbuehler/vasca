@@ -1,5 +1,5 @@
 # To run this analysis example type the following from this directory: 
-# 'vasca_pipe --cfg uvva_pipe_example_cfg.yaml'
+# 'vasca_pipe --cfg vasca_pipe_example_cfg.yaml'
 #
 # You can further analyse the results using the notebook
 # 'vasca_pipe_example_analysis.ipynb'
@@ -62,7 +62,7 @@ selection:
             ul_weight    : [2.0,.inf]
 
 ressources:                      
-    load_method      : "VASCA"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "UVVA", "AUTO"]
+    load_method      : "VASCA"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null

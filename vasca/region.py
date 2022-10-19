@@ -11,7 +11,7 @@ from astropy import units as uu
 from vasca import tables
 from vasca.field import GALEXField
 from vasca.tables import TableCollection
-from vasca.tables_dict import dd_uvva_tables
+from vasca.tables_dict import dd_vasca_tables
 
 
 class Region(TableCollection):
