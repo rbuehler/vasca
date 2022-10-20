@@ -1,0 +1,740 @@
+SIMPLE  =                    T / Standard FITS Format                           BITPIX  =                    8 / Character data                                 NAXIS   =                    0 / No Image --- just extension(s)                 EXTEND  =                    T / There are standard extensions                  ORIGIN  = 'xml2fits_v1.95'     / Converted from XML-Astrores to FITS                                     e-mail: question@simbad.u-strasbg.fr                   COMMENT  ARG='-rm'                                                              LONGSTRN= 'OGIP 1.0'           / Long string convention (&/CONTINUE) may be usedDATE    = '2022-03-29'         / Written on 2022-03-29:09:12:56 (GMT)                                        by: www-data@vizier.astro.unistra.fr                        **********************************************************                          EXCERPT from catalogues stored in VizieR (CDS)                                             with the following conditions:                                   **********************************************************                                                                                                      VizieR Astronomical Server vizier.cds.unistra.fr                                Date: 2022-03-29T09:12:56 [V1.99+ (14-Oct-2013)]                                Explanations and Statistics of UCDs: See LINK below                             In case of problem, please report to: cds-question@unistra.fr                                                                                          INFO    = 'votable-version=1.99+ (14-Oct-2013)' / #                             INFO    = '-ref=VIZ6242cb24276a80' / #                                          INFO    = '-out.max=9999'      / #                                              Q-PARAMS=                   32 / Number of queryParameters (followed by list)            -oc.form=dec                                                                    -out.max=9999                                                                   #out.form=FITS (binary) Table                                                   -out.all=2                                                                      -order=I                                                                        -nav=cat:J/ApJ/766/60&tab:{J/ApJ/766/60/table4}&key:source=J/ApJ/766/60         &HTTPPRM:&&-ref=VIZ6242cb24276a80&-out.max=50&-out.form=HTML                    Table&-out.all=2&-order=I&-oc.form=sexa&-out.src=J/ApJ/766/60/table4&-c         .eq=J2000&-c.r=                                                                 2&-c.u=arcmin&-c.geom=r&-out=ID&-out=RAJ2000&-out=DEJ2000&-out=l_mlow&-         out=mlow&-out=l_Dmmax&-out=Dmmax&-out=l_sigint&-out=sigint&-out=l_Sd&-o         ut=Sd&-out=l_Sy&-out=Sy&-out=LC&-out=Mph&-out=rmag&-out=OT&-out=z&-out=         X&-out=Class&-meta.ucd=2&-meta=1&-meta.foot=1&-usenav=1&-bmark=POST&            -c.eq=J2000                                                                     -c.r= 2                                                                         -c.u=arcmin                                                                     -c.geom=r                                                                       -source= J/ApJ/766/60/table4                                                    -out.src=J/ApJ/766/60/table4                                                    -out=ID                                                                         -out=RAJ2000                                                                    -out=DEJ2000                                                                    -out=l_mlow                                                                     -out=mlow                                                                       -out=l_Dmmax                                                                    -out=Dmmax                                                                      -out=l_sigint                                                                   -out=sigint                                                                     -out=l_Sd                                                                       -out=Sd                                                                         -out=l_Sy                                                                       -out=Sy                                                                         -out=LC                                                                         -out=Mph                                                                        -out=rmag                                                                       -out=OT                                                                         -out=z                                                                          -out=X                                                                          -out=Class                                                                      #                                                                               #RESOURCE=yCat_17660060                                                         #Name: J/ApJ/766/60                                                             #Title: GALEX Time Domain Survey I. UV variable sources (Gezari+, 2013)         #Coosys J2000: eq_FK5 J2000                                                                                                                            END                                                                                                                                                                                                                                             XTENSION= 'BINTABLE'           / Binary Table Extension                         BITPIX  =                    8 / binary data                                    NAXIS   =                    2 / Simple 2-D matrix                              NAXIS1  =                   89 / Number of bytes per record                     NAXIS2  =                 1078 / Number of records                              PCOUNT  =                    0 / Get rid of random parameters                   GCOUNT  =                    1 / Only one group (isn't it obvious?)             TFIELDS =                   21 / Number of data fields (columns)                CDS-CAT = 'J/ApJ/766/60'       / Catalogue designation in CDS nomenclature               GALEX Time Domain Survey I. UV variable sources (Gezari+, 2013)        EXTNAME = 'J_ApJ_766_60_table4' / Identification of the table                   CDS-NAME= 'J/ApJ/766/60/table4' / Table name in METAtab                                  GALEX Time Domain Survey (TDS) catalog                                 UCD__1  = 'meta.record'        / ................................byte#0         TDISP1  = 'I8      '           / Display Fortran Format                         TFORM1  = 'J       '           / 32-bit integer                                 TTYPE1  = 'recno   '           / Record number assigned by the VizieR team.                                      Should Not be used for identification. (link)  UCD__2  = 'meta.id;meta.main'  / ................................byte#4         TDISP2  = 'A16     '           / Display Fortran Format                         TFORM2  = '16A     '           / Ascii string                                   TTYPE2  = 'ID      '           / GALEX TDS name (fieldname_MOSpointing-NN)                                       (link)                                         UCD__3  = 'pos.eq.ra;meta.main' / ...............................byte#20        TDISP3  = 'F8.4    '           / Display Fortran Format                         TFORM3  = 'D       '           / 64-bit floating-point (double precision)       TTYPE3  = 'RAJ2000 '           / Right Ascension in decimal degrees (J2000)     TUNIT3  = 'deg     '           / degree                                         UCD__4  = 'pos.eq.dec;meta.main' / ..............................byte#28        TDISP4  = 'F8.4    '           / Display Fortran Format                         TFORM4  = 'D       '           / 64-bit floating-point (double precision)       TTYPE4  = 'DEJ2000 '           / Declination in decimal degrees (J2000)         TUNIT4  = 'deg     '           / degree                                         UCD__5  = 'meta.code.error'    / ................................byte#36        TDISP5  = 'A1      '           / Display Fortran Format                         TFORM5  = 'A       '           / Ascii string                                   TTYPE5  = 'l_mlow  '           / Limit flag on mlow                             UCD__6  = 'phot.mag;em.UV'     / ................................byte#37        TDISP6  = 'F5.2    '           / Display Fortran Format                         TFORM6  = 'E       '           / 32-bit floating-point (simple precision)       TTYPE6  = 'mlow    '           / [17.9/23.1] Low-state GALEX/NUV AB magnitude                                    corrected for Galactic extinction              TUNIT6  = 'mag     '           / magnitude                                      UCD__7  = 'meta.code.error'    / ................................byte#41        TDISP7  = 'A1      '           / Display Fortran Format                         TFORM7  = 'A       '           / Ascii string                                   TTYPE7  = 'l_Dmmax '           / Limit flag on Dmax                             UCD__8  = 'src.var.amplitude;em.UV.200-300nm' / .................byte#42        TDISP8  = 'F5.2    '           / Display Fortran Format                         TFORM8  = 'E       '           / 32-bit floating-point (simple precision)       TTYPE8  = 'Dmmax   '           / [0.2/4.6] Maximum amplitude of NUV variability                                  |{Delta}m_max_|                                TUNIT8  = 'mag     '           / magnitude                                      UCD__9  = 'meta.code.error'    / ................................byte#46        TDISP9  = 'A1      '           / Display Fortran Format                         TFORM9  = 'A       '           / Ascii string                                   TTYPE9  = 'l_sigint'           / Limit flag on sigint                           UCD__10 = 'stat.stdev'         / ................................byte#47        TDISP10 = 'F5.2    '           / Display Fortran Format                         TFORM10 = 'E       '           / 32-bit floating-point (simple precision)       TTYPE10 = 'sigint  '           / [0/3.6] Intrinsic rms scatter {sigma}_int_     TUNIT10 = 'mag     '           / magnitude                                      UCD__11 = 'meta.code.error'    / ................................byte#51        TDISP11 = 'A1      '           / Display Fortran Format                         TFORM11 = 'A       '           / Ascii string                                   TTYPE11 = 'l_Sd    '           / Limit flag on Sd                               UCD__12 = 'src.var.index'      / ................................byte#52        TDISP12 = 'F5.2    '           / Display Fortran Format                         TFORM12 = 'E       '           / 32-bit floating-point (simple precision)       TTYPE12 = 'Sd      '           / [0/1.5]? Structure function on days (3)        TUNIT12 = 'mag     '           / magnitude                                      UCD__13 = 'meta.code.error'    / ................................byte#56        TDISP13 = 'A1      '           / Display Fortran Format                         TFORM13 = 'A       '           / Ascii string                                   TTYPE13 = 'l_Sy    '           / Limit flag on Sy                               UCD__14 = 'src.var.index'      / ................................byte#57        TDISP14 = 'F5.2    '           / Display Fortran Format                         TFORM14 = 'E       '           / 32-bit floating-point (simple precision)       TTYPE14 = 'Sy      '           / [0/4.1]? Structure function on years (3)       TUNIT14 = 'mag     '           / magnitude                                      UCD__15 = 'meta.code;src.var'  / ................................byte#61        TDISP15 = 'A1      '           / Display Fortran Format                         TFORM15 = 'A       '           / Ascii string                                   TTYPE15 = 'LC      '           / [VF] Light curve type: V=stocharstic, F=flaringUCD__16 = 'src.class.starGalaxy' / ..............................byte#62        TDISP16 = 'A3      '           / Display Fortran Format                         TFORM16 = '3A      '           / Ascii string                                   TTYPE16 = 'Mph     '           / Optical host morphology: pt=point, ext=extendedUCD__17 = 'phot.mag;em.opt.R'  / ................................byte#65        TDISP17 = 'F5.2    '           / Display Fortran Format                         TFORM17 = 'E       '           / 32-bit floating-point (simple precision)       TTYPE17 = 'rmag    '           / [8.8/45.3]? Optical host r-band AB magnitude                                    corrected for Galactic extinction              TUNIT17 = 'mag     '           / magnitude                                      UCD__18 = 'meta.code.class'    / ................................byte#69        TDISP18 = 'A3      '           / Display Fortran Format                         TFORM18 = '3A      '           / Ascii string                                   TTYPE18 = 'OT      '           / Optical color class (1) (link)                 UCD__19 = 'src.redshift'       / ................................byte#72        TDISP19 = 'F6.3    '           / Display Fortran Format                         TFORM19 = 'E       '           / 32-bit floating-point (simple precision)       TTYPE19 = 'z       '           / [0/4.1]? Redshift                              UCD__20 = 'meta.code'          / ................................byte#76        TDISP20 = 'A1      '           / Display Fortran Format                         TFORM20 = 'A       '           / Ascii string                                   TTYPE20 = 'X       '           / [X ] X-ray source match                        UCD__21 = 'src.class'          / ................................byte#77        TDISP21 = 'A12     '           / Display Fortran Format                         TFORM21 = '12A     '           / Ascii string                                   TTYPE21 = 'Class   '           / Classification (2) (link)                      END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                GROTH_MOS01-21  @k0¾í(@K©*0U1 A´Qì @“33 ?…¸ ?LÌÍ ?£×Vpt An¸RMdwÿÿÿÿ Mdw            VVDS22H_MOS05-05@tİRT`ªd¿á’:)Çy¦ A©¸ @
+= ?}p¤ ?fff ?=p¤Fpt A©ë…QSOÿÿÿÿ CV             ELAISN1_MOS15-02@nAE8ï4Ö@K-æšÔ,<>A·¸>@€õÃ ?¯\) ?W
+= @;…Vpt A´{QSOÿÿÿÿ CV             ELAISN1_MOS15-09@nKÊÀƒm@JÖ?»>A¸=q>@€£× ?p¤ <#×
+ @	™šFextA¨ff   ÿÿÿÿ Galaxy Trans   GROTH_MOS07-09  @j©*0T@J5(Œç¯>A¸ÌÍ>@g
+= @`£× =¸Qì ?0£×Fpt A‹™šMdwÿÿÿÿ Mdw            CDFS_MOS02-20   @J•‡“İ—õÀ:[=ÈK]>A¸zá>@fff ?:áH ?s33 ?G®    A{…Mdwÿÿÿÿ Mdw            CDFS_MOS00-41   @J¬2ÊW§†À;V
+¦L/‚>A¸ÌÍ>@W
+= >¸Qì >Ç® >™šV   A|(ö   ÿÿÿÿ Mdw            COSMOS_MOS22-11 @b¯éá°‰Ÿ@ïÒòä A´zá @Vff ?@   ÿÿÿÿ ?záFpt Ad  Mdwÿÿÿÿ Mdw            	GROTH_MOS05-00  @jŞ1&éxÔ@JeıŠÚ¹ A°\ @R\ ?5Â ?—
+= ?&ffFpt AbffMdwÿÿÿÿXMdw            
+XMMLSS_MOS06-22 @BRÊW§†ÁÀZ¹õY³Ğ>A·™š>@Që… ?s33<     @G® pt AyG®MdwÿÿÿÿXMdw            XMMLSS_MOS06-13 @BN;Í5¨ÀöâëC,>A·™š>@Dzá ?p£× ?fff @HõÃVpt A‚áHMdwÿÿÿÿ Mdw            VVDS22H_MOS06-14@tĞOv_¿­<64é A¬áH @:áH ?@   ?‚\ ?záHVpt AÂQSOÿÿÿÿ RRAB           VVDS22H_MOS01-20@tÏ$İ.?äA‰7KÆ§ A¦ff @:=q ?™š ?p£× ?LÌÍVpt A…ÂRRLÿÿÿÿ RRL            CDFS_MOS02-27   @J±0¾í(À:jCş\‘Ğ>A¸Qì>@1ë… ?O\) ?¡G® ?€  Vpt A˜¸R   ÿÿÿÿ Point Var      CDFS_MOS00-34   @Jšxl"h	À;qÑN;Í5>A¸ÌÍ>@.¸R @,(ö >W
+= =¸QìFpt A©p¤   ÿÿÿÿ Mdw            COSMOS_MOS26-10 @bÅv_Ø­«?õä%®æ1ø>Aµë…>@,ÌÍ ?J=q ?¹™š ?¯\)Vpt A‘G®RRLÿÿÿÿ BHB            CDFS_MOS00-48   @JÂ6âëBÀ;ñ [À6>A¸ÌÍ>@'
+= ?O\) >™š @3×
+VextAª     ÿÿÿÿ AGN            ELAISN1_MOS14-10@nƒÎÙ‡*@JæOv_Ø>A¸  >@%Â ?Å¸ >õÂ ?Â\ pt A¹Â   ÿÿÿÿ QSO            GROTH_MOS05-28  @kã¼ÓZ…@J{À6âê Aµ™š @$zá ?8Qì >¸R ?€  Vextÿÿÿÿ   ÿÿÿÿ AGN            XMMLSS_MOS00-06 @A­ó¶E¡ÊÀ	İ/Ÿ¾v>A·p¤>@#×
+ >úáH >Ç® >¸QìFpt Aˆ¸RMdwÿÿÿÿXMdw            GROTH_MOS04-09  @j~éxÔıó@JíÖ8†YJ>A¸£×>@{ @® ?LÌÍ >®{Fpt A—®Mdwÿÿÿÿ Mdw            CDFS_MOS01-18   @Iı(Œç¯À<B:)Çy¦>A¸ÌÍ>@… ?™š >uÂ >…¸ pt A†     ÿÿÿÿ ?              GROTH_MOS01-17  @j÷²•éá@JçÁ½¥œ A¯… @áH ?E¸ >.{ ?—
+=Fpt A0ÌÍ   ÿÿÿÿ S Boo (LPV)    XMMLSS_MOS04-19 @B—8}¿HÀÓ÷ÎÙ‡ A°(ö @® >Ü(ö<     @2\VextA¤(ö   ÿÿÿÿ AGN            XMMLSS_MOS06-08 @Be+ÓÃÀë…¸Q>A·™š>@zá >úáH ?J=q >æffFpt A{…MdwÿÿÿÿXMdw            XMMLSS_MOS06-15 @B+¢œwškÀ¸Që„ A©G® @33 ?zá ?ƒ×
+ ?@  Vpt A‹G®RRLÿÿÿÿ RRL            VVDS22H_MOS05-06@tŞ„µÜÆ>¿ìu%F
+¦K>A²=q>@ë… >úáH ?¸R ?(öFpt Ag\)Mdwÿÿÿÿ Mdw            VVDS22H_MOS01-12@tËq²•é?î³g ù	k A«G® @… >ÌÌÍ ?ÌÍ ?@  Vpt A`õÃMdwÿÿÿÿ Mdw            GROTH_MOS04-18  @j•éá°‰@Jÿ$tSò A¶Qì @
+áH ?@   >LÌÍ ?µÂVextA¬áH   ÿÿÿÿ AGN            ELAISN1_MOS16-06@nÚ¹õY³@KXN¤¨ÁT>A¸=q>@
+áH ?\) >³33 >áG® pt A€¸RMdwÿÿÿÿ Mdw            VVDS22H_MOS00-20@tİP°ò{²?û/ìVÕÏª A¦¸R @® >áG® ?.{ ?O\) pt Aˆ=q   ÿÿÿÿ ?               XMMLSS_MOS05-22 @A½:’£À©*0U2>A·ë…>@® @ë… >æff >”záF   ÿÿÿÿ   ÿÿÿÿ Orphan Trans   !ELAISN1_MOS13-00@nlô!,@K}/Ÿ¾v A¯® @
+= ?&ff ?‚\ ?xQìVpt A(öRRLÿÿÿÿ RRL            "CDFS_MOS00-08   @JV®}VlóÀ;…Y³Ğ|„ A±\) @¸ >æff >\) ?Â\VextA‘×
+   ÿÿÿÿ AGN            #XMMLSS_MOS06-16 @B,ì¿±[À($xF A¤=q @zá ?.{ ?˜Qì ?\(öVpt Aˆ  RRLÿÿÿÿ RRL            $COSMOS_MOS27-03 @b¤fffff?ğ×süPG>A¸{>@ £× ?øQì >×
+= >…¸Fpt A™®Mdwÿÿÿÿ Mdw            %CDFS_MOS00-19   @J|2ÊW§†À;n($x>A¸ÌÍ>?ıp¤ ?øQì >8Qì<    Fpt A“p¤Mdwÿÿÿÿ Mdw            &VVDS22H_MOS01-18@tÏDg8}?İûçl‹C”>A¶Qì>?úáH ?¥¸ >€   >æffF   ÿÿÿÿ   ÿÿÿÿ Orphan Trans   'ELAISN1_MOS12-16@nmŸ¾vÈ@KUã¼ÓZ>A¸{>?øQì ?® ?® ?
+=qVpt A  Mdwÿÿÿÿ Mdw            (COSMOS_MOS26-21 @bÌp:û~?û—Oß;c A–(ö ?÷
+= ?zá ?™™š ?J=qVpt Ai™šRRLÿÿÿÿ RRL            )GROTH_MOS07-16  @j›l‹C•€@Jie+ÓÃ` A¶õÃ ?÷
+= ?.{<     ?Î{VextA©×
+   ÿÿÿÿ AGN            *COSMOS_MOS27-21 @b¼”Fs×?÷°ò{²şÅ A²   ?õÂ ?(ö<     ?ÔzáVextA¥p¤   ?”záXAGN            +ELAISN1_MOS11-14@n•Ö8†YJ@Kn»˜Çâ A²ff ?õÂ ?=p¤ >™š ?à   extA£ë…   ÿÿÿÿ ?              ,VVDS22H_MOS04-00@tãÓÃa@¿»íúCş\‘>A²(ö>?ôzá >áG® ?¸ ?^¸RFpt A‘…RRL     RRL            -XMMLSS_MOS00-01 @AŠ¬Ùè>BÀ	`A‰7KÆ>A·\)>?ó33 ?(õÃ<     ?¹™šVpt A¦(öQSOÿÿÿÿ QSO            .GROTH_MOS06-00  @j¸êJŒ@J"ø7´¢3 A´(ö ?ó33 ?(õÃ =£×
+ ?£×Vpt A`õÃ   ÿÿÿÿXQSO            /GROTH_MOS05-12  @jğ-àp@JFí(Œæ A·\) ?ñë… >Ç® >Ç® ?@  Vpt AŸp¤QSOÿÿÿÿ QSO            0ELAISN1_MOS16-15@n&ÓZ…‡“@KIº^4 A¢   ?ñë… >áG® ?c×
+ ?+… pt A}¸RRLÿÿÿÿ BHB            1COSMOS_MOS27-13 @b³@N¤¨Á?í÷ÎÙ‡*>A¸{>?ğ£× ?ç® >\) >”záFextAÀ{   ÿÿÿÿ Galaxy Trans   2XMMLSS_MOS04-08 @BPy=ÙbÀMƒä%®>A·®>?ğ£× ?Ó33 >õÂ >ğ£×FextA¼ÌÍ   ÿÿÿÿ Galaxy Trans   3XMMLSS_MOS06-06 @Aû=ÈK]À³Ğ|„µÜ A³™š ?ï\) ?® >®{ ?záHVextAEp¤   ÿÿÿÿ AGN            4GROTH_MOS02-01  @j§6z–@K ‰ 'RS A±p¤ ?ìÌÍ >×
+= >½p¤ ?!G®VextA•ë…   >?|î AGN            5ELAISN1_MOS10-01@n9Ø­«ŸU@KíğoiDf AŸG® ?ìÌÍ ?¸R ?†ff ?k… pt Aw×
+RRLÿÿÿÿ RRL            6COSMOS_MOS24-06 @b³Oß;d@Å¡ÊÀƒ A·\) ?ìÌÍ ?\ >#×
+ ?E¸VextA²     ?1hsXAGN            7CDFS_MOS01-10   @IâÇË)^À<^.±Ä2É>A¸¸R>?ë… ?\) >Ç® @ë… extA¨{   ÿÿÿÿ ?              8VVDS22H_MOS03-03@tÔì¿±[V?äkP°ò{²>A´  >?ê=q ?ÌÍ >€   ?«…VextA¤£×   ÿÿÿÿ AGN            9CDFS_MOS05-07   @Iá [À6À;JdÂø7´>A¸¸R>?ê=q ?áG® >™™š >.{Fpt A›ÂMdwÿÿÿÿ Mdw            :GROTH_MOS04-17  @jŠšt@Jºa|ÚP A¨£× ?ç® ?+… >¸ ?ÁG®VextA’áH   >„›¦XAGN            ;ELAISN1_MOS15-10@nLC,¥zw@J×„M:>A¸=q>?ç® ?™š ?\(ö ?LÌÍVpt A
+=Mdwÿÿÿÿ Mdw            <CDFS_MOS03-21   @KIÔ•*˜À;`:û~ÿ A²ff ?æff >Â\ ?ë… ?\VextAë…   ÿÿÿÿ AGN            =XMMLSS_MOS05-27 @AÑ@N¤¨À7ÎÙ‡*>A·®>?ã×
+ ?ÌÍ >\) ?æff extB4×
+   ÿÿÿÿXAGN            >VVDS22H_MOS01-13@tËÿ—$t?È:û~ÿ–>Aµ×
+>?â\ >¨õÃ >k… ?Š=qVextAª£×   ÿÿÿÿ AGN            ?VVDS22H_MOS00-08@tØa|ÚP?õ¡aä÷eı AµÂ ?â\ >Â\ ?(õÃ ?¸Vpt A•×
+QSOÿÿÿÿ QSO            @XMMLSS_MOS02-00 @A=ÈK]ÌÀC•$İ A´¸R ?â\ >Ñë… >™š ?ç® extA¢ff   ÿÿÿÿ ?              AVVDS22H_MOS01-14@tËï4Ö¡a?ä–»˜Ç>A¶Qì>?â\ ?ØQì >\) >¨õÃFpt A¢{Mdwÿÿÿÿ Mdw            BCDFS_MOS06-09   @Jú^5?|íÀ;ë/ìVÕÏ A·×
+ ?â\ ?E¸ ÿÿÿÿ ?İp¤FextA¢£×   ÿÿÿÿ Galaxy Flare   CXMMLSS_MOS01-16 @BEw1ÅÀÄg8}¾>A·Â>?â\ ?LÌÍ =LÌÍ ?À  VextA­…   ÿÿÿÿXAGN            DGROTH_MOS07-17  @jœXy=Ù~@Jm2a|Ù A¯×
+ ?áG® ?\) >\) ?s33Vpt A£™šQSOÿÿÿÿ QSO            ECDFS_MOS04-03   @JI³Ğ|„µÀ<ˆ -à>A¸ÌÍ>?à   ?×
+= >B\ >Š=qFpt A  Mdwÿÿÿÿ Mdw            FCDFS_MOS03-01   @JÔ“t¼jÀ;…¸Që„>A¸\>?Ş¸R ?ÕÂ >B\ >€  FextAw®   ÿÿÿÿ Galaxy Trans   GELAISN1_MOS15-20@nZˆÎp:ú@JßåÉã>A¸=q>?İp¤ ?Ï\) =uÂ >£×
+FextA‰33   ÿÿÿÿ Galaxy Trans   HCDFS_MOS01-32   @J2kP°ò{À<g$tSò A¤¸R ?İp¤ ?(ö >æff ?O\)V   AuG®   ÿÿÿÿ Point Var      IXMMLSS_MOS06-07 @Aü¹#¢œwÀ¬ô!-v>A·p¤>?Ü(ö >¸R >€   ?à   extA®Qì   ÿÿÿÿXAGN            JVVDS22H_MOS04-01@tçŠ	Ş ¿·â‚@·€4 A‘33 ?ÚáH >úáH ?\(ö ?#×
+Vpt A^{RRLÿÿÿÿ RRL            KCDFS_MOS00-31   @J–vÈ´9WÀ;óFÜ]c‡>A¸ÌÍ>?ÚáH >uÂ >™™š ?\F   A_\)   ÿÿÿÿX?              LCOSMOS_MOS24-21 @b¾C,¥zx@ô‡ü¹#¢ A´{ ?ÚáH ?\ >¸ ?šáHVpt A§\)QSO?h´9XQSO            MVVDS22H_MOS02-09@tîÒˆÎp:?âFs×Ûô>Aµ…>?ÚáH ?+…<     ?ÕÂVpt A¢£×QSO?Æ QSO            NCOSMOS_MOS24-25 @bÀÂ&€I@S&Á½ A²£× ?Ù™š >ë… >LÌÍ ?n{VextA zá   ÿÿÿÿXAGN            OXMMLSS_MOS04-02 @B4ğØDĞÀ±[W>«>A·G®>?Ù™š >æff >”zá ?ƒ×
+VextA«…   ÿÿÿÿXAGN            PCDFS_MOS03-12   @K›=ÈJÀ:øÔıó¶E Aµp¤ ?Ù™š ?¸ >W
+= ?…¸VextA§Â   ÿÿÿÿ AGN            QCOSMOS_MOS23-27 @báéùrG?úï4Ö¡aä>A·Â>?ØQì ?Î{ >\) >ÌÌÍFpt A˜áHMdwÿÿÿÿ Mdw            RXMMLSS_MOS01-07 @Bàuöı!À	?HË’9 A·… ?ØQì >áG® >õÂ >Ç®Vpt A€ffMdwÿÿÿÿ Mdw            SELAISN1_MOS14-14@næšÔ+@K9XbMÒ A±\) ?ØQì ?ë…<     ?£×
+VextA¥®   ÿÿÿÿ AGN            TELAISN1_MOS16-19@n.€IQ‚@K	³Ğ|„µ>A·
+=>?ØQì >ë… >¸ ?€   pt A¨{QSOÿÿÿÿ QSO            UVVDS22H_MOS02-10@tîÖ¡aä÷?âGE8ï4Ö>Aµ…>?×
+= ?0£× >LÌÍ ?Ù™šVpt A¢£×QSO?Æ QSO            VELAISN1_MOS16-25@n7g ù	k@Kt¼j~ù A¶áH ?×
+= >úáH<     ?Š=qVextA ÌÍ   ÿÿÿÿ AGN            WCDFS_MOS03-00   @JÎæ1ø À;4É…ğoh AšõÃ ?ÕÂ ?zá ?…¸ ?@  VextAv{   ÿÿÿÿ AGN            XCOSMOS_MOS25-12 @b¨Që…¸?ÿ–»˜Çá A²Qì ?ÕÂ ?® >8Qì ?¡G®Vpt AŸ×
+Mdwÿÿÿÿ Mdw            YCOSMOS_MOS24-10 @b¶ƒä%®æ@ 'RT`ª A´áH ?Ôzá >áG® >LÌÍ ?¬ÌÍFpt A¦¸RQSO?ÅÂXQSO            ZCOSMOS_MOS26-29 @bÑN;Í5¨?ó¼j~ùÛ" A¯ë… ?Ôzá >£×
+ ?    >ğ£×FextA£\)   ÿÿÿÿ Galaxy Flare   [XMMLSS_MOS05-02 @Ae¸ºÇËÀ:û~ÿ–>A·×
+>?Ó33 >½p¤ ?(õÃ ?5ÂFextA¤ff   ÿÿÿÿ Galaxy Trans   \XMMLSS_MOS05-03 @AeÌcñA À:)Çy¦´>A·×
+>?Ó33 >³33 ?ë… ?™šFextA¹…   ÿÿÿÿ Galaxy Trans   ]GROTH_MOS07-12  @j–¬1&@J>šÔ,< A±Â ?Ñë… ?    >€   ?p£× extA–\   ÿÿÿÿ ?              ^VVDS22H_MOS05-10@tàß;dZ¿çeıŠÚ¹ô A±×
+ ?Ñë… >áG® >aG® ?Ê=qFextAµë…   ÿÿÿÿ Galaxy Flare   _CDFS_MOS03-11   @KÇy¦µ
+À;²-U A±33 ?Ğ£× ?(ö =LÌÍ ?ÁG®VextA¦¸R   ÿÿÿÿ AGN            `VVDS22H_MOS02-00@táö+jçÕ?ÙG®záG A±\) ?Ï\) >£×
+ =ÌÌÍ ?¦ffVpt AÂQSO?ó×
+ QSO            aXMMLSS_MOS00-10 @AÅ—ö+jçÀÌ/ƒ{J">A·p¤>?Î{ >áG®<     ?õÂ pt AªffQSOÿÿÿÿXQSO            bCDFS_MOS05-22   @J!-w1À;’&€IQ AµG® ?Î{ ?¸ >#×
+ ?ª=qVextA¦¸R   ÿÿÿÿ AGN            cCDFS_MOS00-22   @J†Á½¥À;G
+=p£Ö A·¸ ?ÌÌÍ >…¸ >™™š ?uÂVpt A«®   ÿÿÿÿ QSO            dCOSMOS_MOS25-11 @b§ê³g ø?ş_oÒò>A¶(ö>?Ë… >áG® ?¸ ?záHVpt A¡×
+QSO?ÇKÇ QSO            eCOSMOS_MOS21-23 @bÜáG®z@)^™>A¶\>?Ë… ?k… =¸Qì ?İp¤VextAª£×   ÿÿÿÿ AGN            fCOSMOS_MOS23-38 @bğÙ‡+@ ·Xâe A­Â ?Ê=q ?\ =áG® ?ÁG®FextA{   >^5? AGN            gCDFS_MOS01-23   @J;dZ«À<g ù	k A¸ff ?Ê=q ?\)<     ?°£×Vpt A¦õÃQSOÿÿÿÿ QSO            hGROTH_MOS04-28  @j¡g ù	k@J·v_Ø­« A±Â ?Ê=q ?
+= ?†ff ?uÂ extA¥p¤   ÿÿÿÿ ?              iCOSMOS_MOS24-37 @bÊ-àq@Ğå`A‰7 A±Â ?ÈõÃ ?ÌÍ =uÂ ?«…FextA§33   ?u?}XAGN            jELAISN1_MOS15-21@n[ûçl‹B@Jİcˆe”® AŸ×
+ ?ÈõÃ >æff ?n{ ?+…Vpt A×
+RRLÿÿÿÿ RRL            kELAISN1_MOS15-05@nH«6z@JÇ'»/ìV>A¸=q>?ÈõÃ >áG® >Ç® ?€  Vpt A©×
+QSOÿÿÿÿ QSO            lELAISN1_MOS11-10@n‘xFÜ\@KÙ*0U2` A£\) ?ÈõÃ >³33 ?8Qì >”záFpt A€(öMdwÿÿÿÿ Mdw            mCDFS_MOS01-22   @Jì¿±[VÀ<‘hr°  Aµ… ?Ç® ?    =#×
+ ?·
+=Fpt A©…QSOÿÿÿÿ QSO            nCOSMOS_MOS22-00 @b}Vlô@_¤?åÉ>A¶ff>?Ç® ?ÁG® ÿÿÿÿ >”záFpt A·™š   ÿÿÿÿ Point Trans    oELAISN1_MOS10-16@nfe”¯O@L¥ãS÷Î A±™š ?Ç® ?® =ÌÌÍ ?“33Vpt A¥G®   ÿÿÿÿ QSO            pXMMLSS_MOS05-14 @A¦±Ä2ÊWÀãS&Á>A·Â>?Ç® >ÌÌÍ ?
+=q >ë…FextA£®   ÿÿÿÿ Galaxy Trans   qCDFS_MOS01-26   @J'»/ìVÀ<[P°ò{²>A¸¸R>?Ç® ?(õÃ<     ?Ó33Vpt A¤=qQSOÿÿÿÿ QSO            rELAISN1_MOS12-08@nY2a|Ù@K†ì¿±[V A®õÃ ?Æff >ë… ?n{ ?G®Vpt AõÃ   ÿÿÿÿ Point Var      sELAISN1_MOS11-05@nƒô‡ü¹#@K®æ1ø >A·Â>?Æff >”zá >³33 >®{FextA«×
+   ÿÿÿÿ Galaxy Trans   tXMMLSS_MOS04-05 @B;İ—ö+jÀ…¸Që„ A³… ?Æff >€   =¸Qì ?¢\VextA©Â   ÿÿÿÿXAGN            uXMMLSS_MOS04-04 @B8HğÀQN;Í5¨>A·G®>?Æff >¨õÃ<     ?Ü(öFextAª\   >¥ãXAGN            vVVDS22H_MOS06-09@tÌäŠqŞ¿ØË)^ A¦áH ?Æff >ë… ?0£× ?8QìVpt Aˆ{RRLÿÿÿÿ RRL            wVVDS22H_MOS03-07@tÖ]cˆe”?Ş6âëC, A²{ ?Æff >™™š =áG® ?‡®Vpt A£G®QSO?¤ıô QSO            xELAISN1_MOS16-29@n=F
+¦L.@K6ƒä%®å>A¸=q>?Å¸ ?•Â >Â\ >³33F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans   yCDFS_MOS01-01   @I½ƒä%®À<_ hÛ‹« A°   ?Å¸ >…¸ >™š ?µÂ extA”zá   ÿÿÿÿ ?              zXMMLSS_MOS05-10 @AˆÛ‹¬qÀ$¨ÁTÉ…>A·…>?Å¸ >Ü(ö =ÌÌÍ ?s33Fpt A¡33QSOÿÿÿÿXQSO            {GROTH_MOS01-16  @jõô‡ü¹#@KQá°‰ & A²{ ?Å¸ >õÂ >€   ?k…VextA©
+=   ÿÿÿÿ AGN            |XMMLSS_MOS01-22 @BfV“tÀ
+{µsê²>A·
+=>?Å¸ ?ÌÍ =ÌÌÍ ?§®Fpt A¨=qQSOÿÿÿÿXQSO            }COSMOS_MOS26-17 @bË!–R½?è÷eıŠÚ¹>A·®>?Å¸ ?   <     ?¡G®Vpt A¨{QSOÿÿÿÿ QSO            ~ELAISN1_MOS10-12@n[óMj@KÁ$İ/>A¸(ö>?Å¸ ?
+= >€   ?+…VextA–ÌÍ   ÿÿÿÿ AGN            ELAISN1_MOS15-16@nVõÂ\(@Jàšu%E>A¸=q>?Ã×
+ ?Š=q >Ü(ö >£×
+ pt Ap¤Mdwÿÿÿÿ Mdw            €CDFS_MOS05-36   @JMöı!ÿ-À;4¨ÁTÉ… A¸¸R ?Ã×
+ ?
+=q =áG® ?¬ÌÍ extA£p¤   ÿÿÿÿ ?              XMMLSS_MOS02-04 @Ac÷ÎÙ‡À)*0U2`>A¶zá>?Ã×
+ ?¾¸R ?=p¤ >ë…Fpt AšQìMdwÿÿÿÿ Mdw            ‚COSMOS_MOS23-24 @bà–»˜@„µÜÆ?>A·\)>?Â\ >ÌÌÍ >™š ?€  Vpt A­™š   ÿÿÿÿ QSO            ƒCDFS_MOS00-09   @JY4êJ‹À;üú¬Ùè= A¶=q ?Â\ >Š=q >™š ?´zá extA§™š   ÿÿÿÿ ?              „CDFS_MOS02-07   @JgìVÕÏªÀ;®záG>A¸ÌÍ>?Â\ ?¹™š >aG® >B\F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans   …XMMLSS_MOS05-00 @ATwškP°ÀÌç¯·è>A·…>?Â\ ?
+=q >”zá ?¡G®Vpt A©™šQSOÿÿÿÿ QSO            †COSMOS_MOS23-21 @bİéùrG@_ö”F A®õÃ ?Â\ ?    >™š ?£×
+Vpt A¨¸RQSOÿÿÿÿ QSO            ‡CDFS_MOS00-58   @JÖcŠ	À;ï\(õÂ>A¸ÌÍ>?ÁG® >™™š<     ?ÌÌÍ extAª{   ÿÿÿÿ ?              ˆVVDS22H_MOS06-12@tÎÎp:û~¿²T`ªdÂø>A±ë…>?ÁG® ?‚\ >\) >\)FextAÌ£×   ÿÿÿÿ Galaxy Trans   ‰GROTH_MOS01-20  @jÿS&Á@JòW§†Â& A³Â ?ÁG® >Ü(ö =\) ?Tzá extA§™š   ÿÿÿÿ ?              ŠCOSMOS_MOS23-09 @bÙàŞÒˆ@Š¦L/ƒ{ Aµë… ?ÁG® >ÌÌÍ <õÂ ?Š=qVextA§Â   ?ıôXAGN            ‹XMMLSS_MOS05-08 @Auí(ŒçÀ¼£n.± A¶\ ?ÁG® >ë…<     ?Ë… pt A¥®QSOÿÿÿÿXQSO            ŒCDFS_MOS00-18   @J{œ¾ß£À;_Ånÿ>A¸ÌÍ>?ÁG® >£×
+ >8Qì ?¾¸RFextA©™š   ÿÿÿÿ Galaxy Trans   GROTH_MOS02-02  @j¨¸ºÇ@KIQ‚©“>A¸{>?À   >ÌÌÍ >¸Qì ?™šVextA Qì   ÿÿÿÿ AGN            GROTH_MOS05-27  @kß;dZ@JO¾vÈ´8>A¸  >?À   ?
+=q =£×
+ ?¥¸ extA›\)   ÿÿÿÿ ?              COSMOS_MOS24-18 @b»ÌcñA ?ÿä%®æ1÷>A¶áH>?¾¸R >™™š >æff ?záVpt A©®QSO?—l‹XQSO            CDFS_MOS01-12   @Iåéá°‰ŸÀ< Hğ A·G® ?¾¸R >úáH =áG® ?˜QìVextA¥33   ÿÿÿÿ AGN            ‘COSMOS_MOS27-16 @b¶È´9X?ò Ñ·Xá>A·Â>?¾¸R >ğ£× =LÌÍ ?§®Fpt A¢õÃQSOÿÿÿÿ QSO            ’ELAISN1_MOS16-28@n:(õÂ[@KÅm\ú¬ A°   ?¾¸R >Ñë… =£×
+ ?p£×Vpt A§ë…QSOÿÿÿÿ QSO            “XMMLSS_MOS01-04 @BiDg8À
+n—OŞ A°=q ?½p¤ >Š=q =ÌÌÍ ?¬ÌÍVpt A¤  QSOÿÿÿÿXQSO            ”CDFS_MOS04-13   @Jˆ­«ŸUšÀ<»~ÿ—# Aµ33 ?½p¤ >ÌÌÍ =õÂ ?n{FextA«®   ÿÿÿÿ Galaxy Flare   •VVDS22H_MOS06-15@tĞâëC,¿è*™0¾ì A«¸ ?½p¤ >”zá ?    >ë…Vpt Aip¤   ÿÿÿÿ Point Var      –CDFS_MOS00-01   @JI|ÚQÀ<
+ÇË)^ A·\) ?½p¤ >\) =õÂ ?°£× pt A  QSOÿÿÿÿ QSO            —GROTH_MOS05-04  @jåĞ|„µÜ@JM2a|Ù A°¸R ?½p¤ >Ç® >W
+= ?
+=q extA¸   ÿÿÿÿ ?              ˜XMMLSS_MOS04-03 @B6.±Ä2ÊÀI7KÆ§ï A³p¤ ?½p¤ ?    =ÌÌÍ ?“33FextA©Â   ?(ö AGN            ™COSMOS_MOS23-05 @bÕÜÆ?@™™™™™™ A¯ë… ?½p¤ >æff >W
+= ?šáHVextA›
+=   >À  XAGN            šCDFS_MOS00-43   @J¯l‹C•€À;ñÄ2ÊW§ Aª{ ?½p¤ >£×
+ =LÌÍ ?‹…VextAŸ33   ÿÿÿÿXAGN            ›XMMLSS_MOS04-23 @B¥F
+¦L/ÀÎ_o>A·®>?¼(ö ?³33 >”zá >B\Fpt A£®Mdwÿÿÿÿ Mdw            œCDFS_MOS05-29   @J'_oÒòÀ;/Ÿ¾v A¦Qì ?¼(ö >k…<     ?×
+= extA”áH   ÿÿÿÿ ?              COSMOS_MOS24-13 @b¸qŞi­B@¬¥zxl" A·
+= ?¼(ö >¨õÃ >.{ ?W
+=Vpt A§×
+QSO?‘ÊÁXQSO            XMMLSS_MOS04-12 @BjOv_ÀÔ,<ì Aµ
+= ?ºáH >áG® =uÂ ?‡®VextA¨ff   ÿÿÿÿXAGN            ŸCOSMOS_MOS26-05 @bÂ½<63?ñcŠ	İ>A·G®>?¹™š >¸Qì >£×
+ ?s33Vpt A£×
+QSOÿÿÿÿ QSO             COSMOS_MOS25-03 @b›ÕfÏAñ@PHğ>A¶£×>?¹™š ?aG® ÿÿÿÿ ?Ç®Vpt A¦£×QSOÿÿÿÿ QSO            ¡ELAISN1_MOS16-17@n*Ùè>BZ@K‰7KÆ§>A¸=q>?¹™š ?®{ >aG® =õÂFpt A{   ÿÿÿÿ STAR           ¢COSMOS_MOS24-14 @bº'RT`ª?ıŒç¯·è Aµp¤ ?¹™š >æff<     ?Që…VextA©…   ?„záXAGN            £XMMLSS_MOS03-20 @BÂø7´¢ÀÎ¾ß¤?å A¦ÌÍ ?¹™š >úáH >™š ?‹…VextAp¤   ÿÿÿÿXAGN            ¤XMMLSS_MOS02-14 @A -àqÀº’£S%>A¶(ö>?¹™š >ë… ÿÿÿÿ ?Š=qVextAÀ(ö   ÿÿÿÿXAGN            ¥XMMLSS_MOS01-13 @B<"h	Ô”À	ÖÕÏªÍ A´¸R ?¹™š >…¸ =uÂ ?uÂ pt AªffQSOÿÿÿÿ QSO            ¦CDFS_MOS02-15   @J|›¥ãS÷À:—_oÒò A°õÃ ?¸Qì >€  <     ?Ğ£× extA«×
+   ÿÿÿÿ ?              §VVDS22H_MOS05-04@tİQÎ_¿ñu%F
+¦L>A²£×>?¸Qì ?®{<     >k…F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans   ¨XMMLSS_MOS01-06 @BQ‚©“Àœàuöü A¶   ?¸Qì >k… >Ñë… >¸QìFpt A~\MdwÿÿÿÿXMdw            ©XMMLSS_MOS03-14 @Aölô!-À_!-w1>A·™š>?¸Qì ?ë…<     ?¸RVpt A¥™š   ÿÿÿÿX?              ªVVDS22H_MOS05-09@tà4mÅÖ8¿ğ+jçÕfÏ>A²£×>?¸Qì ?¯\) >\)<    Fpt A‡¸Mdwÿÿÿÿ Mdw            «ELAISN1_MOS11-15@nš,<ì¿@K¦¸ºÇ>A¸Qì>?·
+= ?(õÃ<     ?«…Fpt A¶(ö   ÿÿÿÿ Point Trans    ¬VVDS22H_MOS06-01@tÇÚQÍ¿äwškP°ò A¦   ?·
+= >®{ >#×
+ ?O\)VextAë…   =¶E¢ AGN            ­XMMLSS_MOS01-23 @Bnı!ÿ.HÀ\ú¬Ùè=>A·Â>?·
+= >k… >aG® >×
+=FextA¨õÃ   ÿÿÿÿ Galaxy Trans   ®CDFS_MOS01-14   @IêŸ¾vÈ³À;ÊŒL˜^>A¸ÌÍ>?·
+= ?¯\) =£×
+ =\)Fpt A£×Mdwÿÿÿÿ Mdw            ¯CDFS_MOS04-18   @J™TÉ…ğnÀ<}¸ºÇÊ A¸   ?·
+= >Ñë…<     ?¨õÃVpt A±™šQSOÿÿÿÿ QSO            °ELAISN1_MOS12-09@n`–»˜Çá@KPò{²şÄ A³Â ?·
+= >£×
+ =ÌÌÍ ?µÂ pt A§G®QSOÿÿÿÿ QSO            ±XMMLSS_MOS05-04 @AjÀƒn—À—Ûô‡ü¸ A·¸ ?·
+= >Ü(ö >”zá ?xQìFpt Aª     ÿÿÿÿ QSO            ²COSMOS_MOS23-32 @bé„M:’@6âëB>A¶¸R>?·
+= >ë… >…¸ ?˜QìFextAŸG®   ÿÿÿÿ Galaxy Trans   ³CDFS_MOS01-30   @J$`ªdÂ÷À<H7´¢3› A³p¤ ?µÂ >”zá >¸ ?¾¸R extAªQì   ÿÿÿÿ ?              ´CDFS_MOS05-27   @J!ã¼ÒÀ:æR½<6>A¸¸R>?µÂ >Ü(ö >LÌÍ ?}p¤VextA«®   ÿÿÿÿ AGN            µCOSMOS_MOS23-03 @bÓ…ğoiD@–‡+I A°   ?µÂ >Ç® <õÂ ?#×
+Vpt AŸë…QSO?¥¡ËXQSO            ¶ELAISN1_MOS12-13@njmÅÖ8…@KyÑN;Í5>A·×
+>?µÂ >õÂ =#×
+ ?™™š extA¬õÃ   ÿÿÿÿ ?              ·ELAISN1_MOS16-01@nÛô‡ü¸@KÁ½¥œ A­™š ?µÂ >¸Qì =õÂ ?œ(öVpt A¦õÃQSOÿÿÿÿ QSO            ¸ELAISN1_MOS15-24@na£n.±Ã@K!Dg8} A´=q ?µÂ >×
+= >™š ?\(öVextAŸ¸   ÿÿÿÿ AGN            ¹XMMLSS_MOS01-26 @BœàuöüÀ#9Àëíù>A·G®>?µÂ >…¸ >½p¤ ?O\)FextA§Â   ÿÿÿÿ Galaxy Trans   ºCOSMOS_MOS26-28 @bĞŞÒˆÎp?öŞ Ñ· A¡×
+ ?´zá >Ü(ö ?G® ?0£×Vpt Aƒ…RRLÿÿÿÿ RRL            »CDFS_MOS04-24   @J¯y¦µÀ=?åÉ Aµp¤ ?´zá >uÂ =ÌÌÍ ?p£× extAáH   ÿÿÿÿ ?              ¼ELAISN1_MOS14-05@nyE8ï4Ö@K@ªdÂø7 A´ÌÍ ?´zá >×
+= >#×
+ ?‚\ pt A¢QìQSOÿÿÿÿ QSO            ½VVDS22H_MOS05-11@tâaä÷eı¿Ğuöı!ÿ.>A²£×>?´zá ?†ff<     >.{    ÿÿÿÿ   ÿÿÿÿ ?              ¾GROTH_MOS01-00  @j×»/ìVÕ@K4q²•é>A¸(ö>?³33 >ğ£× =õÂ ?=p¤Vpt Aª£×QSOÿÿÿÿ QSO            ¿GROTH_MOS05-05  @jéÆ§ï±@JšCş\‘Ğ>A¸£×>?³33 >³33 >k… ?¸Vpt A¨ÌÍ   ?ú^5XQSO            ÀCOSMOS_MOS26-22 @bÍô‡ü¹#?ôÕfÏAò>A·®>?³33 >Ç® >8Qì ?hõÃ extA­×
+   ÿÿÿÿ ?              ÁXMMLSS_MOS04-21 @Bs×ÛôÀo²-U>A·p¤>?³33 >ğ£× >LÌÍ ?À  FextA­™š   ÿÿÿÿ Galaxy Trans   ÂCOSMOS_MOS25-06 @b¡‹¬q²@ ¥®æ1ø >A¶£×>?³33 ?¬ÌÍ ?hõÃ >LÌÍFpt AŠ£×Mdwÿÿÿÿ Mdw            ÃXMMLSS_MOS05-25 @AÁb¶®}À¦fffff A«® ?³33 ?ë…<     ?ª=qVextA˜(ö   ÿÿÿÿXAGN            ÄCDFS_MOS05-02   @IÏeıŠÚ¹À;CóMj A¸{ ?³33 >½p¤ =uÂ ?£×V   A±ë…   ÿÿÿÿ QSO            ÅXMMLSS_MOS00-03 @A *™0¾À‰ 'RT` A¯™š ?³33 >aG® <õÂ ?ºáH pt AœzáQSOÿÿÿÿ QSO            ÆELAISN1_MOS12-06@nTr° Ä›@KlÖ¡aäö A²áH ?³33 >ë…<     ?šáH extA§p¤   ÿÿÿÿ ?              ÇGROTH_MOS04-14  @jƒÂ\(õ@JŞ\‘ÑN; A¶   ?³33 ?¸ =¸Qì ?¥¸Vpt A§33QSOÿÿÿÿ QSO            ÈXMMLSS_MOS01-00 @B’£S%ÀIº^5?|>A·™š>?³33 >Â\ ?Y™š ?
+=qVpt A­G®QSOÿÿÿÿ QSO            ÉGROTH_MOS07-13  @j˜áG®z@J\¼j~ùÚ>A¸ÌÍ>?³33 >Â\ >æff ?\Vpt A¥×
+QSOÿÿÿÿ QSO            ÊGROTH_MOS07-23  @j¡~ÿ—#@JcxFÜ\ A¸   ?±ë… >æff >™™š ?záH extA©×
+   ÿÿÿÿ ?              ËXMMLSS_MOS01-03 @Bµsê³À¸ï4Ö¡a Aµ… ?±ë… >uÂ =ÌÌÍ ?¾¸RVextA¦õÃ   ÿÿÿÿ AGN            ÌVVDS22H_MOS00-26@tß†Â&€?ôï²-U A²õÃ ?±ë… >”zá<     ?E¸Vpt A¤ff   ÿÿÿÿ Point Var      ÍGROTH_MOS02-06  @j¶ì¿±[V@Kdàuöı!>A¸Qì>?±ë… >³33 >\) ?=p¤ extA©Â   ÿÿÿÿ ?              ÎELAISN1_MOS16-11@n#ÑN;Í5@JıÏªÍƒ>A¸  >?±ë… ?333<     ?¹™š extA¢¸R   ÿÿÿÿ ?              ÏGROTH_MOS07-11  @j•ã¼ÓZ@JSdZ¬ A®õÃ ?±ë… >ÌÌÍ =£×
+ ?LÌÍVpt A¤\QSOÿÿÿÿ QSO            ĞCOSMOS_MOS26-30 @bÓş\‘ÑN?ø_oÒò A´zá ?°£× >³33 >¸ ?c×
+FextA áH   ÿÿÿÿXAGN            ÑELAISN1_MOS13-13@nBì¿±[V@K²Cş\‘Ğ>A¸ff>?°£× ?ÌÍ<     ?®{Fpt A¯®   ÿÿÿÿ Point Trans    ÒXMMLSS_MOS00-19 @Año hÛ‹ÀJW§†Â% A³×
+ ?°£× >ğ£× >aG® ?“33Vpt A¥×
+QSOÿÿÿÿXQSO            ÓCOSMOS_MOS24-03 @b±Éã¼@ ¿±[W>« A°(ö ?°£× >æff =õÂ ?s33VextA¨=q   ?{XAGN            ÔELAISN1_MOS15-11@nM¼ÓZ…†@K.YJôğ×>A¸=q>?°£× ?hõÃ<     >£×
+FextA¯\)   ÿÿÿÿ Galaxy Trans   ÕVVDS22H_MOS00-06@tÖğ¸º?õŞÒˆÎp:>Aµ…>?°£× >Ñë…<     ?k…Vpt A¡33QSOÿÿÿÿ QSO            ÖXMMLSS_MOS04-00 @B/Ë)^À
+Àƒn— A²=q ?°£× >áG® >Â\ ?}p¤VextA¢£×   ÿÿÿÿXAGN            ×XMMLSS_MOS02-10 @A‡¤?åÉÀ!ÿ.Hè¦ A²{ ?¯\) >½p¤<     ?Ñë…VextA£33   ÿÿÿÿ AGN            ØELAISN1_MOS16-31@n? ù	k¸@K+ŸU›=>A¸=q>?¯\) ?E¸ ?
+=<    Fpt AõÃMdwÿÿÿÿ Mdw            ÙGROTH_MOS03-18  @jÓûçl‹C@JÜİ/Ÿ½ A°ÌÍ ?¯\) >¸R >LÌÍ >ÌÌÍFextAŸ…   ÿÿÿÿ Galaxy Flare   ÚCOSMOS_MOS27-07 @bªHè§æ?úşÅm\ú¬>A¸{>?¯\) ?ÌÍ >™š ?†ffFextAÌÍ   ÿÿÿÿ Galaxy Trans   ÛVVDS22H_MOS00-19@tİ"Ğå`A?ì¸ºÇÊ>AµÂ>?®{ >Ñë…<     ?“33 extAª=q   ÿÿÿÿ ?              ÜVVDS22H_MOS06-21@tÖ$İ.¿Õ¡ÊÀƒn A­™š ?®{ >”zá<     ?záVpt A–zá   ?‰7L QSO            İVVDS22H_MOS05-13@tåMÒñ©û¿á„M:’ A¯¸ ?®{ >”zá >#×
+ ?ÌÍVpt A {QSOÿÿÿÿ QSO            ŞVVDS22H_MOS03-12@tÛ8†YJô?ÜğØDĞ¨ A°zá ?®{ >³33<     ?fffVextA§33   ÿÿÿÿ AGN            ßELAISN1_MOS11-21@n§Aò×r@KˆŞÒˆÎo A¬ff ?®{ >£×
+ >W
+= ?ˆõÃVextA¥®   ÿÿÿÿ AGN            àCDFS_MOS03-20   @KDÌÌÌÌÌÀ;×sû>A¸\>?®{ >áG® >aG® ?s33Fpt Aˆ£×   ÿÿÿÿ QSO            áCOSMOS_MOS27-04 @b¥Á½¥œ?ôÉîËûµ A¶{ ?®{ >Ç® >…¸ ?£×VextA˜ÌÍ   ÿÿÿÿ AGN            âELAISN1_MOS11-17@n›KÆ§ï@KÒe+ÓÂ A³® ?®{ >Â\ >¸Qì ?Që…Vpt A°ÌÍQSOÿÿÿÿ QSO            ãCDFS_MOS00-20   @J‚3œ¾ßÀ;Ÿ²-U>A¸ÌÍ>?®{ >uÂ =LÌÍ ?³33Fpt A¶{QSOÿÿÿÿXQSO            äELAISN1_MOS12-02@nEö”Fr@KŒô!-v>A¸ff>?®{ ?   <     ?ÈõÃFpt Aˆ(öMdwÿÿÿÿ Mdw            åVVDS22H_MOS06-05@tËOv_Ø¿Ì¨ÁTÉ…ï>A±33>?®{ >aG® >#×
+ ?5ÂFextAŸ
+=   ÿÿÿÿ Galaxy Trans   æGROTH_MOS05-06  @jêa|ÚP@Jg—$tS>A¸ÌÍ>?®{ ?\)<     >€  FextA´zá   ÿÿÿÿ Galaxy Trans   çCOSMOS_MOS23-22 @bŞšu%E@vı!ÿ.H A±ë… ?®{ >Â\ >LÌÍ ?Š=q extA¡G®   ÿÿÿÿ ?              èELAISN1_MOS14-11@n„÷eıŠÚ@K¿HË‘>A¶ÌÍ>?¬ÌÍ >Ü(ö =ÌÌÍ ?—
+= extA«\)   ÿÿÿÿ ?              éCDFS_MOS00-02   @JJe+ÓÂÀ;ÌcñA A¶¸R ?¬ÌÍ >\) >.{ >™™šVpt A§33QSOÿÿÿÿ QSO            êELAISN1_MOS16-16@n*ŒL˜^@K,É…ğoh A¯33 ?¬ÌÍ >¸Qì ?(ö ?J=qVextA•p¤   >Y‡XAGN            ëVVDS22H_MOS05-12@tã8}¿H¿åº^5?|í>A²£×>?¬ÌÍ >¸R >Ç® ?!G® pt A¢õÃQSOÿÿÿÿ QSO            ìVVDS22H_MOS00-29@tá¢œwšk?øQÎ_o>A¶zá>?¬ÌÍ >¨õÃ ?ÌÍ >æffVpt Aš\   ÿÿÿÿ Point Var      íVVDS22H_MOS01-03@tÅ+jçÕf?à~($x>A¶Qì>?¬ÌÍ ?¸<    <     extAÄff   ÿÿÿÿ ?              îCDFS_MOS04-20   @J¢òä‰À<5¨Xy=>A¸ÌÍ>?¬ÌÍ >áG® =¸Qì ?ŒÌÍVextA³\)   ÿÿÿÿ AGN            ïCDFS_MOS05-11   @IíY³Ğ|„À;'ÕfÏAñ A±p¤ ?¬ÌÍ >W
+= =#×
+ ?°£× extA§™š   ÿÿÿÿ ?              ğELAISN1_MOS16-22@n2ç¯·è@K_Ø­«>A¸=q>?¬ÌÍ ?¡G® >LÌÍ >k…Fpt A¤\Mdwÿÿÿÿ Mdw            ñCOSMOS_MOS21-06 @bÈ‘ÑN;Í@
+n—O>A¶£×>?¬ÌÍ >úáH >LÌÍ ?‘ë…VextA©¸   ÿÿÿÿ AGN            òXMMLSS_MOS04-15 @B|¯O„LÀî}Vlô>A·®>?¬ÌÍ >áG®<     ?£×
+VextA«\)   ÿÿÿÿXAGN            óELAISN1_MOS15-17@nX¤¨ÁTÈ@Jê…‡“İ— A£… ?¬ÌÍ >Â\ =£×
+ ?+…VextA¡¸   ÿÿÿÿ AGN            ôXMMLSS_MOS05-28 @A×–»˜ÇÀÍƒä%®>A·ë…>?«… ?¡G® >aG® >\)F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans   õCOSMOS_MOS27-11 @b°ğØDĞ?û6z–»>A¸  >?«… ?@  <     ?£×Vpt A©\)QSOÿÿÿÿ QSO            öCOSMOS_MOS23-00 @bĞæ1ø ?ÿË’:)Çx Aµ\) ?«… >”zá ?\) >ÌÌÍFpt AmÂMdwÿÿÿÿXMdw            ÷XMMLSS_MOS01-02 @Bl"h	ÔÀ7éùrF A²¸R ?«… >™™š =\) ?À  VextA¦\   ÿÿÿÿXAGN            øELAISN1_MOS10-17@nkí(Œç@Kö
+¦L/‚>A·ë…>?«… >Š=q<     ?¢\Vpt A¤áHQSOÿÿÿÿ QSO            ùVVDS22H_MOS00-02@tÔ¹Œ~(#?ù*™0¾>A¶¸R>?«… ?¸R<     =¸QìFextÿÿÿÿ   ÿÿÿÿ Galaxy Trans   úCDFS_MOS01-03   @IÅ¡ÊÀƒÀ<>í(Œæ A°(ö ?«… >æff<     ?‹…VextA¤õÃ   ÿÿÿÿ AGN            ûVVDS22H_MOS05-08@tßØDĞ¨¿ß/ìVÕÏª A¬Qì ?«… >€   >½p¤ >³33Vpt Ag×
+   ÿÿÿÿ Point Var      üGROTH_MOS03-21  @jÚÙ‡+@J£xFÜ\>A¸ÌÍ>?«… ?\)<     ?záFextA«\)   ÿÿÿÿ Galaxy Trans   ıCOSMOS_MOS23-30 @bçº^5?|?û¸Që…·>A·Â>?ª=q ?    >k… >W
+=F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans   şELAISN1_MOS10-07@nE¼£n.@LL˜_ö A®Qì ?ª=q ?¸ >.{ ?£×
+ extA­p¤   ÿÿÿÿ ?              ÿXMMLSS_MOS04-22 @B¡‰7KÆ§Àe+ÓÃ` AŸ×
+ ?ª=q >€   <õÂ ?Ê=q extA¸R   ÿÿÿÿ ?              ELAISN1_MOS11-00@nz:)Çy¦@K¯ùrGE8>A¸Qì>?ª=q ?¸R >aG® >…¸Fpt AtzáMdwÿÿÿÿ Mdw           CDFS_MOS01-35   @J>”Fs×À<	ùrGD>A¸ÌÍ>?ª=q ?¡G® >8Qì >B\Fpt A•p¤Mdwÿÿÿÿ Mdw           COSMOS_MOS22-15 @b¾PHğ@œ¬1&é A­Â ?ª=q >ğ£× >8Qì ?•ÂVpt A¨{QSOÿÿÿÿ QSO           COSMOS_MOS26-32 @bØ¡aä÷e?îDĞ©*/>A·×
+>?ª=q ?   <     >™šFpt A»\)   ÿÿÿÿ Point Trans   VVDS22H_MOS06-10@tÍ(Œç¯¿Í(Œç¯·>A±ë…>?ª=q ?ŒÌÍ >B\ >#×
+ pt A×
+Mdwÿÿÿÿ Mdw           CDFS_MOS06-12   @KtSóLÀ<+6z– A£Â ?ª=q ?+… ÿÿÿÿ ?Â\VextA›Â   ÿÿÿÿ AGN           XMMLSS_MOS00-15 @AÕOß;dYÀø -à A±\) ?ª=q >æff =LÌÍ ?…¸Vpt A¦\QSOÿÿÿÿXQSO           XMMLSS_MOS04-20 @B™‚©“àÀĞ©*0U>A·®>?¨õÃ >Ç® >¸R ?TzáFextAé×
+   ÿÿÿÿ Galaxy Trans  XMMLSS_MOS01-15 @B?¤?åÉÀ/O„M >A·Â>?¨õÃ >uÂ<     ?¾¸R extA¦     ÿÿÿÿ ?             	COSMOS_MOS23-29 @bç§†Â&€?û´9XbM>A·Â>?¨õÃ ?¸R >¸Qì >LÌÍFpt AÇ¸   ÿÿÿÿ Point Trans   
+XMMLSS_MOS05-29 @AÙûçl‹CÀ×ö+jçÕ>A·ë…>?¨õÃ ?¸R >aG® >\)F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  COSMOS_MOS26-09 @bÅ¯·é?õå`A‰7K>A·
+=>?¨õÃ >.{ >\) >B\FextAŸ
+=   ÿÿÿÿ Galaxy Trans  XMMLSS_MOS04-11 @Bd²•éá°ÀîËûµs>A·®>?¨õÃ ?®<     ?\)VextA¯
+=   ÿÿÿÿXAGN           XMMLSS_MOS00-07 @A®+jçÕfÀí(Œç>A·p¤>?¨õÃ >Â\ >™š ?‘ë…VextA¨ÌÍ   ÿÿÿÿXAGN           COSMOS_MOS26-04 @bÂ¸ºÇ?÷0¾í(Œ A¥ë… ?¨õÃ >Š=q >£×
+ >Ç®Vpt AL(ö   ÿÿÿÿ Point Var     XMMLSS_MOS05-30 @AÚ{²şÅmÀşBZîc A ¸R ?¨õÃ >ë…<     ?Ç® extA”     ÿÿÿÿXAGN           GROTH_MOS03-06  @j½oÒòä@JœÌÌÌÌÌ A±Â ?¨õÃ >ÌÌÍ >.{ ?záVextA›×
+   ÿÿÿÿ AGN           CDFS_MOS02-19   @J‹qu!•À:Çy¦µ A±\) ?¨õÃ >™™š >#×
+ ?·
+= extA¯™š   ÿÿÿÿ ?             XMMLSS_MOS01-14 @B? ù	k¹À-V’>A·Â>?¨õÃ >k…<     ?½p¤ extA¥×
+   ÿÿÿÿ ?             COSMOS_MOS23-08 @bØšÔ,<@bëC,¥>A·Â>?¨õÃ ?¸R >¸Qì >LÌÍF   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  ELAISN1_MOS16-09@n õÂ\(@K-sê³g  Aµ… ?§® >õÂ<     ?—
+=Vpt A«™š   ÿÿÿÿ Point Var     ELAISN1_MOS13-07@n+jçÕfÎ@K¯±[W>ª>A¸  >?§® >×
+= >.{ ?p£× pt A¥®QSOÿÿÿÿ QSO           XMMLSS_MOS06-19 @B2×süÀô‡ü¹# A°ff ?§® >aG® >#×
+ >…¸Vpt A`ÌÍ   ÿÿÿÿX?             COSMOS_MOS24-11 @b·ÎÙ‡*@ÿÿÿÿÿÿ Aª(ö ?§® >×
+= =uÂ ?‘ë…VextAŠ¸R   >1'XAGN           COSMOS_MOS24-41 @bÏÛ"Ğå`@KÆ§ï±>A¸  >?§® >³33 >uÂ ?hõÃFextA©G®   ?¯;dXAGN           ELAISN1_MOS11-07@n…àqt@KŠJŒL—>A·Â>?§® >½p¤ >£×
+ ?333Fpt A­\)   ÿÿÿÿ Point Trans   VVDS22H_MOS00-04@tÖ:’£?ï$tSóL>A¶Qì>?§® >¸R<     ?J=qVextA±\)   ÿÿÿÿ AGN           XMMLSS_MOS00-08 @A¼¬1&éÀÂ&€IP>A·…>?§® ?p¤ >³33 =õÂFextA¿33   ÿÿÿÿ Galaxy Trans  COSMOS_MOS23-36 @bîVÕÏªÍ@ hr° Ä>A·…>?§® >Â\ >8Qì ?uÂFpt A¨ÌÍQSOÿÿÿÿ QSO           CDFS_MOS02-35   @JĞğ¸À:ÈüPHï A·33 ?¦ff >Â\ >k… ?B\VextA¨ÌÍ   ÿÿÿÿ AGN           ELAISN1_MOS16-08@nÀëíúC@Ko1Å€>A·
+=>?¦ff >\)<     ?\(öFpt A¤\   ÿÿÿÿ Point Trans   ELAISN1_MOS16-36@nG©ûçlŠ@K-—ö+jç A³\) ?¦ff >Ü(ö<     ?{Vpt AªáH   ÿÿÿÿ Point Var      COSMOS_MOS27-22 @b½ö+jçÕ?ôÛ‹¬q²>A¸  >?¦ff >ğ£× >#×
+ ?¥¸Vpt A¬áH   ÿÿÿÿ QSO           !CDFS_MOS02-11   @Jr0U2a{À;.V“t A®\ ?¦ff >®{ =LÌÍ ?E¸VextA¥Â   ÿÿÿÿ AGN           "COSMOS_MOS25-01 @b˜šu%E@ E8ï4Ö¡ A¦ff ?¦ff >³33 >.{ >”zá extA—Â   ÿÿÿÿ ?             #COSMOS_MOS24-31 @bÃö+jçÕ@İcˆe”¯ AµÂ ?¥¸ >£×
+ >€   ?=p¤VextA¥™š   ?:^5XAGN           $CDFS_MOS01-29   @J#óMjÀ<–s×Ûó>A¸ÌÍ>?¥¸ >£×
+ >.{ ?+…VextA¬Qì   ÿÿÿÿ AGN           %COSMOS_MOS24-33 @bÄz–»@ Ãa@N¤>A¸{>?¥¸ ?™™š >k… >W
+=Fpt A\MdwÿÿÿÿXMdw           &CDFS_MOS05-01   @IÇOß;cÀ;Gy¦µ A·
+= ?¥¸ >…¸ =uÂ ?!G®V   A¦õÃ   ÿÿÿÿ QSO           'COSMOS_MOS24-08 @bµŠÚ¹õY@©Çy¦µ
+>A¸  >?¥¸ >¸Qì ?+… ?®VextA£ë…   ÿÿÿÿ AGN           (ELAISN1_MOS14-03@nt$İ/Ÿ@JØuöı!ş A°=q ?¥¸ >×
+= >W
+= ?{FextAª{   ÿÿÿÿ Galaxy Flare  )COSMOS_MOS26-02 @bÂxFÜ?ùğ¸º>A·p¤>?¥¸ >W
+= >¨õÃ >Š=qVextAõÃ   ÿÿÿÿ AGN           *VVDS22H_MOS00-18@tÜîËûµ?êòäŠq>AµÂ>?¥¸ >Ç®<     ?€  VextA©™š   ÿÿÿÿ AGN           +CDFS_MOS03-05   @JïškP°òÀ;%8ï4Ö >A¸\>?¥¸ >áG® >™š ?}p¤VextA¨ff   ÿÿÿÿ AGN           ,CDFS_MOS00-36   @J£ŸU›=À<'KÆ§ï A´=q ?¥¸ >\)<     ?uÂVpt A©\)   ÿÿÿÿ STAR          -GROTH_MOS04-26  @jœ1&éxÔ@JÁJôğØD A£® ?¥¸ >¸Qì >úáH ?¸ pt A…\)RRLÿÿÿÿ RRL           .COSMOS_MOS24-19 @b¼:)Çy¦@û~ÿ—$>A¸{>?¥¸ ?p£× >®{ >uÂFextAÁG®   ÿÿÿÿ Galaxy Trans  /CDFS_MOS03-19   @K@ªdÂø7À;>p:û~>A¸\>?£×
+ >Ç® >\) ?¸RVextA­…   ÿÿÿÿ AGN           0COSMOS_MOS24-36 @bÉü¹#¢œ@ JW§†Â& A±® ?£×
+ >Ü(ö<     ?¡G®FextA«…   ?}/XAGN           1ELAISN1_MOS16-30@n?ƒä%®@K [À6>A¸=q>?£×
+ ?\)<     ?”záVpt A°=qQSOÿÿÿÿ QSO           2COSMOS_MOS24-01 @b¯Òòä@q©ûçl‹>A·p¤>?£×
+ >B\ >uÂ >#×
+FextA      ÿÿÿÿ Galaxy Trans  3ELAISN1_MOS15-03@nFE¡ÊÀ‚@K	:’£R A´õÃ ?£×
+ >€   =¸Qì ?aG®FextA©®   ÿÿÿÿ Galaxy Flare  4XMMLSS_MOS05-21 @A·»/ìVÕÀ§l‹C•€ A¶ÌÍ ?£×
+ >.{<     ?G®VextAª{   ÿÿÿÿXAGN           5XMMLSS_MOS01-24 @Bu5¨Xy=À¨Œç¯· A®ÌÍ ?£×
+ >™™š =\) ?+… extA®õÃ   ÿÿÿÿXAGN           6CDFS_MOS00-57   @JÖOv_ØÀ;¯!-w1>A¸ÌÍ>?£×
+ >³33<     ?ª=qF   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  7XMMLSS_MOS03-11 @Aà}¿HÀ¡ÿ.Hè§>A·®>?£×
+ ?™™š >™š =LÌÍF   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  8XMMLSS_MOS05-19 @A´C,¥zxÀqŞi­BÃ Aµë… ?¢\ >LÌÍ >B\ >Š=qFextA¯G®   ÿÿÿÿ Galaxy Flare  9COSMOS_MOS22-07 @b«Aò×r@µ?|í‘h A°áH ?¢\ >ğ£× >€   ?\)Vpt A áHQSO?tıô QSO           :XMMLSS_MOS06-10 @BÙb¶®Àusê³g  A¶   ?¢\ >Â\ =\) ?k…Vpt A =qQSOÿÿÿÿXQSO           ;ELAISN1_MOS14-00@nfù	k¹‹@K-à>A·×
+>?¢\ >™™š =ÌÌÍ ?8QìVpt A õÃQSOÿÿÿÿ QSO           <COSMOS_MOS23-33 @béÃa@N@ÀN¤¨ÁT>A·®>?¢\ >£×
+ >#×
+ ?#×
+ pt A¦¸RQSOÿÿÿÿ QSO           =VVDS22H_MOS00-14@tÚW>«6y?í^š A²ff ?¢\ >£×
+ =\) ?0£×VextA¦{   ÿÿÿÿ AGN           >CDFS_MOS00-14   @Jl¿±[W>À<E›=ÈJ A®ÌÍ ?¢\ =õÂ =áG® >Ç® extA”{   ÿÿÿÿ ?             ?COSMOS_MOS21-08 @bÎ‰ 'RT@dŠqŞi A°ff ?¢\ >Ü(ö >B\ ?ƒ×
+Vpt A¢áHQSOÿÿÿÿ QSO           @ELAISN1_MOS10-15@ndø7´¢3@KÔ(õÂ[ A·p¤ ?¢\ >…¸ ?#×
+ >£×
+VextA¤ff   ÿÿÿÿ AGN           ACOSMOS_MOS25-05 @bœ§ï²,@ª™0¾ì>A¶ff>?¡G® >Ü(ö >8Qì ?‘ë…VextA¬áH   ÿÿÿÿ AGN           BCDFS_MOS00-53   @JÇ|í‘hrÀ;è­«ŸUš A¸¸R ?¡G® =\) =\)<    VextA¦ÌÍ   ÿÿÿÿ AGN           CXMMLSS_MOS01-25 @B„M:À
+@·€4m A°\ ?¡G® >Ñë… >¨õÃ ?ÌÍFextA›®   ÿÿÿÿ Galaxy Flare  DELAISN1_MOS11-01@n| Ñ·X@Kmöı!ÿ- A«G® ?¡G® >Ñë… >#×
+ ?W
+=FextA¢õÃ   ÿÿÿÿ Galaxy Flare  EVVDS22H_MOS00-15@tÛ=ÈK]?ôô!-w1>A¶¸R>?¡G® ?”zá <#×
+<    Fpt AÌÍMdwÿÿÿÿ Mdw           FVVDS22H_MOS01-01@tÄ“t¼?âffffff>A¶Qì>?¡G® >£×
+ =áG® ?{FextA®(ö   ÿÿÿÿ Galaxy Trans  GELAISN1_MOS16-34@nDƒä%®å@K=Ö8†YJ>A·Â>?    >™™š<     ?£×FextA¬õÃ   ÿÿÿÿ Galaxy Trans  HELAISN1_MOS11-18@nE¡ÊÀ‚@K²\(õÂ A°£× ?    >Ñë…<     ?n{Vpt A¡®QSOÿÿÿÿ QSO           ICDFS_MOS01-09   @Iİ—ö+jçÀ;Ò£S& A¶\ ?    >LÌÍ =¸Qì ?¦ffVpt A§…   ÿÿÿÿ QSO           JCDFS_MOS00-17   @Jw8}¿HÀ;ş—Oß:>A¸ÌÍ>?    =õÂ >#×
+ >LÌÍVextAŸë…   ÿÿÿÿ AGN           KXMMLSS_MOS01-20 @BdtSóMÀ+jçÕfÎ>A·Â>?    ?   <     ?‘ë… pt A§×
+   ÿÿÿÿ ?             LCDFS_MOS05-32   @J;6z–À;³àŞÒˆ>A¸¸R>?    ?!G® >\) >™šF   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  MCDFS_MOS02-25   @Jª	Ş ÑÀ:]„M:’>A¸ÌÍ>?¸R >W
+= =¸Qì ?‹…FextA®Qì   ÿÿÿÿ Galaxy Trans  NGROTH_MOS04-06  @j|$xF@JßŠ	Ş >A·®>?¸R >ÌÌÍ >™š ?.{VextA¨zá   ÿÿÿÿ AGN           OGROTH_MOS01-23  @kµsê³g@K	rGE8î A¡
+= ?¸R ?¸ =\) ?—
+=FextA¢õÃ   ?,ÌÍ AGN           PVVDS22H_MOS05-14@tæb¶®}¿êzáG® A¢áH ?¸R >¸Qì <£×
+ ?LÌÍVextAœ\   >ıp¤ AGN           QXMMLSS_MOS02-03 @A]àquÀÍí(Œç A³… ?¸R >×
+= >™š ?p£×Vpt A¥33QSOÿÿÿÿ QSO           RCOSMOS_MOS21-15 @bÔ?»@	é­BÃÉî A´=q ?¸R >½p¤ >k… ?O\)Vpt A«…QSOÿÿÿÿ QSO           SXMMLSS_MOS01-01 @B”Fs×Àzxl"h	 A°   ?¸R >uÂ >8Qì ?    pt A¥…QSOÿÿÿÿXQSO           TGROTH_MOS06-11  @jÙâ‚@·@J2a|Ù A³p¤ ?¸R >×
+= ÿÿÿÿ ?Š=qVpt A£×QSO?Ç+ QSO           UCDFS_MOS04-07   @J`	Ô•*À<[ŸU›= A³ë… ?¸R >™š =õÂ ?Š=q pt A¦¸RQSOÿÿÿÿ QSO           VXMMLSS_MOS03-15 @Aş;Í5¨XÀ½Vlô! A²£× ?p¤ >£×
+ >.{ ?0£×Fpt A¬QìQSOÿÿÿÿXQSO           WCOSMOS_MOS27-00 @b 9XbM?ö~($x>A¸{>?p¤ ?”zá >aG® >#×
+Fpt A~ffMdwÿÿÿÿ Mdw           XXMMLSS_MOS00-09 @A½öı!ÿ.À}¿HË‘ A·G® ?p¤ >B\ >™™š >¨õÃVextA›ë…   ÿÿÿÿXAGN           YCDFS_MOS00-32   @J˜|„µÜÅÀ;íúCş\‘>A¸ÌÍ>?p¤ >#×
+ >k… >ÌÌÍVextA§G®   ÿÿÿÿ AGN           ZCOSMOS_MOS24-15 @bºMÒñ©û?ıl"h	Ô”>A·Â>?p¤ >®{<     ?c×
+Vpt A¤ÌÍQSO?«çmXQSO           [CDFS_MOS05-00   @IÁ*0U2aÀ;2ÃÉîËú>A¸¸R>?p¤ >™™š >…¸ ?¸RVextA«G®   ÿÿÿÿ AGN           \GROTH_MOS07-01  @j|qu@J;"Ğå`A>A¸{>?p¤ >¸Qì<     ?B\VextA§G®   ÿÿÿÿ AGN           ]XMMLSS_MOS06-02 @AâÔ,<ìÀLcñA [ A¶¸R ?p¤ >¸Qì =áG® ?TzáVextA¨Qì   ÿÿÿÿXAGN           ^XMMLSS_MOS00-04 @A¨ò{²şÅÀ?HË’9>A·…>?p¤ ?
+=q<     ?k…Fpt A¬¸RQSOÿÿÿÿXQSO           _XMMLSS_MOS00-00 @A‡'»/ìVÀ
+2-V>A·p¤>?p¤ >³33 >Š=q ?TzáVextA©…   ÿÿÿÿ AGN           `COSMOS_MOS24-16 @bº~ùÛ"Ğ@P°ò{²ş A®Qì ?œ(ö >¨õÃ >\) ?&ffVpt Aœ{QSO?”“XQSO           aELAISN1_MOS10-00@n7 ù	k¸@L¤¨ÁTÉ A²¸R ?œ(ö >\) =uÂ ?ŒÌÍFpt A£™šQSOÿÿÿÿ QSO           bXMMLSS_MOS03-02 @A¶ÿ—$tÀöÈ´9X>A·®>?œ(ö ?‘ë… >k… =õÂF   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  cCDFS_MOS03-14   @KÎ_oÀ;=¥œàu>A¸\>?œ(ö ?“33 =uÂ =£×
+Fpt A¡p¤Mdwÿÿÿÿ Mdw           dGROTH_MOS05-11  @jíìVÕÏª@JMÌcñA A·… ?œ(ö >Š=q >Ç® >ÌÌÍVextA¬ÌÍ   ÿÿÿÿ AGN           eGROTH_MOS07-21  @jŸL˜_ö@J’	Ş Ñ A³ë… ?œ(ö >¸R<     ?záFpt A§¸QSOÿÿÿÿ QSO           fELAISN1_MOS11-12@n”	Ş Ñ@KŠJŒL— Aµ\) ?šáH >”zá >\) ?ˆõÃ pt A¨áHQSOÿÿÿÿ QSO           gCDFS_MOS00-13   @Jiø -ßÀ;°oiDg7>A¸ÌÍ>?šáH >\) =\) ?“33FextA±G®   ÿÿÿÿXAGN           hCDFS_MOS03-09   @Jõ\ú¬ÙçÀ:×1Å€ A¸{ ?šáH >aG® >\) ?#×
+Vpt Aš(ö   ÿÿÿÿ Point Var     iELAISN1_MOS13-04@n%fÏAò@K™^™ A³×
+ ?šáH >™™š >uÂ ?n{Fpt A£G®QSOÿÿÿÿ QSO           jVVDS22H_MOS03-17@tŞÀëíúC?Ü•*™0½ A¯ë… ?šáH >€   =¸Qì >úáHVextA¥¸   ÿÿÿÿ AGN           kXMMLSS_MOS05-15 @A©Q‚©“ÀT,<ì¿>A·ë…>?šáH >ğ£×<     ?O\)VextA¨zá   ÿÿÿÿXAGN           lGROTH_MOS04-27  @jœkP°ò{@J¶Ov_Ø­ A°Qì ?šáH >®{ =áG® ?ÌÍVextA§\)   ÿÿÿÿ AGN           mCDFS_MOS01-28   @J ØDĞ¨À<l(õÂ[>A¸¸R>?šáH >.{ >aG® >…¸Fpt A°=qQSOÿÿÿÿ QSO           nCOSMOS_MOS23-06 @bØÚQÍ?ıÎÙ‡+>A·Â>?™™š ?\) >Â\ >B\F   ÿÿÿÿ   ÿÿÿÿ Point Trans   oELAISN1_MOS14-01@nj§æšÓ@K4„µÜÆ> A­Â ?™™š >ë… >W
+= ?†ffVextA¡p¤   ÿÿÿÿ AGN           pVVDS22H_MOS05-01@t×ùÛ"Ğå¿ğ¥œàuö A¤¸R ?™™š >Š=q >LÌÍ ?!G®Vpt AœÌÍQSOÿÿÿÿ QSO           qGROTH_MOS04-16  @jˆ˜_ö“@KùrGE8 A«\) ?™™š >³33 =¸Qì >úáHFextA¢áH   ÿÿÿÿ Galaxy Flare  rGROTH_MOS04-04  @juóMj@J³Ãa@N Aµ… ?™™š >™™š >k… ?¸RVpt A¤ÌÍQSOÿÿÿÿ QSO           sCOSMOS_MOS27-06 @b©[W>«6?÷ó¶E¡ÊÀ A­™š ?™™š >¨õÃ =LÌÍ ?uÂVextAŸ33   ÿÿÿÿ AGN           tCOSMOS_MOS27-08 @b«xFÜ]?ñ$İ/>A¸{>?™™š >æff =£×
+ ?hõÃFpt A«®QSOÿÿÿÿ QSO           uCOSMOS_MOS26-25 @bÏûµsê?øl"h	Ô” A±ë… ?™™š >”zá =ÌÌÍ ?:áHVpt AªÌÍQSO?z¬XQSO           vXMMLSS_MOS05-16 @A«šu%ÀÑÑN;Í5 A¨õÃ ?™™š >õÂ<     ?“33Vpt AŸ…QSOÿÿÿÿXQSO           wGROTH_MOS01-05  @jà‚@·€3@K%ÏªÍƒ>A·×
+>?™™š >¸Qì >Ñë… >ë…VextA©p¤   ÿÿÿÿ AGN           xXMMLSS_MOS03-09 @AÚ’£S%Àı¥œàu>A·®>?™™š >¸Qì<     ?E¸FextA¯Â   ÿÿÿÿXAGN           yCOSMOS_MOS24-17 @b»²şÅm\@ $İ/Ÿ Aµ¸ ?™™š >\) >®{ ?+…VextAª     ?Ÿ¾wXAGN           zXMMLSS_MOS03-10 @AÜ˜_ö”ÀöÈ´9X A ÌÍ ?™™š >£×
+ =\) ?333 extA“×
+   ÿÿÿÿXAGN           {XMMLSS_MOS02-07 @A~ùÛ"ĞåÀ#×
+=p£ A²ÌÍ ?™™š >³33 >”zá ?B\Vpt A¨{QSOÿÿÿÿ QSO           |GROTH_MOS05-17  @jôÔıó¶E@JoÁ½¥œ>A¸zá>?™™š >™™š >áG® >æffVextA«×
+   ÿÿÿÿ AGN           }CDFS_MOS02-23   @J¢QÎ^À:Zû~ÿ–>A¸zá>?™™š >aG® >LÌÍ ?J=qVextAª¸R   ÿÿÿÿ AGN           ~GROTH_MOS07-02  @j}=ÈK]@J}ŠÚ¹õY A§… ?™™š >ğ£× =#×
+ ?}p¤Vpt A¸QSOÿÿÿÿ QSO           CDFS_MOS06-03   @JÜã¼ÓZ…À<yá°‰ & A¯\) ?˜Qì ?
+=q >¸Qì ?œ(ö pt A áHQSOÿÿÿÿ QSO           €ELAISN1_MOS12-04@nLa|ÚP@K¶ÕÏªÍ A¯ë… ?˜Qì >\) =¸Qì ?k…VextA¡33   ÿÿÿÿ AGN           ELAISN1_MOS13-14@nC“àŞÑ@KÉ^™>A¸ff>?˜Qì ?ŒÌÍ >#×
+ >W
+=Fpt A  Mdwÿÿÿÿ Mdw           ‚CDFS_MOS02-29   @JÁ³Ğ|„µÀ;0°ò{²ş>A¸ÌÍ>?˜Qì ?J=q >™™š ?\)F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  ƒELAISN1_MOS14-13@nŠp:û~@Jù 'RT` A­G® ?˜Qì >×
+= =áG® ?ƒ×
+ pt A¡ë…QSOÿÿÿÿ QSO           „CDFS_MOS02-06   @Jg+I¹À:Ò×sû A¸zá ?˜Qì >B\ >€   >\)VextAŸ\)   ÿÿÿÿ AGN           …CDFS_MOS01-25   @Jo hÛ‹À<»Æ§ï± A±×
+ ?˜Qì >”zá<     ?8QìVpt A¦\QSOÿÿÿÿ QSO           †ELAISN1_MOS15-22@n\L/ƒ{I@JËÉîËû>A¸=q>?˜Qì ?Š=q >³33 >B\ pt A†  Mdwÿÿÿÿ Mdw           ‡CDFS_MOS00-47   @J¶Â&€HÀ<S&Á A·p¤ ?˜Qì >#×
+ >W
+= >ÌÌÍVpt A®   ÿÿÿÿ Point Var     ˆXMMLSS_MOS05-13 @A¢û~ÿ—À¼j~ùÛ" AŸ33 ?˜Qì >®{ =\) ?¸R extAˆff   ÿÿÿÿXAGN           ‰COSMOS_MOS21-05 @bÅ]Ìcñ@@be+ÓÃ A«™š ?˜Qì >õÂ =\) ?\)Fpt A¢{QSO?…?}XQSO           ŠXMMLSS_MOS03-00 @A¬xFÜÀN;Í5¨X>A·®>?˜Qì ?\)<     ?¯\)VextA¨     ÿÿÿÿXAGN           ‹GROTH_MOS07-07  @jœàuöü@J„ÚQÍ>A¸ÌÍ>?˜Qì ?333<     ?.{ extA«p¤   ÿÿÿÿ ?             ŒGROTH_MOS05-15  @jò=p£×	@JAÀëíúC>A¸ÌÍ>?˜Qì ?ŒÌÍ >™š ÿÿÿÿFpt Ap¤Mdwÿÿÿÿ Mdw           COSMOS_MOS24-38 @bÍ†Â&€@g ù	k¹ A±G® ?˜Qì >³33 >\) ?záHVextA¦(ö   ?{dZXAGN           GROTH_MOS01-12  @jòâe+Ó@KKW>«6y A²   ?˜Qì >³33 >”zá ?333 extA¨=q   ÿÿÿÿ ?             CDFS_MOS01-17   @Iñä÷eıŠÀ<
+¦L/‚ A±¸ ?˜Qì >Â\<     ?s33Vpt A§ÂQSOÿÿÿÿ QSO           COSMOS_MOS23-07 @bØcñA [?ıæšÔ,< A³
+= ?—
+= >¨õÃ =£×
+ ?(öFpt A õÃQSO?æéyXQSO           ‘CDFS_MOS00-37   @J¥BÃÉîËÀ;Ä¼j~ùÚ>A¸ÌÍ>?—
+= >…¸ >ÌÌÍ >¨õÃVextA²Qì   ÿÿÿÿXAGN           ’VVDS22H_MOS02-03@tå¯·é?Ü£n.±Ã A©p¤ ?—
+= >×
+= =\) ?ƒ×
+VextA£¸   ?@Äœ AGN           “VVDS22H_MOS03-16@tİxl"h	?âIQ‚©’ A¯p¤ ?—
+= >¨õÃ<     ?k…Vpt A¤ffRRLÿÿÿÿ RRL           ”COSMOS_MOS26-20 @bÌQë…¸?ğS&Á½¤ A²(ö ?—
+= >Ñë… =\) ?ŒÌÍVpt A¡33QSO?´İ/ QSO           •ELAISN1_MOS16-32@nA:’£R@K6záG­>A·…>?—
+= >£×
+ >”zá ?¸RV   ÿÿÿÿ   ÿÿÿÿ Orphan Var    –ELAISN1_MOS16-33@nAAò×r@K61ø - A·… ?—
+= >ÌÌÍ >”zá ?5ÂVpt A®  QSOÿÿÿÿ QSO           —XMMLSS_MOS04-13 @BnÕÏªÍÀŠŒL˜^ A³p¤ ?—
+= >³33 >uÂ ?J=qFextA£Â   ÿÿÿÿXAGN           ˜ELAISN1_MOS16-18@n-'»/ë@K
+u%F
+¥ A±ë… ?—
+= >³33 =áG® ?TzáVextA¥33   ÿÿÿÿ AGN           ™VVDS22H_MOS03-10@tØÔ,<ì¿Å¡ÊÀƒn A±ë… ?—
+= >uÂ<     ?\VextAšÌÍ   >´9X AGN           šCDFS_MOS01-16   @Iïv_Ø­«À<ƒüPH>A¸¸R>?—
+= >€   >uÂ >Â\FextA®ff   ÿÿÿÿ Galaxy Trans  ›COSMOS_MOS25-08 @b¤)Çy¦´@\(õÂ A³33 ?—
+= >¨õÃ >…¸ ?aG®Vpt A­ë…   ÿÿÿÿ QSO           œXMMLSS_MOS05-24 @A½¸ºÇËÀ=ÈK]Ì A±G® ?—
+= >£×
+ ?¸ ?   Vpt A€{   ÿÿÿÿ STAR          CDFS_MOS04-14   @J8†YJôÀ<g»/ìVÕ>A¸ÌÍ>?—
+= ?{ >\) >#×
+F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  CDFS_MOS03-06   @JïškP°òÀ;Íp£×
+< A®õÃ ?•Â >½p¤ ÿÿÿÿ ?±ë… pt A£
+=   ÿÿÿÿ ?             ŸCOSMOS_MOS21-24 @bßg ù	k@,q²•é>A¶£×>?•Â ?ÌÍ<     ?Š=qVpt A©™šQSOÿÿÿÿ QSO            CDFS_MOS05-31   @J6¸ºÇÀ;¤!-w1 A´Qì ?•Â >¸R >#×
+ ?k…VextA¤£×   ÿÿÿÿ AGN           ¡ELAISN1_MOS15-18@nXáG®z@Jûn.±Ä2>A·ë…>?•Â >ğ£× <#×
+ ?}p¤VextA¬(ö   ÿÿÿÿ AGN           ¢COSMOS_MOS23-28 @bæhÛ‹¬p@ š6âëC>A·®>?•Â >…¸ >™™š ?ÌÍFextA²     ÿÿÿÿ Galaxy Trans  £VVDS22H_MOS03-04@tÔÿ—$tS?äÅm\ú¬Ù>A³Â>?•Â >8Qì >æff >8QìFextA˜¸R   ÿÿÿÿ Galaxy Trans  ¤COSMOS_MOS26-18 @bÌGE8ï4?ìBZîc‰ A±×
+ ?•Â >¸R<     ?G® pt A¨(öQSOÿÿÿÿ QSO           ¥XMMLSS_MOS05-20 @A´¿±[W>ÀÌcñA  A³ë… ?•Â >®{ >LÌÍ ?E¸Vpt A¨õÃQSOÿÿÿÿXQSO           ¦COSMOS_MOS23-37 @bïAò×r@9ÀëíúC>A·Â>?•Â ?hõÃ >×
+= >ÌÌÍF   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  §VVDS22H_MOS00-21@tİ´9Xb?ğqŞi­BÃ A®õÃ ?”zá >™™š =õÂ ?&ffVextA¦£×   ÿÿÿÿ AGN           ¨XMMLSS_MOS06-23 @BYÄ2ÊW§Àµöı!ÿ- A·
+= ?”zá >uÂ >£×
+ ?&ffVextA¢     ÿÿÿÿ AGN           ©COSMOS_MOS23-14 @bÛ1Å?ş¯·éùq A§\) ?”zá >Ñë…<     ?ª=qFpt AœffQSOÿÿÿÿ QSO           ªCDFS_MOS01-15   @Iê¹õY³ĞÀ<WÕfÏAñ>A¸¸R>?”zá >”zá >¨õÃ ?®VextA¨ÌÍ   ÿÿÿÿ AGN           «CDFS_MOS00-33   @J™$İ/À;É­BÃÉî>A¸¸R>?”zá >#×
+ >Š=q >…¸VextA¯×
+   ÿÿÿÿ AGN           ¬COSMOS_MOS27-17 @b¹'»/?ëÿ.Hè§ A¬ÌÍ ?”zá >½p¤ <õÂ ?Š=qVpt A¢QìQSOÿÿÿÿ QSO           ­COSMOS_MOS27-01 @b¡:’£R?ø§†Â&€œ A·
+= ?”zá >.{ >aG® >aG®FextA     ÿÿÿÿ Galaxy Flare  ®XMMLSS_MOS06-09 @B~($wÀîHè§æ>A·G®>?”zá >Ç® >€   ?ÌÍFextA©Â   ÿÿÿÿXAGN           ¯ELAISN1_MOS10-10@nLáG®z@KÑaä÷eı A­™š ?”zá >áG®<     ?”zá pt A ¸RQSOÿÿÿÿ QSO           °ELAISN1_MOS11-22@n¬ŒL˜^@K¤Âø7´¡ Aµ33 ?“33 >¸R =uÂ ?B\ pt A£™šQSOÿÿÿÿ QSO           ±CDFS_MOS02-09   @JkÃa@NÀ;<£n.±>A¸¸R>?“33 >aG® =¸Qì ?® extA¨Qì   ÿÿÿÿ ?             ²COSMOS_MOS27-10 @b¯u!–R?ö<64é A­Â ?“33 >W
+= >³33 >…¸Fpt AHÌÍMdwÿÿÿÿ Mdw           ³XMMLSS_MOS05-11 @A5¨Xy=À+Iº] A¦ÌÍ ?“33 >¨õÃ >LÌÍ ?“33 extA™G®   ÿÿÿÿ ?             ´GROTH_MOS04-11  @j€<ì¿°@KšÔ,<>A¸£×>?‘ë… ?ƒ×
+<     >™šFextAÃG®   ÿÿÿÿ Galaxy Trans  µCDFS_MOS00-52   @JÆì¿±[VÀ;–L/ƒ{I>A¸ÌÍ>?‘ë… >#×
+ >€   >8QìVextA £×   ÿÿÿÿ AGN           ¶COSMOS_MOS23-25 @bà×sü?şŠqŞi¬>A·®>?‘ë… >€   ?\ >¸QìFextAš£×   ÿÿÿÿ Galaxy Trans  ·CDFS_MOS04-06   @J_.Hè§À<Sê³g ø A¸zá ?‘ë… >k… >\) ?
+=Fpt A«…QSOÿÿÿÿ QSO           ¸XMMLSS_MOS03-21 @B!¦µ'À`[À6â A°õÃ ?‘ë… >½p¤ =uÂ ?hõÃVextA¥…   ÿÿÿÿXAGN           ¹ELAISN1_MOS15-13@nOŠ	İ@JÔ64é>A¸=q>?‘ë… ?ƒ×
+ >\) >#×
+F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  ºVVDS22H_MOS03-05@tÕó¶E¡Ê¿ÌtSóMi A°£× ?‘ë… >Š=q =õÂ ?
+=VextA¤{   ÿÿÿÿ AGN           »COSMOS_MOS24-22 @b¾ƒä%®æ?ÿ¿±[W>ª A¶ff ?‘ë… >W
+= >€   >”záVextA¥G®   >?|î AGN           ¼GROTH_MOS07-05  @jiDg8@J[àŞÒˆÍ>A¸zá>?‘ë… >½p¤ =LÌÍ ?ë…VextA©\)   ÿÿÿÿ AGN           ½GROTH_MOS04-20  @j‘Æ§ï±@KÅÖ8†X A°¸R ?‘ë… >¨õÃ<     ?8QìVpt A¡33QSOÿÿÿÿ QSO           ¾CDFS_MOS01-31   @J+ñA [¿À<:ÇË)^ A³® ?‘ë… >¨õÃ <£×
+ ?}p¤Vpt A®QìQSOÿÿÿÿ QSO           ¿COSMOS_MOS23-35 @bëÒñ©ûç?ÿIQ‚©“ A­G® ?‘ë… >®{<     ?
+=qVpt A¥…QSOÿÿÿÿ QSO           ÀXMMLSS_MOS05-26 @AÈË’:)ÀN;Í5¨ Aª£× ?‘ë… >B\<     ?ˆõÃ pt AŸG®QSOÿÿÿÿXQSO           ÁCOSMOS_MOS24-02 @b°$xF@µÜÆ?>A¸{>?‘ë… ?G® >”zá >aG® pt A~¸RMdwÿÿÿÿ Mdw           ÂXMMLSS_MOS02-12 @A“MjOÀ¯O„L>A¶zá>?‘ë… ?ŒÌÍ<    <    Fpt A†  MdwÿÿÿÿXMdw           ÃCOSMOS_MOS21-20 @bØe+ÓÃ@â‚@·€4>A¶£×>?‘ë… ?ë… >Â\ ?J=q extAªáH   ÿÿÿÿ ?             ÄVVDS22H_MOS03-01@tÔµsê³g?¸*™0¾ì A«ë… ?‘ë… >uÂ >LÌÍ ?    pt A¢ÌÍQSOÿÿÿÿ QSO           ÅELAISN1_MOS15-04@nGµsê³g@K-!–R¼ A²ff ?£× >×
+=<     ?Š=q pt AªÌÍ   ÿÿÿÿ ?             ÆELAISN1_MOS10-14@ndô!-v@K×²-U>A¸  >?£× >™™š<     >úáHFpt A«p¤QSOÿÿÿÿ QSO           ÇXMMLSS_MOS03-06 @AÕY³Ğ|„À 'RT`ª A³\) ?£× >£×
+ =LÌÍ ?‡®FextA°¸R   ÿÿÿÿXAGN           ÈVVDS22H_MOS01-21@tÏÒòä?çÀëíúCı A°¸R ?£× >k… =uÂ ?+…VextA¨\   ÿÿÿÿ AGN           ÉCOSMOS_MOS21-09 @bÎì¿±[W@ï²-U A¶\ ?£× >\) >£×
+ ?™šVextA©33   ÿÿÿÿ AGN           ÊCOSMOS_MOS25-09 @b¦şÅm\ú@Åm\ú¬Ù AªQì ?£× >Ñë… >¸R ?‚\VextAõÃ   ÿÿÿÿ AGN           ËCOSMOS_MOS22-06 @b©Š	Ş @ì¿±[V A®ff ?£× >¸Qì >Š=q ?LÌÍ extA˜ÌÍ   ÿÿÿÿ ?             ÌXMMLSS_MOS03-18 @BN;Í5¨À
+qŞi­B A©
+= ?£× >ë…<     ?“33Fpt A¢ÌÍQSOÿÿÿÿXQSO           ÍGROTH_MOS02-04  @j«Á½¥œ@K/iDg8 A°=q ?£× >”zá >8Qì ?(õÃVpt A§…   ÿÿÿÿ QSO           ÎXMMLSS_MOS06-05 @Aù7KÆ§ïÀd?åÉ Aµ
+= ?£× >¨õÃ<     ?LÌÍVpt A áHQSOÿÿÿÿXQSO           ÏXMMLSS_MOS06-17 @B1#¢œwšÀÆ§ï²,>A·p¤>?£× >…¸ >×
+= ?333VextA¤\   ÿÿÿÿ AGN           ĞCDFS_MOS00-25   @JŠ×süOÀ<	Œ~($
+ A³… ?£× >LÌÍ<     ?O\)Fpt A¦£×QSOÿÿÿÿXQSO           ÑCDFS_MOS02-26   @JªT`ªdÂÀ:m¿HË‘ Aµ¸ ?\) >B\ >B\ >úáHVextAª=q   ÿÿÿÿ AGN           ÒXMMLSS_MOS02-05 @AvOv_Ø­ÀŞì¿±[W>A¶(ö>?\) >Š=q >³33 ?s33 extA©\)   ÿÿÿÿXAGN           ÓGROTH_MOS02-17  @jË…¸Që@JıÅÖ8†X A·×
+ ?\) >.{ >Š=q =¸QìVextA¦Qì   ÿÿÿÿ AGN           ÔCDFS_MOS00-28   @JË’:)ÇÀ;Ñ·Xá A¸{ ?\) >\) >B\ >.{V   A®     ÿÿÿÿ AGN           ÕELAISN1_MOS13-10@n8¨ÁTÉ…@Kö”Fs>A¸(ö>?\) ?¸<     ?xQì extA´=q   ÿÿÿÿ ?             ÖGROTH_MOS06-08  @jÓÀëíúC@Jy¦µ A³33 ?\) >ÌÌÍ ÿÿÿÿ ?£×VextAŸë…   ÿÿÿÿ AGN           ×XMMLSS_MOS01-17 @BJ¹õY³ĞÀ•µsê³g A³33 ?{ >uÂ =áG® ?ë…Vpt A¯¸QSOÿÿÿÿ QSO           ØCOSMOS_MOS21-22 @bÚ–»˜Çâ@
+Üú¬Ùè= A®Qì ?{ >Â\ >8Qì ?Y™š extA•Â   ÿÿÿÿ ?             ÙCDFS_MOS05-15   @J  Ä›¥âÀ;ß¤?åÈ A«p¤ ?{ >³33 ?J=q >úáHVpt A“×
+   ÿÿÿÿ Point Var     ÚVVDS22H_MOS03-00@tÓê³g ø?ÍÜÆ? A°£× ?{ >…¸ =£×
+ ?uÂVextA§\)   ÿÿÿÿ AGN           ÛXMMLSS_MOS03-13 @Aó÷ÎÙ‡À«ÓÃa@ A¯Â ?{ >®{<     ?O\)Vpt A (öQSOÿÿÿÿXQSO           ÜXMMLSS_MOS03-16 @B ªdÂø7À5?|í‘g>A¶áH>?{ >B\ >k… >®{ pt A£™šQSOÿÿÿÿ QSO           İGROTH_MOS07-14  @j›‡+@J‡süPG A¸   ?{ >®{ >®{ ?\ extAš     ÿÿÿÿ ?             ŞCOSMOS_MOS27-14 @b³¦µ'?òA‰7KÆ§ Aª\ ?{ >™™š >uÂ ?Y™šVpt A®QSOÿÿÿÿ QSO           ßXMMLSS_MOS04-18 @B–Åm\ú¬ÀÒ¼£m A·G® ?{ >#×
+ >uÂ >uÂVextA©×
+   ÿÿÿÿ AGN           àGROTH_MOS06-02  @jÀœwškP@J;g ù	k A£33 ?{ >ÌÌÍ ?™™š ?\Vpt A…ÂRRLÿÿÿÿ RRL           áVVDS22H_MOS04-02@té¾ß¤?å?m}¿HË‘ A¢zá ?{ >™™š >¸ ?‡® extA{   >Û"Ñ AGN           âELAISN1_MOS13-03@n$SóMi@K×$tSò A³™š ?{ >×
+=<     ?€  Vpt Aš\QSOÿÿÿÿ QSO           ãCOSMOS_MOS26-26 @bĞa|ÚP?ò×Ûô‡ü>A·×
+>?{ >…¸ >LÌÍ ?0£×Vpt A¯™šQSOÿÿÿÿ QSO           äCDFS_MOS01-36   @JB³g ùÀ;ûjçÕfÎ A¶õÃ ?{ >k… >B\ >Ç®VextA®£×   ÿÿÿÿ AGN           åCDFS_MOS00-21   @J…ÌcñAÀ;ÉõY³Ğ|>A¸ÌÍ>?{ >¸ >#×
+ >k…VextA£ë…   ?œj AGN           æCOSMOS_MOS26-08 @bÄxl"h	?ú/ìVÕÏª A·
+= ?{ >\) =õÂ ?ë…Vpt A©¸QSO?¸XQSO           çCDFS_MOS01-06   @IÒkP°ò{À<ü¹#¢› A±™š ?{ >½p¤<     ?fffFpt A£
+=   ÿÿÿÿ Point Flare   èGROTH_MOS06-13  @já^™@JVYJôğ× A¯
+= ?{ >Ç® >aG® ?‡®FextA ÌÍ   ÿÿÿÿ Galaxy Flare  éGROTH_MOS01-15  @jôëC,¤@K_KÆ§ï>A¸\>?ŒÌÍ >£×
+ >®{ ?    extA´£×   ÿÿÿÿ ?             êCDFS_MOS01-27   @J °ò{²şÀ<˜7´¢3›>A¸ÌÍ>?ŒÌÍ >™š >.{ >Š=qVextA®áH   ÿÿÿÿ AGN           ëXMMLSS_MOS04-09 @BSàŞÒˆÀ.Hè§>A·p¤>?ŒÌÍ >™š >8Qì =\) extA¤¸R   ÿÿÿÿ ?             ìGROTH_MOS07-08  @j­BÃÉî@JYxÔıóµ>A¸¸R>?ŒÌÍ >aG® >õÂ >”zá extA§Â   ÿÿÿÿ ?             íGROTH_MOS07-15  @j›JôğØD@J)k¹Œ~' A±¸ ?ŒÌÍ >¸R<     ?5ÂVextAª     ÿÿÿÿ AGN           îCOSMOS_MOS24-24 @b¿½¥œà?û”¯O„L A¬\ ?ŒÌÍ >\) >.{ ?(öVpt A¡¸QSO?Ï;dXQSO           ïELAISN1_MOS15-00@n4Â&€H@K)©ûçlŠ>A·ë…>?ŒÌÍ >uÂ >uÂ ?
+=qFextA·Â   ÿÿÿÿ Galaxy Trans  ğVVDS22H_MOS01-07@tÈ5?|í‘?ó¼£n. A°   ?ŒÌÍ >¸R =ÌÌÍ ?:áHVpt A¦{QSOÿÿÿÿ QSO           ñCOSMOS_MOS22-03 @b¥çl‹C•@ÓZ…‡“İ A°ÌÍ ?ŒÌÍ >áG® =LÌÍ ?{Fpt A¦ffQSOÿÿÿÿ QSO           òGROTH_MOS04-07  @j|œwškP@Kµsê² A§Â ?ŒÌÍ >™™š >.{ >úáHVextA     ÿÿÿÿ AGN           óCOSMOS_MOS23-13 @bÚ¸ºÇ@m(Œç¯ A¯™š ?ŒÌÍ >Š=q >.{ ?
+=Vpt A§…QSOÿÿÿÿXQSO           ôCDFS_MOS06-22   @KJñ©ûçlÀ<DğØDĞ>A¸¸R>?ŒÌÍ ?&ff ÿÿÿÿ ?.{ extA £×   ÿÿÿÿ ?             õGROTH_MOS02-20  @jÕÁ½¥œ@K*dÂø7´>A¸Qì>?ŒÌÍ ?\) >õÂ ?   FextA»33   ÿÿÿÿ Galaxy Trans  öGROTH_MOS04-24  @j™a@N¤@J£jçÕfÎ>A¸£×>?ŒÌÍ >£×
+ >®{ ?#×
+FextA¢zá   ÿÿÿÿ Galaxy Trans  ÷GROTH_MOS03-08  @j¾«6z@JªÚ¹õY³ A·® ?ŒÌÍ >uÂ >×
+= >ÌÌÍFpt A¥G®   ÿÿÿÿ Point Flare   øVVDS22H_MOS06-19@tÔr° Ä›¿ÍÌcñA [ A¦(ö ?ŒÌÍ >£×
+ =ÌÌÍ ?Š=qVextA˜ff   ?+ AGN           ùELAISN1_MOS12-17@nn -à@KŠäŠqİ>A¸ff>?ŒÌÍ ?}p¤<     =áG®F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  úELAISN1_MOS11-04@nƒ­BÃÉî@K€uöı!ş>A¸{>?‹… ?
+=q<     ?‹… pt Aª=qQSOÿÿÿÿ QSO           ûCOSMOS_MOS27-12 @b³V“?újçÕfÏA>A¸{>?‹… ?5Â<     ?&ff extA¤õÃ   ÿÿÿÿ ?             üCOSMOS_MOS23-34 @bë†Â&€@~ÿ—$t A¶¸R ?‹… >£×
+ =£×
+ ?€  Fpt A§™šQSOÿÿÿÿ QSO           ıELAISN1_MOS13-01@n ¼j~ùÚ@Kïÿÿÿÿÿ A®(ö ?‹… >™™š >B\ ?@   pt AœffQSOÿÿÿÿ QSO           şXMMLSS_MOS03-05 @AÊh	Ô•À¾ß¤?å>A·p¤>?‹… >#×
+ >#×
+ >#×
+FextA§…   ÿÿÿÿ Galaxy Trans  ÿGROTH_MOS04-31  @j©+I¹@JêáG®z A·… ?‹… >W
+= ?&ff >€  VextA¤(ö   ÿÿÿÿ AGN            COSMOS_MOS22-09 @b¯@N¤¨@_¤?åÉ>A¶Qì>?‹… ?ƒ×
+ >æff =uÂFpt A«×
+   ÿÿÿÿ Mdw           GROTH_MOS05-02  @jãæšÔ+@J7eıŠÚ¹>A¸¸R>?Š=q >ğ£× >W
+= ?p£×VextA«Â   ÿÿÿÿ AGN           CDFS_MOS00-11   @Jc‹¬q²À;™ 'RT` A¸Qì ?Š=q =£×
+ =õÂ =ÌÌÍVextA£Â   ÿÿÿÿ AGN           GROTH_MOS01-19  @jıZ…‡“İ@K%F
+¦K A²£× ?Š=q >€  <     >£×
+Vpt A“33   ÿÿÿÿ Point Var     XMMLSS_MOS01-11 @B5o hÀNÙ‡+ A±33 ?Š=q >Š=q =áG® ?™šVpt A¥ÂQSOÿÿÿÿXQSO           GROTH_MOS03-09  @j¿škP°ò@Jå*™0½>A¸¸R>?Š=q >k… >ÌÌÍ >³33FextA¦     ÿÿÿÿ Galaxy Trans  CDFS_MOS05-06   @Iİ8ï4Ö À;8ï4Ö  A·Â ?Š=q >.{ >Š=q >W
+=VextA£™š   ÿÿÿÿ AGN           GROTH_MOS02-07  @j¸V“t@KWU›=Ç A³×
+ ?Š=q >£×
+<     ?\)Fpt A§p¤QSOÿÿÿÿ QSO           XMMLSS_MOS03-07 @AÖlô!-ÀòGE8ï4 A®(ö ?Š=q >aG®<     ?šáH pt A¡
+=QSOÿÿÿÿXQSO           	GROTH_MOS03-07  @j½–R½<5@J•öı!ÿ- A¯… ?Š=q >”zá >™š >Ü(öVextA›G®   ÿÿÿÿ AGN           
+ELAISN1_MOS11-03@n‚mÅÖ8…@Ksg ù	k A¥¸ ?Š=q >Ñë… =#×
+ ?}p¤Vpt A™ÂQSOÿÿÿÿXQSO           XMMLSS_MOS06-18 @B1îËûµÀ.—Oß; A·
+= ?Š=q >#×
+<     >aG®VextA©
+=   >‚\ AGN           GROTH_MOS01-02  @jÛ9Àëíù@KoÒòä>A¸\>?Š=q >€   >aG® >õÂ extA®{   ÿÿÿÿ ?             ELAISN1_MOS16-24@n4R½<6@K`bMÒñ©>A¸=q>?Š=q ?®<     ?\FextA±®   ÿÿÿÿ Galaxy Trans  CDFS_MOS00-03   @JLÌÌÌÌÌÀ;Ÿ¾vÈ A¸Qì ?Š=q =£×
+ >B\ =£×
+VextA¡…   ÿÿÿÿ AGN           ELAISN1_MOS16-27@n8€IQ‚@KA­BÃÉî A®{ ?ˆõÃ >£×
+ >W
+= ?(õÃVextA­Â   ÿÿÿÿ AGN           GROTH_MOS03-19  @jÕ'»/@J•ıŠÚ¹ô A¬áH ?ˆõÃ >¸R =áG® >ë… pt A¤=qQSOÿÿÿÿ QSO           GROTH_MOS02-19  @jÏ=Ùb¶@K'eıŠÚ¹ A®   ?ˆõÃ >”zá >Â\ >æffVpt AyG®Mdwÿÿÿÿ Mdw           CDFS_MOS02-36   @JĞÔıó¶EÀ:²-U>A¸£×>?ˆõÃ >.{ >¸R >LÌÍVextA¯×
+   ÿÿÿÿ AGN           CDFS_MOS03-10   @JşÂ&€HÀ;¡ [À6>A¸\>?ˆõÃ >Ü(ö<     ?fffFextA¬£×   ÿÿÿÿ Galaxy Trans  ELAISN1_MOS12-11@nc„M9@KD“t¼j A°õÃ ?ˆõÃ >”zá >¨õÃ ?™šVextAœ=q   ÿÿÿÿ AGN           XMMLSS_MOS01-08 @B*h	Ô•ÀLcñA [ A©\) ?ˆõÃ >¨õÃ >¸ ?O\)VextA•¸   ÿÿÿÿXAGN           CDFS_MOS06-19   @K<cñA [À<,‹C• A¸\ ?ˆõÃ >×
+= >¨õÃ ?€   extA­¸   ÿÿÿÿ ?             GROTH_MOS04-19  @j‘©*0U1@J÷ö+jçÔ>A¸£×>?‡® >k… ?
+=q >™™š extA¬áH   ÿÿÿÿ ?             CDFS_MOS01-00   @I´64éÀ<¬1&è A®=q ?‡® >”zá =#×
+ ?\) pt A¤{   ÿÿÿÿ QSO           XMMLSS_MOS05-17 @A¬‘ÑN;ÍÀÉîËûµ>A·p¤>?‡® >¸ >…¸ >W
+=FextA¦£×   ÿÿÿÿ Galaxy Trans  VVDS22H_MOS05-03@tÛú¬Ùè=¿ğâëC,¥>A²\>?‡® =õÂ >k… =£×
+Fpt A€zá   ÿÿÿÿ STAR          CDFS_MOS03-02   @Jßï²-À;Ånÿ A³33 ?‡® >k… =õÂ ?hõÃVextA›ë…   ÿÿÿÿ AGN           COSMOS_MOS22-08 @b®3œ¾ß@Hè§æš>A¶ff>?‡® >\) >×
+= >®{ extA¡33   ÿÿÿÿ ?             COSMOS_MOS26-03 @bÂ{²şÅm?ô_oÒò A¦   ?‡® >¨õÃ <#×
+ ?k…Vpt A¡…QSOÿÿÿÿ QSO           GROTH_MOS01-01  @jÙ[W>«5@K%Â\(õ A¸   ?‡® >aG® ?\ >Š=qVextA¤õÃ   ÿÿÿÿ AGN           CDFS_MOS00-30   @J”Ö¡aäöÀ<	#¢œw™ A¸{ ?‡® =ÌÌÍ >#×
+ >¸VextA«®   ÿÿÿÿ AGN            CDFS_MOS00-35   @J¢0U2a{À<Qœàuöü>A¸¸R>?†ff =áG® >™š >£×
+FextA ff   ÿÿÿÿ Galaxy Trans  !CDFS_MOS03-23   @KR¹õY³ÏÀ;ZáG®z>A¸\>?†ff >½p¤ <£×
+ ?^¸R pt A´\   ÿÿÿÿ QSO           "ELAISN1_MOS14-04@ny4êJ‹@JÚ™0¾ì Aµ
+= ?†ff >#×
+ ?8Qì =áG®FextA(ö   ÿÿÿÿ Galaxy Flare  #GROTH_MOS03-22  @jÛ'»/ë@JØºÇË( A®õÃ ?†ff >®{ =£×
+ ?:áH pt A¥×
+QSOÿÿÿÿ QSO           $ELAISN1_MOS16-13@n%°‰ 'Q@Jú’£S%>A¸=q>?†ff >#×
+ >Ç® >uÂFextA¨áH   ÿÿÿÿ Galaxy Trans  %CDFS_MOS00-40   @J«¥ãS÷ÎÀ;¾5?|í>A¸ÌÍ>?†ff =\) >¸<    VextA¦Qì   ÿÿÿÿ AGN           &CDFS_MOS02-34   @JÈ7´¢3›À:›À6âê A·\) ?†ff >#×
+ >8Qì >™šVextAáH   ÿÿÿÿ AGN           'COSMOS_MOS24-32 @bÄvÈ´9W?ş_oÒò A­™š ?†ff >\) <£×
+ ?aG®VextAºQì   ?TıôXAGN           (CDFS_MOS02-13   @JyœàuöüÀ:‡>«6z A¥… ?…¸ >¨õÃ ?¸ >ğ£×V   Afff   ÿÿÿÿ Point Var     )CDFS_MOS00-24   @Jˆ6âëÀ<¿HË‘ A¸£× ?…¸ =£×
+ >¸ =£×
+Vpt Aº£×   ÿÿÿÿ Point Var     *ELAISN1_MOS10-08@nFšt@Kğ_ö”E>A¸ff>?…¸ ?n{<     >¸Fpt AŒ¸RMdwÿÿÿÿ Mdw           +COSMOS_MOS21-25 @bá[W>«6@fÏAò×>A¶£×>?…¸ ?.{ ÿÿÿÿ ?“33Fpt A£×
+QSOÿÿÿÿ QSO           ,CDFS_MOS00-39   @Jª¬Ùè>AÀ;ü˜_ö“ A±33 ?…¸ >#×
+ <õÂ ?ÌÍVextA¨     ÿÿÿÿXAGN           -XMMLSS_MOS00-02 @A‹íúCş\À	Q‚©“à A£¸ ?…¸ >×
+=<     ?€  Fpt A   QSOÿÿÿÿ QSO           .XMMLSS_MOS05-07 @ApØDĞ©À¯ìVÕÏª>A·…>?…¸ >¸<     ?J=qFextA©…   ÿÿÿÿ Galaxy Trans  /GROTH_MOS05-29  @k:’£@J]`A‰7K>A¸¸R>?…¸ >B\ >™™š >W
+=Fpt A›\)RRLÿÿÿÿ RRL           0CDFS_MOS00-45   @J°ÿ—$tSÀ;ç$tSò A³G® ?ƒ×
+ >™š<     >úáHFextA¥ë…   ÿÿÿÿXAGN           1COSMOS_MOS26-15 @bËVlô ?õo hÛ‹¬>A·p¤>?ƒ×
+ >B\ >®{ >™™šVextA¨=q   ÿÿÿÿ AGN           2GROTH_MOS04-22  @j•~ÿ—#@J¨'RT`© Aª=q ?ƒ×
+ >€   >aG® >³33Fpt A…QSOÿÿÿÿ QSO           3XMMLSS_MOS06-11 @B5?|í‘À«6z– AŸ
+= ?ƒ×
+ >8Qì >®{ >W
+=Fpt A^\   ÿÿÿÿ STAR          4COSMOS_MOS26-31 @bØ•éá°‰?ëk¹Œ~(# A·¸ ?ƒ×
+ =õÂ =õÂ >\)FextA§G®   ÿÿÿÿ Galaxy Flare  5COSMOS_MOS26-33 @bØ¬1&é?óØDĞ©) A·¸ ?ƒ×
+ >.{ >aG® >¨õÃVpt A‹™š   ÿÿÿÿ STAR          6CDFS_MOS03-24   @KU«ŸU›<À;Ezxl"g>A¸\>?ƒ×
+ >ÌÌÍ<     ?ƒ×
+Vpt A¦£×   ÿÿÿÿ Point Var     7COSMOS_MOS24-04 @b²§ï²,@àqu AœáH ?ƒ×
+ >½p¤ <#×
+ ?{VextA”(ö   >°£×XAGN           8GROTH_MOS07-10  @j”/ƒ{J"@J!7KÆ§ï A³
+= ?ƒ×
+ >Š=q<     ?!G®VextA ¸R   ÿÿÿÿ AGN           9XMMLSS_MOS03-12 @Aê-VÀ2a|Ú>A·®>?ƒ×
+ >£×
+ >W
+= ?5Â extA«®   ÿÿÿÿXAGN           :CDFS_MOS05-18   @JªÍƒãÀ;L/ƒ{I A«
+= ?ƒ×
+ >¸R<     ?LÌÍVpt A ¸R   ÿÿÿÿ Point Var     ;CDFS_MOS05-20   @J‹C•À:Ø“t¼j~ A²(ö ?ƒ×
+ >€   =áG® >®{ extA§¸   ÿÿÿÿ ?             <GROTH_MOS07-25  @j£'»/@J¸ºÇ>A·®>?ƒ×
+ >aG® >ë… >Ñë…FextA­¸   ÿÿÿÿ Galaxy Trans  =XMMLSS_MOS02-13 @Aì¿±[WÀ¦€IQ‚>A¶zá>?ƒ×
+ ?záH >B\<    FextAÊ     ÿÿÿÿ Galaxy Trans  >ELAISN1_MOS10-11@nOº^5?|@KÌ?åÉ>A·ë…>?ƒ×
+ >B\ >¸R >½p¤FextAª     ÿÿÿÿ Galaxy Trans  ?CDFS_MOS06-15   @K%àquÀ<wE8ï4Ö A±… ?ƒ×
+ >æff ÿÿÿÿ ?{VextA§…   ÿÿÿÿ AGN           @ELAISN1_MOS16-02@nß;dZ@Kb)Çy¦´ A±
+= ?ƒ×
+ >\) <£×
+ ?!G®Vpt A§¸   ÿÿÿÿ QSO           AGROTH_MOS07-27  @j§5¨Xy=@J‘™™™™™ A¯p¤ ?‚\ >€   >™š >ÌÌÍ pt A   QSOÿÿÿÿ QSO           BGROTH_MOS01-14  @jôM:’¢@K;dZ«>A¸\>?‚\ >W
+= ?\) >Š=qVpt A¢=q   ÿÿÿÿ Point Var     CGROTH_MOS05-25  @k Ü]cˆe@JWÁ½¥œ>A¸ÌÍ>?‚\ >.{ >.{ >aG® extA²Qì   ÿÿÿÿ ?             DGROTH_MOS07-03  @j‚:û~ÿ@JI×Ûô‡ü>A¸ÌÍ>?‚\ >æff<     ?Tzá extA¡p¤   ÿÿÿÿ ?             EVVDS22H_MOS01-00@tÃ|í‘hr?ãè>BZîb AªáH ?‚\ >£×
+<     ?}p¤Fpt A¢\QSO?–ff QSO           FELAISN1_MOS11-19@n£õY³Ğ{@K·Aò×r A´   ?‚\ >”zá >ë… >ğ£×Vpt A§\)QSOÿÿÿÿ QSO           GELAISN1_MOS16-03@nÇË)^@KHy=Ùb>A¸  >?‚\ >úáH =#×
+ ?fffVpt A©™šQSOÿÿÿÿ QSO           HCDFS_MOS04-17   @J’ˆÎp:ûÀ<{J#9Àë>A¸¸R>?‚\ >#×
+ >aG® >õÂFextA¥
+=   ÿÿÿÿ Galaxy Trans  ICDFS_MOS05-03   @IÏ§†Â&€À;0‰ 'RS A¸   ?‚\ =õÂ >W
+= =¸QìVextA£®   ÿÿÿÿ AGN           JCDFS_MOS00-06   @JUp£×
+<À;Ò•éá°‰>A¸¸R>?G® =£×
+ =áG® =¸QìFextA zá   ÿÿÿÿ Galaxy Trans  KVVDS22H_MOS02-08@tî­«ŸUš?è´9XbM A±® ?G® >¸ >W
+= >aG®VextA¡33   ÿÿÿÿ AGN           LXMMLSS_MOS03-22 @B#¶E¡ÊÀÀ0¾í(>A·®>?G® >LÌÍ >€   >¸QìFextA™
+=   ÿÿÿÿ Galaxy Trans  MXMMLSS_MOS04-07 @BC¯·éùÀ2a|ÚQ A¬ÌÍ ?G® >\) =õÂ ?#×
+Vpt A—33   ÿÿÿÿXQSO           NCDFS_MOS02-14   @JzIº^4À:Hè§æ A¡33 ?G® >\) =\) ?:áHVextA–£×   ÿÿÿÿ AGN           OGROTH_MOS05-09  @jìYJôğ×@J9×Ûô‡ü>A¸¸R>?G® >™š >¨õÃ >8QìFextA¦\   ÿÿÿÿ Galaxy Trans  PCDFS_MOS06-13   @K¥zxl!À<¿oÒòä Aµ¸ ?€   >õÂ ÿÿÿÿ ?p¤ pt A=qQSOÿÿÿÿ QSO           QCDFS_MOS02-10   @JnE¡ÊÀ‚À:fğ¸º A±G® ?€   >8Qì =áG® ?…¸VextA¤\   ÿÿÿÿ AGN           RGROTH_MOS01-09  @jï¨Xy=Ù@Jìã¼ÓZ… A¨=q ?€   >”zá =uÂ >Ü(öVextAœõÃ   ÿÿÿÿ AGN           SCDFS_MOS06-04   @JáÄ2ÊW§À<BZîc A²õÃ ?€   >ÌÌÍ >™™š ?aG® pt A­
+=QSOÿÿÿÿ QSO           TGROTH_MOS05-24  @jÿ/ìVÕÏ@J¾vÈ´8 A³p¤ ?€   >Š=q >³33 ?ë…VextA¬zá   ÿÿÿÿ AGN           UELAISN1_MOS10-02@n=l‹C•€@Kñûçl‹C A²áH ?€   >W
+=<     >æffVpt A¬QìQSOÿÿÿÿ QSO           VCOSMOS_MOS27-19 @b¹ÿÿÿÿÿ?ïòäŠqİ Aªff ?€   >”zá<     ?™šVpt Aœ(öQSO?è1' QSO           WCOSMOS_MOS25-00 @b‘…ğoiD@©ûçl‹C>A¶£×>?€   ?p£× ÿÿÿÿ >…¸F   ÿÿÿÿ   ÿÿÿÿ Point Trans   XCOSMOS_MOS26-35 @bÙ¬q²•?ïC,¥zw A¢áH ?€   >”zá >ë… ?záFpt AŠ=q        STAR          YCOSMOS_MOS24-12 @b¸^5?|í@ŒIº^5? A    ?€   >”zá <õÂ ?záVextA•
+=   >°£×XAGN           ZCDFS_MOS03-16   @KéxÔıóÀ;¶lô!, A«™š ?€   >³33<     ?fffVpt A¢£×QSOÿÿÿÿ QSO           [ELAISN1_MOS13-09@n6tSóL@Kã6z–>A¸ff>?€   ?#×
+ >£×
+<    FextA²£×   ÿÿÿÿ Galaxy Trans  \CDFS_MOS06-11   @K•éá°‰À<zqŞi­B>A¸¸R>?€   ?® >×
+= ?Që…Fpt A®{QSOÿÿÿÿ QSO           ]COSMOS_MOS26-12 @bÇTÉ…ğo?öP°ò{²ş A—G® ?€   >Ç® ?
+= ?
+=qVpt A€  RRLÿÿÿÿ RRL           ^GROTH_MOS05-23  @jşì¿±Z@JSP°ò{² A­G® ?€   >”zá >.{ >æffVpt AŸ¸RRLÿÿÿÿ RRL           _CDFS_MOS00-55   @JÑ	k¹Œ}À;ÉŞ Ñ¶>A¸¸R>?€  <    <     =uÂVextAªõÃ   ÿÿÿÿ AGN           `COSMOS_MOS23-11 @bÚU2a|?üù	k¹Œ}>A·®>?}p¤ >€   >\) ?¸RVpt Aª(öQSOÿÿÿÿ QSO           aCOSMOS_MOS27-09 @b­(Œç¯?óÎ_oÑ>A¸  >?}p¤ >®{ =áG® ?0£× pt A­\)   ÿÿÿÿ QSO           bXMMLSS_MOS04-10 @B[ÉîËûÀezxl"g A­G® ?}p¤ >³33<     ?^¸RVpt A£33QSOÿÿÿÿXQSO           cVVDS22H_MOS06-03@tÇ»˜Çâ¿ä¶®}Vló A›™š ?}p¤ >®{ ?:áH >õÂVpt AÂRRLÿÿÿÿ RRL           dCOSMOS_MOS26-07 @bÃô‡ü¹#?ôÁ½¥œà>A·33>?}p¤ >uÂ >³33 >Â\ extA¡¸   ÿÿÿÿ ?             eCDFS_MOS05-09   @IêW§†Â&À:ÚkP°ò{ A¬=q ?}p¤ >™š<     ?fff pt A™33   ÿÿÿÿ ?             fCDFS_MOS00-50   @JÃxFÜ\À;ò‚@·€3 A¸£× ?záH =uÂ >¸ =uÂF   A¹Â   ÿÿÿÿ Galaxy Flare  gGROTH_MOS02-14  @jÅy¦µ@K;¯·éø>A¸Qì>?záH >õÂ >.{ ?5ÂFextA¶£×   ÿÿÿÿ Galaxy Trans  hVVDS22H_MOS06-11@tÍ©*0U2¿âû~ÿ—$ A­G® ?záH >B\ >8Qì >úáH extA›®   ÿÿÿÿ ?             iGROTH_MOS04-29  @j¡ŸU›=@Jéá°‰ &>A¸£×>?záH ?® >™š >£×
+ extA¬¸R   ÿÿÿÿ ?             jELAISN1_MOS12-18@nqÎ_o@K™Ån>A·ë…>?záH >™š =LÌÍ >#×
+FextA§\)   ÿÿÿÿ Galaxy Trans  kCDFS_MOS01-07   @IÓW>«6yÀ<]ã¼ÓY A¯p¤ ?záH >8Qì =£×
+ ?zá extA¤=q   ÿÿÿÿ ?             lGROTH_MOS05-19  @jö¦L/ƒz@Jgü¹#¢œ>A¸\>?záH >uÂ ?™š >¸RFextA±…   ÿÿÿÿ Galaxy Trans  mGROTH_MOS05-22  @jı­BÃÉî@Jg†Â&€œ A­×
+ ?záH >aG® >aG® >¨õÃ pt Azá   ÿÿÿÿ ?             nCOSMOS_MOS21-10 @bÏï²-@Gy¦µ A©p¤ ?záH >½p¤<     ?Y™šVextA¡33   ?ZŸ¾XAGN           oELAISN1_MOS16-21@n2×sû@KXhÛ‹¬p A¦¸R ?záH >®{<     ?J=qVpt AŸG®QSOÿÿÿÿ QSO           pELAISN1_MOS10-03@n@!-w0@Kõ!–R¼>A¸ff>?záH ?aG®<    <    Fpt AÍ¸   ÿÿÿÿ Point Trans   qGROTH_MOS05-10  @jìÁTÉ…ï@JC×Ûô‡ A£G® ?xQì >€   >W
+= >Ç®VextA’=q   >~ùÛ AGN           rCDFS_MOS02-21   @J™ã¼ÒÀ;-BÃÉîË A   ?xQì >uÂ<     ?”záVextA–=q   ÿÿÿÿ AGN           sELAISN1_MOS10-04@nAKÆ§ï@KÕ¸ºÇÊ A£Â ?xQì >¨õÃ >™š ?&ffVextA•33   ÿÿÿÿXAGN           tCDFS_MOS00-51   @JÆE¡ÊÀ‚À;Ìç¯·è A¯™š ?xQì =áG®<     >Ç®VextA¡Â   ÿÿÿÿ AGN           uCDFS_MOS03-25   @KWË)^À;éxÔıó A²£× ?xQì >™š =£×
+ ?uÂVextA§33   ÿÿÿÿ AGN           vELAISN1_MOS12-22@nyt¼j~ù@K¼£n. Aš\ ?xQì >™™š =¸Qì ?8QìVextA˜Qì   ÿÿÿÿ AGN           wCDFS_MOS00-46   @J³²şÅm\À;ØüPHï A·ë… ?xQì =\) =áG® =£×
+FextA¢ÌÍ   ÿÿÿÿ Galaxy Flare  xCDFS_MOS01-24   @J9ÀëíùÀ<Y*0U2` A°ff ?xQì >¸R<     ?TzáVpt A™Â   ÿÿÿÿ Point Var     yGROTH_MOS04-13  @jƒƒä%®@J±ä÷eıŠ A¨=q ?xQì >\) =¸Qì >úáHVextA¤=q   ÿÿÿÿ AGN           zCDFS_MOS00-10   @Jb¦L/ƒzÀ;x§æšÓ A¸   ?xQì =£×
+ =ÌÌÍ =õÂVextA¦ff   ÿÿÿÿ AGN           {CDFS_MOS01-20   @JàŞÒˆÀ<r° Ä›¥ A­G® ?xQì >¨õÃ<     ?TzáFextA«™š   ÿÿÿÿ Galaxy Flare  |COSMOS_MOS21-07 @bÌ™0¾ì@
+.Hè§æ A¬   ?uÂ >ÌÌÍ >\) ?p£×Vpt A(öQSOÿÿÿÿ QSO           }CDFS_MOS02-04   @JcZ…‡“İÀ;n—OŞ A«ë… ?uÂ >.{ =ÌÌÍ ?Që… extA¥p¤   ÿÿÿÿ ?             ~CDFS_MOS04-08   @Jc6z–À=ªÍƒã A·¸ ?uÂ =ÌÌÍ >W
+= =#×
+FextA™™š   ÿÿÿÿ Galaxy Flare  ELAISN1_MOS10-13@n^²•éá¯@L´¢3œ Aª   ?uÂ >¸R >.{ ?@   pt A¢záQSOÿÿÿÿ QSO           €GROTH_MOS02-09  @j¹ä%®æ1@Kqu! A²{ ?uÂ >™™š >B\ ?ÌÍFextA§G®   ÿÿÿÿ Galaxy Flare  COSMOS_MOS21-02 @bÂ­«ŸU›@
+£S& A¯33 ?uÂ >Š=q >\) ?®Vpt A›ÂQSOÿÿÿÿ QSO           ‚CDFS_MOS01-19   @JOv_À<«ŸU›< A­33 ?uÂ >k…<     ?\) pt Aœ£×QSOÿÿÿÿ QSO           ƒVVDS22H_MOS00-05@tÖqu?ùı!ÿ.Hè A®(ö ?uÂ >W
+=<     >ğ£×Vpt A›×
+QSOÿÿÿÿ QSO           „CDFS_MOS03-17   @K#¹Œ~(#À;ÅÖ8†X A¯™š ?uÂ >¨õÃ =uÂ ?Që…Vpt A¤zá   ÿÿÿÿ QSO           …VVDS22H_MOS00-12@tÙeıŠÚ¹?õ;Í5¨Xx A±™š ?uÂ >¸ >.{ >™™š pt AŠ(öRRLÿÿÿÿ RRL           †VVDS22H_MOS01-08@tÉòäŠ?à—Oß;d A­™š ?uÂ >k… =áG® ?
+=Vpt A¤(öQSOÿÿÿÿ QSO           ‡CDFS_MOS01-34   @J5ÜÆ?À<ØDĞ¨ A¸zá ?uÂ >™š >B\ ?+…FextA¤£×   ÿÿÿÿ Galaxy Flare  ˆVVDS22H_MOS06-16@tÑ“t¼j~?µ2a|ÚP A˜zá ?uÂ >¸R ?#×
+ >æffVpt Aw\)   ÿÿÿÿ STAR          ‰VVDS22H_MOS01-09@tÉG®zá?Ñ/Ÿ¾vÈ>A¶Qì>?uÂ ?+…<     ?c×
+ extA²{   ÿÿÿÿ ?             ŠGROTH_MOS03-16  @jÑâ‚@·@J´ÌÌÌÌÌ>A·×
+>?uÂ >8Qì >8Qì >¸ pt AŠzá   ÿÿÿÿ STAR          ‹CDFS_MOS02-30   @JÄ£n.±À;A [À A³\) ?s33 >€   =ÌÌÍ ?
+=qVextA©33   ÿÿÿÿ AGN           ŒVVDS22H_MOS00-16@tÛw1Å?ì:û~ÿ– A«® ?s33 >uÂ =õÂ >®{VextA£\)   ÿÿÿÿ Point Var     CDFS_MOS00-49   @JÃ/ìVÕÏÀ;}‘hr°  AªÌÍ ?s33 >.{ =#×
+ ?\)FextAŸ33   ÿÿÿÿ Galaxy Flare  VVDS22H_MOS06-20@tÕOv_Ø¿á4êJŒ AŸ\) ?s33 >\) >½p¤ >áG® pt A‡™šRRLÿÿÿÿ RRL           GROTH_MOS04-08  @j~òä‰@Jöì¿±[V A³
+= ?s33 >\) >W
+= >õÂVextA¦     ÿÿÿÿ AGN           VVDS22H_MOS02-01@tãÑ·Xá?ÙÄ2ÊW§† A«ë… ?s33 >aG® =õÂ >õÂVextA {   ÿÿÿÿ AGN           ‘XMMLSS_MOS00-05 @A«¯·éùÀR½<6 A«
+= ?s33 >\) ?zá >Ç®Vpt AQìRRLÿÿÿÿ RRL           ’GROTH_MOS01-03  @jİ’:)Çy@Jøğ¸ AªõÃ ?s33 >W
+= >™š >¸Qì pt A¡
+=QSOÿÿÿÿ QSO           “ELAISN1_MOS15-01@n?ÿ.Hè¦@JïE8ï4Ö A¸R ?s33 >¨õÃ ?(õÃ >õÂVpt A†ffRRLÿÿÿÿ RRL           ”GROTH_MOS05-07  @jëë…¸Q@JŒj~ùÛ" A®=q ?s33 >Š=q >™š >æffFpt A§p¤QSO?—l‹XQSO           •ELAISN1_MOS16-14@n&Íƒä%@KE\ú¬Ùç A§™š ?s33 >™™š =#×
+ ?!G®Fpt AŸ™š   ÿÿÿÿ QSO           –CDFS_MOS01-21   @J›¥ãS÷À;Äo hÛ A¨=q ?s33 >®{<     ?W
+=Vpt AÂ   ÿÿÿÿ Point Var     —ELAISN1_MOS12-19@nsm\ú¬Ù@KQ°‰ 'Q A´zá ?s33 >\) >#×
+ ?\(öVpt Aª=qQSOÿÿÿÿ QSO           ˜COSMOS_MOS27-05 @b§XbMÒ?öÇË)^>A·×
+>?s33 >#×
+ >B\ >k…FextAªzá   ÿÿÿÿ Galaxy Trans  ™XMMLSS_MOS05-18 @A¯ÒòäÀòäŠqŞ A°Qì ?s33 >aG®<     ?
+=qVpt A´(öQSOÿÿÿÿXQSO           šCDFS_MOS06-16   @K0	Ô•*À<G´¢3œ>A¸¸R>?s33 ?^¸R ?c×
+ >æff extA­p¤   ÿÿÿÿ ?             ›CDFS_MOS04-00   @J5`A‰7KÀ<Ô¼j~ùÚ A¯Â ?p£× >uÂ =#×
+ ?fff pt A{QSOÿÿÿÿ QSO           œGROTH_MOS04-00  @jr)Çy¦´@JÔ"h	Ô” A¦zá ?p£× >Š=q =LÌÍ >ë…Vpt A›®QSOÿÿÿÿ QSO           COSMOS_MOS27-18 @b¹×
+=p£?ñ5¨Xy=Ù>A¸{>?p£× ?W
+=<     >¸RFpt A¿p¤   ÿÿÿÿ Point Trans   GROTH_MOS02-13  @jÅsüPG@JûÓÃa?>A¸{>?p£× >W
+= ?LÌÍ >uÂFextA¦=q   ÿÿÿÿ Galaxy Trans  ŸCDFS_MOS01-04   @IÆ¡aä÷eÀ<CZ…‡“İ A¥p¤ ?p£× >Š=q <£×
+ ?(õÃ extAŸ×
+   ÿÿÿÿ ?              CDFS_MOS02-37   @JÓŠ	İÀ:Ô%®æ1ø A®£× ?p£× >…¸<     ?#×
+Vpt AŸë…   ÿÿÿÿ Point Var     ¡CDFS_MOS00-12   @Jd?åÉÀ<ì¿±[V A¸¸R ?p£× =#×
+ =uÂ<    VextA¤(ö   ÿÿÿÿ AGN           ¢XMMLSS_MOS02-09 @A…Ùb¶®ÀT•*™0 A¥\) ?p£× >€   ?ÌÍ ?   Vpt Ao
+=QSOÿÿÿÿXQSO           £CDFS_MOS01-08   @IÔPHğÀ<¦8†YJô>A¸ÌÍ>?p£× >½p¤<     ?TzáFpt A¬     ÿÿÿÿ Point Trans   ¤CDFS_MOS00-15   @JoªÍƒãÀ<MV’ A´{ ?p£× =¸Qì >™š >¸RVextA¤(ö   ÿÿÿÿ AGN           ¥ELAISN1_MOS13-06@n*R½<6@KÍ$İ. A­
+= ?p£× >\) >¨õÃ ?¸R extA¢£×   ÿÿÿÿ ?             ¦COSMOS_MOS25-10 @b§[W>«6@ eıŠÚ¹õ A¬   ?p£× >®{ ÿÿÿÿ ?fffVpt A¥™šQSOÿÿÿÿ QSO           §COSMOS_MOS26-27 @bĞ{²şÅm?ùÒòäŠ>A·×
+>?n{ ?O\) >½p¤ >W
+=F   ÿÿÿÿ   ÿÿÿÿ Orphan Trans  ¨GROTH_MOS04-01  @js™™™™™@JâÀƒn— A¸   ?n{ >B\ ?333 >k… extA¤ÌÍ   ÿÿÿÿ ?             ©VVDS22H_MOS06-00@tÆ­«ŸUš¿Ù 'RT`© AŸG® ?n{ >”zá =LÌÍ ?5ÂVpt A‘ÂQSO?Ÿ|î QSO           ªGROTH_MOS05-13  @jğ`ªdÂ÷@J:’£R A­¸ ?n{ >”zá =#×
+ ?(õÃVpt A¡\)QSOÿÿÿÿ QSO           «COSMOS_MOS21-16 @bÕ|í‘hr@	Iº^5?| A¨\ ?n{ >®{ =õÂ ?Që…Vpt A£ë…QSOÿÿÿÿ QSO           ¬CDFS_MOS04-10   @JxÄ›¥ãSÀ<Ş«6z A¸(ö ?n{ >¸ >\) >\)FextA¬\   ÿÿÿÿ Galaxy Flare  ­XMMLSS_MOS04-16 @B0¾í(À‹xFÜ] A­×
+ ?n{ >”zá <õÂ ?0£×VextA¤ÌÍ   ÿÿÿÿXAGN           ®CDFS_MOS05-33   @J<¼j~ùÚÀ; ù	k¹Œ A²áH ?k… >.{ >uÂ >”záVextA©®   ÿÿÿÿ AGN           ¯CDFS_MOS05-13   @IùœàuöüÀ;•zxl"g A²Qì ?k… >k… >8Qì ?¸ extAªzá   ÿÿÿÿ ?             °CDFS_MOS00-44   @J°6âëÀ;ïÒòä A³p¤ ?k… =£×
+ =áG® >B\VextA…   ÿÿÿÿ AGN           ±XMMLSS_MOS01-18 @Bak¹Œ~'À
+8ï4Ö¡a A°¸R ?k… =áG® =ÌÌÍ >8QìFextA zá   ÿÿÿÿ Galaxy Flare  ²XMMLSS_MOS01-12 @B:Iº^5ÀüPHğ A³¸ ?k… >\) =áG® ?B\FextA«×
+   ÿÿÿÿXAGN           ³GROTH_MOS04-03  @juã¼ÓZ@KçÕfÏA A²   ?k… >uÂ >\) >Ñë… pt A¦záQSOÿÿÿÿ QSO           ´COSMOS_MOS21-04 @bÄ’£S%@ùÛ"Ğå_ Aª£× ?k… >¨õÃ >B\ ?J=qVpt A¢  QSOÿÿÿÿ QSO           µVVDS22H_MOS01-16@tÎkP°ò{?çŸU›=Ç A©… ?k… >Š=q<     ?¸RVpt Aë…QSO?ùûç QSO           ¶VVDS22H_MOS04-04@tğ$xF¿Ë…¸Që„ A¡™š ?hõÃ >W
+= >W
+= ?
+=qVextA—
+=   ÿÿÿÿ AGN           ·VVDS22H_MOS03-15@tİ/Ÿ¾v?¤É…ğoiD A¯ë… ?hõÃ =áG® >aG®<     extA£™š   ÿÿÿÿ ?             ¸COSMOS_MOS24-40 @bÏã¼Ó@Hğ¸ A­¸ ?hõÃ >€   >.{ >úáHVextA¥…   ?*ÀƒXAGN           ¹VVDS22H_MOS06-04@tÊçl‹C•¿İ‚©“àŞ A¨{ ?hõÃ >B\ =LÌÍ ?8QìVextA›Â   ?¾w AGN           ºVVDS22H_MOS03-06@tÖ0¾í(¿Êe+ÓÃ` A¬ÌÍ ?hõÃ >\) =áG® >€  Vpt A€Qì   ÿÿÿÿ STAR          »XMMLSS_MOS02-15 @A Ñ·XáÀá@N¤¨ A¬\ ?hõÃ >¸R<     ?(öVextA©¸   ÿÿÿÿXAGN           ¼XMMLSS_MOS00-17 @AÙŞi­BÃÀ
+UÏªÍƒ A±p¤ ?hõÃ >€   =áG® >½p¤FextA§33   ÿÿÿÿ Galaxy Flare  ½CDFS_MOS02-32   @JÇß;dZÀ:Ø­«ŸU>A¸ÌÍ>?hõÃ ?™š >\) >.{    ÿÿÿÿ   ÿÿÿÿ ?             ¾XMMLSS_MOS00-18 @AÛg ù	kÀ>í(Œæ A›… ?hõÃ >8Qì >aG® >€  FextA†\   ÿÿÿÿ Galaxy Flare  ¿CDFS_MOS02-00   @JJ^5?|íÀ:©Dg8} A¬Qì ?hõÃ >”zá =LÌÍ ?=p¤Vpt AŸ¸   ÿÿÿÿ QSO           ÀVVDS22H_MOS00-01@tÔ8}¿H?òâe+ÓÃ A¤£× ?fff >LÌÍ =uÂ >½p¤Vpt Aë…QSOÿÿÿÿ QSO           ÁCOSMOS_MOS25-13 @b¬ƒä%®æ@K)^ A¨\ ?fff >aG® ?¸R >¸RVpt A…QSO?¸´9 QSO           ÂELAISN1_MOS14-08@n™™™™˜@KM%F
+¦K A­Â ?fff >W
+=<     ?5Â pt AŸ®QSOÿÿÿÿ QSO           ÃVVDS22H_MOS01-05@tÆû~ÿ–?çm\ú¬Ùç A±G® ?fff >8Qì >W
+= >k…Vpt A§ë…   ÿÿÿÿ Point Var     ÄELAISN1_MOS12-12@ngÒñ©ûæ@Kš©“àŞ A¬\ ?fff >Š=q =\) ?™š extA¤\   ÿÿÿÿ ?             ÅELAISN1_MOS16-00@nF
+¦L.@KF_oÒ A´ff ?fff >™š<     >ÌÌÍVextAŸ¸   ÿÿÿÿ AGN           ÆVVDS22H_MOS00-09@tØxÔıó¶?ó+jçÕfÏ A¯×
+ ?fff >¸<     ?¸R pt A õÃQSO?ùº^ QSO           ÇCDFS_MOS04-16   @J‘hr° ÄÀ<ÂMÒñ©û A±G® ?fff >€   =uÂ ?#×
+Vpt A{QSOÿÿÿÿ QSO           ÈCOSMOS_MOS24-35 @bÇ/ìVÕÏ@¥®æ1ø  A³\) ?c×
+ >\) >Š=q >W
+=VextA¤£×   ÿÿÿÿ AGN           ÉXMMLSS_MOS06-01 @AßsüPGÀìô!-v A¡Â ?c×
+ >\) =¸Qì ?&ffVextAš¸R   ÿÿÿÿXAGN           ÊCDFS_MOS06-10   @Kë…¸QÀ<Ä¼j~ùÚ>A¸¸R>?c×
+ >×
+= ÿÿÿÿ >õÂ extA£33   ÿÿÿÿ ?             ËCDFS_MOS05-14   @Iú’£S%À:íBÃÉîË A®Qì ?c×
+ =áG® >#×
+ >\)V   AhÌÍ   ÿÿÿÿ Point Var     ÌELAISN1_MOS15-19@nYº^5?|@Ky¦µ A¡×
+ ?c×
+ >k… =ÌÌÍ ?LÌÍVpt A \QSOÿÿÿÿ QSO           ÍELAISN1_MOS15-06@nHÄ›¥ãS@Jä¯O„L A§G® ?c×
+ >aG® >…¸ >Ü(ö pt A…
+=RRLÿÿÿÿ RRL           ÎELAISN1_MOS12-15@nk¼ÓZ…†@K†í(Œæ A§
+= ?c×
+ >®{<     ?fff pt A—×
+QSOÿÿÿÿ QSO           ÏVVDS22H_MOS00-27@tßÛô‡ü¸?ùXâe+Ó A©Â ?c×
+ >LÌÍ =LÌÍ ?0£× pt A£33QSOÿÿÿÿ QSO           ĞXMMLSS_MOS01-10 @B,ıó¶E¡ÀÌÌÌÌÌÌ A¦{ ?aG® >uÂ<     ?n{ pt Aš{QSOÿÿÿÿXQSO           ÑCDFS_MOS05-23   @J¦L/ƒzÀ;eıŠÚ¹ A¥\) ?aG® >”zá =\) ?@  VextAzá   ÿÿÿÿ AGN           ÒXMMLSS_MOS00-16 @AØFÜ]cÀ1&éxÔı A¦£× ?aG® >”zá<     ?.{Vpt A ÌÍQSOÿÿÿÿXQSO           ÓCDFS_MOS04-19   @J?»À<¼ÓZ…‡“ A°   ?aG® =õÂ <õÂ ?W
+=FextA¯ë…   ÿÿÿÿ Galaxy Flare  ÔCDFS_MOS03-15   @K¼¢À;Ô¼¢ A£\) ?aG® >™™š =£×
+ ?@  Vpt A›33QSOÿÿÿÿ QSO           ÕXMMLSS_MOS04-01 @B2™0¾ìÀ™Î_oÑ A¬áH ?aG® >LÌÍ >\) >úáH extA¤¸R   ÿÿÿÿXAGN           ÖCDFS_MOS06-02   @JÒëC,¥À<›Í5¨Xx A¦zá ?aG® >Â\ ÿÿÿÿ ?s33Vpt Aš=qQSOÿÿÿÿ QSO           ×XMMLSS_MOS03-19 @BœàuöüÀè§æš>A·®>?aG® >ÌÌÍ<     ?@   extAÎzá   ÿÿÿÿXAGN           ØELAISN1_MOS13-08@n.Ğå`Aˆ@Kê–»˜ A¦ff ?aG® >uÂ >#×
+ >¸QìVextA•G®   ÿÿÿÿ AGN           ÙCOSMOS_MOS27-15 @bµÿ.Hè¦?û‚©“àŞ A®{ ?aG® >W
+= =áG® >ÌÌÍFpt A¢£×QSO?¬¬XQSO           ÚVVDS22H_MOS01-22@tĞ!–R½;?â¸ºÇ A«® ?aG® >aG® =LÌÍ ?\VextA£×
+   ÿÿÿÿ AGN           ÛGROTH_MOS06-07  @jÒ,<ì¿@J?KÆ§ï A®£× ?aG® >¸R ?
+=q ?TzáFpt A¡ë…QSOÿÿÿÿXQSO           ÜXMMLSS_MOS02-02 @AT¹#¢œwÀ`-à A¢zá ?^¸R >k… =áG® >áG®VextA‰®   ÿÿÿÿ AGN           İVVDS22H_MOS00-10@tØ©*0U2?ì#9Àëíù A¥
+= ?^¸R >”zá<     ?8QìVpt A33QSOÿÿÿÿ QSO           ŞVVDS22H_MOS00-00@tÓ/ìVÕÏ?ö6âëC, A­
+= ?^¸R >.{ =¸Qì >½p¤VextA©33   ÿÿÿÿ AGN           ßXMMLSS_MOS03-08 @AÖ«6zÀ¸Që„ Aª{ ?^¸R >k…<     ?n{ pt A¥G®QSOÿÿÿÿXQSO           àGROTH_MOS02-00  @j¤e”¯O@KxFÜ\ A­™š ?^¸R >#×
+ >€   >uÂFextA¤Qì   ÿÿÿÿ Galaxy Flare  áXMMLSS_MOS02-06 @A{Í5¨XyÀì¿±[W A¦\ ?^¸R >B\ >¸ ?W
+= extA õÃ   ÿÿÿÿXAGN           âVVDS22H_MOS02-05@tèóMj?Ö5?|í‘h A®zá ?^¸R >\)<     ?
+=qFpt A£ë…QSOÿÿÿÿ QSO           ãELAISN1_MOS11-06@n…#¢œw™@K»¢œwšj A°{ ?\(ö >Š=q<     ?8QìVpt A§™šQSOÿÿÿÿ QSO           äXMMLSS_MOS02-08 @A¦µ'À	k¹Œ~' A¢(ö ?\(ö >B\ >#×
+ ?k… extAœzá   ÿÿÿÿ ?             åELAISN1_MOS16-05@n‹C•@KP|„µÜÅ A§ë… ?\(ö >\) =#×
+ ?0£×Vpt AffQSOÿÿÿÿ QSO           æELAISN1_MOS14-06@n{óMj@K@7´¢3› A zá ?\(ö >½p¤<     ?xQì pt Aš  QSOÿÿÿÿ QSO           çCDFS_MOS05-12   @Iï$tSòÀ:ÔtSóL A¯\) ?\(ö >¸ =¸Qì ?:áHVpt A¡¸   ÿÿÿÿ QSO           èELAISN1_MOS12-03@nH~($w@KRh	Ô• A«p¤ ?\(ö >”zá<     ?(õÃVpt A¨¸RQSOÿÿÿÿ QSO           éCDFS_MOS02-24   @J£]Ìcñ@À;óMj A§\) ?Y™š >¸R<     ?J=qVpt A¡…   ÿÿÿÿ Point Var     êVVDS22H_MOS01-19@tÏDĞ©)?ñ$İ/Ÿ¾ A©ë… ?Y™š >LÌÍ<     ?®Vpt A¥ÂQSOÿÿÿÿ QSO           ëCDFS_MOS06-00   @J½«ŸU›<À<rˆÎp:ú A­p¤ ?Y™š >£×
+ ÿÿÿÿ ?(õÃVpt A£G®QSOÿÿÿÿ QSO           ìCOSMOS_MOS23-01 @bÒr° Ä›@sMjO A²{ ?Y™š >#×
+ =¸Qì >¸QìVextAŸ×
+   ?ÒòXAGN           íXMMLSS_MOS03-03 @AÂşÅm\úÀ6®}Vló A¤zá ?Y™š >\)<     ?n{ pt A¸QSOÿÿÿÿXQSO           îELAISN1_MOS12-21@nvFÜ]b@Ko_oÒò>A¸ff>?Y™š >úáH<     ?0£× extA²ff   ÿÿÿÿ ?             ïCOSMOS_MOS22-14 @b»îËûµ@	y¦µ' A—¸ ?W
+= >”zá >LÌÍ ?(õÃVextA†     =ıó¶XAGN           ğELAISN1_MOS11-08@nŠ!-w0@K´SóMi A®(ö ?W
+= >uÂ >.{ ?8Qì pt A>{   ÿÿÿÿ QSO           ñCDFS_MOS05-17   @JE¡ÊÀ‚À:ê™0¾ì A¯33 ?W
+= >uÂ =#×
+ ?(öVpt A§
+=   ÿÿÿÿ QSO           òVVDS22H_MOS03-14@tÛÀëíúC?ÕVlô!- A©ë… ?W
+= >\) =áG® >B\ extA”ÌÍ   ÿÿÿÿ ?             óCOSMOS_MOS24-23 @b¾Ü]cˆe@ "h	Ô• A³¸ ?W
+= >8Qì >½p¤ >Š=q extA¢ff   >-V AGN           ôELAISN1_MOS12-07@nV“t»@KM8ï4Ö  A £× ?W
+= >.{ =uÂ ?O\)VextA—™š   ÿÿÿÿXAGN           õVVDS22H_MOS01-10@tÉ¿HË‘?ìCş\‘ÑM A«Â ?Tzá >uÂ =õÂ ?ÌÍVextA«33   ?Áhs AGN           öGROTH_MOS05-16  @jó”¯Oƒ@J[@N¤¨À>A¸¸R>?Që… ?™š<     >™™šFextA®=q   ÿÿÿÿ Galaxy Trans  ÷COSMOS_MOS24-34 @bÅ…¸Që@ËÆ§ï± A²ff ?Që… =áG® >#×
+ >™šFextA–£×   ÿÿÿÿ Galaxy Flare  øCOSMOS_MOS27-24 @b¿Æ§ï±?òXy=Ùb A¦   ?Që… >k… =£×
+ >æffVpt A
+=QSOÿÿÿÿ QSO           ùVVDS22H_MOS00-23@tŞ¹õY³Ğ?ûg ù	k¹ A±… ?Që… =ÌÌÍ >.{ >¸FextAff   ÿÿÿÿ Galaxy Flare  úXMMLSS_MOS06-21 @B@ -àÀK'»/ì A¬(ö ?Që… >.{ >…¸ >¨õÃVpt A›p¤   ÿÿÿÿ Point Var     ûGROTH_MOS04-02  @jsä÷eıŠ@JÌ¬1&è A°Qì ?Që… >8Qì >\) >…¸Vpt A¦=qQSOÿÿÿÿ QSO           üCOSMOS_MOS26-11 @bÅŒ~($?ùÜ]cˆe” A°õÃ ?O\) >B\ >¸ >Ü(öVextA¢     ?~¸RXAGN           ıGROTH_MOS07-00  @j{t¼j~ù@JwO„M >A¸ÌÍ>?O\) ?ë…<     >B\FextA±¸   ÿÿÿÿ Galaxy Trans  şVVDS22H_MOS03-09@tØ~ÿ—$?¿Ë’:)Çx A¦áH ?O\) >LÌÍ =¸Qì >ë…VextA£33   ?iûç AGN           ÿVVDS22H_MOS00-03@tÕÉ…ğoi?ï{J#9Àë A§33 ?O\) >€  <     ?ÌÍVpt A¢(öQSOÿÿÿÿ QSO            CDFS_MOS02-03   @JZÍƒä%À:º¹õY³Ğ A¦ÌÍ ?O\) >8Qì <õÂ ?k…VextA ÌÍ   ÿÿÿÿ AGN           GROTH_MOS07-20  @jŸ7KÆ§ï@J˜-àp A¦áH ?O\) >uÂ >\) ?
+=q extA£×
+   ÿÿÿÿ ?             CDFS_MOS06-07   @JíÏªÍƒÀ<ßO„M >A¸¸R>?LÌÍ >ğ£× >aG® ÿÿÿÿ extA¦õÃ   ÿÿÿÿ ?             VVDS22H_MOS01-15@tÎÁ½¥?éŞi­BÃÉ A    ?LÌÍ >W
+=<     ?E¸VextA˜õÃ   >›¥ã AGN           ELAISN1_MOS11-16@nš«6z@KÌí‘hr¯ A¥\) ?LÌÍ >uÂ >¸Qì ?8QìVpt A”õÃQSOÿÿÿÿ QSO           GROTH_MOS03-20  @j×[W>«5@JºşÅm\ú>A¸ÌÍ>?LÌÍ ?0£×<     =LÌÍFextA‡G®   ÿÿÿÿ Galaxy Trans  ELAISN1_MOS14-02@np®}Vló@JãS÷ÎÙ A£
+= ?LÌÍ >8Qì<     ?@   extA–(ö   ÿÿÿÿXAGN           ELAISN1_MOS16-20@n/Iº]@Kø -ß A¥… ?LÌÍ >k… >ÌÌÍ >õÂ pt AÂRRLÿÿÿÿ RRL           COSMOS_MOS21-01 @bÁÆ§ï±@	s×Ûô‡ A¨¸R ?LÌÍ >”zá =uÂ ?8QìVpt AœÌÍQSOÿÿÿÿ QSO           	COSMOS_MOS22-01 @b¢âëC,@ˆÎp:û~ A (ö ?LÌÍ >®{ =\) ?Që…Fpt A™…QSO?t9X QSO           
+GROTH_MOS03-01  @j¯ï²-@J—¼ A®   ?LÌÍ >uÂ =¸Qì >õÂFpt A¦=q   ÿÿÿÿ QSO           GROTH_MOS04-23  @j•ÈK]Ìc@J×Ø­«ŸU A®Qì ?LÌÍ >.{ <õÂ >\)VextA¦£×   ÿÿÿÿ AGN           GROTH_MOS03-10  @jÃ
+=p£Ö@J§HË’9 A©×
+ ?LÌÍ >\) =¸Qì ?+…Vpt A¤=qQSOÿÿÿÿ QSO           GROTH_MOS04-12  @jŸU›=@Jñ-w1Ä A¤=q ?LÌÍ >aG® >¸ >”zá extA\)   =í‘h AGN           GROTH_MOS03-13  @jÆ‚@·€3@J‹¯·éø A©p¤ ?LÌÍ >W
+= >#×
+ >½p¤VextA¡¸   ÿÿÿÿ AGN           VVDS22H_MOS03-13@tÛ>BZîb?ÚËûµsê A£… ?LÌÍ >LÌÍ =¸Qì ?B\Vpt A–  QSO?ì(ö QSO           GROTH_MOS06-05  @jÌ¥zxl!@J<"h	Ô” AªõÃ ?J=q >€   ÿÿÿÿ ÿÿÿÿ pt A©G®QSOÿÿÿÿXQSO           GROTH_MOS05-20  @jø?»@JG hÛ‹« A©Â ?J=q >aG®<     >×
+=VextA¢Qì   ÿÿÿÿ AGN           CDFS_MOS02-31   @JÇOß;cÀ;	³Ğ|„µ Aªzá ?J=q >W
+=<     ?® pt A¡p¤   ÿÿÿÿ ?             ELAISN1_MOS12-00@n?Ãa@N@KlPHğ A¡® ?J=q >…¸<     ?#×
+Vpt A˜(öQSOÿÿÿÿ QSO           ELAISN1_MOS13-11@n8âe+Ó@K‡Ånÿ A˜¸R ?J=q >LÌÍ >LÌÍ >¨õÃVpt Aa™š   ÿÿÿÿ Point Var     COSMOS_MOS24-20 @b½Xâe+@ã¼ÓZ… A¬ÌÍ ?J=q >B\ >¸ ?ë…Vpt A¡p¤QSO?¾wXQSO           CDFS_MOS03-03   @Jíp£×
+<À;Œç¯· A¡¸ ?J=q >”zá<     ?5ÂVpt A˜(ö   ÿÿÿÿ Point Var     VVDS22H_MOS04-03@tğ‡+?°:û~ÿ— A ¸R ?J=q >aG® =\) >õÂVpt A˜\QSO?·
+= QSO           GROTH_MOS02-10  @jÀ¾ß¤?@KBÃÉîËú A¬=q ?J=q >…¸<     ?&ffVpt A¥×
+QSOÿÿÿÿ QSO           CDFS_MOS00-23   @J†štÀ;ca@N¤ A®ff ?J=q =£×
+ >#×
+ =uÂV   AÂ   ÿÿÿÿ Point Var     ELAISN1_MOS15-23@n^?»@K%¨Xy=Ù A£p¤ ?J=q >Š=q <£×
+ ?\)Vpt AŸ…QSOÿÿÿÿ QSO           VVDS22H_MOS00-28@tá	k¹Œ}?îbMÒñ© Aªzá ?J=q >8Qì =\) ?¸RVpt A˜ÌÍQSO?´İ/ QSO           CDFS_MOS03-13   @KAò×rÀ;8Që…· A¦õÃ ?J=q >8Qì<     ?Y™š pt A¢ff   ÿÿÿÿ ?             COSMOS_MOS24-09 @bµö+jçÕ@,¥zxl" A¬¸R ?J=q >k… >£×
+ >£×
+Vpt AÂRRLÿÿÿÿ RRL           COSMOS_MOS24-00 @b®üPHï@·€4mÅÖ A¥¸ ?G® >…¸ =áG® ?
+=qVpt A—G®QSO@Ğå QSO           COSMOS_MOS23-26 @báÌcñA ?şO„M9 A§
+= ?G® >\) <õÂ ?8QìVpt AœffQSOÿÿÿÿ QSO            XMMLSS_MOS01-09 @B+]Ìcñ@À‡“İ—ö* Aª{ ?G® >\)<     ?+…Vpt A ÌÍQSOÿÿÿÿXQSO           !XMMLSS_MOS03-01 @A­sê³g À˜âe+Ó A£p¤ ?G® >€  <     ?LÌÍVpt A™\)   ÿÿÿÿX?             "COSMOS_MOS21-14 @bÑó¶E¡Ê@
+¨ÁTÉ…ï A³33 ?G® =ÌÌÍ >B\ =õÂVextA§33   ÿÿÿÿ AGN           #CDFS_MOS02-28   @J³C,¥yÀ:Ò&€IQ A ÌÍ ?G® >¸R<     ?:áHVpt Aœ     ÿÿÿÿ Point Var     $ELAISN1_MOS13-02@n!Xâe+@K—Ë)^ A£
+= ?G® >uÂ >€   >¨õÃVextA›…   ÿÿÿÿ AGN           %CDFS_MOS04-04   @JL„µÜÆ>À<làuöı! AŸ¸ ?G® >€   =\) ?™šVextA¥Â   ÿÿÿÿ AGN           &CDFS_MOS05-16   @J?åÉÀ:Ùb¶®| A²(ö ?G® =õÂ >LÌÍ >B\VextA›×
+   ÿÿÿÿ AGN           'ELAISN1_MOS11-13@n•w1Å@K`·€4mÅ A¢=q ?G® >#×
+ >½p¤ >LÌÍVpt A\£×   ÿÿÿÿ STAR          (ELAISN1_MOS14-16@n–lô!,@KàŞÒˆÍ A¤áH ?G® >k… =ÌÌÍ ?®VextA›×
+   ÿÿÿÿXAGN           )CDFS_MOS04-21   @J¢W§†Â&À=58ï4Ö  A­
+= ?E¸ >8Qì >\) >\)Vpt AQì   ÿÿÿÿ Point Var     *GROTH_MOS03-03  @jµÇy¦µ
+@Jåw1Å A«ë… ?E¸ >LÌÍ =áG® >”záFextA¤(ö   ÿÿÿÿ Galaxy Flare  +VVDS22H_MOS02-02@tä—$tS?İ¸Që… A›ë… ?E¸ >…¸<     ?
+=Vpt A—…QSO?vÉ QSO           ,CDFS_MOS05-04   @IÛÓÃa?À:ó,¥zxk A«™š ?E¸ >€  <     ?¸RVpt AQì   ÿÿÿÿ Point Var     -ELAISN1_MOS12-05@nPlô!,@KMÂ\(õ A¤\ ?E¸ >LÌÍ >”zá >×
+=VextA•33   ÿÿÿÿXAGN           .ELAISN1_MOS16-10@n!·éùq@KlÓZ…‡“ A¥33 ?E¸ >8Qì <#×
+ >½p¤ extAõÃ   ÿÿÿÿ ?             /GROTH_MOS04-05  @jvoiDg7@JôğØDĞ A¬õÃ ?E¸ >#×
+ >…¸ >Š=qVpt A \QSOÿÿÿÿ QSO           0GROTH_MOS06-06  @jĞ6âëB@JnóMj A¦ÌÍ ?E¸ >uÂ =\) ?    pt A¡¸QSOÿÿÿÿ QSO           1ELAISN1_MOS11-11@n“ÏªÍƒ@K_oÒò A©Â ?E¸ >€   <õÂ ?\ extA”Qì   ÿÿÿÿ ?             2COSMOS_MOS24-28 @bÃC•$@ Ø­«ŸU› A­p¤ ?E¸ >B\ <õÂ >®{Vpt Ap¤QSO@ûçXQSO           3CDFS_MOS02-33   @JÈ1&éxÔÀ:í/Ÿ¾v A©¸ ?E¸ >B\<     >ë… pt Aœzá   ÿÿÿÿ ?             4COSMOS_MOS21-11 @bĞ Ä›¥ã@—ö+jçÕ A©™š ?E¸ >”zá >¸R ?5ÂVpt A¤¸RQSOÿÿÿÿ QSO           5GROTH_MOS01-06  @jàè§æš@KUm\ú¬Ù Aªff ?B\ >LÌÍ =¸Qì >Š=qVpt A¨ffQSOÿÿÿÿ QSO           6CDFS_MOS00-26   @J+ÓÃaÀ;–Á½¥ A³p¤ ?B\<    <     =uÂVextA¤£×   ÿÿÿÿ AGN           7COSMOS_MOS23-18 @bÜhÛ‹¬p@5ÜÆ? A¦áH ?B\ >k…<     ?:áH pt A£
+=QSO?)ûçXQSO           8COSMOS_MOS22-02 @b¤ç¯·è@	œàuöü Aªzá ?B\ >aG® =£×
+ >æffVpt A¡
+=QSOÿÿÿÿ QSO           9GROTH_MOS03-14  @jÊè§æš@J×“İ—ö* A›33 ?B\ >k… =LÌÍ >ğ£×Vpt AÂQSO>E¡ËXQSO           :XMMLSS_MOS03-17 @Bã¼ÓZ…À*~ùÛ"Ğ A¨{ ?B\ >\) =uÂ ?&ffFpt A›¸QSOÿÿÿÿXQSO           ;XMMLSS_MOS05-05 @Al¾ß¤?À»/ìVÕÏ Aªzá ?B\ >W
+=<     ?¸FextA§®   ÿÿÿÿ Galaxy Flare  <CDFS_MOS03-18   @K+¯·éøÀ;FÜ]cˆe A¨áH ?B\ >k…<     ?G® pt A×
+   ÿÿÿÿ ?             =CDFS_MOS02-05   @JeæšÔ,<À:‘ä÷eıŠ A¦¸R ?B\ >™š<     ?®Vpt A–zá   ÿÿÿÿ Point Var     >XMMLSS_MOS05-23 @A½fÏAòÀ4!-w1 A¦zá ?B\ >€  <     ?!G®Vpt A\)   ÿÿÿÿX?             ?VVDS22H_MOS00-25@tßxFÜ]?öP°ò{²ş A®zá ?B\ >\)<     >…¸Fpt A¡×
+   ÿÿÿÿ Point Flare   @CDFS_MOS04-12   @J‡!-w1À<›'»/ë A¨õÃ ?@   >aG® =LÌÍ ?
+=qVpt A¡
+=QSOÿÿÿÿ QSO           ACDFS_MOS05-21   @Jß¤?åÈÀ;¤?åÉ A©… ?@   >8Qì >€   >®{VextApõÃ   ÿÿÿÿ AGN           BXMMLSS_MOS06-25 @B\cñA [À.}Vlô A¥… ?@   >™š >¸Qì >…¸Vpt AHzá   ÿÿÿÿX?             CCDFS_MOS04-01   @J;,¥zxkÀ<Üí‘hr¯ A³p¤ ?@   =áG® >.{ >\)FextA¤(ö   ÿÿÿÿ Galaxy Flare  DCOSMOS_MOS23-04 @bÔJŒL˜@ÀN¤¨ÁT A® ?@   >”zá =uÂ ?5ÂVpt A–õÃQSO?(1'XQSO           ECDFS_MOS05-28   @J%%F
+¦KÀ:ïŠ	Ş  A˜{ ?@   >¸R<     ?G®Fpt A“p¤   ÿÿÿÿ Point Flare   FGROTH_MOS05-08  @jìDĞ©)@J…¸ºÇÊ A®£× ?@   >k…<     >Ü(öVextA·ë…   ?‹¥ãXAGN           GCOSMOS_MOS24-07 @b³ûçl‹C@r{²şÅm A«G® ?@   >€  <     ?.{FextA¢=q   ?—®XAGN           HVVDS22H_MOS03-02@tÔ¼j~ùÚ?¿ªÍƒä% AŸ\) ?@   >W
+= >¸ >ë…VextA’õÃ   >Ñhs AGN           IVVDS22H_MOS04-05@tğç¯·è¿ÉTÉ…ğoh AŸ… ?=p¤ >uÂ<     ?¸RVextA›×
+   ?fff AGN           JXMMLSS_MOS05-12 @Asê³g ÀşBZîc A¤{ ?=p¤ >k…<     ?\)Vpt A”õÃ   ÿÿÿÿX?             KGROTH_MOS01-04  @jßö”Fs@KH_ö”E A©33 ?=p¤ >B\ >Š=q >™™šVextA¢Qì   ÿÿÿÿ AGN           LELAISN1_MOS14-07@n|C,¥zw@Kü¹#¢› AªõÃ ?=p¤ >#×
+ =£×
+ ?
+=qFpt A›ÂQSOÿÿÿÿ QSO           MVVDS22H_MOS01-02@tÄ¦µ'?èL˜_ö A¡® ?=p¤ >W
+=<     ?J=qVpt A–  QSO?µãT QSO           NGROTH_MOS05-18  @jõÎÙ‡*@J‹n.±Ä2 A¯¸ ?=p¤ >\) >\) >…¸FextA ÌÍ   ÿÿÿÿ Galaxy Flare  OCDFS_MOS00-42   @J¬Ùè>BZÀ;WKÆ§ï A²Qì ?=p¤ =\) =áG® >€  Fpt A©™š   ÿÿÿÿ Point Flare   PCDFS_MOS03-22   @KMcˆe”®À;š A¥Â ?=p¤ >\)<     >Ñë… pt A¸   ÿÿÿÿ ?             QXMMLSS_MOS02-17 @A»Š	İÀúCş\‘Ğ A¦(ö ?=p¤ >uÂ =£×
+ ?
+=Vpt Aœ{QSOÿÿÿÿXQSO           RELAISN1_MOS11-20@n¤Zîc‰@Kfö”Fs A¥×
+ ?=p¤ >uÂ =\) ?(öVpt A  QSOÿÿÿÿ QSO           SCDFS_MOS06-06   @JìxFÛÀ<=„M:’ A­… ?:áH >\) ÿÿÿÿ ?
+=Vpt A¤{QSOÿÿÿÿ QSO           TCDFS_MOS05-30   @J-5¨Xy=À:Ë)^ A­×
+ ?:áH >.{ =áG® >ğ£×VextAG®   ÿÿÿÿ AGN           UVVDS22H_MOS01-11@tÊ·Xâ?Ş0U2a| A¨{ ?:áH =õÂ =#×
+ >Â\Vpt A £×QSOÿÿÿÿ QSO           VELAISN1_MOS12-01@nB)Çy¦´@K‡¤?åÉ A¦ÌÍ ?:áH >aG® =uÂ ?® pt A\QSOÿÿÿÿ QSO           WGROTH_MOS06-12  @jŞí(Œæ@JIQ‚©’ A«
+= ?:áH >W
+= >uÂ >™š extA¤     ÿÿÿÿ ?             XCOSMOS_MOS27-02 @b¤cñA [?ô\(õÂ A£ë… ?:áH >k… >ğ£× >£×
+Vpt A„áHRRLÿÿÿÿ RRL           YVVDS22H_MOS06-18@tÓ¬q²•¿èbMÒñ© A¦(ö ?:áH >B\<     >×
+=Vpt AœõÃQSO?µãT QSO           ZGROTH_MOS07-29  @j§KÆ§ï@JsFÜ]c‡ A­ë… ?:áH >uÂ =áG® >¸Qì pt Aœ£×QSOÿÿÿÿ QSO           [COSMOS_MOS23-12 @bÚcŠ	@1&éxÔı A¦Qì ?:áH >\)<     ?E¸Vpt A¢ffQSOÿÿÿÿXQSO           \XMMLSS_MOS05-09 @A‚MÒñ©ûÀá|ÚQ Aª(ö ?:áH >\)<     ?8QìFpt A¥33QSOÿÿÿÿ QSO           ]GROTH_MOS06-04  @jËHË’9@J@âe+Ó A©Â ?8Qì >uÂ =uÂ ?&ffVextA…   >öÈ´XAGN           ^COSMOS_MOS22-16 @b¿$tSó@	«6z– A¤£× ?8Qì >\) >õÂ >Ü(öVpt An{   ÿÿÿÿ STAR          _CDFS_MOS00-07   @JV¸ºÇÀ;•ãS÷ÎØ A¨õÃ ?8Qì >B\ <õÂ ?:áHVpt A¡¸QSOÿÿÿÿ QSO           `ELAISN1_MOS10-09@nGzxl"g@L5¿HË‘ AŸ\) ?8Qì >Š=q<     >®{Vpt A¬     ÿÿÿÿ Point Var     aCOSMOS_MOS23-02 @bÒšÔ,<?şÔıó¶E¡ A¨áH ?8Qì >…¸ <õÂ ?+…Vpt AzáQSO?Àå`XQSO           bCDFS_MOS06-17   @K1ÿ.Hè¦À<Òñ©ûæ>A¸¸R>?8Qì ?ÌÍ ÿÿÿÿ ?ÌÍ    A¬Qì   ÿÿÿÿ ?             cCOSMOS_MOS21-00 @b¿%F
+¦L@	ªÍƒä% A¤¸R ?8Qì >aG® ?#×
+ >B\Vpt An=q   ÿÿÿÿ STAR          dCDFS_MOS04-23   @J­!ÿ.HèÀ<½¸ºÇÊ A©™š ?8Qì >k… <õÂ ?=p¤ extA (ö   ÿÿÿÿ ?             eXMMLSS_MOS01-05 @B¼j~ùÚÀiDg8} AŸG® ?5Â >\)<     ?0£× pt A•®QSOÿÿÿÿXQSO           fCOSMOS_MOS26-01 @bÁÉîËû?ó7KÆ§ï A¡ë… ?5Â >…¸ <£×
+ ?333Vpt A”{QSO?ç
+= QSO           gELAISN1_MOS11-09@n‹Y³Ğ|„@KsS&Á A¦Qì ?5Â >8Qì =£×
+ >Ñë…VextA›p¤   ÿÿÿÿ AGN           hCDFS_MOS00-04   @JM¥œàuÀ;yùrGD A¤ff ?5Â >8Qì =¸Qì ?záVextA ÌÍ   ÿÿÿÿ AGN           iELAISN1_MOS15-14@nT’£S%@J¾ö”Fs A­… ?5Â >™š >.{ >W
+=VextA¯33   ÿÿÿÿ AGN           jGROTH_MOS03-00  @j©À6âê@J°ëíúCı A³\) ?333 >¸ >\) >#×
+ extA£Â   ÿÿÿÿ ?             kGROTH_MOS07-22  @j dÂø7´@J+˜Çâ‚@ A£\) ?333 >LÌÍ >.{ >B\VextA—×
+   ÿÿÿÿ AGN           lCDFS_MOS00-29   @J”SóMiÀ;©™™™™™ A¦(ö ?333 =#×
+<     ?8QìVpt A¤õÃQSO?VE¢XQSO           mVVDS22H_MOS06-17@tÒ hÛ‹¬?°4mÅÖ8† AšõÃ ?333 =ÌÌÍ =õÂ >#×
+Vpt AU™š   ÿÿÿÿ Point Var     nVVDS22H_MOS06-02@tÇ}¿H¿âùÛ"Ğå` A¡×
+ ?333 >W
+=<     ?!G®Vpt A™G®QSO?"MÓ QSO           oELAISN1_MOS13-05@n&ÃÉîËú@Kå2a|Ù A©33 ?333 >.{<     ?&ffVpt A (öQSOÿÿÿÿ QSO           pCDFS_MOS06-18   @K7!-w1À<›~ÿ—# A­™š ?333 >”zá =LÌÍ ?.{VextA¥®   ÿÿÿÿ AGN           qELAISN1_MOS16-26@n7ÈK]Ìc@KlÉ…ğoh A¨õÃ ?0£× >B\<     >áG®VextAŸ¸   ÿÿÿÿ AGN           rGROTH_MOS06-10  @j×õY³Ğ|@J&¾ß¤?å A©™š ?0£× >aG® <£×
+ ?(öVpt Aœ£×QSOÿÿÿÿ QSO           sCDFS_MOS05-24   @JÀƒn—À;3ÉîËû AŸë… ?0£× >…¸<     ?B\VextA›×
+   ÿÿÿÿ AGN           tELAISN1_MOS12-14@njÒˆÎp:@KœêJŒL A¦£× ?0£× >\) =õÂ ?\)FextA (ö   ÿÿÿÿ Galaxy Flare  uXMMLSS_MOS04-14 @BròäŠÀ±A [À A¨=q ?0£× =õÂ =£×
+ ?™š pt A¡G®QSOÿÿÿÿXQSO           vXMMLSS_MOS06-00 @AŞOv_ØÀe+ÓÃa A§Â ?0£× >k…<     ?\)Fpt AŸ33QSOÿÿÿÿXQSO           wCOSMOS_MOS23-31 @bèÁTÉ…ğ@·Xâe A¬ff ?0£× >.{ =£×
+ ?\Vpt A™×
+QSO@Qì QSO           xVVDS22H_MOS06-06@tËdÂø7´¿Ö¤¨ÁTÉ… A£… ?0£× >.{ <õÂ >úáHVpt AÂQSO?¨r° QSO           yELAISN1_MOS13-12@n=—ö+jç@K¸bMÒñ A¦¸R ?.{ >LÌÍ =uÂ >õÂFpt A¢áHQSOÿÿÿÿ QSO           zCDFS_MOS05-19   @Jÿ—$tSÀ;+ÚQÎ A Qì ?.{ >B\ =\) ?333VextA{   ÿÿÿÿXAGN           {CDFS_MOS01-11   @IätSóLÀ<˜Xy=Ù~ A§… ?.{ >™š<     ?J=qFextA¡p¤   ÿÿÿÿ Galaxy Flare  |XMMLSS_MOS04-06 @B>—Oß;ÀèõÂ\( A¨áH ?.{ >#×
+ =¸Qì >Ç®FextA¥…   ?"ÑXAGN           }GROTH_MOS02-03  @jªŠqŞi¬@KDVÕÏªÍ AÂ ?.{ >k…<     ?ë… extA•G®   >¹X AGN           ~VVDS22H_MOS00-07@tØ;dZ«?õŠqŞi¬ Aœ£× ?.{ >aG® <#×
+ ?:áH pt A˜QìQSOÿÿÿÿ QSO           CDFS_MOS00-05   @JS²şÅm\À;´%®æ1ø A®=q ?.{ =¸Qì >\) =áG®VextAš(ö   ÿÿÿÿ AGN           €XMMLSS_MOS06-04 @Aï¤?åÉÀ¨>BZîb A¨\ ?+… >\) =uÂ >B\VextA£
+=   ÿÿÿÿXAGN           ELAISN1_MOS14-09@nƒ{J#9@K"0U2a{ A¥Â ?+… =õÂ<     ?ë…Vpt A£×QSOÿÿÿÿ QSO           ‚COSMOS_MOS26-34 @bÙæšÔ,?õˆe”¯O A¤\ ?+… >B\ ÿÿÿÿ >¸RVpt Aš¸RQSOÿÿÿÿ QSO           ƒCDFS_MOS02-02   @JZu%F
+¥À:oÒòä A®(ö ?+… =¸Qì =LÌÍ ?!G®VextA¥33   ÿÿÿÿ AGN           „XMMLSS_MOS02-16 @A¥Ùb¶®ÀïŸ¾vÈ A©¸ ?+… >W
+= >.{ >úáHVpt A(öQSOÿÿÿÿXQSO           …GROTH_MOS02-16  @jÈC,¥zw@K(Œç¯ A¤{ ?+… >aG®<     >áG®VextA˜ff   ?ŒÌÍ AGN           †CDFS_MOS03-07   @JñùrGDÀ;Nÿ—$s A¡… ?+… =ÌÌÍ<     ?¸VextA—Â   ÿÿÿÿ AGN           ‡ELAISN1_MOS14-15@n¸ºÇ@K\ú¬Ùç A©
+= ?+… >\) >¸ ?záVextA¤Qì   ÿÿÿÿ AGN           ˆGROTH_MOS04-21  @j’h	Ô•@J¿;dZ« AªQì ?+… >8Qì >.{ >\)VextA¥33   ÿÿÿÿ AGN           ‰GROTH_MOS04-25  @j™²şÅm\@JàA‰7KÆ A¡Â ?+… >aG® <#×
+ >ÌÌÍVextAë…   ÿÿÿÿ AGN           ŠCDFS_MOS06-08   @Jôo hÛÀ<Ëûµs>A¸¸R>?+… ?
+= ÿÿÿÿ >\) extA©p¤   ÿÿÿÿ ?             ‹CDFS_MOS00-16   @JsÆ§ï±À;x*™0¾ A°Qì ?+… =#×
+ =#×
+ >™šVextA¥×
+   ÿÿÿÿ AGN           ŒCDFS_MOS06-14   @K]Ìcñ@À<¤¢3œ¾>A¸¸R>?+… ?zá ?¸ >”zá extAÈÌÍ   ÿÿÿÿ ?             GROTH_MOS03-02  @j°üPHï@J‰ò×s A—ë… ?(õÃ >W
+= =¸Qì >Ü(ö pt AÌÍQSO?ˆõÃ QSO           GROTH_MOS02-05  @j²záG®@K6záG­ A£× ?(õÃ >8Qì<     >Ç® extA™®   ?HõÃ AGN           COSMOS_MOS26-19 @bÌK]Ìcñ?ù(Œç¯· A¦ÌÍ ?(õÃ >8Qì =áG® >úáHVpt A¡…QSO?®5?XQSO           COSMOS_MOS25-02 @b˜§ï²,@–»˜Çâ A¢ÌÍ ?(õÃ >uÂ =áG® ?
+=Vpt A  QSOÿÿÿÿ QSO           ‘ELAISN1_MOS16-07@nŠÚ¹õY@K qu AŸ\) ?(õÃ >B\<     >áG®Vpt Aš  QSO?¼j QSO           ’COSMOS_MOS23-19 @bÜŠqŞi@Ë)^ A¢zá ?(õÃ >#×
+ =LÌÍ >ë… pt A ÌÍQSOÿÿÿÿ QSO           “ELAISN1_MOS10-05@nAÈK]Ìc@L$¾ß¤? A¦£× ?(õÃ >W
+=<     >¸RVpt A£®QSOÿÿÿÿ QSO           ”CDFS_MOS05-35   @JM‡“İ—õÀ;xüPHï A£p¤ ?&ff >LÌÍ <£×
+ ?   VextA ÌÍ   ÿÿÿÿ AGN           •COSMOS_MOS21-17 @bÖí(Œæ@¹Œ~($
+ A¤ff ?&ff >uÂ<     ?záFpt A›\)QSO?ÒMÓ QSO           –CDFS_MOS04-22   @J¤záG®À<ùÇy¦µ
+ A¤zá ?&ff >W
+=<     ?ÌÍVpt A›
+=QSOÿÿÿÿ QSO           —VVDS22H_MOS05-02@tÛ.Hè§¿Õë…¸Që A™® ?#×
+ >.{<     ?™š pt A‘33QSO?‹çm QSO           ˜COSMOS_MOS24-05 @b²ºÇË)@ h>BZîc A¦ÌÍ ?#×
+ >¸ =£×
+ >™™šVpt A=qQSO?­p¤ QSO           ™CDFS_MOS03-08   @Jòe+ÓÂÀ;ŠÚ¹õY A õÃ ?#×
+ >k…<     ?\)VextAœ     ÿÿÿÿ AGN           šXMMLSS_MOS03-04 @AÄVÕÏªÍÀÖlô!- A£ë… ?#×
+ >™š<     ?#×
+ pt A“G®QSOÿÿÿÿXQSO           ›VVDS22H_MOS06-13@tÎõY³Ğ|¿Ûn—OŞ A¤zá ?!G® =õÂ >8Qì >¸Vpt AŒ  RRLÿÿÿÿ RRL           œCDFS_MOS04-09   @JpIQ‚©À<ÄxFÛ A›ë… ?!G® >8Qì<     ?5Â pt A—×
+QSOÿÿÿÿ QSO           COSMOS_MOS21-13 @bÑ/ìVÕÏ@(ÁTÉ…ğ A­×
+ ?!G® =õÂ >uÂ >\)VextA™
+=   ÿÿÿÿ AGN           GROTH_MOS03-12  @jÄÈ´9X@JyA [À A¦=q ?¸R >B\ =£×
+ >Ç® pt A—¸QSO?°å` QSO           ŸCDFS_MOS06-01   @JÃ¯·éøÀ<”µÜÆ? A¥
+= ?¸R >k… >™™š >ğ£×Vpt A¢QìQSOÿÿÿÿ QSO            CDFS_MOS05-26   @Jv_Ø­«À;²•éá° Aœ(ö ?¸R >LÌÍ<     ?333 pt A’¸R   ÿÿÿÿ ?             ¡CDFS_MOS04-11   @J{©*0U1À=-w1Ä AÌÍ ?¸R >#×
+ =#×
+ >”záVextA‘33   ÿÿÿÿ AGN           ¢VVDS22H_MOS05-07@tŞÑN;Í5¿ãIQ‚©“ A•×
+ ?¸R >™š >\) >õÂ extAƒp¤   =ÊÀƒXAGN           £GROTH_MOS07-04  @j‡¸ºÇÊ@Jg¼ A¸R ?¸R >B\ =õÂ >Ü(öVextA™
+=   ÿÿÿÿ AGN           ¤XMMLSS_MOS06-14 @B'²-UÀ"e+ÓÃ A   ?¸R >¸<     >õÂVpt A’=qQSOÿÿÿÿXQSO           ¥GROTH_MOS01-07  @jç,¥zxk@K=¡ÊÀƒ Aœ\ ?(ö >B\ ?\) >€   pt AaG®   ÿÿÿÿ STAR          ¦ELAISN1_MOS15-12@nNÂø7´¡@J¾5?|í Aœ¸R ?(ö >#×
+<     >úáHVpt Aë…QSO?Û… QSO           §CDFS_MOS05-08   @Ié [À6À;Íƒä% A =q ?(ö >8Qì <õÂ >Ü(öVextA®   ÿÿÿÿ AGN           ¨GROTH_MOS03-11  @jÃn.±Ä2@Jô˜_ö“ A\) ?(ö >.{ >#×
+ >¸QìVextA•¸   >†§ğ AGN           ©COSMOS_MOS22-13 @b¶ô!-w@í(Œç¯ A¡… ?(ö >W
+= ÿÿÿÿ ?   Vpt A™®QSO?³÷ÏXQSO           ªELAISN1_MOS14-12@n‡~ÿ—#@KP©*0T AœõÃ ?(ö >W
+= <õÂ >úáHVpt A–ÌÍQSOÿÿÿÿ QSO           «CDFS_MOS01-33   @J3¹Œ~(#À<f“t» A¢{ ?(ö =õÂ<     >£×
+    A’¸R   ÿÿÿÿ ?             ¬GROTH_MOS01-11  @jñÅnÿ@K`A‰7K A £× ?™š >#×
+ =uÂ >k…Vpt AÌÍQSO?Ô¼j QSO           ­COSMOS_MOS23-16 @bÛÅn@ ¨Xy=Ù AáH ?™š >8Qì =áG® >áG®Fpt A›33QSOÿÿÿÿ QSO           ®ELAISN1_MOS15-15@nV£×
+=p@Jßï²- A¥¸ ?™š >#×
+<     ?®VextA{   ÿÿÿÿ AGN           ¯VVDS22H_MOS01-23@tÑs×Ûô?ç)^™ A—Â ?™š >aG®<     ?¸Vpt A”áHQSOÿÿÿÿ QSO           °ELAISN1_MOS15-07@nI5¨Xy=@JÄ¾ß¤? A™G® ?
+= >W
+=<     ?¸Vpt A’záQSO?PbN QSO           ±GROTH_MOS05-03  @jã2a|Ù@J¢QÎ^ A¤¸R ?
+= >8Qì >¨õÃ >¸QìVextA¡Â   ÿÿÿÿ AGN           ²VVDS22H_MOS00-24@tßN¤¨ÁT?óß;dZ« Aœ   ?
+= >\)<     >ë…VextA…   ÿÿÿÿ AGN           ³XMMLSS_MOS06-03 @AîštÀÍƒä%® A§\) ?
+= >¸ =\) >£×
+VextA¢{   ÿÿÿÿXAGN           ´COSMOS_MOS23-23 @bßƒä%®@¸ºÇÊ A\) ?
+= >B\ <õÂ >áG® pt A˜ÌÍQSO?½Òò QSO           µCDFS_MOS00-27   @J_Ø­«À;¯Aò×r A¡ë… ?
+= =õÂ <#×
+ >×
+=VextAšQì   ?;çmXAGN           ¶GROTH_MOS07-30  @j®Hğ@JKœ¾ß£ AŸ… ?
+= >k… =#×
+ >×
+=Fpt A”£×   ?™X QSO           ·COSMOS_MOS24-27 @bÁá°‰ '@Ñ·Xâ A©33 ?
+= >#×
+ =LÌÍ >³33Fpt A¢  QSO? ÄœXQSO           ¸XMMLSS_MOS05-01 @A`bMÒñ©À"œwškP A¤zá ?
+= >8Qì =\) >æffVpt A™
+=QSOÿÿÿÿ QSO           ¹XMMLSS_MOS00-12 @AÇ hÛ‹¬Àö_Ø­« A¢ff ?zá >¸<     >\) pt AõÃQSOÿÿÿÿXQSO           ºCDFS_MOS00-38   @J¥p£×
+<À;5¨Xy= A®(ö ?zá<     <£×
+ =\)VextAšQì   ÿÿÿÿXAGN           »XMMLSS_MOS02-11 @A‘ [À6Àn—OŞ A©\) ?zá >¸ =uÂ ?záVpt A¥
+=QSOÿÿÿÿXQSO           ¼ELAISN1_MOS16-23@n4Á½¥@K*ëC,¤ A™ë… ?zá >8Qì<     >×
+= pt A”záQSO?Që… QSO           ½XMMLSS_MOS06-24 @B[ş\‘ÑNÀl<ì¿± A£® ?ë… =áG®<     >”zá pt A›ÂQSOÿÿÿÿXQSO           ¾ELAISN1_MOS11-02@n~Û‹¬q@K¾vÈ´8 A ¸R ?ë… >8Qì<     >Ü(ö pt AœÌÍQSOÿÿÿÿ QSO           ¿GROTH_MOS03-15  @jËè>BZí@J§b¶®}U A¡\) ?ë… >\) >#×
+ >\)VextA“33   ÿÿÿÿ AGN           ÀXMMLSS_MOS00-11 @AÅó¶E¡ÊÀ	\‘ÑN;Ì A’ff ?ë… >#×
+ >Š=q >k…Vpt AQë…   ÿÿÿÿXSTAR          ÁCOSMOS_MOS21-03 @bÂÛ‹¬q@
+ƒä%®æ1 A˜{ ?ë… >.{ >¸ >£×
+VextA‹33   @€‹D AGN           ÂCDFS_MOS00-00   @JHè§æšÀ;Â&€IP A®=q ?ë…<    <     =\)V   A€\   ÿÿÿÿ Point Var     ÃCOSMOS_MOS26-24 @bÏÃa@N?÷[À6âê A¡¸ ?ë… >\) =\) >uÂVextAš\   ÿÿÿÿ AGN           ÄCOSMOS_MOS24-26 @bÁ¹Œ~(#@·€4mÅÕ A™¸ ?ë… >B\ =#×
+ ?
+=qVextA–¸R   ?2n˜XAGN           ÅELAISN1_MOS15-25@na«ŸU›<@K„µÜÆ> A… ?ë… >B\<     >Ñë…Fpt A”ÌÍQSOÿÿÿÿ QSO           ÆCDFS_MOS00-56   @JÔxFÛÀ;ù^™ A£×
+ ?ë… =áG®<     >Â\Vpt A”(ö   ÿÿÿÿ Point Var     ÇCDFS_MOS06-20   @K=ã¼ÓZÀ<,˜_ö“ A©
+= ?ë… >uÂ =ÌÌÍ >€   extA’ÌÍ   ÿÿÿÿ ?             ÈELAISN1_MOS12-10@narGE8î@K‘²•éá A—™š ?ë… >B\ =LÌÍ >úáH extA–{   ÿÿÿÿXAGN           ÉCOSMOS_MOS26-13 @bÉœàuöü?ëOß;dZ A¦áH ?\) >™š<     >ë…Vpt A¸RQSOÿÿÿÿ QSO           ÊCOSMOS_MOS23-15 @bÛG®zá@y	k¹Œ} A–õÃ ?\) >#×
+ =ÌÌÍ >…¸Vpt A’áHQSO?›¦XQSO           ËCOSMOS_MOS24-39 @bÎ3œ¾ß@ d%®æ1ø A¤¸R ?\) >¸ =áG® >™™šVextA¡
+=   ?+XAGN           ÌELAISN1_MOS16-35@nD½<63@K2e+ÓÂ AŸ
+= ?\) >aG®<     ?\)Vpt AG®QSOÿÿÿÿ QSO           ÍGROTH_MOS05-01  @jŞ¡aä÷e@JŒ›¥ãS÷ A =q ?\) >.{ >®{ >uÂVpt AŒÌÍ   ÿÿÿÿX?             ÎELAISN1_MOS16-12@n#Şi­BÃ@K\ğØDĞ A¡\) ?\) >\)<     >ğ£×Fpt A“™šQSO?¢n˜ QSO           ÏELAISN1_MOS10-18@nl'RT`©@KàQë…· A=q ?\) >\) =áG® ?¸Vpt A˜\QSOÿÿÿÿ QSO           ĞGROTH_MOS01-08  @jëo hÛ‹@K e”¯O A¤áH ?ÌÍ >¸ =¸Qì >LÌÍVpt A›
+=   ÿÿÿÿ Point Var     ÑCOSMOS_MOS27-20 @b»iDg8?ô%®æ1ø  A¡… ?ÌÍ >B\ <õÂ >Ü(öVpt A–õÃQSO?ØÔş QSO           ÒCDFS_MOS05-05   @IÜ‘ÑN;ÌÀ;í(Œæ A¥G® ?ÌÍ >.{<     >áG®Fpt A™®   ÿÿÿÿ Point Flare   ÓCDFS_MOS03-04   @Jîµ'ºÀ:ó9Àëíù A    ?ÌÍ >™š<     >ÌÌÍVextAœQì   ÿÿÿÿ AGN           ÔCOSMOS_MOS26-23 @bÏFÜ]cˆ?è9XbMÒ Aš¸R ?ÌÍ >.{ =ÌÌÍ >×
+=Vpt A‘®QSO?­‘h QSO           ÕGROTH_MOS01-13  @jóu!–R@KTxFÛ A£G® ?ÌÍ >LÌÍ =LÌÍ >ë…Fpt A ÌÍ   ÿÿÿÿ QSO           ÖGROTH_MOS01-18  @jùsüPG@K5Â\(õ Aš(ö ?
+=q >¸<     >k…Vpt A’¸RQSO?»¥ã QSO           ×COSMOS_MOS24-29 @bÃJôğØD@>í(Œæ AœÌÍ ?
+=q >#×
+ =uÂ >Ñë…Vpt A•×
+QSO?¨ÔşXQSO           ØGROTH_MOS03-24  @jŞ-à@JÄ‹C• A£×
+ ?
+=q >™š =LÌÍ >…¸ pt AœõÃQSOÿÿÿÿ QSO           ÙGROTH_MOS07-06  @joÒòä@Jqu! A¥p¤ ?
+=q =ÌÌÍ =uÂ >™šVpt A™šQSOÿÿÿÿ QSO           ÚCDFS_MOS04-25   @JµÉã¼À=,<ì¿ A–£× ?
+=q >B\<     >úáHVpt A’£×QSOÿÿÿÿ QSO           ÛCDFS_MOS05-25   @JĞå`AˆÀ:Â° Ä›¥ AœõÃ ?® =ÌÌÍ =£×
+ >LÌÍVpt A–ff   ÿÿÿÿ Point Var     ÜCDFS_MOS02-18   @J‚™0¾ìÀ:lcñA [ A§
+= ?¸ >¸<     >uÂ pt A Qì   ÿÿÿÿ ?             İCDFS_MOS01-13   @Iéûçl‹CÀ<Pò{²şÄ A™š ?¸ >.{<     >Ñë…VextA™¸   ÿÿÿÿ AGN           ŞCOSMOS_MOS26-16 @bËfÏAò?ëÇy¦µ A›33 ?¸ >8Qì =#×
+ >ë…Vpt A–áHQSO?Gï QSO           ßGROTH_MOS02-11  @jÀœwškP@K¾ß¤?å A¡ë… ?¸ =áG® =¸Qì >\)Vpt A—¸QSO?¾V QSO           àCDFS_MOS04-15   @JN¤¨ÁTÀ<ÌL˜_ A£ë… ?¸ =£×
+<     ?\ extAŸ×
+   ÿÿÿÿ ?             áVVDS22H_MOS00-17@tÜ“àŞÒ?úø -à A£
+= ?¸ =¸Qì <£×
+ >Ç®Fpt A(öQSOÿÿÿÿ QSO           âGROTH_MOS02-18  @jÎu%F
+¥@KPIQ‚© A¤áH ?¸ >.{ >¸ >€   extA \   ÿÿÿÿ ?             ãCDFS_MOS02-08   @Jk¬q²•À;'$tSò AŸp¤ ?¸ =\)<     >Ñë… pt A™¸   ÿÿÿÿ ?             äCOSMOS_MOS25-04 @bœ©*0U@@ƒn— A¢zá ?¸ >8Qì >™š >ğ£× pt A¢{QSO??|î QSO           åXMMLSS_MOS00-13 @AÉ™™™™™ÀHğ¸ A”£× ?¸ >.{ <£×
+ >Ñë…Vpt A33QSOÿÿÿÿ QSO           æGROTH_MOS05-26  @k¹Œ~(#@JSS÷ÎÙ A £× ?\ >™š <#×
+ >”záVpt A¢(öQSOÿÿÿÿ QSO           çCDFS_MOS02-22   @J›C•$À;FÜ]c A¨zá ?\ =¸Qì <#×
+ >³33Fpt A¡G®   ÿÿÿÿ QSO           èXMMLSS_MOS00-14 @AÑã¼ÓÀ7Xâd A    ?\ =áG®<     >\) pt A˜QìQSOÿÿÿÿXQSO           éVVDS22H_MOS03-08@t× Ñ·X?²½<64 A¡® ?\ =£×
+ =ÌÌÍ =\)Fpt A;33   ÿÿÿÿ Point Flare   êGROTH_MOS03-23  @jİzxl"g@JÎŠqŞi¬ A¡\) ?\ >\)<     >B\VextAšÌÍ   ÿÿÿÿ AGN           ëCOSMOS_MOS22-05 @b¨7´¢3›@2•éá°‰ A
+= ?\ >¸ =õÂ >€  Vpt A—™šQSO?‰xÕ QSO           ìXMMLSS_MOS02-01 @ATg8}¿ÀR×süP A¢¸R ?\ =ÌÌÍ >aG® >\)Vpt AzáRRLÿÿÿÿ RRL           íELAISN1_MOS10-06@nDu%F
+@Kİ$İ. A£G® ?    >¸<     >Ü(öVpt A—
+=QSOÿÿÿÿ QSO           îELAISN1_MOS16-04@n}Vlô@KgØ­«ŸU A¥™š ?    =£×
+ <#×
+ >”záVpt Ay™š   ÿÿÿÿ STAR          ïGROTH_MOS06-01  @j½¾vÈ´8@JlµÜÆ? AáH ?    >™š =\) =\)Vpt A™\)QSO?±ë… QSO           ğCOSMOS_MOS22-12 @bµ¼£n.@
+ƒFÜ]c‡ Azá ?    >¸ =uÂ >uÂVextA(ö   >ƒo AGN           ñCDFS_MOS02-01   @JMí(ŒçÀ:·§†Â&€ A\) ?    =£×
+<     >ÌÌÍVextA™\)   ÿÿÿÿ AGN           òCDFS_MOS03-26   @K^.±Ä2ÉÀ;6E¡ÊÀ‚ A¤Qì >úáH =£×
+<     ?
+=qFpt A˜\   ÿÿÿÿ Point Flare   óXMMLSS_MOS05-06 @AlmÅÖ8†ÀtmÅÖ8† Aš   >úáH =\)<     ?\)VextA˜ÌÍ   ÿÿÿÿ AGN           ôCOSMOS_MOS24-30 @bÃ`A‰7K?ÿ³g ù	k Aš£× >úáH >\) =#×
+ >Â\Vpt A–=qQSO>¾ùÛXQSO           õVVDS22H_MOS06-08@tÌóMj¿ªu%F
+¥ A—\) >úáH =áG® =uÂ >.{VextA\)   >¹X AGN           öVVDS22H_MOS02-07@tìÎÙ‡*?ãOß;dZ Aš£× >úáH =ÌÌÍ<     >×
+=Vpt A”=qQSO?St¼ QSO           ÷COSMOS_MOS26-06 @bÂè§æš?ôy=Ùb¶ A
+= >úáH >\) >k… >8QìVpt AjffRRLÿÿÿÿ RRL           øCOSMOS_MOS22-04 @b¦Z¬0@ğØDĞ¨ A§33 >úáH =\) >Š=q =¸Qì extA‰p¤   >“ ?             ùGROTH_MOS05-21  @jø\(õÂ@Jc=ÈK] A˜=q >õÂ >#×
+ =\) >®{Vpt A”=qQSO?;d QSO           úGROTH_MOS07-19  @jšu%E@JhŒç¯· AÂ >ğ£× =õÂ =¸Qì >LÌÍVextAi™š   =›¥ãXAGN           ûCDFS_MOS06-05   @Jâu%F
+À<ÆOv_Ø A¦(ö >ğ£× >W
+= ÿÿÿÿ ?® extA©p¤   ÿÿÿÿ ?             üCDFS_MOS02-16   @JÎ_oÀ;/ƒ{J" A˜¸R >ë… =áG® =õÂ >B\V   Aƒ…   ÿÿÿÿ Point Var     ıCOSMOS_MOS26-00 @bÁ¤?åÉ?ğûçl‹C• A§
+= >ë… =\) >#×
+ =ÌÌÍVpt AŒ£×RRLÿÿÿÿ RRL           şGROTH_MOS07-18  @jXy=Ù~@JI@N¤¨ A¤ff >æff =áG®<     >uÂVextAœ(ö   ÿÿÿÿ AGN           ÿCDFS_MOS04-05   @JX[À6âÀ<²a|ÚP A (ö >æff >\)<     >½p¤FextAŸ×
+   ÿÿÿÿ Galaxy Flare   VVDS22H_MOS02-04@tèÛ"Ğå_?éğoiDg7 A¸ >æff =£×
+ >\) =áG®Vpt AŠ£×RRLÿÿÿÿ RRL           GROTH_MOS05-14  @jñ8}¿H@JŒÂø7´¡ Aœ£× >æff >¸<     >B\FextAœ{   ÿÿÿÿXAGN           GROTH_MOS01-22  @kŠÚ¹õY@K‰7KÆ§ A£® >æff >¸ >¸ >B\VextA—×
+   ÿÿÿÿ AGN           VVDS22H_MOS00-13@tÚ1Å?ô®æ1ø  A™š >æff =¸Qì<     >³33Vpt A™¸QSOÿÿÿÿ QSO           GROTH_MOS07-28  @j§?|í‘g@JnE¡ÊÀ‚ A¦£× >áG® =ÌÌÍ =uÂ >8QìVpt A\QSOÿÿÿÿ QSO           VVDS22H_MOS02-06@téí(Œç?ñ²•éá° A\) >áG® =uÂ =£×
+ >¸Vpt A^ff   ÿÿÿÿ STAR          ELAISN1_MOS15-08@nIÁ½¥œ@Jô?åÉ A—® >áG® =£×
+<     >\) pt A’¸RQSO?}ó¶ QSO           GROTH_MOS07-24  @j¢å`A‰6@J7_oÒò A™
+= >áG® =õÂ <õÂ >8QìVextA–\   ?l1 AGN           CDFS_MOS05-10   @IíOß;dYÀ;³Z…‡“İ A (ö >áG® =ÌÌÍ <#×
+ >€  Fpt A›\)   ÿÿÿÿ QSO           	GROTH_MOS04-10  @jàqu@JæcŠ	 A›33 >áG® >™š =uÂ >\)VextA‹¸   >0 Å AGN           
+XMMLSS_MOS06-20 @B;J#9ÀëÀ‘Î_o A˜{ >Ü(ö >¸ >uÂ >W
+=Vpt A…®RRLÿÿÿÿ RRL           COSMOS_MOS25-07 @b¢GE8ï4@ŞÒˆÎp: A    >Ü(ö =õÂ =áG® >€  Vpt AšQìQSO?³×
+ QSO           XMMLSS_MOS06-12 @BŞÒˆÎpÀãŠ	İ A•p¤ >Ü(ö =£×
+<     >®{Vpt AˆÌÍQSOÿÿÿÿ QSO           CDFS_MOS02-12   @Jst¼j~ùÀ:bëC,¥ A£™š >Ü(ö =\)<     >¸Vpt AŸG®   ÿÿÿÿ Point Var     COSMOS_MOS23-10 @bÚ*™0¾@®æ1ø  AŸ
+= >Ü(ö =áG® >#×
+ >k…VextA”zá   >^5?XAGN           ELAISN1_MOS12-20@nto hÚ@KW'»/ìV AšQì >Ü(ö >¸ =áG® >…¸ extA…   ÿÿÿÿ ?             CDFS_MOS01-02   @IÂòäŠÀ;ñ@N¤¨ A˜zá >×
+= =£×
+<     >LÌÍ pt A‘ë…   ÿÿÿÿ ?             GROTH_MOS03-17  @jÒØDĞ¨@Jzu%F
+¥ A¤zá >×
+= =õÂ<     >”záFextA–áH   ÿÿÿÿ Galaxy Flare  GROTH_MOS03-05  @j¼”Fs×@JÏv_Ø­« A”   >×
+= >#×
+ =LÌÍ >³33Fpt A×
+QSO?œí‘ QSO           COSMOS_MOS22-10 @b¯Z…‡“İ@j~ùÛ"Ğ A{ >Ñë… >¸ =LÌÍ >¸RVpt A˜  QSO?{XQSO           COSMOS_MOS21-21 @bÚqu@	Îp:û~ AÌÍ >ÌÌÍ >¸ =\) >¸RVpt A˜záQSO?;d QSO           VVDS22H_MOS01-04@tÆfÏAò?àÙè>BZî Aš¸R >Ç® =uÂ =#×
+ >.{ extAG®   ÿÿÿÿ ?             VVDS22H_MOS06-07@tËe+ÓÃ`¿ÒóMjO A”   >Ç® =ÌÌÍ<     >Ü(ö pt AÂQSO?¦ QSO           VVDS22H_MOS01-06@tÇe”¯O?ßàŞÒˆÎo A’zá >Â\ =áG® >B\ >™šVpt Abff   ÿÿÿÿ Point Var     CDFS_MOS00-54   @JĞe”¯OÀ;Ov_Ø­ A =q >Â\<     <õÂ <£×
+Vpt A€¸R   ÿÿÿÿ Point Var     XMMLSS_MOS01-21 @BdÂø7´¢À?¼ A… >½p¤ =¸Qì =ÌÌÍ >¸Vpt Ax  RRLÿÿÿÿ RRL           COSMOS_MOS21-19 @b×„M:@B\(õÂ AáH >½p¤ =õÂ<     >”zá pt AœÌÍQSO?K…XQSO           XMMLSS_MOS01-19 @BbÔ,<ìÀ¦€IQ‚ A–=q >¸Qì =ÌÌÍ >B\ >\)Vpt A…33RRLÿÿÿÿ RRL           CDFS_MOS01-05   @IÎ_Ø­«À;ïË’:)Æ Aš   >¸Qì =\)<     >ÌÌÍ pt A”=q   ÿÿÿÿ ?             VVDS22H_MOS00-11@tØ´¢3œ?øDg8}¾ A“×
+ >³33 =£×
+ =\) >#×
+Vpt AMG®   ÿÿÿÿ Point Var     COSMOS_MOS21-18 @bÖmÅÖ8†@BZîc‰ A•ë… >³33 >\) =£×
+ >®{Vpt Ap¤QSO?½‘h QSO           CDFS_MOS02-17   @JN;Í5§À;E”¯Oƒ A“
+= >®{ =ÌÌÍ <#×
+ >®{VextAáH   ÿÿÿÿ AGN            COSMOS_MOS26-14 @bÊ¡aä÷e?ñW>«6z A›G® >¨õÃ =£×
+ =#×
+ >\) pt A•33QSO?ó¶ QSO           !GROTH_MOS04-30  @j¡ä%®æ1@J· hÛ‹« Aš=q >¨õÃ =¸Qì =#×
+ >LÌÍFextA—\)   >ê~ú AGN           "GROTH_MOS07-26  @j£ˆe”¯N@JrÇË)^ A˜£× >£×
+ =¸Qì<     >#×
+Fpt A•¸QSO?’n˜ QSO           #CDFS_MOS06-21   @K>V“tÀ< N¤¨ÁT A™… >£×
+ >\) <£×
+ >8Qì    Aip¤   ÿÿÿÿ QSO           $XMMLSS_MOS04-17 @B
+=p£ÖÀ~($w Aš¸R >£×
+ <õÂ<     >®{Fpt Ap¤QSOÿÿÿÿXQSO           %GROTH_MOS01-10  @jğÙè>BZ@K—Oß: AŸ33 >£×
+ =ÌÌÍ =¸Qì >¸VextAŸ\)   ÿÿÿÿ AGN           &GROTH_MOS03-04  @jºñ©ûçl@JëÚQÎ A¸R >¸R =¸Qì >LÌÍ >¸Vpt A›…QSOÿÿÿÿ QSO           'GROTH_MOS02-12  @jÅDg8}@K]IQ‚©’ A•… >¸R =ÌÌÍ =uÂ >LÌÍ pt AÂQSO?˜Ôş QSO           (VVDS22H_MOS00-22@tİÇy¦µ
+?ó·Xâd A¸ >¸R =uÂ<     >8QìVpt A–ÌÍQSO?¡ë… QSO           )GROTH_MOS02-15  @jÇø -ß@Jûş\‘ÑM A˜{ >¸R =¸Qì =áG® >LÌÍVextAáH   ?8QìXAGN           *VVDS22H_MOS03-11@tÛŠ	İ?áÎ_oÒ A’áH >\) =uÂ ÿÿÿÿ >B\ pt A…QSO?dZ QSO           +CDFS_MOS04-02   @J=Oß;dYÀ="u%F
+¥ A›×
+ >\) <õÂ <£×
+ =¸QìVextAx     ÿÿÿÿ AGN           ,COSMOS_MOS27-23 @b¾záG­?ï’:)Çy¦ A›\) >Š=q =\) >\) =ÌÌÍVpt AiÂ   ÿÿÿÿ STAR          -GROTH_MOS02-08  @j¹škP°ò@KpbMÒñ© A“\) >Š=q =#×
+ =\) =uÂVpt APzá   ÿÿÿÿ Point Var     .COSMOS_MOS23-17 @bÛ±[W>«?ÿe”¯Oƒ A”zá >Š=q =£×
+ =#×
+ >LÌÍFpt A’õÃQSO?ˆ“u QSO           /GROTH_MOS06-09  @jÕ!-w1@J333332 A˜Qì >Š=q =õÂ ÿÿÿÿ >Š=q pt A•…QSO?;dXQSO           0VVDS22H_MOS01-17@tÏ"h	Ô”?ÍjOv_ A˜(ö >Š=q <õÂ =LÌÍ =#×
+Fpt A?\)   ÿÿÿÿ Point Flare   1COSMOS_MOS21-12 @bĞğØDĞ@vÈ´9X A\ >…¸ =\)<     >¸VextA^áH   <¼j AGN           2VVDS22H_MOS05-00@tÖ‡ü¹#¢¿æüPHğ Azá >…¸ =#×
+ <£×
+ =ÌÌÍVpt A‰…QSO?—KÇ QSO           3COSMOS_MOS23-20 @bİ—$tS@ ÁTÉ…ğo A™™š >…¸ =LÌÍ <õÂ >\)VextA†(ö   ÿÿÿÿ AGN           4GROTH_MOS04-15  @jˆ>BZîb@J™Ån AQì >uÂ =LÌÍ =õÂ =\)Vpt A‚áHRRLÿÿÿÿ RRL           5GROTH_MOS06-03  @jÅ¥ãS÷Î@J&Ù‡+ A”Qì >uÂ =£×
+ <£×
+ >k…Vpt AŒ\QSO?¤“XQSO           6CDFS_MOS05-34   @JFi­BÃÉÀ:ò&€IQ A‘×
+ >k… =#×
+ =LÌÍ =\)VextAu™š   ÿÿÿÿ AGN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
