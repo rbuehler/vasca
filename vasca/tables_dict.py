@@ -185,6 +185,7 @@ base_field = {
             "Flux magnitude",
             "Flux magnitude error",
             "Flux magnitude upper limit",
+            "Selection of rows for VASCA analysis.",
         ],
         "meta": {"INFO": "Light curve magnitude flux table for one source"},
     },

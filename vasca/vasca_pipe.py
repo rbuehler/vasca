@@ -164,6 +164,11 @@ def set_logger():
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
+    # create log file name
+    log_file_name = "log_" + vasca_cfg["general"]["name"] + ".txt"
+    if vasca_cfg["general"]["log_file"] != "default":
+        log_file_name = vasca_cfg["general"]["log_file"]
+
     log_cfg = {
         "handlers": [
             {
@@ -177,7 +182,7 @@ def set_logger():
                 "diagnose": True,
             },
             {
-                "sink": log_dir + vasca_cfg["general"]["log_file"],
+                "sink": log_dir + log_file_name,
                 "serialize": True,
                 "backtrace": True,
                 "diagnose": True,
@@ -339,7 +344,10 @@ def run(vasca_cfg):
 
     if vasca_cfg["general"]["hp_coverage_out"]:
         hpy.fitsfunc.write_map(
-            region_dir + "/region_" + vasca_cfg["general"]["name"] + "_coverage_hp.fits",
+            region_dir
+            + "/region_"
+            + vasca_cfg["general"]["name"]
+            + "_coverage_hp.fits",
             [hp_vis, hp_exp],
             coord="C",
             column_names=["nr_vis", "exposure"],
@@ -377,9 +385,9 @@ def run(vasca_cfg):
     fig_diag_rgsrcs_hist = diagnostic(rg, "tt_sources", "hist")
     fig_diag_rgsrcs_hist.savefig(
         region_dir
-        + "/region_"
+        + "/region_diagnostic_srcs_hist_"
         + vasca_cfg["general"]["name"]
-        + "_diagnostic_srcs_hist.png",
+        + ".png",
         dpi=150,
     )
     plt.close(fig_diag_rgsrcs_hist)
@@ -387,15 +395,17 @@ def run(vasca_cfg):
     fig_diag_rgsrcs_scat = diagnostic(rg, "tt_sources", "scatter")
     fig_diag_rgsrcs_scat.savefig(
         region_dir
-        + "/region_"
+        + "/region_diagnostic_srcs_scat_"
         + vasca_cfg["general"]["name"]
-        + "_diagnostic_srcs_scat.png",
+        + ".png",
         dpi=150,
     )
     plt.close(fig_diag_rgsrcs_scat)
 
     # Write used config file
-    yaml_out_name = region_dir + "/vasca_ran_cfg.yaml"
+    yaml_out_name = (
+        region_dir + "/vasca_ran_cfg_" + vasca_cfg["general"]["name"] + ".yaml"
+    )
     with open(yaml_out_name, "w") as yaml_file:
         yaml.dump(vasca_cfg, yaml_file)
 
