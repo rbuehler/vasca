@@ -276,18 +276,18 @@ def run_field(field, vasca_cfg):
     # Draw selected  light curves
     sel_srcs = field.tt_sources["sel"]
     if sel_srcs.sum() > 0:
-        all_srcs_ids = field.tt_sources[sel_srcs]["src_id"].data
+        all_srcs_ids = field.tt_sources[sel_srcs]["fd_src_id"].data
 
         # Loop over list in chuks of 14
-        for src_ids_chunk in zip_longest(
+        for fd_src_ids_chunk in zip_longest(
             *([np.nditer(all_srcs_ids)]) * 14, fillvalue=-1
         ):
             fig_lc = plt.figure(figsize=(10, 10))
-            src_ids_chunk = np.array(src_ids_chunk, dtype=np.int64).flatten()
-            src_ids_chunk = np.delete(src_ids_chunk, np.where(src_ids_chunk == -1))
-            field.plot_light_curve(src_ids_chunk, ylim=[24.5, 15.5])
+            fd_src_ids_chunk = np.array(fd_src_ids_chunk, dtype=np.int64).flatten()
+            fd_src_ids_chunk = np.delete(fd_src_ids_chunk, np.where(fd_src_ids_chunk == -1))
+            field.plot_light_curve(fd_src_ids_chunk, ylim=[24.5, 15.5])
             plt.tight_layout()
-            srcs_name = "_".join([str(elem) for elem in src_ids_chunk])
+            srcs_name = "_".join([str(elem) for elem in fd_src_ids_chunk])
 
             fig_lc.savefig(
                 field_dir + "lcs/lc_" + str(field.field_id) + "_" + srcs_name + ".png",

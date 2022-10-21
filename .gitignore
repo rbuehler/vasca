@@ -192,3 +192,14 @@ uvva/output.csv
 /uvva/examples/uvva_pipeline/TDS_COSMOS/fields/6388191295067652096/scatter_sources_6388191295067652096.png
 /uvva/examples/uvva_pipeline/TDS_COSMOS/fields/6388191295067652096/sky_map_hr_6388191295067652096.png
 uvva/examples/uvva_pipe_example/*
+/vasca.egg-info/PKG-INFO
+/vasca.egg-info/SOURCES.txt
+/vasca.egg-info/dependency_links.txt
+/vasca.egg-info/entry_points.txt
+/vasca.egg-info/requires.txt
+/vasca.egg-info/top_level.txt
+/vasca/test/resources/6381787756527353856/MAST_6381787756527353856_NUV_down.ecsv
+/vasca/test/resources/6381787756527353856/mastDownload/GALEX/6381787619088400384/AIS_309_0001_sg28-xd-mcat.fits.gz
+/vasca/test/resources/6381787756527353856/mastDownload/GALEX/6381787619121954816/AIS_309_0002_sg28-xd-mcat.fits.gz
+/vasca/test/resources/6381787756527353856/mastDownload/GALEX/6381787756527353856/AIS_309_sg28-nd-int.fits.gz
+/vasca/test/resources/6381787756527353856/mastDownload/GALEX/6381787756527353856/AIS_309_sg28-xd-mcat.fits.gz
