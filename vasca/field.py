@@ -1,9 +1,9 @@
 import os
+import time
 from datetime import datetime
 from itertools import cycle
 
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
@@ -13,8 +13,9 @@ from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
 from loguru import logger
+from matplotlib.colors import LogNorm
+from requests.exceptions import HTTPError
 from sklearn.cluster import MeanShift, estimate_bandwidth
-from collections import OrderedDict
 
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
@@ -1286,11 +1287,29 @@ class GALEXField(BaseField):
             logger.debug(
                 f"Downloading archive data products list and saving to {path_tt_data}."
             )
-            tt_data = Table(
-                Observations.get_product_list(tt_coadd).as_array().data
-            )  # Returns unmasked table
+            # -> Todo: Create a generic decorator wrapper for Astroquery requests
+            try:
+                tt_data = Table(
+                    Observations.get_product_list(tt_coadd).as_array().data
+                )  # Returns unmasked table
+            except HTTPError as e:
+                # Need to check its an 404, 503, 500, 403 etc.
+                status_code = e.response.status_code
+
+                # Try again
+                if status_code == 503:
+                    logger.info(
+                        "HTTPError Astroquery response "
+                        "503 Server Error 'Service Unavailable'"
+                    )
+                    sleep_time = 5
+                    logger.info(f"Retrying Astroquery request in {sleep_time} s.")
+                    time.sleep(sleep_time)
+                    tt_data = Table(
+                        Observations.get_product_list(tt_coadd).as_array().data
+                    )  # Returns unmasked table
             # Saves to disc
-            # tt_data.write(path_tt_data, overwrite=True)
+            tt_data.write(path_tt_data, overwrite=True)
         else:
             logger.debug(
                 f"Reading archive data products list from cashed file '{path_tt_data}'"
