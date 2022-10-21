@@ -8,21 +8,20 @@ Script that runs the VASCA pipeline.
 import argparse
 import os
 import sys
+from collections import OrderedDict
 from itertools import zip_longest
-
-import numpy as np
-import healpy as hpy
-import matplotlib
-import matplotlib.pyplot as plt
-import yaml
-from loguru import logger
-
-from vasca.region import Region
 
 # from multiprocessing import Pool
 from multiprocessing import Pool
 
-from collections import OrderedDict
+import healpy as hpy
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import yaml
+from loguru import logger
+
+from vasca.region import Region
 
 
 def set_config(cfg_file):
@@ -40,7 +39,6 @@ def set_config(cfg_file):
         VASCA pipeline configuration dictionary
     """
     with open(cfg_file) as file:
-        global vasca_cfg
         vasca_cfg = yaml.safe_load(file)  # yaml.
 
     # Set output directory
@@ -53,7 +51,8 @@ def set_config(cfg_file):
     return vasca_cfg
 
 
-# TODO: there are some GALEX specific variables, will need to be adapted to other missions
+# TODO: there are some GALEX specific variables
+# will need to be adapted to other missions
 def diagnostic(tc, table_name, plot_type):
 
     det_vars = OrderedDict()
@@ -149,7 +148,7 @@ def diagnostic(tc, table_name, plot_type):
     return fig
 
 
-def set_logger():
+def set_logger(vasca_cfg):
     """
     Setup logger. Gets configuration from global config variable set with set_config
 
@@ -197,7 +196,7 @@ def set_logger():
     logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
 
 
-def run_field(field):
+def run_field(field, vasca_cfg):
     """
     Run analysis on a single field
 
@@ -321,7 +320,7 @@ def run(vasca_cfg):
     """
 
     # Setup logger
-    set_logger()
+    set_logger(vasca_cfg)
 
     # Set matplotlib backend
     if vasca_cfg["general"]["mpl_backend"] != "SYSTEM":
@@ -339,7 +338,7 @@ def run(vasca_cfg):
         vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"] + "/"
     )
 
-    # Write our helpix coverage maps
+    # Write our healpix coverage maps
     hp_vis, hp_exp = rg.add_coverage_hp(nside=4096)
 
     if vasca_cfg["general"]["hp_coverage_out"]:
@@ -355,10 +354,12 @@ def run(vasca_cfg):
             overwrite=True,
             partial=True,
         )
-
     # Run each field in a separate process in parallel
     with Pool(vasca_cfg["general"]["nr_cpus"]) as pool:
-        pool_return = pool.map(run_field, list(rg.fields.values()))
+        pool_return = pool.starmap(
+            run_field,
+            [(field, vasca_cfg) for field in rg.fields.values()],
+        )
     pool.join()
 
     # update region fields
