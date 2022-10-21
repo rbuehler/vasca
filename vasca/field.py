@@ -91,7 +91,7 @@ class BaseField(TableCollection):
         self,
         ax=None,
         plot_detections=True,
-        plot_src_id=True,
+        plot_fd_src_id=True,
         src_kwargs=None,
         det_kwargs=None,
     ):
@@ -104,7 +104,7 @@ class BaseField(TableCollection):
             Matplotlib axes to plot on. The default is None.
         plot_detections : bool, optional
             Plot the visit detections below the sources. The default is True.
-        plot_src_ids: bool, optional
+        plot_fd_src_ids: bool, optional
             Write the source ID next to its marker. Default is True.
         src_kwargs : dict, optional
             Keyword arguments for pyplot.plot of the sources. The default is None.
@@ -149,13 +149,13 @@ class BaseField(TableCollection):
         sel = self.tt_sources["sel"]
         tt_src = self.tt_sources[sel]
         tt_det = self.tt_detections
-        tt_det.add_index("src_id")
+        tt_det.add_index("fd_src_id")
 
         # Loop over all srcs and plot
         colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
         for src, col in zip(tt_src, colors):
             if plot_detections:
-                det_idx = tt_det.loc_indices["src_id", src["src_id"]]
+                det_idx = tt_det.loc_indices["fd_src_id", src["fd_src_id"]]
                 ax.plot(
                     tt_det[det_idx]["ra"].data,
                     tt_det[det_idx]["dec"].data,
@@ -167,7 +167,7 @@ class BaseField(TableCollection):
             ax.text(
                 src["ra"] + 0.005,
                 src["dec"] + 0.004,
-                str(src["src_id"]),
+                str(src["fd_src_id"]),
                 transform=plt_src_kwargs["transform"],
                 fontsize=2,
                 color=col,
@@ -326,12 +326,12 @@ class BaseField(TableCollection):
         ms.fit(coords)
 
         # Fill in data into field tables
-        src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+        fd_src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
 
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
         srcs_data = {
-            "src_id": src_ids,
+            "fd_src_id": fd_src_ids,
             "ra": cluster_centers[:, 0],
             "dec": cluster_centers[:, 1],
             "nr_det": det_cts,
@@ -342,8 +342,8 @@ class BaseField(TableCollection):
         self.add_table(srcs_data, "base_field:tt_sources")
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
 
-        # Update src_id entries
-        self.tt_detections["src_id"][sel] = ms.labels_
+        # Update fd_src_id entries
+        self.tt_detections["fd_src_id"][sel] = ms.labels_
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
@@ -407,7 +407,7 @@ class BaseField(TableCollection):
 
         # Dictionary to collect lightcurve data
         tdata = {
-            "src_id": list(),
+            "fd_src_id": list(),
             "mag": list(),
             "mag_err": list(),
             "ul": list(),
@@ -416,12 +416,12 @@ class BaseField(TableCollection):
         }
 
         # Loop over sources and add them to dictionary
-        tt_det_grp = self.tt_detections[sel].group_by(["src_id"])
+        tt_det_grp = self.tt_detections[sel].group_by(["fd_src_id"])
         for tt_det in tt_det_grp.groups:
 
             # Add src id
-            src_id = tt_det["src_id"][0]
-            tdata["src_id"].append(src_id.tolist())
+            fd_src_id = tt_det["fd_src_id"][0]
+            tdata["fd_src_id"].append(fd_src_id.tolist())
 
             # Add magnitudes and errors, array has length of Nr of visits.
             # Values is 0, except for detections.
@@ -510,17 +510,17 @@ class BaseField(TableCollection):
         ul_weight = nr_ulmean / np.sqrt(nr_uls + (nr_uls == 0) * 1e-6)
 
         # Write them into tt_sources
-        src_ids = self.ta_sources_lc["src_id"]
-        self.tt_sources.add_index("src_id")
-        src_idx = self.tt_sources.loc_indices["src_id", src_ids]
+        fd_src_ids = self.ta_sources_lc["fd_src_id"]
+        self.tt_sources.add_index("fd_src_id")
+        fd_src_idx = self.tt_sources.loc_indices["fd_src_id", fd_src_ids]
 
-        self.tt_sources["nr_uls"][src_idx] = nr_uls
-        self.tt_sources["mag_mean"][src_idx] = mag_mean
-        self.tt_sources["mag_var"][src_idx] = mag_var
-        self.tt_sources["mag_rchiq"][src_idx] = rchiq_const
-        self.tt_sources["mag_dmax"][src_idx] = dmag
-        self.tt_sources["mag_dmax_sig"][src_idx] = dmag_max_sig
-        self.tt_sources["ul_weight"][src_idx] = ul_weight
+        self.tt_sources["nr_uls"][fd_src_idx] = nr_uls
+        self.tt_sources["mag_mean"][fd_src_idx] = mag_mean
+        self.tt_sources["mag_var"][fd_src_idx] = mag_var
+        self.tt_sources["mag_rchiq"][fd_src_idx] = rchiq_const
+        self.tt_sources["mag_dmax"][fd_src_idx] = dmag
+        self.tt_sources["mag_dmax_sig"][fd_src_idx] = dmag_max_sig
+        self.tt_sources["ul_weight"][fd_src_idx] = ul_weight
 
     def remove_double_visit_detections(self):
         """
@@ -540,21 +540,21 @@ class BaseField(TableCollection):
         sel = self.tt_detections["sel"]
 
         # Index tables
-        self.tt_sources.add_index("src_id")
+        self.tt_sources.add_index("fd_src_id")
         self.tt_detections.add_index("det_id")
 
         # Determine detection_id of srcs with more than one detection in one visit
         rm_det_ids = []
-        tt_det_grp = self.tt_detections[sel].group_by(["vis_id", "src_id"])
+        tt_det_grp = self.tt_detections[sel].group_by(["vis_id", "fd_src_id"])
 
         for tt_det in tt_det_grp.groups:
             if len(tt_det) > 1:
 
                 # Get source coordinate
-                src_id = tt_det["src_id"].data[0]
-                src_idx = self.tt_sources.loc_indices["src_id", src_id]
-                src_ra = self.tt_sources["ra"].quantity[src_idx]
-                src_dec = self.tt_sources["dec"].quantity[src_idx]
+                fd_src_id = tt_det["fd_src_id"].data[0]
+                fd_src_idx = self.tt_sources.loc_indices["fd_src_id", fd_src_id]
+                src_ra = self.tt_sources["ra"].quantity[fd_src_idx]
+                src_dec = self.tt_sources["dec"].quantity[fd_src_idx]
                 src_coord = SkyCoord(src_ra, src_dec, frame="icrs")
 
                 # Determine distance
@@ -581,8 +581,8 @@ class BaseField(TableCollection):
 
             # Update detection count in tt_sources
             sel = self.tt_detections["sel"]
-            src_ids, det_cts = np.unique(
-                self.tt_detections[sel]["src_id"], return_counts=True
+            fd_src_ids, det_cts = np.unique(
+                self.tt_detections[sel]["fd_src_id"], return_counts=True
             )
             self.tt_sources.replace_column("nr_det", det_cts)
 
@@ -1473,7 +1473,7 @@ class GALEXField(BaseField):
 
             vasca_col_names = [
                 "vis_id",
-                "src_id",
+                "fd_src_id",
                 "det_id",
                 "ra",
                 "dec",
