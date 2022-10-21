@@ -182,7 +182,7 @@ class TableCollection(object):
 
                         col_for = "PE()"
                         # TODO: Make this more general
-                        if colname == "field_id" or colname == "src_id":
+                        if colname == "field_id" or colname == "fd_src_id":
                             col_for = "K"
                         col = fits.Column(
                             name=colname,
@@ -602,13 +602,13 @@ class TableCollection(object):
 
         return ax
 
-    def get_light_curve(self, src_ids, field_ids=None):
+    def get_light_curve(self, fd_src_ids, field_ids=None):
         """
         Get a light curve for one source or a list of sources.
 
         Parameters
         ----------
-        src_ids : list or int
+        fd_src_ids : list or int
             Source ID(s) to return the light curve.
         field_ids: list or int
             Field IDs. Array length has to match source IDs. If None
@@ -621,12 +621,12 @@ class TableCollection(object):
             with astropy BinnedTimeSeries.
 
         """
-        if not hasattr(src_ids, "__iter__"):
-            src_ids = [src_ids]
+        if not hasattr(fd_src_ids, "__iter__"):
+            fd_src_ids = [fd_src_ids]
         if not hasattr(field_ids, "__iter__"):
             field_ids = [field_ids]
 
-        logger.debug(f"Getting lightcurve for Nr src: {len(src_ids)}")
+        logger.debug(f"Getting lightcurve for Nr src: {len(fd_src_ids)}")
 
         if "ta_sources_lc" not in self._table_names:
             logger.error(
@@ -639,8 +639,8 @@ class TableCollection(object):
         # Loop over sources and get lc info
         # If called from a field no field ID is passed
         if field_ids[0] == None:
-            for src_id in src_ids:
-                sel = self.ta_sources_lc["src_id"] == src_id
+            for fd_src_id in fd_src_ids:
+                sel = self.ta_sources_lc["fd_src_id"] == fd_src_id
                 src_data = {
                     "time_start": self.tt_visits["time_bin_start"].data,
                     "time_delta": self.tt_visits["time_bin_size"].data,
@@ -652,13 +652,13 @@ class TableCollection(object):
                 }
                 # Create and store table
                 tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
-                tt_lc.meta["src_id"] = src_id
-                lc_dict[src_id] = tt_lc
+                tt_lc.meta["fd_src_id"] = fd_src_id
+                lc_dict[fd_src_id] = tt_lc
         # If called from a region field_id needs to be matched too
         else:
             self.tt_visits.add_index("field_id")
-            for src_id, field_id in zip(src_ids, field_ids):
-                sel = (self.ta_sources_lc["src_id"] == src_id) * (
+            for fd_src_id, field_id in zip(fd_src_ids, field_ids):
+                sel = (self.ta_sources_lc["fd_src_id"] == fd_src_id) * (
                     self.ta_sources_lc["field_id"] == field_id
                 )
 
@@ -677,11 +677,11 @@ class TableCollection(object):
 
                 # Create table
                 tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
-                tt_lc.meta["src_id"] = src_id
-                tt_lc.meta["field_id"] = src_id
-                lc_dict[src_id] = tt_lc
+                tt_lc.meta["fd_src_id"] = fd_src_id
+                tt_lc.meta["field_id"] = fd_src_id
+                lc_dict[fd_src_id] = tt_lc
 
-        # If only one src_id was passed do not return as list
+        # If only one fd_src_id was passed do not return as list
         if len(lc_dict) == 1:
             lc_dict = list(lc_dict.values())[0]
 
@@ -689,7 +689,7 @@ class TableCollection(object):
 
     def plot_light_curve(
         self,
-        src_ids,
+        fd_src_ids,
         field_ids=None,
         ax=None,
         ylim=None,
@@ -702,7 +702,7 @@ class TableCollection(object):
 
         Parameters
         ----------
-        src_ids : list or int
+        fd_src_ids : list or int
             List or single source IDs to plot.
         field_ids: list or int
             Field IDs. Array length has to match source IDs. If None
@@ -725,13 +725,13 @@ class TableCollection(object):
 
         """
 
-        # If only one src_id/field_id was passed create a list
-        if not hasattr(src_ids, "__iter__"):
-            src_ids = [src_ids]
+        # If only one fd_src_id/field_id was passed create a list
+        if not hasattr(fd_src_ids, "__iter__"):
+            fd_src_ids = [fd_src_ids]
         if not hasattr(field_ids, "__iter__"):
             field_ids = [field_ids]
         if field_ids[0] == None:
-            field_ids = [None] * len(src_ids)
+            field_ids = [None] * len(fd_src_ids)
 
         logger.info("Plotting light curves")
 
@@ -757,7 +757,7 @@ class TableCollection(object):
         colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
         markers = cycle("osDd<>^v")
         ctr = 0
-        for src_id, field_id, col, mar in zip(src_ids, field_ids, colors, markers):
+        for fd_src_id, field_id, col, mar in zip(fd_src_ids, field_ids, colors, markers):
 
             # Every 8 markers plot open symbols
             ctr += 1
@@ -766,10 +766,10 @@ class TableCollection(object):
                 mfc = "None"
 
             # Get light curve
-            lc = self.get_light_curve(src_id, field_id)
+            lc = self.get_light_curve(fd_src_id, field_id)
 
             # Get arrays
-            src_lab = str(src_id)
+            src_lab = str(fd_src_id)
             uplims = np.zeros(len(lc))
             sel = lc["mag"] > 0
             mags = lc["mag"]

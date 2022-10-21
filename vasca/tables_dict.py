@@ -45,7 +45,7 @@ base_field = {
     "tt_detections": {
         "names": [
             "vis_id",
-            "src_id",
+            "fd_src_id",
             "det_id",
             "ra",
             "dec",
@@ -122,7 +122,7 @@ base_field = {
     },
     "tt_sources": {
         "names": [
-            "src_id",
+            "fd_src_id",
             "ra",
             "dec",
             "nr_det",
@@ -191,7 +191,7 @@ base_field = {
     },
     "ta_sources_lc": {
         "names": [
-            "src_id",
+            "fd_src_id",
             "mag",
             "mag_err",
             "ul",
