@@ -3,6 +3,7 @@
 
 import glob
 import os
+import shutil
 
 import astropy.units as uu
 import numpy as np
@@ -182,6 +183,14 @@ def test_pipeline(test_paths):
 
     # run pipeline
     vasca_pipe.run(vasca_cfg)
+
+    # delete field data from test resource directory
+    # this forces to download the data from mast,
+    # i.e., tests also the fallback from load method "MAST_LOCAL" to "MAST_REMOTE"
+    # -> Todo: write dedicated test for the various load methods
+    field_data_path = f"{test_paths['resource_root']}/6381787756527353856"
+    if os.path.isdir(field_data_path):
+        shutil.rmtree(field_data_path)
 
 
 def main():
