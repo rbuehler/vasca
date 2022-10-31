@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Astropy table collection for VASCA
+astropy.Table collection class for VASCA
 """
 
 import os

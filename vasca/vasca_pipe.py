@@ -4,7 +4,6 @@
 Script that runs the VASCA pipeline.
 """
 
-
 import argparse
 import os
 import sys
