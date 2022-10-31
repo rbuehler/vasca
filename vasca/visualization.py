@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Visualizytion related methods for VASCA
+Visualization related methods for VASCA
 """
 
 from loguru import logger
@@ -12,7 +12,8 @@ import numpy as np
 from collections import OrderedDict
 
 # %% field sky plotting
-#
+
+
 def plot_field_sky_sources(
     field,
     ax=None,
@@ -200,7 +201,8 @@ def plot_field_sky(field, plot_detections=True, plot_map=True):
 
 
 # %% table variable plotting
-#
+
+
 def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
     """
     Plot histogram for passed astropy.Table and variable
@@ -472,3 +474,6 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
     plt.tight_layout()
     plt.legend()
     return fig
+
+
+# %% light curve plotting
