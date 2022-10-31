@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Field classes for VASCA
+"""
+
 import os
 import time
 from datetime import datetime

@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Ressource manager for VASCA
+"""
+
 import inspect
 import os
 from pprint import pprint
