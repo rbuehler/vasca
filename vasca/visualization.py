@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Oct 31 09:42:29 2022
-
-@author: buehler
-
 Visualizytion related methods for VASCA
 """
 

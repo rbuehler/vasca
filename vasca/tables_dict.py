@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Oct  6 13:46:31 2022
-
-@author: buehler
-
-Defines the tables used by vasca.tables.TableCollection 
+Defines dictionary for the tables used by vasca.tables.TableCollection 
 """
 
 import numpy as np
