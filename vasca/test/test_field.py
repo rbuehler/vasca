@@ -3,6 +3,7 @@
 
 import glob
 import os
+import shutil
 
 import astropy.units as uu
 import numpy as np
@@ -141,13 +142,19 @@ def test_base_field_print_info(new_field):
     print(new_field)
 
 
-def test_base_field_io(new_field):
-    new_field.write_to_fits()
-    new_field.write_to_hdf5()
+def test_base_field_io(test_paths, new_field):
+    # store fits data in temporary directory
+    d = f"{test_paths['temp_path']}/fits_out_dir"
+    os.mkdir(d)
+    # get path to the fits file
+    file_path = f"{d}/vasca_tables_output"  # note: no file extension
+
+    new_field.write_to_fits(f"{file_path}.fits")
+    new_field.write_to_hdf5(f"{file_path}.hdf5")
     save_str = new_field.__str__
-    new_field.load_from_fits()
+    new_field.load_from_fits(f"{file_path}.fits")
     load_str_fits = new_field.__str__
-    new_field.load_from_hdf5()
+    new_field.load_from_hdf5(f"{file_path}.hdf5")
     load_str_hdf5 = new_field.__str__
     assert save_str == load_str_fits == load_str_hdf5
 
@@ -182,6 +189,14 @@ def test_pipeline(test_paths):
 
     # run pipeline
     vasca_pipe.run(vasca_cfg)
+
+    # delete field data from test resource directory
+    # this forces to download the data from mast,
+    # i.e., tests also the fallback from load method "MAST_LOCAL" to "MAST_REMOTE"
+    # -> Todo: write dedicated test for the various load methods
+    field_data_path = f"{test_paths['resource_root']}/6381787756527353856"
+    if os.path.isdir(field_data_path):
+        shutil.rmtree(field_data_path)
 
 
 def main():
