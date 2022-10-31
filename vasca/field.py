@@ -1,9 +1,8 @@
 import os
 import time
 from datetime import datetime
-from itertools import cycle
 
-import matplotlib.pyplot as plt
+
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
@@ -12,14 +11,15 @@ from astropy.table import Column, Table, conf, vstack
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
+
 from loguru import logger
-from matplotlib.colors import LogNorm
+
 from requests.exceptions import HTTPError
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
-from vasca.utils import get_time_delta, get_time_delta_mean, sky_sep2d, table_to_array
+from vasca.utils import table_to_array
 
 # global paths
 # path to the dir. of this file
@@ -87,182 +87,6 @@ class BaseField(TableCollection):
 
         #: Reference wcs
         self.ref_wcs = None
-
-    def plot_sky_sources(
-        self,
-        ax=None,
-        plot_detections=True,
-        plot_fd_src_id=True,
-        src_kwargs=None,
-        det_kwargs=None,
-    ):
-        """
-        Plot the selected sources and (optinally) the visit detections on the sky.
-
-        Parameters
-        ----------
-        ax : axes, optional
-            Matplotlib axes to plot on. The default is None.
-        plot_detections : bool, optional
-            Plot the visit detections below the sources. The default is True.
-        plot_fd_src_ids: bool, optional
-            Write the source ID next to its marker. Default is True.
-        src_kwargs : dict, optional
-            Keyword arguments for pyplot.plot of the sources. The default is None.
-        det_kwargs : dict, optional
-            Keyword arguments for pyplot.plot of the detections. The default is None.
-
-        Returns
-        -------
-        ax : axes
-            Used Matplotlib axes.
-
-        """
-        logger.debug("Plotting sky sources")
-
-        if ax is None:
-            ax = plt.gca()
-
-        # Set marker properties for sources
-        plt_src_kwargs = {
-            "marker": "o",
-            "markersize": 1.5,
-            "alpha": 0.5,
-            "lw": 0,
-            "markeredgewidth": 0.3,
-            "fillstyle": "none",
-        }
-        if src_kwargs is not None:
-            plt_src_kwargs.update(src_kwargs)
-
-        # Set marker properties for detections
-        plt_det_kwargs = {
-            "marker": ".",
-            "markersize": 0.2,
-            "alpha": 0.5,
-            "markeredgewidth": 0.0,
-            "lw": 0,
-        }
-        if det_kwargs is not None:
-            plt_det_kwargs.update(det_kwargs)
-
-        # Prepare data
-        sel = self.tt_sources["sel"]
-        tt_src = self.tt_sources[sel]
-        tt_det = self.tt_detections
-        tt_det.add_index("fd_src_id")
-
-        # Loop over all srcs and plot
-        colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
-        for src, col in zip(tt_src, colors):
-            if plot_detections:
-                det_idx = tt_det.loc_indices["fd_src_id", src["fd_src_id"]]
-                ax.plot(
-                    tt_det[det_idx]["ra"].data,
-                    tt_det[det_idx]["dec"].data,
-                    color=col,
-                    **plt_det_kwargs,
-                )
-            ax.plot(src["ra"], src["dec"], color=col, **plt_src_kwargs)
-
-            ax.text(
-                src["ra"] + 0.005,
-                src["dec"] + 0.004,
-                str(src["fd_src_id"]),
-                transform=plt_src_kwargs["transform"],
-                fontsize=2,
-                color=col,
-                alpha=0.5,
-            )
-
-        return ax
-
-    def plot_sky_map(self, ax=None, **img_kwargs):
-        """
-        Plot the reference sky map.
-
-        Parameters
-        ----------
-        ax : axes, optional
-            Matplotlib axes to plot on. The default is None.
-        **img_kwargs : dict
-            Key word arguments for pyplot.imshow plotting.
-
-        Returns
-        -------
-        graph : AxesImage
-            Matplotlib axes of 2D image.
-
-        """
-
-        logger.debug("Plotting sky map'")
-
-        if self.ref_img is None:
-            logger.error("No map to draw")
-
-        if ax is None:
-            ax = plt.gca()
-
-        plt_img_kwargs = {
-            "interpolation": "None",
-            "cmap": "gist_yarg",
-            "origin": "lower",
-            "norm": LogNorm(),
-        }
-
-        if img_kwargs is not None:
-            plt_img_kwargs.update(img_kwargs)
-
-        graph = ax.imshow(self.ref_img, **plt_img_kwargs)
-
-        return graph
-
-    def plot_sky(self, plot_detections=True, plot_map=True):
-        """
-        Plot all field sources and/or a background reference image in the sky.
-
-        Parameters
-        ----------
-        plot_detections : bool, optional
-            Plot sources. The default is True.
-        plot_map : bool, optional
-            Plot reference image in the background. The default is False.
-
-        Returns
-        -------
-        fig : figure
-            Matplotlib figure used to plot.
-
-        """
-
-        logger.debug("Plotting sky map and/or sources'")
-
-        fig = plt.figure(figsize=(8, 7))
-        plt.clf()
-
-        if self.ref_wcs is not None:
-            ax = plt.subplot(projection=self.ref_wcs)  #
-            ax.coords["ra"].set_major_formatter("d.dd")
-            ax.coords["dec"].set_major_formatter("d.dd")
-            ax.set_xlabel("Ra")
-            ax.set_ylabel("Dec")
-
-        if plot_map:
-            graph = self.plot_sky_map(ax)
-            fig.colorbar(graph, label="Intensity [a.u.]")
-
-        if plot_map:
-            plot_arg = {"transform": ax.get_transform("world")}
-            self.plot_sky_sources(
-                ax,
-                plot_detections=plot_detections,
-                src_kwargs=plot_arg,
-                det_kwargs=plot_arg,
-            )
-        else:
-            self.plot_sky_sources(plot_detections=plot_detections)
-
-        return fig
 
     def load_sky_map(self, file_name):
         """
