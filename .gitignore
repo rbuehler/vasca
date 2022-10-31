@@ -33,3 +33,9 @@ coverage.xmluvva/uvva.log
 # UVVA legacy
 uvva/*
 uvva.egg-info
+/vasca/test/resources/6381787756527353856/MAST_6381787756527353856_NUV_coadd.fits
+/vasca/test/resources/6381787756527353856/MAST_6381787756527353856_NUV_down.ecsv
+/vasca/test/resources/6381787756527353856/mastDownload/GALEX/6381787619088400384/AIS_309_0001_sg28-xd-mcat.fits.gz
+/vasca/test/resources/6381787756527353856/mastDownload/GALEX/6381787619121954816/AIS_309_0002_sg28-xd-mcat.fits.gz
+/vasca/test/resources/6381787756527353856/mastDownload/GALEX/6381787756527353856/AIS_309_sg28-nd-int.fits.gz
+/vasca/test/resources/6381787756527353856/mastDownload/GALEX/6381787756527353856/AIS_309_sg28-xd-mcat.fits.gz
