@@ -135,7 +135,10 @@ class Region(TableCollection):
             tt_sel["field_id"] = np.ones(len(tt_sel), dtype="int64") * field_id
             ll_tt.append(tt_sel)
 
-        colnames = dd_vasca_tables["region"][table_name]["names"]
+        # colnames = dd_vasca_tables["region"][table_name]["names"]
+        colnames = list(
+            set(dd_vasca_tables["region"][table_name]["names"]) & set(ll_tt[0].colnames)
+        )
 
         # Create empty data structure and then fill it with field tables
         dd_data = dict(zip(colnames, [list() for ii in range(len(colnames))]))
