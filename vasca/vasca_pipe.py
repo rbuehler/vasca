@@ -12,6 +12,7 @@ from itertools import zip_longest
 # from multiprocessing import Pool
 from multiprocessing import Pool
 
+import pandas as pd
 import healpy as hpy
 import matplotlib
 import matplotlib.pyplot as plt
@@ -208,6 +209,38 @@ def run_field(field, vasca_cfg):
     return field
 
 
+# TODO: This funtion  could be more effcient, as it works none vectorized.
+# Best wait till astropy implements Multiindex (see below)
+def add_rg_src_id(tt_ref, tt_add):
+    """
+    Helper function, adds "rg_src_id" based on "field_id" and "fd_src_id"
+    from the passed reference table.
+
+    Parameters
+    ----------
+    tt_ref : TYPE
+        DESCRIPTION.
+    tt_add : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+
+    # Create mapping from fd_src_id and field_id to rg_src_id
+    # use pandas as this is not yet in astropy, see
+    # https://github.com/astropy/astropy/issues/13176
+    # https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html
+    pd_ref = tt_ref["field_id", "fd_src_id"].to_pandas()
+    ridx = pd.MultiIndex.from_frame(pd_ref)
+
+    for aidx in range(0, len(tt_add)):
+        idx = ridx.get_loc((tt_add[aidx]["field_id"], tt_add[aidx]["fd_src_id"]))
+        tt_add[aidx]["rg_src_id"] = tt_ref[idx]["rg_src_id"]
+
+
 def run(vasca_cfg):
     """
     Runs the VASCA pipeline
@@ -270,14 +303,23 @@ def run(vasca_cfg):
     for field in pool_return:
         rg.fields[field.field_id] = field
 
+    # Add field tables to region
     rg.add_table_from_fields("tt_ref_sources")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("ta_sources_lc")
 
+    # Add region source ids, making sure they are in synch among tables
+    rg_src_ids = range(0, len(rg.tt_sources))
+    rg.tt_sources["rg_src_id"][:] = rg_src_ids
+    add_rg_src_id(rg.tt_sources, rg.ta_sources_lc)
+
+    # Add detections table too, if asked for
     if vasca_cfg["general"]["save_dets"] == "selected":
         rg.add_table_from_fields("tt_detections", only_selected=True)
+        add_rg_src_id(rg.tt_sources, rg.tt_detections)
     elif vasca_cfg["general"]["save_dets"] == "all":
         rg.add_table_from_fields("tt_detections", only_selected=False)
+        add_rg_src_id(rg.tt_sources, rg.tt_detections)
     else:
         logger.info("Not saving detection table into region")
 

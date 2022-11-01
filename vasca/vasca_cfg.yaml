@@ -7,7 +7,7 @@ general:
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                        # Will be written into "out_dir", if ""default" a default name will be created 
-    hd_img_out      : true                              # Write out high definition images
+    hd_img_out      : false                              # Write out high definition images
     hp_coverage_out : false                             # Write out visti& exposure of fields in a separate fits file
     nr_cpus         : 4                                 # Number of CPUs to use. If "null" all available are used.
     mpl_backend     : "SYSTEM"                          # Backend of matplotlib to show / store figures ["SYSTEM", "AGG", "TkAgg", ..].
@@ -55,7 +55,7 @@ selection:
             ul_weight    : [2.0,.inf]
 
 ressources:                      
-    load_method      : "MAST_REMOTE"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null

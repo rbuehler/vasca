@@ -185,11 +185,17 @@ class TableCollection(object):
                     cols = list()
                     for colname in self.__dict__[key].colnames:
                         coldata = self.__dict__[key][colname].data
+                        coltype = str(self.__dict__[key][colname].dtype)
 
+                        # Setup column fits format see
+                        # https://heasarc.gsfc.nasa.gov/docs/software/fitsio/quick/node10.html
+                        # https://docs.astropy.org/en/stable/io/fits/usage/unfamiliar.html
                         col_for = "PE()"
-                        # TODO: Make this more general
-                        if colname == "field_id" or colname == "fd_src_id":
+                        if "int" in coltype:
                             col_for = "K"
+                        elif "float" in coltype:
+                            col_for = "D"
+
                         col = fits.Column(
                             name=colname,
                             format=col_for,
