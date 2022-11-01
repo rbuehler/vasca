@@ -218,10 +218,10 @@ def add_rg_src_id(tt_ref, tt_add):
 
     Parameters
     ----------
-    tt_ref : TYPE
-        DESCRIPTION.
-    tt_add : TYPE
-        DESCRIPTION.
+    tt_ref : astropy.Table
+        Reference table has to contain "rg_src_id", "field_id" and "fd_src_id"
+    tt_add : astropy.Table
+        Table to add "rg_src_id", has to contain "rg_src_id", "field_id" and "fd_src_id"
 
     Returns
     -------
