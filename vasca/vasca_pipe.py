@@ -190,7 +190,7 @@ def run_field(field, vasca_cfg):
             fd_src_ids_chunk = np.delete(
                 fd_src_ids_chunk, np.where(fd_src_ids_chunk == -1)
             )
-            field.plot_light_curve(fd_src_ids_chunk, ylim=[24.5, 15.5])
+            vvis.plot_light_curve(field, fd_src_ids=fd_src_ids_chunk, ylim=[24.5, 15.5])
             plt.tight_layout()
             srcs_name = "_".join([str(elem) for elem in fd_src_ids_chunk])
 

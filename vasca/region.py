@@ -3,12 +3,9 @@
 from loguru import logger
 
 import numpy as np
-import matplotlib.pyplot as plt
 import healpy as hpy
-from astropy.table import Column, vstack
 from astropy import units as uu
 
-from vasca import tables
 from vasca.field import GALEXField
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
@@ -188,68 +185,3 @@ class Region(TableCollection):
         hp_vis[hp_vis < 1e-6] = hpy.UNSEEN
 
         return hp_vis, hp_exp
-
-    def plot_sky_gnomeview(
-        self, ra, dec, sel_srcs=True, gw_kwargs=None, ps_kwargs=None
-    ):
-        """
-        Plot the nr visits and optionally (selected) sources (optinally) on the sky.
-
-        Parameters
-        ----------
-        ra : float
-            RA of the center of the sky figure.
-        dec: float
-            DEC of the center of the sky figure.
-        sel_srcs : bool, optional
-            Show only selected sources. The default is True.
-        gw_kwargs : dict, optional
-            Keyword arguments for healpy..gnomview. The default is None.
-        ps_kwargs : dict, optional
-            Keyword arguments for healpy.projscatter. The default is None.
-
-        Returns
-        -------
-        ax : axes
-            Used Matplotlib axes.
-
-        """
-
-        # Get healpix map of Nr of visits
-        nside = self.tt_coverage_hp.meta["NSIDE"]
-        npix = hpy.nside2npix(nside)
-        hp_map = np.zeros(npix, dtype=np.float64)
-        pix_ids = self.tt_coverage_hp["pix_id"].data.astype(np.int64)
-        hp_map[pix_ids] = self.tt_coverage_hp["nr_vis"]
-
-        # Plot background map
-        plt_gw_kwargs = {
-            "title": "Nr. of visits",
-            "coord": "C",
-            "reso": 5 / 60.0,
-            "xsize": 2000,
-            "ysize": 2000,
-            "cmap": "gray",
-        }
-        if gw_kwargs is not None:
-            plt_gw_kwargs.update(gw_kwargs)
-        hpy.gnomview(hp_map, rot=[ra, dec], **plt_gw_kwargs)
-
-        # Plots selected sources
-        plt_ps_kwargs = {"lonlat": True, "marker": "o", "s": 0.2}
-        if ps_kwargs is not None:
-            plt_ps_kwargs.update(ps_kwargs)
-
-        tt_srcs = self.tt_sources.group_by("field_id")
-        for tt in tt_srcs.groups:
-            sel = tt["sel"]
-            if not sel_srcs:
-                sel = np.ones(len(sel)).astype(bool)
-            hpy.projscatter(tt[sel]["ra"], tt[sel]["dec"], **plt_ps_kwargs)
-
-        # hpy.projscatter(
-        #    [ra], [dec], lonlat=True, marker="o", s=4.0
-        # )  # Mark center of gnomeview
-        # hpy.mollview(hp_map, title="Nr. of visits in log10",nest=False,cmap="nipy_spectral",xsize=4800)
-        # hpy.graticule(local=False,coord="C",dpar=1.0, color="white") # show graticules every 0.5 deg
-        return plt.gca()

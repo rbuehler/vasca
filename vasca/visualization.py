@@ -10,8 +10,9 @@ import matplotlib.pyplot as plt
 from itertools import cycle
 import numpy as np
 from collections import OrderedDict
+import healpy as hpy
 
-# %% field sky plotting
+# %% sky plotting
 
 
 def plot_field_sky_sources(
@@ -198,6 +199,74 @@ def plot_field_sky(field, plot_detections=True, plot_map=True):
         plot_field_sky_sources(field, plot_detections=plot_detections)
 
     return fig
+
+
+def plot_region_sky_gnomeview(
+    region, ra, dec, sel_srcs=True, gw_kwargs=None, ps_kwargs=None
+):
+    """
+    Plot the nr visits and optionally (selected) sources (optinally) on the sky.
+
+    Parameters
+    ----------
+    region : vasca.region.Region
+        Region for which is plotted.
+    ra : float
+        RA of the center of the sky figure.
+    dec: float
+        DEC of the center of the sky figure.
+    sel_srcs : bool, optional
+        Show only selected sources. The default is True.
+    gw_kwargs : dict, optional
+        Keyword arguments for healpy..gnomview. The default is None.
+    ps_kwargs : dict, optional
+        Keyword arguments for healpy.projscatter. The default is None.
+
+    Returns
+    -------
+    ax : axes
+        Used Matplotlib axes.
+
+    """
+
+    # Get healpix map of Nr of visits
+    nside = region.tt_coverage_hp.meta["NSIDE"]
+    npix = hpy.nside2npix(nside)
+    hp_map = np.zeros(npix, dtype=np.float64)
+    pix_ids = region.tt_coverage_hp["pix_id"].data.astype(np.int64)
+    hp_map[pix_ids] = region.tt_coverage_hp["nr_vis"]
+
+    # Plot background map
+    plt_gw_kwargs = {
+        "title": "Nr. of visits",
+        "coord": "C",
+        "reso": 5 / 60.0,
+        "xsize": 2000,
+        "ysize": 2000,
+        "cmap": "gray",
+    }
+    if gw_kwargs is not None:
+        plt_gw_kwargs.update(gw_kwargs)
+    hpy.gnomview(hp_map, rot=[ra, dec], **plt_gw_kwargs)
+
+    # Plots selected sources
+    plt_ps_kwargs = {"lonlat": True, "marker": "o", "s": 0.2}
+    if ps_kwargs is not None:
+        plt_ps_kwargs.update(ps_kwargs)
+
+    tt_srcs = region.tt_sources.group_by("field_id")
+    for tt in tt_srcs.groups:
+        sel = tt["sel"]
+        if not sel_srcs:
+            sel = np.ones(len(sel)).astype(bool)
+        hpy.projscatter(tt[sel]["ra"], tt[sel]["dec"], **plt_ps_kwargs)
+
+    # hpy.projscatter(
+    #    [ra], [dec], lonlat=True, marker="o", s=4.0
+    # )  # Mark center of gnomeview
+    # hpy.mollview(hp_map, title="Nr. of visits in log10",nest=False,cmap="nipy_spectral",xsize=4800)
+    # hpy.graticule(local=False,coord="C",dpar=1.0, color="white") # show graticules every 0.5 deg
+    return plt.gca()
 
 
 # %% table variable plotting
@@ -477,3 +546,117 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
 
 
 # %% light curve plotting
+
+
+def plot_light_curve(
+    tc,
+    fd_src_ids=None,
+    rg_src_ids=None,
+    ax=None,
+    ylim=None,
+    legend_loc="upper center",
+    plot_upper_limits=True,
+    **errorbar_kwargs,
+):
+    """
+    Plot the magnitude light curves of the passed sources.
+
+    Parameters
+    ----------
+    tc : VASCA.table.TableCollection
+        Either field or region that contains the light curves.
+    fd_src_ids : list or int
+        List or single field source IDs to plot. Default is None.
+    rg_src_ids : list or int
+        List or single region source IDs to plot. Default is None.
+    ax : axes, optional
+        Matplotlib axes to plot on. The default is None.
+    ylim : list, optional
+        Limits of the y axis. Default is None
+    legend_loc : string, optional
+        Position of the legend in the figure. The default is "upper right".
+    plot_upper_limits : bool
+        Plot upper limits to the lightcurve. The default is True.
+    **errorbar_kwargs : TYPE
+        Key word arguments for pyplot.errorbars plotting.
+
+    Returns
+    -------
+    ax : axes
+        Used Matplotlib axes.
+
+    """
+
+    logger.debug(f"Plotting lightcurves ")
+
+    # Setup plotting parameters
+    if ax is None:
+        ax = plt.gca()
+    ax.invert_yaxis()
+    if hasattr(ylim, "__iter__"):
+        ax.set_ylim(ylim)
+
+    plt_errorbar_kwargs = {
+        "markersize": 4,
+        "alpha": 0.6,
+        "capsize": 0,
+        "lw": 0.1,
+        "linestyle": "dotted",
+        "elinewidth": 0.6,
+    }
+    if errorbar_kwargs is not None:
+        plt_errorbar_kwargs.update(errorbar_kwargs)
+
+    # Loop over selected sources and plot
+    colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
+    markers = cycle("osDd<>^v")
+    ctr = 0
+
+    # Get light curves dictionary
+    dd_lcs = tc.get_light_curve(fd_src_ids, rg_src_ids)
+    src_ids = list(dd_lcs.keys())
+
+    for src_id, col, mar in zip(src_ids, colors, markers):
+
+        # Every 8 markers plot open symbols
+        ctr += 1
+        mfc = col
+        if ctr > 8:
+            mfc = "None"
+
+        # Get light curve
+        lc = dd_lcs[src_id]
+
+        # Get arrays
+        src_lab = str(src_id)
+        uplims = np.zeros(len(lc))
+        sel = lc["mag"] > 0
+        mags = lc["mag"]
+        mags_err = lc["mag_err"]
+        ul = lc["ul"]
+
+        # Modify arrays if upper limits are plotted
+        if plot_upper_limits:
+            uplims = lc["mag"] < 0
+            sel = np.ones(len(lc), dtype=bool)
+            mags = mags * ~uplims + ul * uplims
+            mags_err = mags_err * ~uplims + 0.1 * uplims
+
+        # Plot
+        plt.errorbar(
+            lc["time_start"][sel],  # TODO: Move this to the bin center
+            mags[sel],
+            yerr=mags_err[sel],
+            lolims=uplims[sel],
+            color=col,
+            markeredgecolor=col,
+            markerfacecolor=mfc,
+            marker=mar,
+            label=src_lab,
+            **plt_errorbar_kwargs,
+        )
+    ax.legend(loc=legend_loc, ncol=7, fontsize="small", handletextpad=0.05)
+    ax.set_xlabel("MJD")
+    ax.set_ylabel("Magnitude")
+
+    return ax
