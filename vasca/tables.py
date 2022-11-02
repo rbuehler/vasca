@@ -455,213 +455,66 @@ class TableCollection(object):
         if remove_unselected:
             tt = tt[sel]
 
-    def get_light_curve(self, fd_src_ids, field_ids=None):
+    def get_light_curve(self, fd_src_ids=None, rg_src_ids=None):
         """
-        Get a light curve for one source or a list of sources.
+        Get a light curves for one or list of sources, for regions or fields.
 
         Parameters
         ----------
         fd_src_ids : list or int
-            Source ID(s) to return the light curve.
-        field_ids: list or int
-            Field IDs. Array length has to match source IDs. If None
-            assumes field_id from current field. Default is None.
+            List or single field source IDs to plot. Default is None.
+        rg_src_ids : list or int
+            List or single region source IDs to plot. Default is None.
 
         Returns
         -------
-        lc_dict : list or table
-            Light curve as an astropy Table compatible
+        lc_dict : dict
+            Dictionary {src_id : light_curve). Light curve as an astropy Table compatible
             with astropy BinnedTimeSeries.
 
         """
-        if not hasattr(fd_src_ids, "__iter__"):
-            fd_src_ids = [fd_src_ids]
-        if not hasattr(field_ids, "__iter__"):
-            field_ids = [field_ids]
 
-        logger.debug(f"Getting lightcurve for Nr src: {len(fd_src_ids)}")
+        # Setup input values depending on field or region
+        src_ids = None
+        ids_type = "none"
+        if hasattr(rg_src_ids, "__iter__"):
+            src_ids = list(rg_src_ids)
+            ids_type = "rg_src_id"
+        elif rg_src_ids is not None:
+            src_ids = [rg_src_ids]
+
+        if hasattr(fd_src_ids, "__iter__"):
+            src_ids = list(fd_src_ids)
+            ids_type = "fd_src_id"
+        elif fd_src_ids is not None:
+            src_ids = [fd_src_ids]
+
+        logger.debug(f"Getting lightcurve  {len(src_ids)} from {ids_type}")
 
         if "ta_sources_lc" not in self._table_names:
             logger.error(
-                "Light curve table does not exist, run 'set_light_curve()' first."
+                "Light curve table does not exist, for fields run 'set_light_curve()' first."
             )
 
         # Dictionary to store light curve tables
         lc_dict = dict()
 
+        # Index field or region for source ID
+        self.ta_sources_lc.add_index(ids_type)
+
         # Loop over sources and get lc info
-        # If called from a field no field ID is passed
-        if field_ids[0] == None:
-            for fd_src_id in fd_src_ids:
-                sel = self.ta_sources_lc["fd_src_id"] == fd_src_id
-                src_data = {
-                    "time_start": self.tt_visits["time_bin_start"].data,
-                    "time_delta": self.tt_visits["time_bin_size"].data,
-                    "mag": self.ta_sources_lc[sel]["mag"].data[0].astype(np.float64),
-                    "mag_err": self.ta_sources_lc[sel]["mag_err"]
-                    .data[0]
-                    .astype(np.float64),
-                    "ul": self.ta_sources_lc[sel]["ul"].data[0].astype(np.float64),
-                }
-                # Create and store table
-                tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
-                tt_lc.meta["fd_src_id"] = fd_src_id
-                lc_dict[fd_src_id] = tt_lc
-        # If called from a region field_id needs to be matched too
-        else:
-            self.tt_visits.add_index("field_id")
-            for fd_src_id, field_id in zip(fd_src_ids, field_ids):
-                sel = (self.ta_sources_lc["fd_src_id"] == fd_src_id) * (
-                    self.ta_sources_lc["field_id"] == field_id
-                )
-
-                # Get visit info and sort it
-                vis_idx = self.tt_visits.loc_indices["field_id", field_id]
-                tt_vis = unique(self.tt_visits[vis_idx], "time_bin_start")
-
-                # Store data
-                src_data = {
-                    "time_start": tt_vis["time_bin_start"].data,
-                    "time_delta": tt_vis["time_bin_size"].data,
-                    "mag": self.ta_sources_lc[sel]["mag"].data[0],
-                    "mag_err": self.ta_sources_lc[sel]["mag_err"].data[0],
-                    "ul": self.ta_sources_lc[sel]["ul"].data[0],
-                }
-
-                # Create table
-                tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
-                tt_lc.meta["fd_src_id"] = fd_src_id
-                tt_lc.meta["field_id"] = fd_src_id
-                lc_dict[fd_src_id] = tt_lc
-
-        # If only one fd_src_id was passed do not return as list
-        if len(lc_dict) == 1:
-            lc_dict = list(lc_dict.values())[0]
+        for src_id in src_ids:
+            src_lc = self.ta_sources_lc.loc[src_id]
+            src_data = {
+                "time_start": np.array(src_lc["time_bin_start"]).astype(np.float64),
+                "time_delta": np.array(src_lc["time_bin_size"]).astype(np.float64),
+                "mag": np.array(src_lc["mag"]).astype(np.float64),
+                "mag_err": np.array(src_lc["mag_err"]).astype(np.float64),
+                "ul": np.array(src_lc["ul"]).astype(np.float64),
+            }
+            # Create and store table
+            tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")
+            tt_lc.meta[ids_type] = src_id
+            lc_dict[src_id] = tt_lc
 
         return lc_dict
-
-    def plot_light_curve(
-        self,
-        fd_src_ids,
-        field_ids=None,
-        ax=None,
-        ylim=None,
-        legend_loc="upper center",
-        plot_upper_limits=True,
-        **errorbar_kwargs,
-    ):
-        """
-        Plot the magnitude light curves of the passed sources.
-
-        Parameters
-        ----------
-        fd_src_ids : list or int
-            List or single source IDs to plot.
-        field_ids: list or int
-            Field IDs. Array length has to match source IDs. If None
-            assumes field_id from current field. Default is None.
-        ax : axes, optional
-                Matplotlib axes to plot on. The default is None.
-        ylim : list, optional
-            Limits of the y axis. Default is None
-        legend_loc : string, optional
-            Position of the legend in the figure. The default is "upper right".
-        plot_upper_limits : bool
-            Plot upper limits to the lightcurve. The default is True.
-        **errorbar_kwargs : TYPE
-            Key word arguments for pyplot.errorbars plotting.
-
-        Returns
-        -------
-        ax : axes
-            Used Matplotlib axes.
-
-        """
-
-        # If only one fd_src_id/field_id was passed create a list
-        if not hasattr(fd_src_ids, "__iter__"):
-            fd_src_ids = [fd_src_ids]
-        if not hasattr(field_ids, "__iter__"):
-            field_ids = [field_ids]
-        if field_ids[0] == None:
-            field_ids = [None] * len(fd_src_ids)
-
-        logger.info("Plotting light curves")
-
-        # Setup plotting parameters
-        if ax is None:
-            ax = plt.gca()
-        ax.invert_yaxis()
-        if hasattr(ylim, "__iter__"):
-            ax.set_ylim(ylim)
-
-        plt_errorbar_kwargs = {
-            "markersize": 4,
-            "alpha": 0.6,
-            "capsize": 0,
-            "lw": 0.1,
-            "linestyle": "dotted",
-            "elinewidth": 0.6,
-        }
-        if errorbar_kwargs is not None:
-            plt_errorbar_kwargs.update(errorbar_kwargs)
-
-        # Loop over selected sources and plot
-        colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
-        markers = cycle("osDd<>^v")
-        ctr = 0
-        for fd_src_id, field_id, col, mar in zip(
-            fd_src_ids, field_ids, colors, markers
-        ):
-
-            # Every 8 markers plot open symbols
-            ctr += 1
-            mfc = col
-            if ctr > 8:
-                mfc = "None"
-
-            # Get light curve
-            lc = self.get_light_curve(fd_src_id, field_id)
-
-            # Get arrays
-            src_lab = str(fd_src_id)
-            uplims = np.zeros(len(lc))
-            sel = lc["mag"] > 0
-            mags = lc["mag"]
-            mags_err = lc["mag_err"]
-            ul = lc["ul"]
-
-            # Modify arrays if upper limits are plotted
-            if plot_upper_limits:
-                uplims = lc["mag"] < 0
-                sel = np.ones(len(lc), dtype=bool)
-                mags = mags * ~uplims + ul * uplims
-                mags_err = mags_err * ~uplims + 0.1 * uplims
-
-            # Plot
-            plt.errorbar(
-                lc["time_start"][sel],  # TODO: Move this to the bin center
-                mags[sel],
-                yerr=mags_err[sel],
-                lolims=uplims[sel],
-                color=col,
-                markeredgecolor=col,
-                markerfacecolor=mfc,
-                marker=mar,
-                label=src_lab,
-                **plt_errorbar_kwargs,
-            )
-        ax.legend(loc=legend_loc, ncol=7, fontsize="small", handletextpad=0.05)
-        ax.set_xlabel("MJD")
-        ax.set_ylabel("Magnitude")
-
-        if field_ids[0] == None:
-            uniq_field_ids = [self.field_id]
-        else:
-            uniq_field_ids = np.unique(field_ids)
-        fig_title = "Field id:"
-        for fid in uniq_field_ids:
-            fig_title += " " + str(fid)
-        ax.set_title(fig_title, fontsize="small", loc="left")
-
-        return ax

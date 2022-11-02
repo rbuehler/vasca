@@ -8,6 +8,8 @@ import numpy as np
 
 
 # global dictionaries defining the table structures
+
+# %% Base field
 base_field = {
     "tt_field": {
         "names": ["field_id", "name", "ra", "dec", "observatory", "obs_filter", "sel"],
@@ -219,6 +221,7 @@ base_field = {
 }
 # For GALEX data products mcat descriptions see
 # http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1
+# %% GALEX field
 galex_field = {
     "tt_visits": {
         "names": [
@@ -365,6 +368,8 @@ galex_field = {
         "meta": {**base_field["tt_ref_sources"]["meta"], "PRECUTS": "List of pre-cuts"},
     },
 }
+
+# %% Region
 region = {
     "tt_fields": {
         "names": [
