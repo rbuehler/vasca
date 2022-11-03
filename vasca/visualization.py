@@ -55,10 +55,10 @@ def plot_field_sky_sources(
     # Set marker properties for sources
     plt_src_kwargs = {
         "marker": "o",
-        "markersize": 1.5,
+        "markersize": 4.5,
         "alpha": 0.5,
         "lw": 0,
-        "markeredgewidth": 0.3,
+        "markeredgewidth": 2.0,
         "fillstyle": "none",
     }
     if src_kwargs is not None:
@@ -67,10 +67,10 @@ def plot_field_sky_sources(
     # Set marker properties for detections
     plt_det_kwargs = {
         "marker": ".",
-        "markersize": 0.2,
+        "markersize": 3.0,
         "alpha": 0.5,
-        "markeredgewidth": 0.0,
-        "lw": 0,
+        "markeredgewidth": 1.0,
+        "lw": 0.0,
     }
     if det_kwargs is not None:
         plt_det_kwargs.update(det_kwargs)
@@ -95,13 +95,13 @@ def plot_field_sky_sources(
         ax.plot(src["ra"], src["dec"], color=col, **plt_src_kwargs)
 
         ax.text(
-            src["ra"] + 0.005,
-            src["dec"] + 0.004,
+            src["ra"] + 0.007,
+            src["dec"] + 0.006,
             str(src["fd_src_id"]),
             transform=plt_src_kwargs["transform"],
-            fontsize=2,
+            fontsize=7,
             color=col,
-            alpha=0.5,
+            alpha=0.7,
         )
 
     return ax
