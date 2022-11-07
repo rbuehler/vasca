@@ -8,13 +8,11 @@ import os
 
 import h5py
 import numpy as np
-import matplotlib.pyplot as plt
-from itertools import cycle
 from astropy import units as uu
 from astropy.io import fits
-from astropy.table import unique, Table
-from astropy.wcs import wcs
 from astropy.nddata import bitmask
+from astropy.table import Table
+from astropy.wcs import wcs
 from loguru import logger
 
 from vasca.tables_dict import dd_vasca_tables
@@ -62,7 +60,7 @@ class TableCollection(object):
         """
 
         # Check dd_data type
-        if not (isinstance(dd_data, dict) or (dd_data == None)):
+        if not (isinstance(dd_data, dict) or (dd_data is None)):
             logger.error(f"Passed data format not supported: {type(dd_data)}")
 
         # Takes pre-defined template dictionary
@@ -93,20 +91,22 @@ class TableCollection(object):
         template_copy = templates[class_key][table_key].copy()
 
         # Check if data misses columns and in case fill with default values
-        if not dd_data == None:
+        if dd_data is not None:
             len_data_cols = len(dd_data[list(dd_data.keys())[0]])
             for col in template_copy["names"]:
-                if not col in dd_data.keys():
+                if col not in dd_data.keys():
                     idx = template_copy["names"].index(col)
                     dd_data[col] = [template_copy["defaults"][idx]] * len_data_cols
 
-        # Create table, delete defaults enty first, as astropy Table does not support this
+        # Create table, delete defaults entry first,
+        # as astropy Table does not support this
         del template_copy["defaults"]
         tt_out = Table(data=dd_data, **template_copy)
         # tt_out.meta["template"] = template_name
 
         # logging
-        # Remove "defaults" from templates dictionary, as astropy.Table does not support this
+        # Remove "defaults" from templates dictionary,
+        # as astropy.Table does not support this
         logger.debug(f"Created new table from template '{template_name}'.")
         return tt_out
 
@@ -171,7 +171,6 @@ class TableCollection(object):
                 logger.debug("Storing image data'")
                 hdup = fits.PrimaryHDU(self.ref_img, header=self.ref_wcs.to_header())
 
-        hdus = [hdup]
         new_hdul = fits.HDUList([hdup])
         new_hdul.writeto(file_name, overwrite=overwrite, output_verify=fits_verify)
 
@@ -180,7 +179,8 @@ class TableCollection(object):
                 logger.debug(f"Writing table '{key}'")
                 if not key.startswith("ta_"):
                     self.__dict__[key].write(file_name, append=True)
-                # Write table with vector entries, currently not supportet by astropy.Table
+                # Write table with vector entries,
+                # currently not supported by astropy.Table
                 else:
                     cols = list()
                     for colname in self.__dict__[key].colnames:
@@ -279,7 +279,8 @@ class TableCollection(object):
                     ta_data[col_name] = ff[ta_name].data[col_name]
 
                 # TODO make loading more general.
-                # Expect astropy handling of fits vecotors to simplify this in the future
+                # Expect astropy handling of fits vector
+                # to simplify this in the future
                 if "field_id" in col_names:
                     self.add_table(ta_data, "region:" + ta_name)
                 else:
@@ -424,7 +425,8 @@ class TableCollection(object):
                 for var, vals in selections["range"].items():
                     sel = sel * (tt[var] >= vals[0]) * (tt[var] <= vals[1])
                     logger.debug(
-                        f"AND selecting '{var}' {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
+                        f"AND selecting '{var}' {vals}, "
+                        f"kept: {100*sel.sum()/nr_sel : .4f}%"
                     )
 
             # Apply bitmask cuts
@@ -434,7 +436,8 @@ class TableCollection(object):
                     bit = bitmask.bitfield_to_boolean_mask(tt[var], ignore_flags=vals)
                     sel = sel * (no_art + bit)
                     logger.debug(
-                        f"AND selecting bitmask '{var}' keep {vals}, kept: {100*sel.sum()/nr_sel : .4f}%"
+                        f"AND selecting bitmask '{var}' keep {vals}, "
+                        f"kept: {100*sel.sum()/nr_sel : .4f}%"
                     )
         elif selections["sel_type"] == "or":
             sel_or = np.zeros(len(sel))
@@ -443,7 +446,8 @@ class TableCollection(object):
                 for var, vals in selections["range"].items():
                     sel_or = sel_or + (tt[var] >= vals[0]) * (tt[var] <= vals[1])
                     logger.debug(
-                        f"OR selecting '{var}' {vals}, kept: {100*sel_or.sum()/nr_sel : .4f}%"
+                        f"OR selecting '{var}' {vals}, "
+                        f"kept: {100*sel_or.sum()/nr_sel : .4f}%"
                     )
                 sel = sel * sel_or
         else:
@@ -469,8 +473,8 @@ class TableCollection(object):
         Returns
         -------
         lc_dict : dict
-            Dictionary {src_id : light_curve). Light curve as an astropy Table compatible
-            with astropy BinnedTimeSeries.
+            Dictionary {src_id : light_curve). Light curve as an astropy Table
+                compatible with astropy BinnedTimeSeries.
 
         """
 
@@ -493,7 +497,8 @@ class TableCollection(object):
 
         if "ta_sources_lc" not in self._table_names:
             logger.error(
-                "Light curve table does not exist, for fields run 'set_light_curve()' first."
+                "Light curve table does not exist, "
+                "for fields run 'set_light_curve()' first."
             )
 
         # Dictionary to store light curve tables

@@ -4,13 +4,14 @@
 Visualization related methods for VASCA
 """
 
+from collections import OrderedDict
+from itertools import cycle
+
+import healpy as hpy
+import matplotlib.pyplot as plt
+import numpy as np
 from loguru import logger
 from matplotlib.colors import LogNorm
-import matplotlib.pyplot as plt
-from itertools import cycle
-import numpy as np
-from collections import OrderedDict
-import healpy as hpy
 
 # %% sky plotting
 
@@ -587,7 +588,7 @@ def plot_light_curve(
 
     """
 
-    logger.debug(f"Plotting lightcurves ")
+    logger.debug("Plotting lightcurves ")
 
     # Setup plotting parameters
     if ax is None:
