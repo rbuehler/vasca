@@ -52,6 +52,7 @@ intersphinx_mapping = {
     "loguru": ("https://loguru.readthedocs.io/en/stable", None),
     "astropy": ("http://docs.astropy.org/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
 }
 
 # -- Options for HTML output -------------------------------------------------
