@@ -8,20 +8,18 @@ import argparse
 import os
 import sys
 from itertools import zip_longest
-
-# from multiprocessing import Pool
 from multiprocessing import Pool
 
-import pandas as pd
 import healpy as hpy
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import yaml
 from loguru import logger
 
-from vasca.region import Region
 import vasca.visualization as vvis
+from vasca.region import Region
 
 
 def set_config(cfg_file):
