@@ -10,6 +10,7 @@ from itertools import cycle
 import healpy as hpy
 import matplotlib.pyplot as plt
 import numpy as np
+from astropy.wcs import WCS
 from loguru import logger
 from matplotlib.colors import LogNorm
 
@@ -61,6 +62,7 @@ def plot_field_sky_sources(
         "lw": 0,
         "markeredgewidth": 2.0,
         "fillstyle": "none",
+        "transform": ax.get_transform("world"),
     }
     if src_kwargs is not None:
         plt_src_kwargs.update(src_kwargs)
@@ -72,6 +74,7 @@ def plot_field_sky_sources(
         "alpha": 0.5,
         "markeredgewidth": 1.0,
         "lw": 0.0,
+        "transform": ax.get_transform("world"),
     }
     if det_kwargs is not None:
         plt_det_kwargs.update(det_kwargs)
@@ -138,7 +141,7 @@ def plot_field_sky_map(field, ax=None, **img_kwargs):
 
     plt_img_kwargs = {
         "interpolation": "None",
-        "cmap": "gist_yarg",
+        "cmap": "gray_r",
         "origin": "lower",
         "norm": LogNorm(),
     }
@@ -151,53 +154,85 @@ def plot_field_sky_map(field, ax=None, **img_kwargs):
     return graph
 
 
-def plot_field_sky(field, plot_detections=True, plot_map=True):
+def plot_field_sky(
+    field,
+    plot_sources=True,
+    plot_detections=True,
+    plot_map=True,
+    kwargs_fig=None,
+    kwargs_map=None,
+    kwargs_sources=None,
+    kwargs_detections=None,
+):
     """
-    Plot all field sources and/or a background reference image in the sky.
+    Optionally, plot field sources, with or without individual visit detections,
+    and reference image as background.
 
     Parameters
     ----------
-    field: vasca.BaseField
+    field: :class:`~vasca.field.BaseField`
         VASCA field to be plotted.
+    plot_sources : bool, optional
+        Plot field sources, The default is True.
     plot_detections : bool, optional
-        Plot sources. The default is True.
+        Plot visit detections. The default is True.
+        Detections are only plotted if ``plot_sources`` is True.
     plot_map : bool, optional
-        Plot reference image in the background. The default is False.
+        Plot reference image in the background. The default is True.
+    kwargs_* : dict, optional
+        Keyword arguments passed to respective plotting functions.
 
     Returns
     -------
-    fig : figure
-        Matplotlib figure used to plot.
+    :py:class:`~matplotlib.figure.Figure`
 
     """
 
     logger.debug("Plotting sky map and/or sources'")
 
-    fig = plt.figure(figsize=(8, 7))
-    plt.clf()
+    # Figure settings
+    kwargs_fig = {
+        "figsize": (8, 7),
+        "num": field.name,
+        "constrained_layout": True,
+        **(kwargs_fig if kwargs_fig is not None else dict()),
+    }
 
-    if field.ref_wcs is not None:
-        ax = plt.subplot(projection=field.ref_wcs)  #
+    # Create new figure
+    plt.close(kwargs_fig["num"])
+    fig = plt.figure(**kwargs_fig)
+
+    # Return empty figure if source nor map is selected
+    if not plot_sources and not plot_map:
+        return fig
+
+    # Enforce Astropy WCS
+    if isinstance(field.ref_wcs, WCS):
+        ax = plt.subplot(projection=field.ref_wcs)
         ax.coords["ra"].set_major_formatter("d.dd")
         ax.coords["dec"].set_major_formatter("d.dd")
         ax.set_xlabel("Ra")
         ax.set_ylabel("Dec")
+        ax.coords.grid(True, color="grey", ls="-", lw=0.5)
+    else:
+        raise ValueError(
+            f"Expected WCS attribute for field, got {type(field.ref_wcs).__name__}"
+        )
 
     if plot_map:
-        graph = plot_field_sky_map(field, ax)
-        fig.colorbar(graph, label="Intensity [a.u.]")
+        graph = plot_field_sky_map(
+            field, ax, **(kwargs_map if kwargs_map is not None else dict())
+        )
+        fig.colorbar(graph, label="Intensity [a.u.]", shrink=0.85)
 
-    if plot_map:
-        plot_arg = {"transform": ax.get_transform("world")}
+    if plot_sources:
         plot_field_sky_sources(
             field,
             ax,
             plot_detections=plot_detections,
-            src_kwargs=plot_arg,
-            det_kwargs=plot_arg,
+            **(kwargs_sources if kwargs_sources is not None else dict()),
+            **(kwargs_detections if kwargs_detections is not None else dict()),
         )
-    else:
-        plot_field_sky_sources(field, plot_detections=plot_detections)
 
     return fig
 
