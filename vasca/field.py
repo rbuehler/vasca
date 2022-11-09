@@ -7,6 +7,7 @@ Field classes for VASCA
 import os
 import time
 from datetime import datetime
+import warnings
 
 import numpy as np
 from astropy import units as uu
@@ -16,6 +17,7 @@ from astropy.table import Column, Table, conf, vstack
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
+from astropy.utils.exceptions import AstropyWarning
 from loguru import logger
 from requests.exceptions import HTTPError
 from sklearn.cluster import MeanShift, estimate_bandwidth
@@ -1217,6 +1219,7 @@ class GALEXField(BaseField):
             # Reading cached manifest
             logger.debug(f"Reading archive data product manifest from {path_tt_down}.")
             tt_down = Table.read(path_tt_down)
+
         # Adds column with corresponding IDs
         tt_down["ID"] = [int(path.split(os.sep)[-2]) for path in tt_down["Local Path"]]
 
@@ -1253,14 +1256,21 @@ class GALEXField(BaseField):
         ]  # list
 
         # Opens reference catalog
-        tt_ref_sources_raw = Table.read(path_tt_ref)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", AstropyWarning)
+            tt_ref_sources_raw = Table.read(path_tt_ref)
+
         # Opens visit catalogs, add columns for visit and source IDs
         # and stack all catalogs
         tt_detections_raw = None
         # loop over visits
         for path, id in zip(path_tt_detections, self.tt_visits["vis_id"]):
             # read new visits catalog
-            tt_vis_mcat = Table.read(path)
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", AstropyWarning)
+                tt_vis_mcat = Table.read(path)
+
             # set initial
             if tt_detections_raw is None:
                 # column visit id
