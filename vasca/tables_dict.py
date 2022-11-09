@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Defines dictionary for the tables used by vasca.tables.TableCollection 
+Defines dictionary for the tables used by vasca.tables.TableCollection
 """
 
 import numpy as np
-
 
 # global dictionaries defining the table structures
 
@@ -294,8 +293,8 @@ galex_field = {
             *base_field["tt_detections"]["descriptions"],
             "Distance from center of FOV in degrees",
             "Logical OR of artifact flags",
-            "Point-source probability: 0.0 (resolved), 1.0 (unresolved, mcat file filter_CLASS_STAR variable)",
-            "Detection matched to a known star (bright_match=1, mcat file chkobj_type variable)",
+            "Point-source probability: 0.0 (resolved), 1.0 (unresolved, mcat file filter_CLASS_STAR variable)",  # noqa E501
+            "Detection matched to a known star (bright_match=1, mcat file chkobj_type variable)",  # noqa E501
             "Flux in a fixed circular 6.0 arcsec radius aperture in cts/sec",
             "Flux error in a fixed circular 6.0 arcsec radius aperture in cts/sec",
             "Flux in a fixed circular 3.8 arcsec radius aperture in cts/sec",

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from loguru import logger
-
-import numpy as np
 import healpy as hpy
+import numpy as np
 from astropy import units as uu
+from loguru import logger
 
 from vasca.field import GALEXField
 from vasca.tables import TableCollection

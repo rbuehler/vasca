@@ -8,7 +8,6 @@ import os
 import time
 from datetime import datetime
 
-
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
@@ -17,9 +16,7 @@ from astropy.table import Column, Table, conf, vstack
 from astropy.time import Time
 from astropy.wcs import wcs
 from astroquery.mast import Observations
-
 from loguru import logger
-
 from requests.exceptions import HTTPError
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
@@ -38,10 +35,11 @@ conf.replace_warnings = ["always"]
 
 class BaseField(TableCollection):
     """
-    :class: `~vasca.field.BaseField` provides class that defines the basic data structure
-    for field-based analysis. One *field* is generally the area in the sky covered
-    by a telescope in one observation. A field is generally composed of several
-    *visits* of the telescope at different times.
+    :class: `~vasca.field.BaseField` provides class that defines the basic
+    data structure for field-based analysis. One *field* is generally
+    the area in the sky covered by a telescope in one observation.
+    A field is generally composed of several *visits* of the telescope
+    at different times.
 
     This class contains the main functionality for source
     detection and drawing. To be inherited by field analysis classes,
@@ -145,8 +143,8 @@ class BaseField(TableCollection):
         # Do bandwidth determination "by hand" to print it out and convert
         # bandwidth unit from arc seconds into degerees
         dd_ms = ms_kw
-        if not "bandwidth" in ms_kw or ms_kw["bandwidth"] == None:
-            logger.debug(f"Estimating bandwidth")
+        if "bandwidth" not in ms_kw or ms_kw["bandwidth"] is None:
+            logger.debug("Estimating bandwidth")
             dd_ms["bandwidth"] = estimate_bandwidth(coords, quantile=0.2, n_samples=500)
         else:
             dd_ms["bandwidth"] = (ms_kw["bandwidth"] * uu.arcsec).to(uu.deg).value
@@ -297,7 +295,7 @@ class BaseField(TableCollection):
 
         """
 
-        logger.debug(f"Calculating source variability statistics.")
+        logger.debug("Calculating source variability statistics.")
 
         if "ta_sources_lc" not in self._table_names:
             logger.error(
@@ -319,7 +317,7 @@ class BaseField(TableCollection):
         mag_ul[~mask_mag] = np.nan
 
         # Calculate variability parameters
-        nr_mags = (~np.isnan(mag)).sum(axis=1)
+        # nr_mags = (~np.isnan(mag)).sum(axis=1)
         mag_mean = np.nanmean(mag, axis=1)
 
         mag_err_mean2 = np.nanmean(mag_err * mag_err, axis=1)
@@ -623,7 +621,8 @@ class GALEXField(BaseField):
                 if visits_data_path is None:
                     self.visits_data_path = rm.get_path("gal_visits_list", "sas_cloud")
 
-        # Create and check existence of directory that holds field data and VASCA outputs
+        # Create and check existence of directory
+        # that holds field data and VASCA outputs
         if not os.path.isdir(self.data_path):
             os.makedirs(self.data_path)
 
@@ -688,7 +687,8 @@ class GALEXField(BaseField):
             )
 
         logger.info(
-            f"Loaded VASCA data for GALEX field '{obs_id}' with obs_filter '{obs_filter}'."
+            f"Loaded VASCA data for GALEX field '{obs_id}' "
+            f"with obs_filter '{obs_filter}'."
         )
 
         return gf
@@ -925,7 +925,8 @@ class GALEXField(BaseField):
         # Uses default columns if not otherwise specified
         # Already sets the order in which columns are added later on
         if col_names is None:
-            # values represent variables in VASCA, keys the variable names in the MAST database
+            # values represent variables in VASCA, keys the variable names
+            # in the MAST database
             col_names = {
                 "obs_id": "field_id",
                 "target_name": "name",
@@ -981,7 +982,7 @@ class GALEXField(BaseField):
                 "obs_id",
                 tt_coadd_select["obs_id"].astype(np.dtype("S64")),
             )
-        # Convert into dictionay with correct vasca column names
+        # Convert into dictionary with correct VASCA column names
         dd_coadd_select = {}
         for col in mast_col_names:
             dd_coadd_select[col_names[col]] = tt_coadd_select[col].data
@@ -1060,7 +1061,7 @@ class GALEXField(BaseField):
                 }
             )
 
-        # Convert into dictionay with correct vasca column names
+        # Convert into dictionary with correct VASCA column names
         dd_visits_raw_select = {}
         for col in mast_col_names:
             dd_visits_raw_select[col_names[col]] = tt_visits_raw_select[col].data
@@ -1351,7 +1352,7 @@ class GALEXField(BaseField):
 
         # set data as class attributes
 
-        # Convert into dictionay with correct vasca column names
+        # Convert into dictionary with correct VASCA column names
         dd_detections_raw = {}
         for col in mast_col_names:
             dd_detections_raw[col_names[col]] = tt_detections_raw[col].data
