@@ -37,7 +37,7 @@ conf.replace_warnings = ["always"]
 
 class BaseField(TableCollection):
     """
-    :class: `~vasca.field.BaseField` provides class that defines the basic
+    `~vasca.field.BaseField` provides class that defines the basic
     data structure for field-based analysis. One *field* is generally
     the area in the sky covered by a telescope in one observation.
     A field is generally composed of several *visits* of the telescope

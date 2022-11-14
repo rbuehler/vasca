@@ -12,7 +12,7 @@ from vasca.tables_dict import dd_vasca_tables
 
 class Region(TableCollection):
     """
-    :class: `~vasca.Region` defines a region in the sky as a
+    `~vasca.Region` defines a region in the sky as a
     list of vasca.field objects. It provides functionality to
     loop over fields to derive source lists, etc.
     """

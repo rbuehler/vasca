@@ -25,6 +25,12 @@ out/*
 # Local documentation
 build/*
 
+# Documentation
+docs/_build
+docs/modules.rst
+docs/vasca.rst
+docs/vasca.test.rst
+
 # Pytest
 .pytest_cache
 .coverage
