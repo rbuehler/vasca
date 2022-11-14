@@ -48,8 +48,23 @@ version to use is 3.9.x . For docstrings we use the
 `ņumpy <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html>`__ 
 format.
 
+**Documentation**
+
 For documentation we use `SPHINX <https://www.sphinx-doc.org/en/master/>`__. To make them yourself be 
 sure to have the ``sphinx-rtd-theme``, ``sphinx.ext.autodoc``
 and ``sphinx.ext.napoleon``  installed (see 
 `here <https://betterprogramming.pub/auto-documenting-a-python-project-using-sphinx-8878f9ddc6e9>`__ 
 for a quick guide).
+Here the steps to follow:
+
+.. code:: bash
+
+	sphinx-apidoc -f -o docs vasca
+	cd docs/
+	make html
+
+To create Unified Modeling Language diagramms install `pyreverse <https://pylint.pycqa.org/en/latest/pyreverse.html>`__ and `graphviz <https://graphviz.org/>`__ and run:
+
+.. code:: bash
+
+	pyreverse vasca -o png -d ./docs/
