@@ -696,3 +696,104 @@ def plot_light_curve(
     ax.set_ylabel("Magnitude")
 
     return ax
+
+    # Code snippets to be added later
+
+    # # Set matplotlib backend
+    # if vasca_cfg["general"]["mpl_backend"] != "SYSTEM":
+    #     logger.info(
+    #         f'setting matplotlib backend to {vasca_cfg["general"]["mpl_backend"]}'
+    #     )
+    #     matplotlib.use(vasca_cfg["general"]["mpl_backend"])
+
+    # from itertools import zip_longest
+    # Draw selected  light curves
+    # sel_srcs = field.tt_sources["sel"]
+    # if sel_srcs.sum() > 0:
+    #     all_srcs_ids = field.tt_sources[sel_srcs]["fd_src_id"].data
+
+    #     # Loop over list in chuks of 14
+    #     for fd_src_ids_chunk in zip_longest(
+    #         *([np.nditer(all_srcs_ids)]) * 14, fillvalue=-1
+    #     ):
+    #         fig_lc = plt.figure(figsize=(10, 10))
+    #         fd_src_ids_chunk = np.array(fd_src_ids_chunk, dtype=np.int64).flatten()
+    #         fd_src_ids_chunk = np.delete(
+    #             fd_src_ids_chunk, np.where(fd_src_ids_chunk == -1)
+    #         )
+    #         vvis.plot_light_curve(field, fd_src_ids=fd_src_ids_chunk, ylim=[24.5, 15.5])
+    #         plt.tight_layout()
+    #         srcs_name = "_".join([str(elem) for elem in fd_src_ids_chunk])
+
+    #         fig_lc.savefig(
+    #             field_dir + "lcs/lc_" + str(field.field_id) + "_" + srcs_name + ".png",
+    #             dpi=150,
+    #         )
+    #         plt.close(fig_lc)
+
+    # # Make field diagnostocs
+    # diags = [
+    #     ("detections", "hist"),
+    #     ("sources", "hist"),
+    #     ("detections", "scatter"),
+    #     ("sources", "scatter"),
+    # ]
+    # for diag in diags:
+    #     fig_diag = vvis.plot_pipe_diagnostic(field, "tt_" + diag[0], diag[1])
+    #     fig_diag.savefig(
+    #         field_dir + diag[1] + "_" + diag[0] + "_" + str(field.field_id) + ".png",
+    #         dpi=150,
+    #     )
+    #     plt.close(fig_diag)
+
+    # Plot sky maps
+    # fig_sky = vvis.plot_field_sky(field, plot_detections=True)
+    # if vasca_cfg["general"]["hd_img_out"]:
+    #     fig_sky.savefig(
+    #         field_dir + "sky_map_hr_" + str(field.field_id) + ".png",
+    #         dpi=2500,
+    #     )
+    # else:
+    #     fig_sky.savefig(
+    #         field_dir + "sky_map_lr_" + str(field.field_id) + ".png",
+    #         dpi=150,
+    #     )
+    # plt.close(fig_sky)
+    #
+    # Write our healpix coverage maps
+    # hp_vis, hp_exp = rg.add_coverage_hp(nside=4096)
+
+    # if vasca_cfg["general"]["hp_coverage_out"]:
+    #     hpy.fitsfunc.write_map(
+    #         region_dir
+    #         + "/region_"
+    #         + vasca_cfg["general"]["name"]
+    #         + "_coverage_hp.fits",
+    #         [hp_vis, hp_exp],
+    #         coord="C",
+    #         column_names=["nr_vis", "exposure"],
+    #         dtype=[np.float32, np.float32],
+    #         overwrite=True,
+    #         partial=True,
+    #     )
+    #
+    # Make diagnostics
+    # fig_diag_rgsrcs_hist = vvis.plot_pipe_diagnostic(rg, "tt_sources", "hist")
+    # fig_diag_rgsrcs_hist.savefig(
+    #     region_dir
+    #     + "/region_diagnostic_srcs_hist_"
+    #     + vasca_cfg["general"]["name"]
+    #     + ".png",
+    #     dpi=150,
+    # )
+    # plt.close(fig_diag_rgsrcs_hist)
+
+    # fig_diag_rgsrcs_scat = vvis.plot_pipe_diagnostic(rg, "tt_sources", "scatter")
+    # fig_diag_rgsrcs_scat.savefig(
+    #     region_dir
+    #     + "/region_diagnostic_srcs_scat_"
+    #     + vasca_cfg["general"]["name"]
+    #     + ".png",
+    #     dpi=150,
+    # )
+    # plt.close(fig_diag_rgsrcs_scat)

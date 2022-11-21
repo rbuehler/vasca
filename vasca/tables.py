@@ -217,14 +217,14 @@ class TableCollection(object):
                     ff.flush(output_verify=fits_verify)
         ff.close()
 
-    def load_from_fits(self, file_name="tables.fits"):
+    def load_from_fits(self, file_name):
         """
         Loads field from a fits file
 
         Parameters
         ----------
         file_name : str, optional
-            File name. The default is "field_default.fits".
+            File name.
 
         Returns
         -------
