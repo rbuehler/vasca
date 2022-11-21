@@ -464,6 +464,8 @@ def plot_table_scatter(
     return ax
 
 
+# %% pipeline diagnostic plotting
+
 # TODO: there are some GALEX specific variables
 # will need to be adapted to other missions
 def plot_pipe_diagnostic(tc, table_name, plot_type):
@@ -473,9 +475,9 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
     Parameters
     ----------
     tc : vasca.TableCollection
-        Table collection
+        Table collection, either field or region
     table_name : str
-        Name of the table
+        Name of the table, tt_detections or tt_sources
     plot_type : str
         Type of plot, either "hist" or "scatter"
 
@@ -699,13 +701,6 @@ def plot_light_curve(
 
     # Code snippets to be added later
 
-    # # Set matplotlib backend
-    # if vasca_cfg["general"]["mpl_backend"] != "SYSTEM":
-    #     logger.info(
-    #         f'setting matplotlib backend to {vasca_cfg["general"]["mpl_backend"]}'
-    #     )
-    #     matplotlib.use(vasca_cfg["general"]["mpl_backend"])
-
     # from itertools import zip_longest
     # Draw selected  light curves
     # sel_srcs = field.tt_sources["sel"]
@@ -730,70 +725,4 @@ def plot_light_curve(
     #             dpi=150,
     #         )
     #         plt.close(fig_lc)
-
-    # # Make field diagnostocs
-    # diags = [
-    #     ("detections", "hist"),
-    #     ("sources", "hist"),
-    #     ("detections", "scatter"),
-    #     ("sources", "scatter"),
-    # ]
-    # for diag in diags:
-    #     fig_diag = vvis.plot_pipe_diagnostic(field, "tt_" + diag[0], diag[1])
-    #     fig_diag.savefig(
-    #         field_dir + diag[1] + "_" + diag[0] + "_" + str(field.field_id) + ".png",
-    #         dpi=150,
-    #     )
-    #     plt.close(fig_diag)
-
-    # Plot sky maps
-    # fig_sky = vvis.plot_field_sky(field, plot_detections=True)
-    # if vasca_cfg["general"]["hd_img_out"]:
-    #     fig_sky.savefig(
-    #         field_dir + "sky_map_hr_" + str(field.field_id) + ".png",
-    #         dpi=2500,
-    #     )
-    # else:
-    #     fig_sky.savefig(
-    #         field_dir + "sky_map_lr_" + str(field.field_id) + ".png",
-    #         dpi=150,
-    #     )
-    # plt.close(fig_sky)
     #
-    # Write our healpix coverage maps
-    # hp_vis, hp_exp = rg.add_coverage_hp(nside=4096)
-
-    # if vasca_cfg["general"]["hp_coverage_out"]:
-    #     hpy.fitsfunc.write_map(
-    #         region_dir
-    #         + "/region_"
-    #         + vasca_cfg["general"]["name"]
-    #         + "_coverage_hp.fits",
-    #         [hp_vis, hp_exp],
-    #         coord="C",
-    #         column_names=["nr_vis", "exposure"],
-    #         dtype=[np.float32, np.float32],
-    #         overwrite=True,
-    #         partial=True,
-    #     )
-    #
-    # Make diagnostics
-    # fig_diag_rgsrcs_hist = vvis.plot_pipe_diagnostic(rg, "tt_sources", "hist")
-    # fig_diag_rgsrcs_hist.savefig(
-    #     region_dir
-    #     + "/region_diagnostic_srcs_hist_"
-    #     + vasca_cfg["general"]["name"]
-    #     + ".png",
-    #     dpi=150,
-    # )
-    # plt.close(fig_diag_rgsrcs_hist)
-
-    # fig_diag_rgsrcs_scat = vvis.plot_pipe_diagnostic(rg, "tt_sources", "scatter")
-    # fig_diag_rgsrcs_scat.savefig(
-    #     region_dir
-    #     + "/region_diagnostic_srcs_scat_"
-    #     + vasca_cfg["general"]["name"]
-    #     + ".png",
-    #     dpi=150,
-    # )
-    # plt.close(fig_diag_rgsrcs_scat)
