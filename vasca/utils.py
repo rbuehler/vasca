@@ -231,3 +231,34 @@ def get_cutout_mask(tt_mcat, cutout_bounds, frame="icrs"):
         )
 
     return mask_cutout_ra * mask_cutout_dec
+
+
+def get_field_file_name(field_id, observatory, obs_filter):
+    """
+    Helper function to create and load fields with uniform naming
+
+    Parameters
+    ----------
+    field_id : int
+        Field ID.
+    observatory : str
+        Observatory of the field
+    obs_filter : str
+        Observation filter of the field
+
+    Returns
+    -------
+    str
+        Field default file name
+
+    """
+
+    return (
+        "field_"
+        + str(field_id)
+        + "_"
+        + str(observatory)
+        + "_"
+        + str(obs_filter)
+        + ".fits"
+    )

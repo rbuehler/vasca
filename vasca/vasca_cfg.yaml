@@ -7,8 +7,6 @@ general:
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                        # Will be written into "out_dir", if ""default" a default name will be created 
-    hd_img_out      : false                              # Write out high definition images
-    hp_coverage_out : false                             # Write out visti& exposure of fields in a separate fits file
     nr_cpus         : 4                                 # Number of CPUs to use. If "null" all available are used.
     mpl_backend     : "SYSTEM"                          # Backend of matplotlib to show / store figures ["SYSTEM", "AGG", "TkAgg", ..].
     save_dets       : "selected"                        # Store detections into region file, options are ["selected","all","none"]
@@ -67,11 +65,11 @@ observations:
     field_ids :
         - 2604912508670050304
         - 2604982877414227968
-        # - 2605053246158405632
-        # - 2605123614902583296
-        # - 2605193983646760960
-        # - 2605264352416104448
-        # - 2605334721135116288
+        #- 2605053246158405632
+        #- 2605123614902583296
+        #- 2605193983646760960
+        #- 2605264352416104448
+        #- 2605334721135116288
 
 # GALEX artifact flags
 # ( 1): edge; Detector bevel edge reflection (NUV only).

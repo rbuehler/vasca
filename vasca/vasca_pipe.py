@@ -7,19 +7,14 @@ Script that runs the VASCA pipeline.
 import argparse
 import os
 import sys
-from itertools import zip_longest
 from multiprocessing import Pool
 
-import healpy as hpy
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import yaml
 from loguru import logger
 
-import vasca.visualization as vvis
 from vasca.region import Region
+from vasca.utils import get_field_file_name
 
 
 def set_config(cfg_file):
@@ -115,20 +110,16 @@ def run_field(field, vasca_cfg):
     logger.info("Analysing field:" + str(field.field_id))
 
     # Create directory structure for fields
-    field_dir = (
+    field_out_dir = (
         vasca_cfg["general"]["out_dir_base"]
         + "/"
         + vasca_cfg["general"]["name"]
         + "/fields/"
-        + str(field.field_id)
-        + "/"
     )
 
     # Create folder
-    if not os.path.exists(field_dir):
-        os.makedirs(field_dir)
-    if not os.path.exists(field_dir + "lcs/"):
-        os.makedirs(field_dir + "lcs/")
+    if not os.path.exists(field_out_dir):
+        os.makedirs(field_out_dir)
 
     # Apply selections
     field.select_rows(vasca_cfg["selection"]["det_quality"])
@@ -143,60 +134,8 @@ def run_field(field, vasca_cfg):
     field.select_rows(vasca_cfg["selection"]["src_variability"])
 
     # Write out field
-    field.write_to_fits(field_dir + "field_" + str(field.field_id) + ".fits")
-
-    # Plot sky maps
-    fig_sky = vvis.plot_field_sky(field, plot_detections=True)
-    if vasca_cfg["general"]["hd_img_out"]:
-        fig_sky.savefig(
-            field_dir + "sky_map_hr_" + str(field.field_id) + ".png",
-            dpi=2500,
-        )
-    else:
-        fig_sky.savefig(
-            field_dir + "sky_map_lr_" + str(field.field_id) + ".png",
-            dpi=150,
-        )
-    plt.close(fig_sky)
-
-    # Make field diagnostocs
-    diags = [
-        ("detections", "hist"),
-        ("sources", "hist"),
-        ("detections", "scatter"),
-        ("sources", "scatter"),
-    ]
-    for diag in diags:
-        fig_diag = vvis.plot_pipe_diagnostic(field, "tt_" + diag[0], diag[1])
-        fig_diag.savefig(
-            field_dir + diag[1] + "_" + diag[0] + "_" + str(field.field_id) + ".png",
-            dpi=150,
-        )
-        plt.close(fig_diag)
-
-    # Draw selected  light curves
-    sel_srcs = field.tt_sources["sel"]
-    if sel_srcs.sum() > 0:
-        all_srcs_ids = field.tt_sources[sel_srcs]["fd_src_id"].data
-
-        # Loop over list in chuks of 14
-        for fd_src_ids_chunk in zip_longest(
-            *([np.nditer(all_srcs_ids)]) * 14, fillvalue=-1
-        ):
-            fig_lc = plt.figure(figsize=(10, 10))
-            fd_src_ids_chunk = np.array(fd_src_ids_chunk, dtype=np.int64).flatten()
-            fd_src_ids_chunk = np.delete(
-                fd_src_ids_chunk, np.where(fd_src_ids_chunk == -1)
-            )
-            vvis.plot_light_curve(field, fd_src_ids=fd_src_ids_chunk, ylim=[24.5, 15.5])
-            plt.tight_layout()
-            srcs_name = "_".join([str(elem) for elem in fd_src_ids_chunk])
-
-            fig_lc.savefig(
-                field_dir + "lcs/lc_" + str(field.field_id) + "_" + srcs_name + ".png",
-                dpi=150,
-            )
-            plt.close(fig_lc)
+    fd_fname = get_field_file_name(field.field_id, field.observatory, field.obs_filter)
+    field.write_to_fits(field_out_dir + fd_fname)
 
     # Remove some items which are not further needed to free memory
     # del field.__dict__["tt_detections"]
@@ -257,13 +196,6 @@ def run(vasca_cfg):
     # Setup logger
     set_logger(vasca_cfg)
 
-    # Set matplotlib backend
-    if vasca_cfg["general"]["mpl_backend"] != "SYSTEM":
-        logger.info(
-            f'setting matplotlib backend to {vasca_cfg["general"]["mpl_backend"]}'
-        )
-        matplotlib.use(vasca_cfg["general"]["mpl_backend"])
-
     # Load region fields
     rg = Region.load_from_config(vasca_cfg)
     rg.add_table_from_fields("tt_visits")
@@ -273,22 +205,6 @@ def run(vasca_cfg):
         vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"] + "/"
     )
 
-    # Write our healpix coverage maps
-    hp_vis, hp_exp = rg.add_coverage_hp(nside=4096)
-
-    if vasca_cfg["general"]["hp_coverage_out"]:
-        hpy.fitsfunc.write_map(
-            region_dir
-            + "/region_"
-            + vasca_cfg["general"]["name"]
-            + "_coverage_hp.fits",
-            [hp_vis, hp_exp],
-            coord="C",
-            column_names=["nr_vis", "exposure"],
-            dtype=[np.float32, np.float32],
-            overwrite=True,
-            partial=True,
-        )
     # Run each field in a separate process in parallel
     with Pool(vasca_cfg["general"]["nr_cpus"]) as pool:
         pool_return = pool.starmap(
@@ -325,27 +241,6 @@ def run(vasca_cfg):
     rg.write_to_fits(
         file_name=region_dir + "/region_" + vasca_cfg["general"]["name"] + ".fits"
     )
-
-    # Make diagnostics
-    fig_diag_rgsrcs_hist = vvis.plot_pipe_diagnostic(rg, "tt_sources", "hist")
-    fig_diag_rgsrcs_hist.savefig(
-        region_dir
-        + "/region_diagnostic_srcs_hist_"
-        + vasca_cfg["general"]["name"]
-        + ".png",
-        dpi=150,
-    )
-    plt.close(fig_diag_rgsrcs_hist)
-
-    fig_diag_rgsrcs_scat = vvis.plot_pipe_diagnostic(rg, "tt_sources", "scatter")
-    fig_diag_rgsrcs_scat.savefig(
-        region_dir
-        + "/region_diagnostic_srcs_scat_"
-        + vasca_cfg["general"]["name"]
-        + ".png",
-        dpi=150,
-    )
-    plt.close(fig_diag_rgsrcs_scat)
 
     # Write used config file
     yaml_out_name = (

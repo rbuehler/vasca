@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+import os
 import healpy as hpy
 import numpy as np
 from astropy import units as uu
 from loguru import logger
 
-from vasca.field import GALEXField
+from vasca.field import BaseField, GALEXField
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
+from vasca.utils import get_field_file_name
 
 
 class Region(TableCollection):
@@ -184,3 +187,35 @@ class Region(TableCollection):
         hp_vis[hp_vis < 1e-6] = hpy.UNSEEN
 
         return hp_vis, hp_exp
+
+    def load_from_fits(self, file_name, load_fields=True):
+        """
+        Loads field from a fits file
+
+        Parameters
+        ----------
+        file_name : str, optional
+            Region file name. The default is "field_default.fits".
+        load_fields : bool,
+            Load the fields, which have to be located as fits in the subfolder "fields"
+            of the region file in "file_name". Default is True.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        # Load file from TableCollection base class
+        super().load_from_fits(file_name)
+        region_path = os.path.dirname(file_name)
+
+        # Load fields
+        if load_fields:
+            for ff in self.tt_fields:
+                fd_fname = get_field_file_name(
+                    ff["field_id"], ff["observatory"], ff["obs_filter"]
+                )
+                fd = BaseField()
+                fd.load_from_fits(region_path + "/fields/" + fd_fname)
+                self.fields[ff["field_id"]] = fd

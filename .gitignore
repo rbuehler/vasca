@@ -39,3 +39,6 @@ coverage.xmluvva/uvva.log
 # UVVA legacy
 uvva/*
 uvva.egg-info
+
+#pipeline example output
+vasca/examples/vasca_pipeline
