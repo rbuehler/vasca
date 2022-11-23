@@ -1052,10 +1052,7 @@ class GALEXField(BaseField):
         logger.debug(
             "Reading archive visit info from cashed file " f"'{self.visits_data_path}'"
         )
-        print("bihh")
-        print(self.visits_data_path)
         tt_visits_raw = Table.read(self.visits_data_path)
-        print("bohh")
 
         logger.debug("Constructing 'tt_visits'.")
 
