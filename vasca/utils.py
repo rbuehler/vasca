@@ -12,6 +12,64 @@ from astropy.coordinates import SkyCoord, search_around_sky
 from astropy.nddata import Cutout2D
 from astropy.time import Time
 
+# Global variable liking observator+obsfilter to a field ID addon
+# The number of Id adon letter has to be three
+# See get_region_field_id funtion below.
+dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
+
+
+def get_region_field_id(obs_field_id, observaory, obs_filter):
+    """
+    Return region field id, which also includes observatory and filter identifier.
+
+    Parameters
+    ----------
+    obs_field_id : int
+        Field ID for the given observatory.
+    observaory : str
+        Observatory name.
+    obs_filter : TYPE
+        Observation filter.
+
+    Returns
+    -------
+    str
+        Region field identifier.
+
+    """
+    return dd_obs_id_add[str(observaory) + str(obs_filter)] + str(obs_field_id)
+
+
+# def get_field_file_name(field_id, observatory, obs_filter):
+#     """
+#     Helper function to create and load fields with uniform naming.
+
+#     Parameters
+#     ----------
+#     field_id : int
+#         Field ID.
+#     observatory : str
+#         Observatory of the field.
+#     obs_filter : str
+#         Observation filter of the field.
+
+#     Returns
+#     -------
+#     str
+#         Field default file name
+
+#     """
+
+#     return (
+#         "field_"
+#         + str(field_id)
+#         + "_"
+#         + str(observatory)
+#         + "_"
+#         + str(obs_filter)
+#         + ".fits"
+#     )
+
 
 def extr_value(inputlist, upper=False):
     """
@@ -231,34 +289,3 @@ def get_cutout_mask(tt_mcat, cutout_bounds, frame="icrs"):
         )
 
     return mask_cutout_ra * mask_cutout_dec
-
-
-def get_field_file_name(field_id, observatory, obs_filter):
-    """
-    Helper function to create and load fields with uniform naming
-
-    Parameters
-    ----------
-    field_id : int
-        Field ID.
-    observatory : str
-        Observatory of the field
-    obs_filter : str
-        Observation filter of the field
-
-    Returns
-    -------
-    str
-        Field default file name
-
-    """
-
-    return (
-        "field_"
-        + str(field_id)
-        + "_"
-        + str(observatory)
-        + "_"
-        + str(obs_filter)
-        + ".fits"
-    )

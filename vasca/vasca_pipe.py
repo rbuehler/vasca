@@ -14,7 +14,7 @@ import yaml
 from loguru import logger
 
 from vasca.region import Region
-from vasca.utils import get_field_file_name
+from vasca.utils import get_region_field_id
 
 
 def set_config(cfg_file):
@@ -92,14 +92,18 @@ def set_logger(vasca_cfg):
     logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
 
 
-def run_field(field, vasca_cfg):
+def run_field(obs_nr, field, vasca_cfg):
     """
     Run analysis on a single field
 
     Parameters
     ----------
+    obs_nr : int
+        Observation number in the config file.
     field : vasca.field
         Field to run analysis on.
+    vasca_cfg :
+        VASCA configuration file
 
     Returns
     -------
@@ -121,21 +125,25 @@ def run_field(field, vasca_cfg):
     if not os.path.exists(field_out_dir):
         os.makedirs(field_out_dir)
 
+    # Get configuration for this field
+    obs_cfg = vasca_cfg["observations"][obs_nr]
+
     # Apply selections
-    field.select_rows(vasca_cfg["selection"]["det_quality"])
+    field.select_rows(obs_cfg["selection"]["det_quality"])
 
     # Run clustering
     field.cluster_meanshift(
-        vasca_cfg["cluster"]["add_upper_limits"], **vasca_cfg["cluster"]["meanshift"]
+        obs_cfg["cluster_det"]["add_upper_limits"],
+        **obs_cfg["cluster_det"]["meanshift"],
     )
 
     # Source selection
-    field.select_rows(vasca_cfg["selection"]["src_quality"])
-    field.select_rows(vasca_cfg["selection"]["src_variability"])
+    field.select_rows(obs_cfg["selection"]["src_quality"])
+    field.select_rows(obs_cfg["selection"]["src_variability"])
 
     # Write out field
-    fd_fname = get_field_file_name(field.field_id, field.observatory, field.obs_filter)
-    field.write_to_fits(field_out_dir + fd_fname)
+    # fd_fname = get_field_file_name(field.field_id, field.observatory, field.obs_filter)
+    field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
 
     # Remove some items which are not further needed to free memory
     # del field.__dict__["tt_detections"]
@@ -171,10 +179,12 @@ def add_rg_src_id(tt_ref, tt_add):
     # https://github.com/astropy/astropy/issues/13176
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html
     pd_ref = tt_ref["field_id", "fd_src_id"].to_pandas()
+    pd_add = tt_add["field_id", "fd_src_id"].to_pandas()
     ridx = pd.MultiIndex.from_frame(pd_ref)
 
-    for aidx in range(0, len(tt_add)):
-        idx = ridx.get_loc((tt_add[aidx]["field_id"], tt_add[aidx]["fd_src_id"]))
+    for aidx in range(0, len(pd_add)):
+        loc_pair = (pd_add["field_id"][aidx], pd_add["fd_src_id"][aidx])
+        idx = ridx.get_loc(loc_pair)
         tt_add[aidx]["rg_src_id"] = tt_ref[idx]["rg_src_id"]
 
 
@@ -200,16 +210,31 @@ def run(vasca_cfg):
     rg = Region.load_from_config(vasca_cfg)
     rg.add_table_from_fields("tt_visits")
 
-    # Setup output directors
+    # Setup output directory
     region_dir = (
         vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"] + "/"
     )
+    if not os.path.exists(region_dir):
+        os.makedirs(region_dir)
+
+    # Prepare fields to run on
+    fd_pars = list()
+    obs_nr = 0
+    for obs in vasca_cfg["observations"]:
+        for field_id in obs["obs_field_ids"]:
+            field_id = get_region_field_id(
+                obs_field_id=field_id,
+                observaory=obs["observatory"],
+                obs_filter=obs["obs_filter"],
+            )
+            fd_pars.append([obs_nr, rg.fields[field_id]])
+        obs_nr += 1
 
     # Run each field in a separate process in parallel
     with Pool(vasca_cfg["general"]["nr_cpus"]) as pool:
         pool_return = pool.starmap(
             run_field,
-            [(field, vasca_cfg) for field in rg.fields.values()],
+            [(*fd_par, vasca_cfg) for fd_par in fd_pars],
         )
     pool.join()
 
@@ -243,9 +268,7 @@ def run(vasca_cfg):
     )
 
     # Write used config file
-    yaml_out_name = (
-        region_dir + "/vasca_ran_cfg_" + vasca_cfg["general"]["name"] + ".yaml"
-    )
+    yaml_out_name = region_dir + "/cfg_ran_" + vasca_cfg["general"]["name"] + ".yaml"
     with open(yaml_out_name, "w") as yaml_file:
         yaml.dump(vasca_cfg, yaml_file)
 

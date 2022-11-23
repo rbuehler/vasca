@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import glob
 import os
 import shutil
 
 import astropy.units as uu
-import numpy as np
 import pytest
-import yaml
 from astropy.coordinates import SkyCoord
 from astropy.time import Time
 from loguru import logger
@@ -42,14 +39,14 @@ def test_paths(tmp_path):
 
 @pytest.fixture
 def galex_test_field_from_MAST_online(test_paths):
-    field_id = 6381787756527353856  # AIS_309_1_28 2 visits (Crab pulsar)
+    gfield_id = 6381787756527353856  # AIS_309_1_28 2 visits (Crab pulsar)
     obs_filter = "NUV"
 
     data_path = test_paths["temp_path"]
     visits_data_path = test_paths["galex_visits"]
 
     gf = GALEXField.from_MAST(
-        obs_id=field_id,
+        obs_id=gfield_id,
         obs_filter=obs_filter,
         data_path=data_path,
         visits_data_path=visits_data_path,
@@ -60,14 +57,14 @@ def galex_test_field_from_MAST_online(test_paths):
 
 @pytest.fixture
 def galex_test_field_from_MAST_offline(test_paths):
-    field_id = 6388191295067652096  # NGC4993-GW170817 2 visits
+    gfield_id = 6388191295067652096  # NGC4993-GW170817 2 visits
     obs_filter = "NUV"
 
     test_resource_path = test_paths["resource_root"]
-    data_path = f"{test_resource_path}/{field_id}"
+    data_path = f"{test_resource_path}/{gfield_id}"
     visits_data_path = f"{test_resource_path}/GALEX_visits_list.fits"
     gf = GALEXField.from_MAST(
-        obs_id=field_id,
+        obs_id=gfield_id,
         obs_filter=obs_filter,
         data_path=data_path,
         visits_data_path=visits_data_path,
@@ -89,7 +86,7 @@ def galex_test_field_from_MAST(request):
 
 def test_galex_field_from_MAST(galex_test_field_from_MAST):
     gf = galex_test_field_from_MAST
-    assert gf.field_id in [6388191295067652096, 6381787756527353856]
+    assert gf.field_id in ["GNU6388191295067652096", "GNU6381787756527353856"]
 
 
 @pytest.fixture
