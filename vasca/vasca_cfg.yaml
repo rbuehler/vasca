@@ -8,69 +8,65 @@ general:
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                        # Will be written into "out_dir", if ""default" a default name will be created 
     nr_cpus         : 4                                 # Number of CPUs to use. If "null" all available are used.
-    mpl_backend     : "SYSTEM"                          # Backend of matplotlib to show / store figures ["SYSTEM", "AGG", "TkAgg", ..].
-    save_dets       : "selected"                        # Store detections into region file, options are ["selected","all","none"]
+    save_dets       : "selected"                        # Store field detections into region file, options are ["selected","all","none"]
+#    run_obs         :
     
-cluster:
-    meanshift:
-        bandwidth     : 5               # In arcsec, to estimate it automatically specify "null"
-        seeds         : null
-        bin_seeding   : false
-        min_bin_freq  : 1
-        cluster_all   : true
-        n_jobs        : null
-        max_iter      : 300
-    add_upper_limits  : true
-
-selection:
-    det_quality:
-        table    : "tt_detections"
-        sel_type : "and"  # These are all AND selections
-        range:
-            s2n            : [4,.inf]
-            r_fov          : [0.0,0.55]
-            point_src_prob : [0.95,1.0]
-            bright_match   : [-0.5,0.5]
-            mag            : [18,26]
-            mag_err        : [0,0.5]
-        bitmask:
-            # Specify the ones to ignore (=keep row).
-            # For GALEX a description is at the end of this document
-            artifacts : [1,8,16,32,64,128,256,512]
-    src_quality:
-        table    : "tt_sources"
-        sel_type : "and"    # These are OR selections
-        range:
-            nr_det        : [1,.inf]
-            nr_uls   : [1,.inf]            
-    src_variability:
-        table    : "tt_sources"
-        sel_type : "or"
-        range:        
-            mag_rchiq     : [4.0,.inf]
-#            mag_dmax      : [0.2,.inf]
-            mag_dmax_sig  : [5.0,.inf]
-            ul_weight    : [2.0,.inf]
-
 ressources:                      
     load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null
-        visits_data_path : null   
-
+        visits_data_path : null 
+        
 observations:
-    observatory : "GALEX"
-    obs_filter : "NUV"
-    field_ids :
+  - observatory   : "GALEX"
+    obs_filter    : "NUV"
+    obs_field_ids :
         - 2604912508670050304
-        - 2604982877414227968
-        #- 2605053246158405632
-        #- 2605123614902583296
-        #- 2605193983646760960
-        #- 2605264352416104448
-        #- 2605334721135116288
+#        - 2604982877414227968
+    
+    cluster_det:
+        meanshift:
+            bandwidth     : 5               # In arcsec, to estimate it automatically specify "null"
+            seeds         : null
+            bin_seeding   : false
+            min_bin_freq  : 1
+            cluster_all   : true
+            n_jobs        : null
+            max_iter      : 300
+        add_upper_limits  : true
 
+    selection:
+        det_quality:
+            table    : "tt_detections"
+            sel_type : "and"  # These are all AND selections
+            range:
+                s2n            : [4,.inf]
+                r_fov          : [0.0,0.55]
+                point_src_prob : [0.95,1.0]
+                bright_match   : [-0.5,0.5]
+                mag            : [18,26]
+                mag_err        : [0,0.5]
+            bitmask:
+                # Specify the ones to ignore (=keep row).
+                # For GALEX a description is at the end of this document
+                artifacts : [1,8,16,32,64,128,256,512]
+        src_quality:
+            table    : "tt_sources"
+            sel_type : "and"    # These are OR selections
+            range:
+                nr_det        : [1,.inf]
+                nr_uls   : [1,.inf]            
+        src_variability:
+            table    : "tt_sources"
+            sel_type : "or"
+            range:        
+                mag_rchiq     : [4.0,.inf]
+    #            mag_dmax      : [0.2,.inf]
+                mag_dmax_sig  : [5.0,.inf]
+                ul_weight    : [2.0,.inf]
+
+  
 # GALEX artifact flags
 # ( 1): edge; Detector bevel edge reflection (NUV only).
 # ( 2): window; Detector window reflection (NUV only).

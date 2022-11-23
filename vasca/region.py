@@ -10,7 +10,7 @@ from loguru import logger
 from vasca.field import BaseField, GALEXField
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import get_field_file_name
+from vasca.utils import get_region_field_id
 
 
 class Region(TableCollection):
@@ -64,36 +64,41 @@ class Region(TableCollection):
 
         logger.debug("Loading fields from config file")
 
-        if vasca_cfg["observations"]["observatory"] == "GALEX":
+        for obs in vasca_cfg["observations"]:
 
-            # Loop over fields and store info
-            for field_id in vasca_cfg["observations"]["field_ids"]:
+            if obs["observatory"] == "GALEX":
 
-                gf = GALEXField.load(
-                    field_id,
-                    obs_filter=vasca_cfg["observations"]["obs_filter"],
-                    method=vasca_cfg["ressources"]["load_method"],
-                    load_products=vasca_cfg["ressources"]["load_products"],
-                    **vasca_cfg["ressources"]["field_kwargs"],
+                # Loop over fields and store info
+                for gfield_id in obs["obs_field_ids"]:
+
+                    gf = GALEXField.load(
+                        gfield_id,
+                        obs_filter=obs["obs_filter"],
+                        method=vasca_cfg["ressources"]["load_method"],
+                        load_products=vasca_cfg["ressources"]["load_products"],
+                        **vasca_cfg["ressources"]["field_kwargs"],
+                    )
+                    field_info = dict(gf.tt_field[0])
+                    field_info["fov_diam"] = 1.10
+                    field_info["nr_vis"] = gf.nr_vis
+                    field_info["time_bin_size_sum"] = gf.time_bin_size_sum
+                    field_info["time_start"] = gf.time_start.mjd
+                    field_info["time_stop"] = gf.time_stop.mjd
+                    rg.tt_fields.add_row(field_info)
+
+                    rg_fd_id = get_region_field_id(
+                        obs_field_id=gfield_id,
+                        observaory=obs["observatory"],
+                        obs_filter=obs["obs_filter"],
+                    )
+                    if vasca_cfg["ressources"]["load_products"]:
+                        rg.fields[rg_fd_id] = gf
+                    else:
+                        rg.fields[rg_fd_id] = None
+            else:
+                logger.waring(
+                    "Selected observatory `" + obs["observatory"] + "` not supported"
                 )
-                field_info = dict(gf.tt_field[0])
-                field_info["fov_diam"] = 1.10
-                field_info["nr_vis"] = gf.nr_vis
-                field_info["time_bin_size_sum"] = gf.time_bin_size_sum
-                field_info["time_start"] = gf.time_start.mjd
-                field_info["time_stop"] = gf.time_stop.mjd
-                rg.tt_fields.add_row(field_info)
-
-                if vasca_cfg["ressources"]["load_products"]:
-                    rg.fields[field_id] = gf
-                else:
-                    rg.fields[field_id] = None
-        else:
-            logger.waring(
-                "Selected observatory `"
-                + vasca_cfg["observations"]["observatory"]
-                + "` not supported"
-            )
 
         return rg
 
@@ -131,7 +136,7 @@ class Region(TableCollection):
             if only_selected:
                 sel = tt["sel"]
             tt_sel = tt[sel]
-            tt_sel["field_id"] = np.ones(len(tt_sel), dtype="int64") * field_id
+            tt_sel["field_id"] = len(tt_sel) * [field_id]
             ll_tt.append(tt_sel)
 
         # colnames = dd_vasca_tables["region"][table_name]["names"]
@@ -213,9 +218,8 @@ class Region(TableCollection):
         # Load fields
         if load_fields:
             for ff in self.tt_fields:
-                fd_fname = get_field_file_name(
-                    ff["field_id"], ff["observatory"], ff["obs_filter"]
-                )
                 fd = BaseField()
-                fd.load_from_fits(region_path + "/fields/" + fd_fname)
+                fd.load_from_fits(
+                    region_path + "/fields/field_" + ff["field_id"] + ".fits"
+                )
                 self.fields[ff["field_id"]] = fd

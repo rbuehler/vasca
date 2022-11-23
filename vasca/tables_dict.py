@@ -12,7 +12,7 @@ import numpy as np
 base_field = {
     "tt_field": {
         "names": ["field_id", "name", "ra", "dec", "observatory", "obs_filter", "sel"],
-        "dtype": ["int64", "S64", "float64", "float64", "S64", "S64", "bool"],
+        "dtype": ["S24", "S24", "float64", "float64", "S24", "S24", "bool"],
         "units": ["1", "", "degree", "degree", "", "", "1"],
         "defaults": [-1, "none", -1.0, -1.0, "none", "none", True],
         "descriptions": [
@@ -401,7 +401,7 @@ region = {
     },
     "tt_visits": {
         "names": [*base_field["tt_visits"]["names"], "field_id"],
-        "dtype": [*base_field["tt_visits"]["dtype"], "int64"],
+        "dtype": [*base_field["tt_visits"]["dtype"], "S24"],
         "units": [*base_field["tt_visits"]["units"], "1"],
         "defaults": [*base_field["tt_visits"]["defaults"], -1],
         "descriptions": [
@@ -425,7 +425,7 @@ region = {
     },
     "tt_ref_sources": {
         "names": [*base_field["tt_ref_sources"]["names"], "field_id"],
-        "dtype": [*base_field["tt_ref_sources"]["dtype"], "int64"],
+        "dtype": [*base_field["tt_ref_sources"]["dtype"], "S24"],
         "units": [*base_field["tt_ref_sources"]["units"], "1"],
         "defaults": [*base_field["tt_ref_sources"]["defaults"], -1],
         "descriptions": [
@@ -436,7 +436,7 @@ region = {
     },
     "tt_detections": {
         "names": [*base_field["tt_detections"]["names"], "field_id", "rg_src_id"],
-        "dtype": [*base_field["tt_detections"]["dtype"], "int64", "int64"],
+        "dtype": [*base_field["tt_detections"]["dtype"], "S24", "int64"],
         "units": [*base_field["tt_detections"]["units"], "1", "1"],
         "defaults": [*base_field["tt_detections"]["defaults"], -1, -1],
         "descriptions": [
@@ -448,7 +448,7 @@ region = {
     },
     "tt_sources": {
         "names": [*base_field["tt_sources"]["names"], "field_id", "rg_src_id"],
-        "dtype": [*base_field["tt_sources"]["dtype"], "int64", "int64"],
+        "dtype": [*base_field["tt_sources"]["dtype"], "S24", "int64"],
         "units": [*base_field["tt_sources"]["units"], "1", "1"],
         "defaults": [*base_field["tt_sources"]["defaults"], -1, -1],
         "descriptions": [
@@ -460,7 +460,7 @@ region = {
     },
     "ta_sources_lc": {
         "names": [*base_field["ta_sources_lc"]["names"], "field_id", "rg_src_id"],
-        "dtype": [*base_field["ta_sources_lc"]["dtype"], "int64", "int64"],
+        "dtype": [*base_field["ta_sources_lc"]["dtype"], "S24", "int64"],
         "units": [*base_field["ta_sources_lc"]["units"], "1", "1"],
         "defaults": [*base_field["tt_sources"]["defaults"], -1, -1],
         "descriptions": [

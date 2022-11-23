@@ -195,7 +195,8 @@ class TableCollection(object):
                             col_for = "K"
                         elif "float" in coltype:
                             col_for = "D"
-
+                        elif "|S" in coltype:
+                            col_for = coltype[2:] + "A"
                         col = fits.Column(
                             name=colname,
                             format=col_for,

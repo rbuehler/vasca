@@ -24,7 +24,8 @@ from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
-from vasca.utils import table_to_array
+from vasca.utils import table_to_array, get_region_field_id
+
 
 # global paths
 # path to the dir. of this file
@@ -675,18 +676,18 @@ class GALEXField(BaseField):
         # Sets convenience class attributes
         gf.set_field_attr()
         # Check consistency
-        if not gf.field_id == obs_id:
-            raise ValueError(
-                "Inconsistent data: Missmatch for 'field_id'. "
-                f"Expected '{obs_id}' but got '{gf.field_id}' "
-                f"from file '{fits_path.split(os.sep)[-1]}."
-            )
-        elif not gf.obs_filter == obs_filter:
-            raise ValueError(
-                "Inconsistent data: Missmatch for 'obs_filter'. "
-                f"Expected '{obs_filter}' but got '{gf.obs_filter}' "
-                f"from file '{fits_path.split(os.sep)[-1]}."
-            )
+        # if not gf.field_id == obs_id:
+        #     raise ValueError(
+        #         "Inconsistent data: Missmatch for 'field_id'. "
+        #         f"Expected '{obs_id}' but got '{gf.field_id}' "
+        #         f"from file '{fits_path.split(os.sep)[-1]}."
+        #     )
+        # elif not gf.obs_filter == obs_filter:
+        #     raise ValueError(
+        #         "Inconsistent data: Missmatch for 'obs_filter'. "
+        #         f"Expected '{obs_filter}' but got '{gf.obs_filter}' "
+        #         f"from file '{fits_path.split(os.sep)[-1]}."
+        #     )
 
         logger.info(
             f"Loaded VASCA data for GALEX field '{obs_id}' "
@@ -773,7 +774,7 @@ class GALEXField(BaseField):
 
     @staticmethod
     def load(
-        field_id,
+        gfield_id,
         obs_filter="NUV",
         method="MAST_LOCAL",
         load_products=True,
@@ -785,7 +786,7 @@ class GALEXField(BaseField):
 
         Parameters
         ----------
-        field_id : int
+        gfield_id : int
             GALEX field ID
         obs_filter : str, optional
             Selects the GALEX obs_filter for which the corresponding
@@ -828,7 +829,7 @@ class GALEXField(BaseField):
         vasca.field.GALEXField
 
         """
-        logger.info(f"Loading data for field '{field_id}' with method '{method}'.")
+        logger.info(f"Loading data for field '{gfield_id}' with method '{method}'.")
 
         # Checks method argument
         # String matching is case insensitive (converts to all to lower case).
@@ -855,7 +856,7 @@ class GALEXField(BaseField):
         # Loads field according to load method specification
         if method in ["mast_remote", "mast_local"]:
             gf = GALEXField.from_MAST(
-                obs_id=field_id,
+                obs_id=gfield_id,
                 obs_filter=obs_filter,
                 refresh=refresh,
                 load_products=load_products,
@@ -867,7 +868,7 @@ class GALEXField(BaseField):
             field_kwargs.pop("write", None)
 
             gf = GALEXField.from_VASCA(
-                obs_id=field_id,
+                obs_id=gfield_id,
                 obs_filter=obs_filter,
                 **field_kwargs,
             )
@@ -973,17 +974,26 @@ class GALEXField(BaseField):
 
         # Constructs field info table
         logger.debug("Constructing 'tt_field'.")
+
         # Selects columns and strip mask
         if tt_coadd.masked is True:
             tt_coadd_select = Table(tt_coadd[mast_col_names].as_array().data)
         else:
             tt_coadd_select = tt_coadd[mast_col_names]
+
         # Converts field id dtype from unicode ('U19') to bytestring ('S64')
         if tt_coadd_select["obs_id"].dtype.kind == "U":
             tt_coadd_select.replace_column(
                 "obs_id",
                 tt_coadd_select["obs_id"].astype(np.dtype("S64")),
             )
+
+        # Converts obs_id colimn  into VASCA field_id
+        for row in tt_coadd_select:
+            row["obs_id"] = get_region_field_id(
+                obs_field_id=row["obs_id"], observaory="GALEX", obs_filter=obs_filter
+            )
+
         # Convert into dictionary with correct VASCA column names
         dd_coadd_select = {}
         for col in mast_col_names:
@@ -1008,6 +1018,7 @@ class GALEXField(BaseField):
             Dictionary with keys of MAST column names to load, and values the
             corresponding VASCA table column names. Default in None.
         """
+        logger.debug("Loading GALEX visit info :" f"{obs_id} {obs_filter} {col_names}")
 
         # Uses default columns if not otherwise specified
         # Already sets the order in which columns are added later on
@@ -1041,13 +1052,18 @@ class GALEXField(BaseField):
         logger.debug(
             "Reading archive visit info from cashed file " f"'{self.visits_data_path}'"
         )
+        print("bihh")
+        print(self.visits_data_path)
         tt_visits_raw = Table.read(self.visits_data_path)
+        print("bohh")
 
         logger.debug("Constructing 'tt_visits'.")
+
         # Filters for visits corresponding to field id and selects specified columns
         tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == obs_id][
             mast_col_names
         ]
+
         # Converts string time format to mjd
         for key in ["minPhotoObsDate"]:
             tt_visits_raw_select.update(
