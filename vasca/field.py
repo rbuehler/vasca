@@ -981,8 +981,9 @@ class GALEXField(BaseField):
         else:
             tt_coadd_select = tt_coadd[mast_col_names]
 
-        # Converts field id dtype from unicode ('U19') to bytestring ('S64')
-        if tt_coadd_select["obs_id"].dtype.kind == "U":
+        # Converts field id dtype from unicode ('U19') or S to bytestring ('S64')
+        obsid_kind = tt_coadd_select["obs_id"].dtype.kind
+        if obsid_kind == "U" or obsid_kind == "S":
             tt_coadd_select.replace_column(
                 "obs_id",
                 tt_coadd_select["obs_id"].astype(np.dtype("S64")),
@@ -1053,8 +1054,6 @@ class GALEXField(BaseField):
             "Reading archive visit info from cashed file " f"'{self.visits_data_path}'"
         )
         tt_visits_raw = Table.read(self.visits_data_path)
-
-        logger.debug("Constructing 'tt_visits'.")
 
         # Filters for visits corresponding to field id and selects specified columns
         tt_visits_raw_select = tt_visits_raw[tt_visits_raw["ParentImgRunID"] == obs_id][
