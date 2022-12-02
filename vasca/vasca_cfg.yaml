@@ -12,7 +12,7 @@ general:
 #    run_obs         :
     
 ressources:                      
-    load_method      : "MAST_LOCAL"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_method      : "MAST_REMOTE"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null
@@ -23,7 +23,12 @@ observations:
     obs_filter    : "NUV"
     obs_field_ids :
         - 2604912508670050304
-#        - 2604982877414227968
+        - 2604982877414227968
+        - 2605053246158405632
+        - 2605123614902583296
+        - 2605193983646760960
+        - 2605264352416104448
+        - 2605334721135116288
     
     cluster_det:
         meanshift:
