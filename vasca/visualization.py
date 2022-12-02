@@ -276,9 +276,9 @@ def plot_region_sky_gnomeview(
     plt_gw_kwargs = {
         "title": "Nr. of visits",
         "coord": "C",
-        "reso": 5 / 60.0,
-        "xsize": 2000,
-        "ysize": 2000,
+        "reso": 10 / 60.0,
+        "xsize": 1400,
+        "ysize": 1400,
         "cmap": "gray",
     }
     if gw_kwargs is not None:
@@ -339,7 +339,7 @@ def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
     # Set marker properties for sources
     plot_kwargs = {
         "bins": "auto",
-        "histtype": "stepfilled",
+        "histtype": "barstacked",
         "log": True,
         "alpha": 0.5,
     }
@@ -468,7 +468,7 @@ def plot_table_scatter(
 
 # TODO: there are some GALEX specific variables
 # will need to be adapted to other missions
-def plot_pipe_diagnostic(tc, table_name, plot_type):
+def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
     """
     Diagnotic plots for VASCA pipe
 
@@ -480,6 +480,8 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
         Name of the table, tt_detections or tt_sources
     plot_type : str
         Type of plot, either "hist" or "scatter"
+    fig_size: (float,float)
+        Matplotlib figure (x,y) size in inches.
 
     Returns
     -------
@@ -498,7 +500,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
             det_vars["r_fov"] = {"range": [0.0, 0.7]}
             det_vars["point_src_prob"] = {}
             det_vars["artifacts"] = {"histtype": "step"}
-            fig, axs = plt.subplots(3, 2, figsize=(18, 12), squeeze=False)
+            fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
             det_vars["nr_det"] = {}
             det_vars["nr_uls"] = {}
@@ -508,7 +510,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
             det_vars["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
             det_vars["mag_var"] = {"logx": True, "range": [-3, 0]}
             det_vars["ul_weight"] = {"bins": 100}
-            fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
+            fig, axs = plt.subplots(2, 4, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
 
@@ -535,7 +537,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
                 "invert_yaxis": True,
                 "ylim": [14.5, 26.5],
             }
-            fig, axs = plt.subplots(3, 2, figsize=(14, 12), squeeze=False)
+            fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
             det_vars[("mag_rchiq", "mag_dmax_sig")] = {"xscale": "log"}
             det_vars[("mag_rchiq", "ul_weight")] = {"xscale": "log"}
@@ -561,7 +563,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            fig, axs = plt.subplots(2, 4, figsize=(22, 12), squeeze=False)
+            fig, axs = plt.subplots(2, 4, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
     else:
@@ -580,7 +582,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type):
 
     plt.tight_layout()
     plt.legend()
-    return fig
+    return fig, det_vars
 
 
 # %% light curve plotting
