@@ -329,6 +329,10 @@ def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
     -------
     ax : matplotlix.axes
         Axes that where used to draw.
+    vals: [float]
+        Histogram bin values.
+    bins : [float]
+        Histogram bins.
 
     """
     logger.debug(f"Plotting histogram of variable '{var}'")
@@ -359,7 +363,7 @@ def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
             data = [np.log10(data[0]), np.log10(data[1])]
         xlabel = "log10( " + xlabel + " )"
 
-    ax.hist(
+    vals, bins, *_ = ax.hist(
         data,
         label=["unselected_" + str_nrnotsel, "selected_" + str_nrsel],
         **plot_kwargs,
@@ -368,7 +372,7 @@ def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
     ax.set_xlabel(xlabel)
     ax.set_ylabel("Counts")
 
-    return ax
+    return ax, vals, bins
 
 
 def plot_table_scatter(
@@ -487,29 +491,31 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
     -------
     fig : matplotlib.figure
         Figure used for plotting
+    var_plt : dict
+        Dictionary with plot variables keys and plot settings values
 
     """
 
-    det_vars = OrderedDict()
+    var_plt = OrderedDict()
     if plot_type == "hist":
         # Detections diagnostic
         if table_name == "tt_detections":
-            det_vars["s2n"] = {"logx": True}
-            det_vars["mag"] = {"range": [14.5, 26.5]}
-            det_vars["mag_err"] = {"range": [0.0, 3.0]}
-            det_vars["r_fov"] = {"range": [0.0, 0.7]}
-            det_vars["point_src_prob"] = {}
-            det_vars["artifacts"] = {"histtype": "step"}
+            var_plt["s2n"] = {"logx": True}
+            var_plt["mag"] = {"range": [14.5, 26.5]}
+            var_plt["mag_err"] = {"range": [0.0, 3.0]}
+            var_plt["r_fov"] = {"range": [0.0, 0.7]}
+            var_plt["point_src_prob"] = {}
+            var_plt["artifacts"] = {"histtype": "step"}
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
-            det_vars["nr_det"] = {}
-            det_vars["nr_uls"] = {}
-            det_vars["mag_mean"] = {}
-            det_vars["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
-            det_vars["mag_dmax"] = {}
-            det_vars["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
-            det_vars["mag_var"] = {"logx": True, "range": [-3, 0]}
-            det_vars["ul_weight"] = {"bins": 100}
+            var_plt["nr_det"] = {}
+            var_plt["nr_uls"] = {}
+            var_plt["mag_mean"] = {}
+            var_plt["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
+            var_plt["mag_dmax"] = {}
+            var_plt["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
+            var_plt["mag_var"] = {"logx": True, "range": [-3, 0]}
+            var_plt["ul_weight"] = {"bins": 100}
             fig, axs = plt.subplots(2, 4, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
@@ -517,49 +523,49 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
     elif plot_type == "scatter":
         # Detections diagnostic
         if table_name == "tt_detections":
-            det_vars[("s2n", "mag")] = {
+            var_plt[("s2n", "mag")] = {
                 "invert_yaxis": True,
                 "xlim": [1, 100],
                 "ylim": [14.5, 26.5],
             }
-            det_vars[("r_fov", "mag")] = {"invert_yaxis": True, "ylim": [15.5, 26.5]}
-            det_vars[("point_src_prob", "mag")] = {
+            var_plt[("r_fov", "mag")] = {"invert_yaxis": True, "ylim": [15.5, 26.5]}
+            var_plt[("point_src_prob", "mag")] = {
                 "invert_yaxis": True,
                 "ylim": [14.5, 26.5],
             }
-            det_vars[("artifacts", "mag")] = {
+            var_plt[("artifacts", "mag")] = {
                 "invert_yaxis": True,
                 "ylim": [14.5, 26.5],
             }
-            det_vars[("r_fov", "artifacts")] = {}
-            det_vars[("mag_err", "mag")] = {
+            var_plt[("r_fov", "artifacts")] = {}
+            var_plt[("mag_err", "mag")] = {
                 "xlim": [0.01, 3],
                 "invert_yaxis": True,
                 "ylim": [14.5, 26.5],
             }
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
-            det_vars[("mag_rchiq", "mag_dmax_sig")] = {"xscale": "log"}
-            det_vars[("mag_rchiq", "ul_weight")] = {"xscale": "log"}
-            det_vars[("mag_dmax_sig", "ul_weight")] = {}
-            det_vars[("mag_dmax_sig", "mag_mean")] = {
+            var_plt[("mag_rchiq", "mag_dmax_sig")] = {"xscale": "log"}
+            var_plt[("mag_rchiq", "ul_weight")] = {"xscale": "log"}
+            var_plt[("mag_dmax_sig", "ul_weight")] = {}
+            var_plt[("mag_dmax_sig", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            det_vars[("ul_weight", "mag_mean")] = {
+            var_plt[("ul_weight", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            det_vars[("mag_rchiq", "mag_mean")] = {
+            var_plt[("mag_rchiq", "mag_mean")] = {
                 "xscale": "log",
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            det_vars[("mag_var", "mag_mean")] = {
+            var_plt[("mag_var", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            det_vars[("nr_uls", "mag_mean")] = {
+            var_plt[("nr_uls", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
@@ -571,7 +577,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
 
     axs = axs.flatten()
     ax_ctr = 0
-    for var, plot_arg in det_vars.items():
+    for var, plot_arg in var_plt.items():
         if plot_type == "hist":
             plot_table_hist(tc.__dict__[table_name], var, axs[ax_ctr], **plot_arg)
         elif plot_type == "scatter":
@@ -582,7 +588,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
 
     plt.tight_layout()
     plt.legend()
-    return fig, det_vars
+    return fig, var_plt
 
 
 # %% light curve plotting
