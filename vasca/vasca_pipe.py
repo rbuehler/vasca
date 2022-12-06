@@ -129,27 +129,28 @@ def run_field(obs_nr, field, vasca_cfg):
     obs_cfg = vasca_cfg["observations"][obs_nr]
 
     # Apply selections
-    field.select_rows(obs_cfg["selection"]["det_quality"])
+    field.select_rows(obs_cfg["selection"]["det_quality"], remove_unselected=True)
 
     # Run clustering
     field.cluster_meanshift(
-        obs_cfg["cluster_det"]["add_upper_limits"],
         **obs_cfg["cluster_det"]["meanshift"],
     )
 
     # Source selection
-    field.select_rows(obs_cfg["selection"]["src_quality"])
-    field.select_rows(obs_cfg["selection"]["src_variability"])
+    field.select_rows(obs_cfg["selection"]["src_quality"], remove_unselected=True)
+    field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=False)
+    field.set_light_curve(add_upper_limits=True)
+    field.select_rows(obs_cfg["selection"]["src_variability"], remove_unselected=False)
 
     # Write out field
-    # fd_fname = get_field_file_name(field.field_id, field.observatory, field.obs_filter)
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
 
     # Remove some items which are not further needed to free memory
     # del field.__dict__["tt_detections"]
     # field._table_names.remove("tt_detections")
-    # field.ref_img = None
-    # field.ref_wcs = None
+    field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
+    field.ref_img = None
+    field.ref_wcs = None
 
     return field
 
