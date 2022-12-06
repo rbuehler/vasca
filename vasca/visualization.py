@@ -332,7 +332,7 @@ def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
     vals: [float]
         Histogram bin values.
     bins : [float]
-        Histogram bins.
+        Histogram bins, default is [selected, all] events.
 
     """
     logger.debug(f"Plotting histogram of variable '{var}'")
@@ -511,7 +511,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["nr_det"] = {}
             var_plt["nr_uls"] = {}
             var_plt["mag_mean"] = {}
-            var_plt["mag_rchiq"] = {"logx": True, "range": [-3, 3]}
+            var_plt["flux_rchiq"] = {"logx": True, "range": [-3, 3]}
             var_plt["mag_dmax"] = {}
             var_plt["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
             var_plt["mag_var"] = {"logx": True, "range": [-3, 0]}
@@ -545,8 +545,8 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             }
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
-            var_plt[("mag_rchiq", "mag_dmax_sig")] = {"xscale": "log"}
-            var_plt[("mag_rchiq", "ul_weight")] = {"xscale": "log"}
+            var_plt[("flux_rchiq", "mag_dmax_sig")] = {"xscale": "log"}
+            var_plt[("flux_rchiq", "ul_weight")] = {"xscale": "log"}
             var_plt[("mag_dmax_sig", "ul_weight")] = {}
             var_plt[("mag_dmax_sig", "mag_mean")] = {
                 "invert_yaxis": True,
@@ -556,7 +556,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            var_plt[("mag_rchiq", "mag_mean")] = {
+            var_plt[("flux_rchiq", "mag_mean")] = {
                 "xscale": "log",
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],

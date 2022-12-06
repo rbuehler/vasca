@@ -114,7 +114,7 @@ class BaseField(TableCollection):
             self.ref_wcs = wcs.WCS(ff[0].header)
             self.ref_img = ff[0].data
 
-    def cluster_meanshift(self, add_upper_limits=True, **ms_kw):
+    def cluster_meanshift(self, **ms_kw):
         """
         Apply _MeanShift clustering algorithm using to derive sources.
 
@@ -122,10 +122,6 @@ class BaseField(TableCollection):
 
         Parameters
         ----------
-        add_upper_limits : bool, optional
-            Add upper limits to the tt_sources_lc, for visits with no detection.
-            Upper limits are stored in the mag_err columns for none detections.
-            The default is True.
         ms_kw : dict, optional
             Keywords passed to the scikit MeanShift function. Note that the
             bandwidth is assumed to be in units of arc seconds.
@@ -179,7 +175,6 @@ class BaseField(TableCollection):
 
         # Fill light curve data into tables
         self.remove_double_visit_detections()
-        self.set_light_curve(add_upper_limits=add_upper_limits)
 
         return nr_srcs
 
@@ -211,7 +206,8 @@ class BaseField(TableCollection):
     def set_light_curve(self, add_upper_limits=True):
         """
         Helper function of cluster_meanshift().
-        Adds detections information into ta_sources_lc.
+        Adds detections information into ta_sources_lc for sources
+        listed in self.tt_sources
 
         Parameters
         ----------
@@ -287,6 +283,8 @@ class BaseField(TableCollection):
         self.add_table(tdata, "base_field:ta_sources_lc")
         self.set_var_stats()
 
+    # Calculation is done on a field level for easy numpy paralleization,
+    # as this calculation is computationally intensive.
     def set_var_stats(self):
         """
         Calculates source variability parameters and stores them
@@ -311,9 +309,12 @@ class BaseField(TableCollection):
         mag_ul = np.array((self.ta_sources_lc["ul"].data).tolist())
 
         # Ignore entries with no magniture or valid error
-        mask_mag = mag < 1e-6
-        mask_mag_err = mag_err < 1e-6
+        # Included for safety, should not be needed with reasonable pre-cuts
+        mask_mag = mag < 1e-7
+        mask_mag_err = mag_err < 1e-7
         mask = mask_mag + mask_mag_err
+        if np.any(mask_mag_err != mask_mag):
+            logger.warning("Invalid values encountered in magnitudes/errors")
 
         mag[mask] = np.nan
         mag_err[mask] = np.nan
@@ -322,10 +323,21 @@ class BaseField(TableCollection):
         # Calculate variability parameters
         # nr_mags = (~np.isnan(mag)).sum(axis=1)
         mag_mean = np.nanmean(mag, axis=1)
+        # mag_err_mean2 = np.nanmean(mag_err * mag_err, axis=1)
+        mag_var = np.nanvar(mag, ddof=1, axis=1)
 
-        mag_err_mean2 = np.nanmean(mag_err * mag_err, axis=1)
-        mag_var = np.nanvar(mag, axis=1)
-        rchiq_const = mag_var / mag_err_mean2
+        # Calculate reduced chisquared based on flux
+        flux = (mag * uu.ABmag).physical
+        flux_err = ((mag - mag_err) * uu.ABmag).physical - flux
+
+        #        nr_flux_bins = (~mask).sum(axis=1)
+        #        nr_bins_min = np.where(nr_flux_bins < 1.5)
+        #        print(nr_bins_min)
+        rchiq_const = np.nanvar(flux, ddof=1, axis=1) / np.nanmean(
+            flux_err * flux_err, axis=1
+        )
+
+        # rchiq_const = mag_var / mag_err_mean2
 
         # Get the maximum flux variation from the mean
         dmag_max = np.abs(np.nanmax(mag, axis=1) - mag_mean)
@@ -349,7 +361,7 @@ class BaseField(TableCollection):
         self.tt_sources["nr_uls"][fd_src_idx] = nr_uls
         self.tt_sources["mag_mean"][fd_src_idx] = mag_mean
         self.tt_sources["mag_var"][fd_src_idx] = mag_var
-        self.tt_sources["mag_rchiq"][fd_src_idx] = rchiq_const
+        self.tt_sources["flux_rchiq"][fd_src_idx] = rchiq_const
         self.tt_sources["mag_dmax"][fd_src_idx] = dmag
         self.tt_sources["mag_dmax_sig"][fd_src_idx] = dmag_max_sig
         self.tt_sources["ul_weight"][fd_src_idx] = ul_weight

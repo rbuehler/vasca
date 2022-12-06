@@ -451,6 +451,9 @@ class TableCollection(object):
                         f"kept: {100*sel_or.sum()/nr_sel : .4f}%"
                     )
                 sel = sel * sel_or
+        elif selections["sel_type"] == "is_in":
+            tt_ref = self.__dict__[selections["ref_table"]]
+            sel = np.in1d(tt[selections["var"]], tt_ref[selections["var"]])
         else:
             logger.error("Unkown selection type.")
 
@@ -459,6 +462,8 @@ class TableCollection(object):
 
         if remove_unselected:
             tt = tt[sel]
+
+        self.__dict__[table_name] = tt
 
     def get_light_curve(self, fd_src_ids=None, rg_src_ids=None):
         """
@@ -524,3 +529,80 @@ class TableCollection(object):
             lc_dict[src_id] = tt_lc
 
         return lc_dict
+
+    # def set_var_stats(self):
+    #     """
+    #     Calculates source variability parameters and stores them
+    #     in the source table (tt_source).
+
+    #     Returns
+    #     -------
+    #     None.
+
+    #     """
+
+    #     logger.debug("Calculating source variability statistics.")
+
+    #     if "ta_sources_lc" not in self._table_names:
+    #         logger.error(
+    #             "Light curve table does not exist, run 'set_light_curve()' first."
+    #         )
+
+    #     # Get lightcurve as numpy arrays to calculate stats
+    #     ll_mag = (self.ta_sources_lc["mag"].data).tolist()
+    #     ll_mag_err = (self.ta_sources_lc["mag_err"].data).tolist()
+    #     ll_mag_ul = (self.ta_sources_lc["ul"].data).tolist()
+
+    #     self.tt_sources.info()
+    #     self.tt_sources.add_index("rg_src_id")
+
+    #     # Loop over all light curve entries
+    #     for ii in range(0, len(ll_mag)):
+
+    #         # Get src lc
+    #         mag = ll_mag[ii]
+    #         mag_err = ll_mag_err[ii]
+    #         mag_ul = ll_mag_ul[ii]
+
+    #         # Ignore entries with no magniture or valid error
+    #         mask_mag = mag < 1e-6
+    #         mask_mag_err = mag_err < 1e-6
+    #         mask = mask_mag + mask_mag_err
+
+    #         mag[mask] = np.nan
+    #         mag_err[mask] = np.nan
+    #         mag_ul[~mask_mag] = np.nan
+
+    #         # Calculate variability parameters
+    #         # nr_mags = (~np.isnan(mag)).sum(axis=1)
+    #         mag_mean = np.nanmean(mag)
+
+    #         mag_err_mean2 = np.nanmean(mag_err * mag_err)
+    #         mag_var = np.nanvar(mag)
+    #         rchiq_const = mag_var / mag_err_mean2
+
+    #         # Get the maximum flux variation from the mean
+    #         dmag_max = np.abs(np.nanmax(mag) - mag_mean)
+    #         dmag_min = np.abs(np.nanmin(mag) - mag_mean)
+    #         dmag = (dmag_max >= dmag_min) * dmag_max + (dmag_max < dmag_min) * dmag_min
+
+    #         # Get maximum significance of flux variation compared to mean
+    #         dmag_max_sig = np.nanmax(np.abs((mag - mag_mean) / mag_err))
+
+    #         # Nr of upper limits below the mean flux (in magnitudes greater)
+    #         nr_ulmean = (mag_mean < mag_ul).sum()
+    #         nr_uls = mask_mag.sum()
+
+    #         ul_weight = nr_ulmean / np.sqrt(nr_uls + (nr_uls == 0) * 1e-6)
+
+    #         # Write them into tt_sources
+    #         rg_src_ids = self.ta_sources_lc["rg_src_id"]
+    #         fd_src_idx = self.tt_sources.loc_indices["rg_src_id", rg_src_ids]
+
+    #         self.tt_sources["nr_uls"][fd_src_idx] = nr_uls
+    #         self.tt_sources["mag_mean"][fd_src_idx] = mag_mean
+    #         self.tt_sources["mag_var"][fd_src_idx] = mag_var
+    #         self.tt_sources["mag_rchiq"][fd_src_idx] = rchiq_const
+    #         self.tt_sources["mag_dmax"][fd_src_idx] = dmag
+    #         self.tt_sources["mag_dmax_sig"][fd_src_idx] = dmag_max_sig
+    #         self.tt_sources["ul_weight"][fd_src_idx] = ul_weight
