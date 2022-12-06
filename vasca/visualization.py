@@ -514,7 +514,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["flux_rchiq"] = {"logx": True, "range": [-3, 3]}
             var_plt["mag_dmax"] = {}
             var_plt["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
-            var_plt["mag_var"] = {"logx": True, "range": [-3, 0]}
+            var_plt["flux_cpval"] = {"logx": False, "range": [-0.1, 1.1]}
             var_plt["ul_weight"] = {"bins": 100}
             fig, axs = plt.subplots(2, 4, figsize=fig_size, squeeze=False)
         else:
@@ -561,7 +561,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            var_plt[("mag_var", "mag_mean")] = {
+            var_plt[("flux_cpval", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
