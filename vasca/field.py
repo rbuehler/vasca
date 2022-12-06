@@ -10,6 +10,7 @@ from datetime import datetime
 import warnings
 
 import numpy as np
+from scipy.stats import chi2
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
@@ -321,23 +322,18 @@ class BaseField(TableCollection):
         mag_ul[~mask_mag] = np.nan
 
         # Calculate variability parameters
-        # nr_mags = (~np.isnan(mag)).sum(axis=1)
         mag_mean = np.nanmean(mag, axis=1)
-        # mag_err_mean2 = np.nanmean(mag_err * mag_err, axis=1)
-        mag_var = np.nanvar(mag, ddof=1, axis=1)
 
         # Calculate reduced chisquared based on flux
         flux = (mag * uu.ABmag).physical
+        flux_mean = np.nanmean(flux, axis=1)
         flux_err = ((mag - mag_err) * uu.ABmag).physical - flux
 
-        #        nr_flux_bins = (~mask).sum(axis=1)
-        #        nr_bins_min = np.where(nr_flux_bins < 1.5)
-        #        print(nr_bins_min)
-        rchiq_const = np.nanvar(flux, ddof=1, axis=1) / np.nanmean(
-            flux_err * flux_err, axis=1
-        )
-
-        # rchiq_const = mag_var / mag_err_mean2
+        chiq_elem = (flux - flux_mean[:, None]) / flux_err
+        chiq_const = np.nansum(chiq_elem * chiq_elem, axis=1)
+        ndf = (~mask).sum(axis=1) - 1
+        rchiq_const = chiq_const / ndf
+        flux_cpval = chi2.sf(chiq_const, ndf)
 
         # Get the maximum flux variation from the mean
         dmag_max = np.abs(np.nanmax(mag, axis=1) - mag_mean)
@@ -360,7 +356,7 @@ class BaseField(TableCollection):
 
         self.tt_sources["nr_uls"][fd_src_idx] = nr_uls
         self.tt_sources["mag_mean"][fd_src_idx] = mag_mean
-        self.tt_sources["mag_var"][fd_src_idx] = mag_var
+        self.tt_sources["flux_cpval"][fd_src_idx] = flux_cpval
         self.tt_sources["flux_rchiq"][fd_src_idx] = rchiq_const
         self.tt_sources["mag_dmax"][fd_src_idx] = dmag
         self.tt_sources["mag_dmax_sig"][fd_src_idx] = dmag_max_sig
