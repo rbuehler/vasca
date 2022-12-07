@@ -325,9 +325,9 @@ class BaseField(TableCollection):
         mag_mean = np.nanmean(mag, axis=1)
 
         # Calculate reduced chisquared based on flux
-        flux = (mag * uu.ABmag).physical
+        flux = uu.Magnitude(mag).physical
         flux_mean = np.nanmean(flux, axis=1)
-        flux_err = ((mag - mag_err) * uu.ABmag).physical - flux
+        flux_err = (uu.Magnitude(mag - mag_err)).physical - flux
 
         chiq_elem = (flux - flux_mean[:, None]) / flux_err
         chiq_const = np.nansum(chiq_elem * chiq_elem, axis=1)
