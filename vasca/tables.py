@@ -190,7 +190,7 @@ class TableCollection(object):
                         # Setup column fits format see
                         # https://heasarc.gsfc.nasa.gov/docs/software/fitsio/quick/node10.html
                         # https://docs.astropy.org/en/stable/io/fits/usage/unfamiliar.html
-                        col_for = "PE()"
+                        col_for = "PD()"
                         if "int" in coltype:
                             col_for = "K"
                         elif "float" in coltype:

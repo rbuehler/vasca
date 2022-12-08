@@ -242,6 +242,9 @@ class BaseField(TableCollection):
             "ul": list(),
             "time_bin_start": list(),
             "time_bin_size": list(),
+            "ra": list(),
+            "dec": list(),
+            "pos_err": list(),
         }
 
         # Loop over sources and add them to dictionary
@@ -255,12 +258,14 @@ class BaseField(TableCollection):
             # Add magnitudes and errors, array has length of Nr of visits.
             # Values is 0, except for detections.
             vis_idxs = self.tt_visits.loc_indices["vis_id", tt_det["vis_id"]]
-            np_mag = np.zeros(nr_vis)
-            np_mag[vis_idxs] = tt_det["mag"]
-            tdata["mag"].append(np_mag.tolist())
-            np_mag_err = np.zeros(nr_vis)
-            np_mag_err[vis_idxs] = tt_det["mag_err"]
-            tdata["mag_err"].append(np_mag_err.tolist())
+
+            det_vars = ["mag", "mag_err", "ra", "dec", "pos_err"]
+
+            for det_var in det_vars:
+                np_var = np.zeros(nr_vis) - 1
+                np_var[vis_idxs] = tt_det[det_var]
+                tdata[det_var].append(np_var.tolist())
+
             tdata["time_bin_start"].append(
                 np.array(self.tt_visits["time_bin_start"]).tolist()
             )
