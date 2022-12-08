@@ -323,6 +323,8 @@ class BaseField(TableCollection):
 
         # Calculate variability parameters
         mag_mean = np.nanmean(mag, axis=1)
+        mag_err_mean = np.nanmean(mag_err, axis=1)
+        mag_var = np.nanvar(mag, ddof=1, axis=1)
 
         # Calculate reduced chisquared based on flux
         flux = uu.Magnitude(mag).physical
@@ -356,6 +358,8 @@ class BaseField(TableCollection):
 
         self.tt_sources["nr_uls"][fd_src_idx] = nr_uls
         self.tt_sources["mag_mean"][fd_src_idx] = mag_mean
+        self.tt_sources["mag_err_mean"][fd_src_idx] = mag_err_mean
+        self.tt_sources["mag_var"][fd_src_idx] = mag_var
         self.tt_sources["flux_cpval"][fd_src_idx] = flux_cpval
         self.tt_sources["flux_rchiq"][fd_src_idx] = rchiq_const
         self.tt_sources["mag_dmax"][fd_src_idx] = dmag
