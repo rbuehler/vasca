@@ -509,7 +509,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
-            var_plt["flux_cpval"] = {"logx": False, "range": [-0.01, 1.01]}
+            var_plt["flux_cpval"] = {}
             var_plt["mag_mean"] = {}
             var_plt["mag_dmax"] = {}
             var_plt["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
