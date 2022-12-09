@@ -287,13 +287,13 @@ class BaseField(TableCollection):
         tdata["time_bin_size"] = np.array(tdata["time_bin_size"], dtype=np.object_)
 
         self.add_table(tdata, "base_field:ta_sources_lc")
-        self.set_var_stats()
+        self.set_src_stats()
 
     # Calculation is done on a field level for easy numpy paralleization,
     # as this calculation is computationally intensive.
-    def set_var_stats(self):
+    def set_src_stats(self):
         """
-        Calculates source variability parameters and stores them
+        Calculates source parameters from detections and stores them
         in the source table (tt_source).
 
         Returns
@@ -310,32 +310,34 @@ class BaseField(TableCollection):
             )
 
         # Get lightcurve as numpy arrays to calculate stats
-        mag = np.array((self.ta_sources_lc["mag"].data).tolist())
-        mag_err = np.array((self.ta_sources_lc["mag_err"].data).tolist())
-        mag_ul = np.array((self.ta_sources_lc["ul"].data).tolist())
+        lc_vars = ["mag", "mag_err", "ul", "ra", "dec", "pos_err"]
+        lc = dict()
+        for var in lc_vars:
+            lc[var] = np.array((self.ta_sources_lc[var].data).tolist())
 
-        # Ignore entries with no magniture or valid error
-        # Included for safety, should not be needed with reasonable pre-cuts
-        mask_mag = mag < 1e-7
-        mask_mag_err = mag_err < 1e-7
-        mask = mask_mag + mask_mag_err
-        if np.any(mask_mag_err != mask_mag):
-            logger.warning("Invalid values encountered in magnitudes/errors")
-
-        mag[mask] = np.nan
-        mag_err[mask] = np.nan
-        mag_ul[~mask_mag] = np.nan
+        # Check that variables are in good range for safety.
+        # Should not be needed with reasonable pre-cuts
+        # mask entires with no meassurement with nan
+        mask = lc["mag"] < 1e-7
+        mask_mag_err = lc["mag_err"] < 1e-7
+        mask_pos_err = lc["pos_err"] < 1e-9
+        if np.any(mask_mag_err != mask) or np.any(mask_pos_err != mask):
+            logger.warning("Invalid values encountered in 'ta_source_lc'")
+        for var in lc_vars:
+            if var == "ul":
+                lc["ul"][~mask] = np.nan
+            else:
+                lc[var][mask] = np.nan
 
         # Calculate variability parameters
-        mag_mean = np.nanmean(mag, axis=1)
-        mag_err_mean = np.nanmean(mag_err, axis=1)
-        mag_var = np.nanvar(mag, ddof=1, axis=1)
+        mag_mean = np.nanmean(lc["mag"], axis=1)
+        mag_err_mean = np.nanmean(lc["mag_err"], axis=1)
+        mag_var = np.nanvar(lc["mag"], ddof=1, axis=1)
 
         # Calculate reduced chisquared based on flux
-        flux = uu.Magnitude(mag).physical
+        flux = uu.Magnitude(lc["mag"]).physical
         flux_mean = np.nanmean(flux, axis=1)
-        flux_err = (uu.Magnitude(mag - mag_err)).physical - flux
-
+        flux_err = (uu.Magnitude(lc["mag"] - lc["mag_err"])).physical - flux
         chiq_elem = (flux - flux_mean[:, None]) / flux_err
         chiq_const = np.nansum(chiq_elem * chiq_elem, axis=1)
         ndf = (~mask).sum(axis=1) - 1
@@ -343,24 +345,29 @@ class BaseField(TableCollection):
         flux_cpval = chi2.sf(chiq_const, ndf)
 
         # Get the maximum flux variation from the mean
-        dmag_max = np.abs(np.nanmax(mag, axis=1) - mag_mean)
-        dmag_min = np.abs(np.nanmin(mag, axis=1) - mag_mean)
+        dmag_max = np.abs(np.nanmax(lc["mag"], axis=1) - mag_mean)
+        dmag_min = np.abs(np.nanmin(lc["mag"], axis=1) - mag_mean)
         dmag = (dmag_max >= dmag_min) * dmag_max + (dmag_max < dmag_min) * dmag_min
 
         # Get maximum significance of flux variation compared to mean
-        dmag_max_sig = np.nanmax(np.abs((mag - mag_mean[:, None]) / mag_err), axis=1)
+        dmag_max_sig = np.nanmax(
+            np.abs((lc["mag"] - mag_mean[:, None]) / lc["mag_err"]), axis=1
+        )
 
         # Nr of upper limits below the mean flux (in magnitudes greater)
-        nr_ulmean = (mag_mean[:, None] < mag_ul).sum(axis=1)
-        nr_uls = mask_mag.sum(axis=1)
-
+        nr_ulmean = (mag_mean[:, None] < lc["ul"]).sum(axis=1)
+        nr_uls = mask.sum(axis=1)
         ul_weight = nr_ulmean / np.sqrt(nr_uls + (nr_uls == 0) * 1e-6)
+
+        # Get pos_err weighted average position
+        weight_sum = np.nansum(1.0 / lc["pos_err"], axis=1)
+        ra_av = np.nansum(lc["ra"] / lc["pos_err"], axis=1) / weight_sum
+        dec_av = np.nansum(lc["dec"] / lc["pos_err"], axis=1) / weight_sum
 
         # Write them into tt_sources
         fd_src_ids = self.ta_sources_lc["fd_src_id"]
         self.tt_sources.add_index("fd_src_id")
         fd_src_idx = self.tt_sources.loc_indices["fd_src_id", fd_src_ids]
-
         self.tt_sources["nr_uls"][fd_src_idx] = nr_uls
         self.tt_sources["mag_mean"][fd_src_idx] = mag_mean
         self.tt_sources["mag_err_mean"][fd_src_idx] = mag_err_mean
@@ -370,6 +377,8 @@ class BaseField(TableCollection):
         self.tt_sources["mag_dmax"][fd_src_idx] = dmag
         self.tt_sources["mag_dmax_sig"][fd_src_idx] = dmag_max_sig
         self.tt_sources["ul_weight"][fd_src_idx] = ul_weight
+        self.tt_sources["ra"][fd_src_idx] = ra_av
+        self.tt_sources["dec"][fd_src_idx] = dec_av
 
     def remove_double_visit_detections(self):
         """
