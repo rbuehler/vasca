@@ -59,10 +59,10 @@ observations:
             table    : "tt_sources"
             sel_type : "or"
             range:        
-                flux_rchiq     : [4.0,.inf]
-    #            mag_dmax      : [0.2,.inf]
-                mag_dmax_sig  : [5.0,.inf]
-                ul_weight    : [2.0,.inf]
+                flux_cpval     : [0.0,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
+               # mag_dmax      : [0.2,.inf]
+               # mag_dmax_sig  : [6.0,.inf]
+               # ul_weight    : [3.0,.inf]
         det_association : 
             table     : "tt_detections"
             ref_table : "tt_sources"

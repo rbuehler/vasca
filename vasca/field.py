@@ -10,7 +10,7 @@ from datetime import datetime
 import warnings
 
 import numpy as np
-from scipy.stats import chi2
+from scipy.stats import chi2, norm
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
@@ -343,6 +343,7 @@ class BaseField(TableCollection):
         ndf = (~mask).sum(axis=1) - 1
         rchiq_const = chiq_const / ndf
         flux_cpval = chi2.sf(chiq_const, ndf)
+        # var_sig = norm.isf(flux_cpval / 2.0)  # Convert to gaussian sigma equivalent
 
         # Get the maximum flux variation from the mean
         dmag_max = np.abs(np.nanmax(lc["mag"], axis=1) - mag_mean)
