@@ -509,14 +509,12 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
-            var_plt["mag_var"] = {}
+            var_plt["flux_cpval"] = {"logx": False, "range": [-0.01, 1.01]}
             var_plt["mag_mean"] = {}
-            var_plt["flux_rchiq"] = {"logx": True, "range": [-3, 3]}
             var_plt["mag_dmax"] = {}
             var_plt["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
-            var_plt["flux_cpval"] = {"logx": False, "range": [-0.1, 1.1]}
             var_plt["ul_weight"] = {"bins": 100}
-            fig, axs = plt.subplots(2, 4, figsize=fig_size, squeeze=False)
+            fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
 
@@ -545,27 +543,27 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             }
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
-            var_plt[("flux_rchiq", "mag_dmax_sig")] = {"xscale": "log"}
-            var_plt[("flux_rchiq", "ul_weight")] = {"xscale": "log"}
-            var_plt[("flux_rchiq", "flux_cpval")] = {
+            var_plt[("flux_cpval", "mag_mean")] = {
+                "xscale": "log",
+                "xlim": [1e-23, 1.0],
+                "invert_yaxis": True,
+                "ylim": [17.5, 24.5],
+            }
+            var_plt[("flux_cpval", "mag_dmax_sig")] = {
+                "xscale": "log",
+                "xlim": [1e-23, 1.0],
+                "ylim": [0, 15],
+            }
+            var_plt[("flux_cpval", "ul_weight")] = {
+                "xscale": "log",
+                "xlim": [1e-23, 1.0],
+            }
+            var_plt[("flux_cpval", "flux_rchiq")] = {
                 "xscale": "log",
                 "yscale": "log",
-                "ylim": [1e-5, 2],
-            }
-            var_plt[("mag_var", "mag_mean")] = {
-                "invert_yaxis": True,
-                "ylim": [17.5, 24.5],
+                "xlim": [1e-23, 2],
             }
             var_plt[("ul_weight", "mag_mean")] = {
-                "invert_yaxis": True,
-                "ylim": [17.5, 24.5],
-            }
-            var_plt[("flux_rchiq", "mag_mean")] = {
-                "xscale": "log",
-                "invert_yaxis": True,
-                "ylim": [17.5, 24.5],
-            }
-            var_plt[("flux_cpval", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
@@ -573,7 +571,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            fig, axs = plt.subplots(2, 4, figsize=fig_size, squeeze=False)
+            fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
     else:
