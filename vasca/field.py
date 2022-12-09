@@ -363,6 +363,10 @@ class BaseField(TableCollection):
         weight_sum = np.nansum(1.0 / lc["pos_err"], axis=1)
         ra_av = np.nansum(lc["ra"] / lc["pos_err"], axis=1) / weight_sum
         dec_av = np.nansum(lc["dec"] / lc["pos_err"], axis=1) / weight_sum
+        ra_var = np.nanvar(lc["ra"], ddof=1, axis=1)
+        dec_var = np.nanvar(lc["dec"], ddof=1, axis=1)
+        pos_var = ra_var + dec_var
+        pos_err_mean = np.nanmean(lc["pos_err"], axis=1)
 
         # Write them into tt_sources
         fd_src_ids = self.ta_sources_lc["fd_src_id"]
@@ -379,6 +383,8 @@ class BaseField(TableCollection):
         self.tt_sources["ul_weight"][fd_src_idx] = ul_weight
         self.tt_sources["ra"][fd_src_idx] = ra_av
         self.tt_sources["dec"][fd_src_idx] = dec_av
+        self.tt_sources["pos_err_mean"][fd_src_idx] = pos_err_mean
+        self.tt_sources["pos_var"][fd_src_idx] = pos_var
 
     def remove_double_visit_detections(self):
         """
