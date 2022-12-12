@@ -8,8 +8,8 @@ general:
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                        # Will be written into "out_dir", if ""default" a default name will be created 
     nr_cpus         : 2                                 # Number of CPUs to use. If "null" all available are used.
-    save_dets       : "selected"                        # Store field detections into region file, options are ["selected","all","none"]
-#    run_obs         :
+    save_dets       : false                            # Store selected field detections into region file
+    save_ref_srcs   : false
     
 ressources:                      
     load_method      : "MAST_REMOTE"     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]

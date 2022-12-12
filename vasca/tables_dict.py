@@ -12,7 +12,7 @@ import numpy as np
 base_field = {
     "tt_field": {
         "names": ["field_id", "name", "ra", "dec", "observatory", "obs_filter", "sel"],
-        "dtype": ["S24", "S24", "float64", "float64", "S24", "S24", "bool"],
+        "dtype": ["S22", "S22", "float64", "float64", "S22", "S22", "bool"],
         "units": ["1", "", "degree", "degree", "", "", "1"],
         "defaults": [-1, "none", -1.0, -1.0, "none", "none", True],
         "descriptions": [
@@ -137,21 +137,21 @@ base_field = {
             "sel",
         ],
         "dtype": [
-            "int64",
+            "int32",
             "float64",
             "float64",
-            "float64",
-            "float64",
-            "int64",
-            "int64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
+            "float32",
+            "float32",
+            "int32",
+            "int32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
             "bool",
         ],
         "units": [
@@ -443,6 +443,7 @@ region = {
             "time_bin_size_sum",
             "time_start",
             "time_stop",
+            "rg_field_id",
         ],
         "dtype": [
             *base_field["tt_field"]["dtype"],
@@ -451,9 +452,18 @@ region = {
             "float64",
             "float64",
             "float64",
+            "int32",
         ],
-        "units": [*base_field["tt_field"]["units"], "degree", "1", "s", "d", "d"],
-        "defaults": [*base_field["tt_field"]["defaults"], -1.0, -1, -1.0, -1.0, -1.0],
+        "units": [*base_field["tt_field"]["units"], "degree", "1", "s", "d", "d", "1"],
+        "defaults": [
+            *base_field["tt_field"]["defaults"],
+            -1.0,
+            -1,
+            -1.0,
+            -1.0,
+            -1.0,
+            -1,
+        ],
         "descriptions": [
             *base_field["tt_field"]["descriptions"],
             "Field radius or box size (depending on the observatory)",
@@ -461,12 +471,13 @@ region = {
             "Total exposure time",
             "Start time of first exposure",
             "End time of last exposure",
+            "Region field ID Nr.",
         ],
         "meta": {**base_field["tt_field"]["meta"]},
     },
     "tt_visits": {
-        "names": [*base_field["tt_visits"]["names"], "field_id"],
-        "dtype": [*base_field["tt_visits"]["dtype"], "S24"],
+        "names": [*base_field["tt_visits"]["names"], "rg_field_id"],
+        "dtype": [*base_field["tt_visits"]["dtype"], "int32"],
         "units": [*base_field["tt_visits"]["units"], "1"],
         "defaults": [*base_field["tt_visits"]["defaults"], -1],
         "descriptions": [
@@ -489,8 +500,8 @@ region = {
         },
     },
     "tt_ref_sources": {
-        "names": [*base_field["tt_ref_sources"]["names"], "field_id"],
-        "dtype": [*base_field["tt_ref_sources"]["dtype"], "S24"],
+        "names": [*base_field["tt_ref_sources"]["names"], "rg_field_id"],
+        "dtype": [*base_field["tt_ref_sources"]["dtype"], "int32"],
         "units": [*base_field["tt_ref_sources"]["units"], "1"],
         "defaults": [*base_field["tt_ref_sources"]["defaults"], -1],
         "descriptions": [
@@ -500,8 +511,8 @@ region = {
         "meta": {**base_field["tt_ref_sources"]["meta"]},
     },
     "tt_detections": {
-        "names": [*base_field["tt_detections"]["names"], "field_id", "rg_src_id"],
-        "dtype": [*base_field["tt_detections"]["dtype"], "S24", "int64"],
+        "names": [*base_field["tt_detections"]["names"], "rg_field_id", "rg_src_id"],
+        "dtype": [*base_field["tt_detections"]["dtype"], "int32", "int64"],
         "units": [*base_field["tt_detections"]["units"], "1", "1"],
         "defaults": [*base_field["tt_detections"]["defaults"], -1, -1],
         "descriptions": [
@@ -512,8 +523,8 @@ region = {
         "meta": {**base_field["tt_detections"]["meta"]},
     },
     "tt_sources": {
-        "names": [*base_field["tt_sources"]["names"], "field_id", "rg_src_id"],
-        "dtype": [*base_field["tt_sources"]["dtype"], "S24", "int64"],
+        "names": [*base_field["tt_sources"]["names"], "rg_field_id", "rg_src_id"],
+        "dtype": [*base_field["tt_sources"]["dtype"], "int32", "int64"],
         "units": [*base_field["tt_sources"]["units"], "1", "1"],
         "defaults": [*base_field["tt_sources"]["defaults"], -1, -1],
         "descriptions": [
@@ -524,8 +535,8 @@ region = {
         "meta": {**base_field["tt_sources"]["meta"]},
     },
     "ta_sources_lc": {
-        "names": [*base_field["ta_sources_lc"]["names"], "field_id", "rg_src_id"],
-        "dtype": [*base_field["ta_sources_lc"]["dtype"], "S24", "int64"],
+        "names": [*base_field["ta_sources_lc"]["names"], "rg_field_id", "rg_src_id"],
+        "dtype": [*base_field["ta_sources_lc"]["dtype"], "int32", "int64"],
         "units": [*base_field["ta_sources_lc"]["units"], "1", "1"],
         "defaults": [*base_field["tt_sources"]["defaults"], -1, -1],
         "descriptions": [

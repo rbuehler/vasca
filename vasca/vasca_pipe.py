@@ -159,15 +159,15 @@ def run_field(obs_nr, field, vasca_cfg):
 # Best wait till astropy implements Multiindex (see below)
 def add_rg_src_id(tt_ref, tt_add):
     """
-    Helper function, adds "rg_src_id" based on "field_id" and "fd_src_id"
+    Helper function, adds "rg_src_id" based on "rg_field_id" and "fd_src_id"
     from the passed reference table.
 
     Parameters
     ----------
     tt_ref : astropy.Table
-        Reference table has to contain "rg_src_id", "field_id" and "fd_src_id"
+        Reference table has to contain "rg_src_id", "rg_field_id" and "fd_src_id"
     tt_add : astropy.Table
-        Table to add "rg_src_id", has to contain "rg_src_id", "field_id" and "fd_src_id"
+        Table to add "rg_src_id", has to contain "rg_src_id", "rg_field_id" and "fd_src_id"
 
     Returns
     -------
@@ -179,12 +179,12 @@ def add_rg_src_id(tt_ref, tt_add):
     # use pandas as this is not yet in astropy, see
     # https://github.com/astropy/astropy/issues/13176
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html
-    pd_ref = tt_ref["field_id", "fd_src_id"].to_pandas()
-    pd_add = tt_add["field_id", "fd_src_id"].to_pandas()
+    pd_ref = tt_ref["rg_field_id", "fd_src_id"].to_pandas()
+    pd_add = tt_add["rg_field_id", "fd_src_id"].to_pandas()
     ridx = pd.MultiIndex.from_frame(pd_ref)
 
     for aidx in range(0, len(pd_add)):
-        loc_pair = (pd_add["field_id"][aidx], pd_add["fd_src_id"][aidx])
+        loc_pair = (pd_add["rg_field_id"][aidx], pd_add["fd_src_id"][aidx])
         idx = ridx.get_loc(loc_pair)
         tt_add[aidx]["rg_src_id"] = tt_ref[idx]["rg_src_id"]
 
@@ -221,6 +221,7 @@ def run(vasca_cfg):
     # Prepare fields to run on
     fd_pars = list()
     obs_nr = 0
+    rg.tt_fields.add_index("field_id")
     for obs in vasca_cfg["observations"]:
         for field_id in obs["obs_field_ids"]:
             field_id = get_region_field_id(
@@ -228,7 +229,9 @@ def run(vasca_cfg):
                 observaory=obs["observatory"],
                 obs_filter=obs["obs_filter"],
             )
-            fd_pars.append([obs_nr, rg.fields[field_id]])
+            fd = rg.tt_fields.loc["field_id", field_id]
+            rg_field_id = fd["rg_field_id"]
+            fd_pars.append([obs_nr, rg.fields[rg_field_id]])
         obs_nr += 1
 
     # Run each field in a separate process in parallel
@@ -241,27 +244,29 @@ def run(vasca_cfg):
 
     # update region fields
     for field in pool_return:
-        rg.fields[field.field_id] = field
+        fd = rg.tt_fields.loc["field_id", field.field_id]
+        rg_field_id = fd["rg_field_id"]
+        rg.fields[rg_field_id] = field
 
     # Add field tables to region
-    rg.add_table_from_fields("tt_ref_sources")
     rg.add_table_from_fields("tt_sources")
-    rg.add_table_from_fields("ta_sources_lc")
 
     # Add region source ids, making sure they are in synch among tables
     rg_src_ids = range(0, len(rg.tt_sources))
     rg.tt_sources["rg_src_id"][:] = rg_src_ids
+
+    # Store light curves
+    rg.add_table_from_fields("ta_sources_lc")
     add_rg_src_id(rg.tt_sources, rg.ta_sources_lc)
 
+    # Store reference sources
+    if vasca_cfg["general"]["save_ref_srcs"]:
+        rg.add_table_from_fields("tt_ref_sources")
+
     # Add detections table too, if asked for
-    if vasca_cfg["general"]["save_dets"] == "selected":
+    if vasca_cfg["general"]["save_dets"]:
         rg.add_table_from_fields("tt_detections", only_selected=True)
         add_rg_src_id(rg.tt_sources, rg.tt_detections)
-    elif vasca_cfg["general"]["save_dets"] == "all":
-        rg.add_table_from_fields("tt_detections", only_selected=False)
-        add_rg_src_id(rg.tt_sources, rg.tt_detections)
-    else:
-        logger.info("Not saving detection table into region")
 
     # Write out regions
     rg.write_to_fits(

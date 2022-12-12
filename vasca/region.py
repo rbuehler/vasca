@@ -69,6 +69,7 @@ class Region(TableCollection):
             if obs["observatory"] == "GALEX":
 
                 # Loop over fields and store info
+                rg_field_id = 0
                 for gfield_id in obs["obs_field_ids"]:
 
                     gf = GALEXField.load(
@@ -84,6 +85,7 @@ class Region(TableCollection):
                     field_info["time_bin_size_sum"] = gf.time_bin_size_sum
                     field_info["time_start"] = gf.time_start.mjd
                     field_info["time_stop"] = gf.time_stop.mjd
+                    field_info["rg_field_id"] = rg_field_id
                     rg.tt_fields.add_row(field_info)
 
                     rg_fd_id = get_region_field_id(
@@ -92,9 +94,10 @@ class Region(TableCollection):
                         obs_filter=obs["obs_filter"],
                     )
                     if vasca_cfg["ressources"]["load_products"]:
-                        rg.fields[rg_fd_id] = gf
+                        rg.fields[rg_field_id] = gf
                     else:
-                        rg.fields[rg_fd_id] = None
+                        rg.fields[rg_field_id] = None
+                    rg_field_id += 1
             else:
                 logger.waring(
                     "Selected observatory `" + obs["observatory"] + "` not supported"
@@ -128,7 +131,7 @@ class Region(TableCollection):
 
         # Loop over fields and add field_id column and field id table
         ll_tt = []  # List of "table_name" tables for all fields
-        for field_id, field in self.fields.items():
+        for rg_field_id, field in self.fields.items():
             tt = field.__dict__[table_name]
 
             # Apply row selection
@@ -136,7 +139,7 @@ class Region(TableCollection):
             if only_selected:
                 sel = tt["sel"]
             tt_sel = tt[sel]
-            tt_sel["field_id"] = len(tt_sel) * [field_id]
+            tt_sel["rg_field_id"] = len(tt_sel) * [rg_field_id]
             ll_tt.append(tt_sel)
 
         # colnames = dd_vasca_tables["region"][table_name]["names"]
@@ -219,7 +222,7 @@ class Region(TableCollection):
         if load_fields:
             for ff in self.tt_fields:
                 fd = BaseField()
-                fd.load_from_fits(
+                fd.load_from_fits(  # FIX HERE TODO
                     region_path + "/fields/field_" + ff["field_id"] + ".fits"
                 )
                 self.fields[ff["field_id"]] = fd

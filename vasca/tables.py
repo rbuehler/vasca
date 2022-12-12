@@ -191,6 +191,15 @@ class TableCollection(object):
                         # https://heasarc.gsfc.nasa.gov/docs/software/fitsio/quick/node10.html
                         # https://docs.astropy.org/en/stable/io/fits/usage/unfamiliar.html
                         col_for = "PD()"
+                        if (
+                            colname == "mag"
+                            or colname == "mag_err"
+                            or colname == "ul"
+                            or colname == "pos_err"
+                            or colname == "time_bin_size"
+                        ):
+                            col_for = "PE()"
+
                         if "int" in coltype:
                             col_for = "K"
                         elif "float" in coltype:
