@@ -159,15 +159,15 @@ def run_field(obs_nr, field, vasca_cfg):
 # Best wait till astropy implements Multiindex (see below)
 def add_rg_src_id(tt_ref, tt_add):
     """
-    Helper function, adds "rg_src_id" based on "rg_field_id" and "fd_src_id"
+    Helper function, adds "rg_src_id" based on "rg_fd_id" and "fd_src_id"
     from the passed reference table.
 
     Parameters
     ----------
     tt_ref : astropy.Table
-        Reference table has to contain "rg_src_id", "rg_field_id" and "fd_src_id"
+        Reference table has to contain "rg_src_id", "rg_fd_id" and "fd_src_id"
     tt_add : astropy.Table
-        Table to add "rg_src_id", has to contain "rg_src_id", "rg_field_id" and "fd_src_id"
+        Table to add "rg_src_id", has to contain "rg_src_id", "rg_fd_id" and "fd_src_id"
 
     Returns
     -------
@@ -179,12 +179,12 @@ def add_rg_src_id(tt_ref, tt_add):
     # use pandas as this is not yet in astropy, see
     # https://github.com/astropy/astropy/issues/13176
     # https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html
-    pd_ref = tt_ref["rg_field_id", "fd_src_id"].to_pandas()
-    pd_add = tt_add["rg_field_id", "fd_src_id"].to_pandas()
+    pd_ref = tt_ref["rg_fd_id", "fd_src_id"].to_pandas()
+    pd_add = tt_add["rg_fd_id", "fd_src_id"].to_pandas()
     ridx = pd.MultiIndex.from_frame(pd_ref)
 
     for aidx in range(0, len(pd_add)):
-        loc_pair = (pd_add["rg_field_id"][aidx], pd_add["fd_src_id"][aidx])
+        loc_pair = (pd_add["rg_fd_id"][aidx], pd_add["fd_src_id"][aidx])
         idx = ridx.get_loc(loc_pair)
         tt_add[aidx]["rg_src_id"] = tt_ref[idx]["rg_src_id"]
 
@@ -230,8 +230,8 @@ def run(vasca_cfg):
                 obs_filter=obs["obs_filter"],
             )
             fd = rg.tt_fields.loc["field_id", field_id]
-            rg_field_id = fd["rg_field_id"]
-            fd_pars.append([obs_nr, rg.fields[rg_field_id]])
+            rg_fd_id = fd["rg_fd_id"]
+            fd_pars.append([obs_nr, rg.fields[rg_fd_id]])
         obs_nr += 1
 
     # Run each field in a separate process in parallel
@@ -245,8 +245,8 @@ def run(vasca_cfg):
     # update region fields
     for field in pool_return:
         fd = rg.tt_fields.loc["field_id", field.field_id]
-        rg_field_id = fd["rg_field_id"]
-        rg.fields[rg_field_id] = field
+        rg_fd_id = fd["rg_fd_id"]
+        rg.fields[rg_fd_id] = field
 
     # Add field tables to region
     rg.add_table_from_fields("tt_sources")

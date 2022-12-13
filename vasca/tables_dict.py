@@ -3,6 +3,23 @@
 """
 Defines dictionary for the tables used by vasca.tables.TableCollection
 """
+# **dtype guidelines**
+#
+# >np.finfo(np.float32)
+# >finfo(resolution=1e-06, min=-3.4028235e+38, max=3.4028235e+38, dtype=float32)
+#
+# >np.finfo(np.float64)
+# >ffinfo(resolution=1e-15, min=-1.7976931348623157e+308, max=1.7976931348623157e+308, dtype=float64)
+#
+# >np.iinfo(np.int32)
+# >info(min=-2147483648, max=2147483647, dtype=int32)
+#
+# >np.iinfo(np.int64)
+# >iinfo(min=-9223372036854775808, max=9223372036854775807, dtype=int64)
+#
+# Based on the above, we need float64 for MJD, ra, dec and int 64 for external ID numbers
+# For enverything else float32 and int32 should be sufficient
+# (e.g. for all magnitude/flux variables and errors)
 
 import numpy as np
 
@@ -54,14 +71,14 @@ base_field = {
         ],
         "dtype": [
             "int64",
+            "int32",
             "int64",
-            "int64",
             "float64",
             "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
             "bool",
         ],
         "units": [
@@ -97,10 +114,10 @@ base_field = {
             "int64",
             "float64",
             "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
             "bool",
         ],
         "units": ["1", "degree", "degree", "degree", "mag", "mag", "1", "1"],
@@ -214,10 +231,10 @@ base_field = {
         "names": ["time_start", "time_delta", "mag", "mag_err", "ul", "sel"],
         "dtype": [
             "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
             "bool",
         ],
         "units": ["d", "s", "mag", "mag", "mag", "1"],
@@ -256,7 +273,7 @@ base_field = {
             np.object_,
         ],
         "units": ["1", "mag", "mag", "mag", "d", "s", "deg", "deg", "deg"],
-        "defaults": [
+        "defaults": [  # For dtype accuracies when saving, see tables.write_to_fits()
             -1,
             np.array([-1.0], dtype=np.object_),
             np.array([-1.0], dtype=np.object_),
@@ -320,15 +337,15 @@ galex_field = {
         ],
         "dtype": [
             *base_field["tt_detections"]["dtype"],
-            "float64",
+            "float32",
             "int64",
-            "float64",
-            "int64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
+            "float32",
+            "int32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
         ],
         "units": [
             *base_field["tt_detections"]["units"],
@@ -383,15 +400,15 @@ galex_field = {
         ],
         "dtype": [
             *base_field["tt_ref_sources"]["dtype"],
-            "float64",
+            "float32",
             "int64",
-            "float64",
-            "int64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
-            "float64",
+            "float32",
+            "int32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "float32",
         ],
         "units": [
             *base_field["tt_ref_sources"]["units"],
@@ -443,13 +460,13 @@ region = {
             "time_bin_size_sum",
             "time_start",
             "time_stop",
-            "rg_field_id",
+            "rg_fd_id",
         ],
         "dtype": [
             *base_field["tt_field"]["dtype"],
-            "float64",
-            "int64",
-            "float64",
+            "float32",
+            "int32",
+            "float32",
             "float64",
             "float64",
             "int32",
@@ -476,7 +493,7 @@ region = {
         "meta": {**base_field["tt_field"]["meta"]},
     },
     "tt_visits": {
-        "names": [*base_field["tt_visits"]["names"], "rg_field_id"],
+        "names": [*base_field["tt_visits"]["names"], "rg_fd_id"],
         "dtype": [*base_field["tt_visits"]["dtype"], "int32"],
         "units": [*base_field["tt_visits"]["units"], "1"],
         "defaults": [*base_field["tt_visits"]["defaults"], -1],
@@ -500,7 +517,7 @@ region = {
         },
     },
     "tt_ref_sources": {
-        "names": [*base_field["tt_ref_sources"]["names"], "rg_field_id"],
+        "names": [*base_field["tt_ref_sources"]["names"], "rg_fd_id"],
         "dtype": [*base_field["tt_ref_sources"]["dtype"], "int32"],
         "units": [*base_field["tt_ref_sources"]["units"], "1"],
         "defaults": [*base_field["tt_ref_sources"]["defaults"], -1],
@@ -511,8 +528,8 @@ region = {
         "meta": {**base_field["tt_ref_sources"]["meta"]},
     },
     "tt_detections": {
-        "names": [*base_field["tt_detections"]["names"], "rg_field_id", "rg_src_id"],
-        "dtype": [*base_field["tt_detections"]["dtype"], "int32", "int64"],
+        "names": [*base_field["tt_detections"]["names"], "rg_fd_id", "rg_src_id"],
+        "dtype": [*base_field["tt_detections"]["dtype"], "int32", "int32"],
         "units": [*base_field["tt_detections"]["units"], "1", "1"],
         "defaults": [*base_field["tt_detections"]["defaults"], -1, -1],
         "descriptions": [
@@ -523,8 +540,8 @@ region = {
         "meta": {**base_field["tt_detections"]["meta"]},
     },
     "tt_sources": {
-        "names": [*base_field["tt_sources"]["names"], "rg_field_id", "rg_src_id"],
-        "dtype": [*base_field["tt_sources"]["dtype"], "int32", "int64"],
+        "names": [*base_field["tt_sources"]["names"], "rg_fd_id", "rg_src_id"],
+        "dtype": [*base_field["tt_sources"]["dtype"], "int32", "int32"],
         "units": [*base_field["tt_sources"]["units"], "1", "1"],
         "defaults": [*base_field["tt_sources"]["defaults"], -1, -1],
         "descriptions": [
@@ -535,8 +552,8 @@ region = {
         "meta": {**base_field["tt_sources"]["meta"]},
     },
     "ta_sources_lc": {
-        "names": [*base_field["ta_sources_lc"]["names"], "rg_field_id", "rg_src_id"],
-        "dtype": [*base_field["ta_sources_lc"]["dtype"], "int32", "int64"],
+        "names": [*base_field["ta_sources_lc"]["names"], "rg_fd_id", "rg_src_id"],
+        "dtype": [*base_field["ta_sources_lc"]["dtype"], "int32", "int32"],
         "units": [*base_field["ta_sources_lc"]["units"], "1", "1"],
         "defaults": [*base_field["tt_sources"]["defaults"], -1, -1],
         "descriptions": [
