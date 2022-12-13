@@ -190,6 +190,7 @@ class TableCollection(object):
                         # Setup column fits format see
                         # https://heasarc.gsfc.nasa.gov/docs/software/fitsio/quick/node10.html
                         # https://docs.astropy.org/en/stable/io/fits/usage/unfamiliar.html
+                        # TODO: Make this more general and read type from tables_dict
                         col_for = "PD()"
                         if (
                             colname == "mag"
@@ -291,7 +292,7 @@ class TableCollection(object):
                 # TODO make loading more general.
                 # Expect astropy handling of fits vector
                 # to simplify this in the future
-                if "field_id" in col_names:
+                if "rg_fd_id" in col_names:
                     self.add_table(ta_data, "region:" + ta_name)
                 else:
                     self.add_table(ta_data, "base_field:" + ta_name)
@@ -526,11 +527,11 @@ class TableCollection(object):
         for src_id in src_ids:
             src_lc = self.ta_sources_lc.loc[src_id]
             src_data = {
-                "time_start": np.array(src_lc["time_bin_start"]).astype(np.float64),
-                "time_delta": np.array(src_lc["time_bin_size"]).astype(np.float64),
-                "mag": np.array(src_lc["mag"]).astype(np.float64),
-                "mag_err": np.array(src_lc["mag_err"]).astype(np.float64),
-                "ul": np.array(src_lc["ul"]).astype(np.float64),
+                "time_start": np.array(src_lc["time_bin_start"]),
+                "time_delta": np.array(src_lc["time_bin_size"]),
+                "mag": np.array(src_lc["mag"]),
+                "mag_err": np.array(src_lc["mag_err"]),
+                "ul": np.array(src_lc["ul"]),
             }
             # Create and store table
             tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")

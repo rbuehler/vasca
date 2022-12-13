@@ -290,7 +290,7 @@ def plot_region_sky_gnomeview(
     if ps_kwargs is not None:
         plt_ps_kwargs.update(ps_kwargs)
 
-    tt_srcs = region.tt_sources.group_by("field_id")
+    tt_srcs = region.tt_sources.group_by("rg_fd_id")
     for tt in tt_srcs.groups:
         sel = tt["sel"]
         if not sel_srcs:
