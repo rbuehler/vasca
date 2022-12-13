@@ -138,8 +138,17 @@ def run_field(obs_nr, field, vasca_cfg):
 
     # Source selection
     field.select_rows(obs_cfg["selection"]["src_quality"], remove_unselected=True)
+
+    # Remove detections with no source association
     field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=False)
+
+    # Create light curve table
     field.set_light_curve(add_upper_limits=True)
+
+    # Calculate source variables from light curve
+    field.set_src_stats()
+
+    # Select variable sources
     field.select_rows(obs_cfg["selection"]["src_variability"], remove_unselected=False)
 
     # Write out field
