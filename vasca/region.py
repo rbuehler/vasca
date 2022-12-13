@@ -6,11 +6,12 @@ import healpy as hpy
 import numpy as np
 from astropy import units as uu
 from loguru import logger
+from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.field import BaseField, GALEXField
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import get_region_field_id
+from vasca.utils import table_to_array
 
 
 class Region(TableCollection):
@@ -221,3 +222,68 @@ class Region(TableCollection):
                     region_path + "/fields/field_" + ff["field_id"] + ".fits"
                 )
                 self.fields[ff["field_id"]] = fd
+
+
+# def cluster_srcs_meanshift(self, **ms_kw):
+#     """
+#     Apply _MeanShift clustering algorithm using to sources for overlapping fields.
+
+#     .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
+
+#     Parameters
+#     ----------
+#     ms_kw : dict, optional
+#         Keywords passed to the scikit MeanShift function. Note that the
+#         bandwidth is assumed to be in units of arc seconds.
+
+#     Returns
+#     -------
+#     int
+#         Number of detected clusters.
+#     """
+#     logger.info("Clustering sources with MeanShift")
+
+#     # Selection
+#     sel = self.tt_sources["sel"]
+
+#     # Get detection coordinates and run clustering
+#     coords = table_to_array(self.tt_sources[sel]["ra", "dec"])
+
+#     # Do bandwidth determination "by hand" to print it out and convert
+#     # bandwidth unit from arc seconds into degerees
+#     dd_ms = ms_kw
+#     if "bandwidth" not in ms_kw or ms_kw["bandwidth"] is None:
+#         logger.debug("Estimating bandwidth")
+#         dd_ms["bandwidth"] = estimate_bandwidth(coords, quantile=0.2, n_samples=500)
+#     else:
+#         dd_ms["bandwidth"] = (ms_kw["bandwidth"] * uu.arcsec).to(uu.deg).value
+
+#     logger.debug(f"MeanShift with parameters (bandwith in degrees): '{dd_ms}' ")
+#     ms = MeanShift(**dd_ms)
+
+#     ms.fit(coords)
+
+#     # Fill in data into field tables
+#     fd_src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+
+#     cluster_centers = ms.cluster_centers_
+#     nr_srcs = len(cluster_centers)
+#     srcs_data = {
+#         "fd_src_id": fd_src_ids,
+#         "ra": cluster_centers[:, 0],
+#         "dec": cluster_centers[:, 1],
+#         "nr_det": det_cts,
+#         "nr_uls": np.zeros(nr_srcs),
+#     }
+
+#     # Fill information into tables.
+#     self.add_table(srcs_data, "base_field:tt_sources")
+#     self.tt_sources.meta["CLUSTALG"] = "MeanShift"
+
+#     # Update fd_src_id entries
+#     self.tt_detections["fd_src_id"][sel] = ms.labels_
+
+#     # Fill light curve data into tables
+#     self.remove_double_visit_detections()
+
+#     return nr_srcs

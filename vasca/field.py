@@ -206,7 +206,6 @@ class BaseField(TableCollection):
 
     def set_light_curve(self, add_upper_limits=True):
         """
-        Helper function of cluster_meanshift().
         Adds detections information into ta_sources_lc for sources
         listed in self.tt_sources
 
@@ -287,7 +286,6 @@ class BaseField(TableCollection):
         tdata["time_bin_size"] = np.array(tdata["time_bin_size"], dtype=np.object_)
 
         self.add_table(tdata, "base_field:ta_sources_lc")
-        self.set_src_stats()
 
     # Calculation is done on a field level for easy numpy paralleization,
     # as this calculation is computationally intensive.
