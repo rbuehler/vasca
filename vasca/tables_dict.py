@@ -45,7 +45,7 @@ base_field = {
     },
     "tt_visits": {
         "names": ["vis_id", "time_bin_start", "time_bin_size", "sel"],
-        "dtype": ["int64", "float64", "float64", "bool"],
+        "dtype": ["int64", "float64", "float32", "bool"],
         "units": ["1", "d", "s", "1"],
         "defaults": [-1, -1.0, -1.0, True],
         "descriptions": [
