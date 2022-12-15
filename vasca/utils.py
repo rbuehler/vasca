@@ -11,6 +11,7 @@ from astropy import units as uu
 from astropy.coordinates import SkyCoord, search_around_sky
 from astropy.nddata import Cutout2D
 from astropy.time import Time
+import pandas as pd
 
 # Global variable liking observator+obsfilter to a field ID addon
 # The number of Id adon letter has to be three
@@ -289,3 +290,37 @@ def get_cutout_mask(tt_mcat, cutout_bounds, frame="icrs"):
         )
 
     return mask_cutout_ra * mask_cutout_dec
+
+
+# TODO: This funtion  could be more effcient, as it works none vectorized.
+# Best wait till astropy implements Multiindex (see below)
+def add_rg_src_id(tt_ref, tt_add):
+    """
+    Helper function, adds "rg_src_id" based on "rg_fd_id" and "fd_src_id"
+    from the passed reference table.
+
+    Parameters
+    ----------
+    tt_ref : astropy.Table
+        Reference table has to contain "rg_src_id", "rg_fd_id" and "fd_src_id"
+    tt_add : astropy.Table
+        Table to add "rg_src_id", has to contain "rg_src_id", "rg_fd_id" and "fd_src_id"
+
+    Returns
+    -------
+    None.
+
+    """
+
+    # Create mapping from fd_src_id and field_id to rg_src_id
+    # use pandas as this is not yet in astropy, see
+    # https://github.com/astropy/astropy/issues/13176
+    # https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html
+    pd_ref = tt_ref["rg_fd_id", "fd_src_id"].to_pandas()
+    pd_add = tt_add["rg_fd_id", "fd_src_id"].to_pandas()
+    ridx = pd.MultiIndex.from_frame(pd_ref)
+
+    for aidx in range(0, len(pd_add)):
+        loc_pair = (pd_add["rg_fd_id"][aidx], pd_add["fd_src_id"][aidx])
+        idx = ridx.get_loc(loc_pair)
+        tt_add[aidx]["rg_src_id"] = tt_ref[idx]["rg_src_id"]
