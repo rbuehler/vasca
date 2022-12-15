@@ -654,32 +654,83 @@ class TableCollection(object):
 
         id_name = "rg_src_id"
 
-        tt_det_grp = self.tt_detections.group_by(id_name)
-        tt_det_grp_idx = tt_det_grp.groups.indices
-        nr_det = tt_det_grp_idx[1:] - tt_det_grp_idx[0:-1]
-        src_ids = np.array(list(tt_det_grp.groups.keys[id_name]))
+        # tt_det_grp = self.tt_detections.group_by(id_name)
+        # tt_det_grp_idx = tt_det_grp.groups.indices
+        # nr_det = tt_det_grp_idx[1:] - tt_det_grp_idx[0:-1]
+        # src_ids = np.array(list(tt_det_grp.groups.keys[id_name]))
 
-        # Add flux and flux_err to table
-        tt_det_grp["flux"] = (np.array(tt_det_grp["mag"]) * uu.ABmag).physical
-        tt_det_grp["flux_err"] = (
-            (np.array(tt_det_grp["mag"]) - np.array(tt_det_grp["mag_err"])) * uu.ABmag
-        ).physical - tt_det_grp["flux"]
+        # # Add indexing
+        # tt_det_grp.add_index(id_name)
 
-        # Get mean values
-        tt_mean = tt_det_grp["mag", "mag_err", "pos_err", "flux"].groups.aggregate(
-            np.mean
+        # # Add flux and flux_err to table
+        # tt_det_grp["flux"] = (np.array(tt_det_grp["mag"]) * uu.ABmag).physical
+        # tt_det_grp["flux_err"] = (
+        #     (np.array(tt_det_grp["mag"]) - np.array(tt_det_grp["mag_err"])) * uu.ABmag
+        # ).physical - tt_det_grp["flux"]
+
+        # # Get mean values
+        # tt_mean = tt_det_grp["mag", "mag_err", "pos_err", "flux"].groups.aggregate(
+        #     np.mean
+        # )
+
+        # # Get sample variances
+        # tt_var = tt_det_grp["mag", "ra", "dec"].groups.aggregate(np.var)
+        # tt_var["pos"] = (tt_var["ra"] + tt_var["dec"]) * nr_det / (nr_det - 1)
+
+        # # Calculate weighted averages
+        # tt_det_grp["ra_av"] = tt_det_grp["ra"] / tt_det_grp["pos_err"]
+        # tt_det_grp["dec_av"] = tt_det_grp["dec"] / tt_det_grp["pos_err"]
+        # tt_det_grp["pos_w"] = 1 / tt_det_grp["pos_err"]
+        # tt_sum = tt_det_grp["ra_av", "dec_av", "pos_w"].groups.aggregate(np.sum)
+
+        # Prepare detection data
+        tt_det = self.tt_detections
+        tt_det.sort(id_name)
+
+        src_ids, src_indices, src_nr_det = np.unique(
+            tt_det[id_name].data, return_index=True, return_counts=True
         )
 
-        # Get sample variances
-        tt_var = tt_det_grp["mag", "ra", "dec"].groups.aggregate(np.var)
-        tt_var["pos"] = (tt_var["ra"] + tt_var["dec"]) * nr_det / (nr_det - 1)
+        # Buffer input data
+        ll_bvar = ["mag", "pos_err"]
+        dd_bvar = dict()
+        for bvar in ll_bvar:
+            dd_bvar[bvar] = tt_det[bvar].data
 
-        # Calculate weighted averages
-        tt_det_grp["ra_av"] = tt_det_grp["ra"] / tt_det_grp["pos_err"]
-        tt_det_grp["dec_av"] = tt_det_grp["dec"] / tt_det_grp["pos_err"]
-        tt_det_grp["pos_w"] = 1 / tt_det_grp["pos_err"]
-        tt_sum = tt_det_grp["ra_av", "dec_av", "pos_w"].groups.aggregate(np.sum)
+        # Prepare output data arrays
+        ll_svar = [
+            "mag_mean",
+            "mag_err_mean",
+            "pos_err_mean",
+            "mag_var",
+            "pos_var",
+            "flux_cpval",
+            "flux_rchiq",
+            "mag_dmax",
+            "mag_dmax_sig",
+            "ra",
+            "dec",
+        ]
 
+        dd_svar = dict()
+        for svar in ll_svar:
+            dd_svar[svar] = np.zeros(len(src_ids))
+
+        # Do loop and calculate stats variables
+        for isrc, srcid in enumerate(src_ids):
+            idx1 = src_indices[isrc]
+            idx2 = idx1 + src_nr_det[isrc]
+            # ra_isrc = ra_buffer[first_isrc_idx:last_isrc_idx]
+            # pos_err_isrc = pos_err_buffer[first_isrc_idx:last_isrc_idx]
+            # isrc_result = np.mean(ra_isrc * pos_err_isrc)
+
+            # Mean magnitude
+            dd_svar["mag_mean"][isrc] = np.mean(dd_bvar["mag"][idx1:idx2])
+
+        # tt_srcs = Table()
+        # tt_srcs["rapos"] = temp_arr
+
+        # Get maximum deviation
         # Calculate reduced chisquared based on flux
         # Add combined columns do wth index
         # tt_det_grp["chiq"] = np.power(
@@ -693,7 +744,7 @@ class TableCollection(object):
         # flux_cpval = chi2.sf(chiq_const, ndf)
 
         # # Get the maximum flux variation from the mean
-        # dmag_max = np.abs(np.nanmax(lc["mag"], axis=1) - mag_mean)
+        #
         # dmag_min = np.abs(np.nanmin(lc["mag"], axis=1) - mag_mean)
         # dmag = (dmag_max >= dmag_min) * dmag_max + (dmag_max < dmag_min) * dmag_min
 
@@ -710,23 +761,19 @@ class TableCollection(object):
 
         # Write them into tt_sources
         self.tt_sources.add_index(id_name)
-        src_idx = self.tt_sources.loc_indices[id_name, src_ids]
+        src_idx = self.tt_sources.loc_indices[id_name, src_ids]  # src_ids]
 
-        self.tt_sources["mag_mean"][src_idx] = tt_mean["mag"]
-        self.tt_sources["mag_err_mean"][src_idx] = tt_mean["mag_err"]
-        self.tt_sources["pos_err_mean"][src_idx] = tt_mean["pos_err"]
+        for svar in ll_svar:
+            self.tt_sources[svar][src_idx] = dd_svar[svar]  # tt_mean["mag"]
+        # self.tt_sources["mag_err_mean"][src_idx] = tt_mean["mag_err"]
+        # self.tt_sources["pos_err_mean"][src_idx] = tt_mean["pos_err"]
 
-        self.tt_sources["mag_var"][src_idx] = tt_var["mag"]
-        self.tt_sources["pos_var"][src_idx] = tt_var["pos"]
+        # self.tt_sources["mag_var"][src_idx] = tt_var["mag"]
+        # self.tt_sources["pos_var"][src_idx] = tt_var["pos"]
 
-        # self.tt_sources["flux_cpval"][src_idx] = flux_cpval
-        # self.tt_sources["flux_rchiq"][src_idx] = tt_sum["chiq"]
-        # self.tt_sources["mag_dmax"][src_idx] = dmag
-        # self.tt_sources["mag_dmax_sig"][src_idx] = dmag_max_sig
-        self.tt_sources["ra"][src_idx] = tt_sum["ra_av"] / tt_sum["pos_w"]
-        self.tt_sources["dec"][src_idx] = tt_sum["dec_av"] / tt_sum["pos_w"]
-
-
-def get_chiq(array):
-    chiq_elem = (array - np.mean(array)) / flux_err
-    chiq_const = np.nansum(chiq_elem * chiq_elem, axis=1)
+        # # self.tt_sources["flux_cpval"][src_idx] = flux_cpval
+        # # self.tt_sources["flux_rchiq"][src_idx] = tt_sum["chiq"]
+        # # self.tt_sources["mag_dmax"][src_idx] = dmag
+        # # self.tt_sources["mag_dmax_sig"][src_idx] = dmag_max_sig
+        # self.tt_sources["ra"][src_idx] = tt_sum["ra_av"] / tt_sum["pos_w"]
+        # self.tt_sources["dec"][src_idx] = tt_sum["dec_av"] / tt_sum["pos_w"]
