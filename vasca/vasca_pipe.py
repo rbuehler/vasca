@@ -9,12 +9,13 @@ import os
 import sys
 from multiprocessing import Pool
 
-import pandas as pd
+
 import yaml
 from loguru import logger
 
 from vasca.region import Region
 from vasca.utils import get_region_field_id
+from vasca.tables_dict import dd_vasca_tables
 
 
 def set_config(cfg_file):
@@ -136,66 +137,37 @@ def run_field(obs_nr, field, vasca_cfg):
         **obs_cfg["cluster_det"]["meanshift"],
     )
 
-    # Source selection
-    field.select_rows(obs_cfg["selection"]["src_quality"], remove_unselected=True)
+    # # Source selection
+    # field.select_rows(obs_cfg["selection"]["src_quality"], remove_unselected=True)
 
-    # Remove detections with no source association
-    field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=False)
+    # # Remove detections with no source association
+    # field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=False)
 
-    # Create light curve table
-    field.set_light_curve(add_upper_limits=True)
+    # # Create light curve table
+    # field.set_light_curve(add_upper_limits=True)
 
-    # Calculate source variables from light curve
-    field.set_src_stats()
+    # # Calculate source variables from light curve
+    # field.set_src_stats()
 
-    # Select variable sources
-    field.select_rows(obs_cfg["selection"]["src_variability"], remove_unselected=False)
+    # # Select variable sources
+    # field.select_rows(obs_cfg["selection"]["src_variability"], remove_unselected=False)
 
     # Write out field
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
 
-    # Remove some items which are not further needed to free memory
-    # del field.__dict__["tt_detections"]
-    # field._table_names.remove("tt_detections")
-    field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
+    # # Remove some items which are not further needed to free memory
+    # # del field.__dict__["tt_detections"]
+    # # field._table_names.remove("tt_detections")
+    # field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
     field.ref_img = None
     field.ref_wcs = None
 
+    # Keep only base class columns
+    for tt_name in field._table_names:
+        cols = dd_vasca_tables["base_field"][tt_name]["names"]
+        field.__dict__[tt_name] = field.__dict__[tt_name][cols]
+
     return field
-
-
-# TODO: This funtion  could be more effcient, as it works none vectorized.
-# Best wait till astropy implements Multiindex (see below)
-def add_rg_src_id(tt_ref, tt_add):
-    """
-    Helper function, adds "rg_src_id" based on "rg_fd_id" and "fd_src_id"
-    from the passed reference table.
-
-    Parameters
-    ----------
-    tt_ref : astropy.Table
-        Reference table has to contain "rg_src_id", "rg_fd_id" and "fd_src_id"
-    tt_add : astropy.Table
-        Table to add "rg_src_id", has to contain "rg_src_id", "rg_fd_id" and "fd_src_id"
-
-    Returns
-    -------
-    None.
-
-    """
-
-    # Create mapping from fd_src_id and field_id to rg_src_id
-    # use pandas as this is not yet in astropy, see
-    # https://github.com/astropy/astropy/issues/13176
-    # https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html
-    pd_ref = tt_ref["rg_fd_id", "fd_src_id"].to_pandas()
-    pd_add = tt_add["rg_fd_id", "fd_src_id"].to_pandas()
-    ridx = pd.MultiIndex.from_frame(pd_ref)
-
-    for aidx in range(0, len(pd_add)):
-        loc_pair = (pd_add["rg_fd_id"][aidx], pd_add["fd_src_id"][aidx])
-        idx = ridx.get_loc(loc_pair)
-        tt_add[aidx]["rg_src_id"] = tt_ref[idx]["rg_src_id"]
 
 
 def run(vasca_cfg):
@@ -259,23 +231,29 @@ def run(vasca_cfg):
 
     # Add field tables to region
     rg.add_table_from_fields("tt_sources")
+    rg.add_table_from_fields("tt_detections", only_selected=False)
+
+    rg.cluster_meanshift(
+        clus_srcs=True,
+        **vasca_cfg["cluster_src"]["meanshift"],
+    )
 
     # Add region source ids, making sure they are in synch among tables
-    rg_src_ids = range(0, len(rg.tt_sources))
-    rg.tt_sources["rg_src_id"][:] = rg_src_ids
+    # rg_src_ids = range(0, len(rg.tt_sources))
+    # rg.tt_sources["rg_src_id"][:] = rg_src_ids
 
-    # Store light curves
-    rg.add_table_from_fields("ta_sources_lc")
-    add_rg_src_id(rg.tt_sources, rg.ta_sources_lc)
+    # # Store light curves
+    # rg.add_table_from_fields("ta_sources_lc")
+    # add_rg_src_id(rg.tt_sources, rg.ta_sources_lc)
 
-    # Store reference sources
-    if vasca_cfg["general"]["save_ref_srcs"]:
-        rg.add_table_from_fields("tt_ref_sources")
+    # # Store reference sources
+    # if vasca_cfg["general"]["save_ref_srcs"]:
+    #     rg.add_table_from_fields("tt_ref_sources")
 
-    # Add detections table too, if asked for
-    if vasca_cfg["general"]["save_dets"]:
-        rg.add_table_from_fields("tt_detections", only_selected=True)
-        add_rg_src_id(rg.tt_sources, rg.tt_detections)
+    # # Add detections table too, if asked for
+    # if vasca_cfg["general"]["save_dets"]:
+
+    # add_rg_src_id(rg.tt_sources, rg.tt_detections)
 
     # Write out regions
     rg.write_to_fits(

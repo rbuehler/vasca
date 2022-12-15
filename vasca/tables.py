@@ -14,8 +14,10 @@ from astropy.nddata import bitmask
 from astropy.table import Table
 from astropy.wcs import wcs
 from loguru import logger
+from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.tables_dict import dd_vasca_tables
+from vasca.utils import table_to_array, add_rg_src_id
 
 # import warnings
 # from astropy.io.fits.verify import VerifyWarning
@@ -539,6 +541,107 @@ class TableCollection(object):
             lc_dict[src_id] = tt_lc
 
         return lc_dict
+
+    def cluster_meanshift(self, clus_srcs=False, **ms_kw):
+        """
+        Apply _MeanShift clustering algorithm using to derive sources.
+
+        .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
+
+        Parameters
+        ----------
+        ms_kw : dict, optional
+            Keywords passed to the scikit MeanShift function. Note that the
+            bandwidth is assumed to be in units of arc seconds.
+
+        Returns
+        -------
+        int
+            Number of detected clusters.
+        """
+        logger.info(f"Clustering with MeanShift with clus_srcs: {clus_srcs}")
+
+        # Select seed table, detections or sources
+        if clus_srcs:
+            tt = self.tt_sources
+        else:
+            tt = self.tt_detections
+
+        # Selection
+        sel = tt["sel"]
+
+        # Get detection coordinates and run clustering
+        coords = table_to_array(tt[sel]["ra", "dec"])
+
+        # Do bandwidth determination "by hand" to print it out and convert
+        # bandwidth unit from arc seconds into degerees
+        dd_ms = ms_kw
+        if "bandwidth" not in ms_kw or ms_kw["bandwidth"] is None:
+            logger.debug("Estimating bandwidth")
+            dd_ms["bandwidth"] = estimate_bandwidth(coords, quantile=0.2, n_samples=500)
+        else:
+            dd_ms["bandwidth"] = (ms_kw["bandwidth"] * uu.arcsec).to(uu.deg).value
+
+        logger.debug(f"MeanShift with parameters (bandwith in degrees): '{dd_ms}' ")
+        ms = MeanShift(**dd_ms)
+
+        ms.fit(coords)
+
+        # Fill in data into source tables
+        src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+        cluster_centers = ms.cluster_centers_
+        nr_srcs = len(cluster_centers)
+
+        # Store clusters in tt_source table
+        if clus_srcs:
+            srcs_data = {
+                "rg_src_id": src_ids,
+                "ra": cluster_centers[:, 0],
+                "dec": cluster_centers[:, 1],
+                "nr_det": det_cts,
+                "nr_uls": np.zeros(nr_srcs),
+            }
+
+            # Remove existing table and add new one
+            del self.__dict__["tt_sources"]
+            self._table_names.remove("tt_sources")
+            self.add_table(srcs_data, "region:tt_sources")
+
+            nr_merged = len(tt[sel]) - len(src_ids)
+            perc_merged = np.round(100 * nr_merged / len(tt[sel]), 4)
+            logger.debug(f"Merged sources: {nr_merged} ({perc_merged}%)")
+
+            # Add rg_src_id to detections
+            tt["rg_src_id"][sel] = ms.labels_
+            add_rg_src_id(tt[sel], self.tt_detections)
+            # self.tt_detections.add_index("fd_src_id")
+            # idx_fd_id = self.tt_detections.loc_indices["fd_src_id", tt["fd_src_id"]]
+            # self.tt_detections[idx_fd_id]["rg_src_id"] = tt["rg_src_id"]
+
+            # Update fd_src_id entries
+            # self.tt_detections["rg_src_id"][sel] = ms.labels_
+
+        else:
+            srcs_data = {
+                "fd_src_id": src_ids,
+                "ra": cluster_centers[:, 0],
+                "dec": cluster_centers[:, 1],
+                "nr_det": det_cts,
+                "nr_uls": np.zeros(nr_srcs),
+            }
+
+            # Fill information into tables.
+            self.add_table(srcs_data, "base_field:tt_sources")
+
+            # Update fd_src_id entries
+            self.tt_detections["fd_src_id"][sel] = ms.labels_
+
+            # Fill light curve data into tables
+            self.remove_double_visit_detections()
+
+        self.tt_sources.meta["CLUSTALG"] = "MeanShift"
+
+        return nr_srcs
 
     # def set_var_stats(self):
     #     """
