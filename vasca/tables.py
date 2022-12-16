@@ -8,6 +8,7 @@ import os
 
 import h5py
 import numpy as np
+from scipy.stats import chi2
 from astropy import units as uu
 from astropy.io import fits
 from astropy.nddata import bitmask
@@ -542,7 +543,7 @@ class TableCollection(object):
 
         return lc_dict
 
-    def cluster_meanshift(self, clus_srcs=False, **ms_kw):
+    def cluster_meanshift(self, **ms_kw):
         """
         Apply _MeanShift clustering algorithm using to derive sources.
 
@@ -559,13 +560,14 @@ class TableCollection(object):
         int
             Number of detected clusters.
         """
-        logger.info(f"Clustering with MeanShift with clus_srcs: {clus_srcs}")
 
         # Select seed table, detections or sources
-        if clus_srcs:
+        clus_srcs = False
+        tt = self.tt_detections
+        if "Region" in self.__class__.__name__:
+            clus_srcs = True
             tt = self.tt_sources
-        else:
-            tt = self.tt_detections
+        logger.info(f"Clustering with MeanShift with clus_srcs: {clus_srcs}")
 
         # Selection
         sel = tt["sel"]
@@ -598,9 +600,21 @@ class TableCollection(object):
                 "rg_src_id": src_ids,
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
-                "nr_det": det_cts,
+                "nr_fds": det_cts,
                 "nr_uls": np.zeros(nr_srcs),
             }
+
+            # Add rg_src_id to detections
+            tt["rg_src_id"][sel] = ms.labels_
+            add_rg_src_id(tt[sel], self.tt_detections)
+
+            # Add total number of detections
+            det_src_ids, src_nr_det = np.unique(
+                self.tt_detections["rg_src_id"].data,
+                return_counts=True,
+            )
+            src_idx = (det_src_ids[:, None] == src_ids).argmax(axis=0)
+            srcs_data["nr_det"] = src_nr_det[src_idx]
 
             # Remove existing table and add new one
             del self.__dict__["tt_sources"]
@@ -610,10 +624,6 @@ class TableCollection(object):
             nr_merged = len(tt[sel]) - len(src_ids)
             perc_merged = np.round(100 * nr_merged / len(tt[sel]), 4)
             logger.debug(f"Merged sources: {nr_merged} ({perc_merged}%)")
-
-            # Add rg_src_id to detections
-            tt["rg_src_id"][sel] = ms.labels_
-            add_rg_src_id(tt[sel], self.tt_detections)
 
         else:
             srcs_data = {
@@ -652,47 +662,27 @@ class TableCollection(object):
 
         logger.debug("Calculating source statistics.")
 
-        id_name = "rg_src_id"
-
-        # tt_det_grp = self.tt_detections.group_by(id_name)
-        # tt_det_grp_idx = tt_det_grp.groups.indices
-        # nr_det = tt_det_grp_idx[1:] - tt_det_grp_idx[0:-1]
-        # src_ids = np.array(list(tt_det_grp.groups.keys[id_name]))
-
-        # # Add indexing
-        # tt_det_grp.add_index(id_name)
-
-        # # Add flux and flux_err to table
-        # tt_det_grp["flux"] = (np.array(tt_det_grp["mag"]) * uu.ABmag).physical
-        # tt_det_grp["flux_err"] = (
-        #     (np.array(tt_det_grp["mag"]) - np.array(tt_det_grp["mag_err"])) * uu.ABmag
-        # ).physical - tt_det_grp["flux"]
-
-        # # Get mean values
-        # tt_mean = tt_det_grp["mag", "mag_err", "pos_err", "flux"].groups.aggregate(
-        #     np.mean
-        # )
-
-        # # Get sample variances
-        # tt_var = tt_det_grp["mag", "ra", "dec"].groups.aggregate(np.var)
-        # tt_var["pos"] = (tt_var["ra"] + tt_var["dec"]) * nr_det / (nr_det - 1)
-
-        # # Calculate weighted averages
-        # tt_det_grp["ra_av"] = tt_det_grp["ra"] / tt_det_grp["pos_err"]
-        # tt_det_grp["dec_av"] = tt_det_grp["dec"] / tt_det_grp["pos_err"]
-        # tt_det_grp["pos_w"] = 1 / tt_det_grp["pos_err"]
-        # tt_sum = tt_det_grp["ra_av", "dec_av", "pos_w"].groups.aggregate(np.sum)
+        # Check if field or region
+        id_name = "fd_src_id"
+        if "Region" in self.__class__.__name__:
+            id_name = "rg_src_id"
 
         # Prepare detection data
-        tt_det = self.tt_detections
+        tt_det = Table(self.tt_detections, copy=True)
         tt_det.sort(id_name)
+
+        # Add flux and flux_err to table
+        tt_det["flux"] = (np.array(tt_det["mag"]) * uu.ABmag).physical
+        tt_det["flux_err"] = (
+            (np.array(tt_det["mag"]) - np.array(tt_det["mag_err"])) * uu.ABmag
+        ).physical - tt_det["flux"]
 
         src_ids, src_indices, src_nr_det = np.unique(
             tt_det[id_name].data, return_index=True, return_counts=True
         )
 
         # Buffer input data
-        ll_bvar = ["mag", "pos_err"]
+        ll_bvar = ["mag", "mag_err", "pos_err", "ra", "dec", "flux", "flux_err"]
         dd_bvar = dict()
         for bvar in ll_bvar:
             dd_bvar[bvar] = tt_det[bvar].data
@@ -720,44 +710,50 @@ class TableCollection(object):
         for isrc, srcid in enumerate(src_ids):
             idx1 = src_indices[isrc]
             idx2 = idx1 + src_nr_det[isrc]
-            # ra_isrc = ra_buffer[first_isrc_idx:last_isrc_idx]
-            # pos_err_isrc = pos_err_buffer[first_isrc_idx:last_isrc_idx]
-            # isrc_result = np.mean(ra_isrc * pos_err_isrc)
 
             # Mean magnitude
             dd_svar["mag_mean"][isrc] = np.mean(dd_bvar["mag"][idx1:idx2])
+            dd_svar["mag_err_mean"][isrc] = np.mean(dd_bvar["mag_err"][idx1:idx2])
+            dd_svar["pos_err_mean"][isrc] = np.mean(dd_bvar["pos_err"][idx1:idx2])
 
-        # tt_srcs = Table()
-        # tt_srcs["rapos"] = temp_arr
+            # Variances
+            if src_nr_det[isrc] > 1:
+                dd_svar["mag_var"][isrc] = np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
+                dd_svar["pos_var"][isrc] = np.var(
+                    dd_bvar["ra"][idx1:idx2], ddof=1
+                ) + np.var(dd_bvar["dec"][idx1:idx2], ddof=1)
+            else:
+                dd_svar["mag_var"][isrc] = -1
+                dd_svar["pos_var"][isrc] = -1
 
-        # Get maximum deviation
-        # Calculate reduced chisquared based on flux
-        # Add combined columns do wth index
-        # tt_det_grp["chiq"] = np.power(
-        #     (tt_det_grp["flux"] - tt_mean["flux"][:, None]) / tt_det_grp["flux_err"], 2
-        # )
-        # tt_sum = tt_det_grp["mag", "chiq"].groups.aggregate(np.sum)
+            # Weighted averages
+            dd_svar["ra"][isrc] = np.average(
+                dd_bvar["ra"][idx1:idx2], weights=1.0 / dd_bvar["pos_err"][idx1:idx2]
+            )
+            dd_svar["dec"][isrc] = np.average(
+                dd_bvar["ra"][idx1:idx2], weights=1.0 / dd_bvar["pos_err"][idx1:idx2]
+            )
 
-        # chiq_elem = (flux - flux_mean[:, None]) / flux_err
-        # chiq_const = np.nansum(chiq_elem * chiq_elem, axis=1)
-        # rchiq_const = chiq_const / ndf
-        # flux_cpval = chi2.sf(chiq_const, ndf)
+            # Chsiquare
+            flux_mean = np.mean(dd_bvar["flux"][idx1:idx2])
+            chiq_el = np.power(dd_bvar["flux"][idx1:idx2] - flux_mean, 2) / np.power(
+                dd_bvar["flux_err"][idx1:idx2], 2
+            )
+            chiq = np.sum(chiq_el)
+            if src_nr_det[isrc] > 1:
+                dd_svar["flux_rchiq"][isrc] = chiq / (src_nr_det[isrc] - 1)
+                dd_svar["flux_cpval"][isrc] = chi2.sf(chiq, src_nr_det[isrc] - 1)
+            else:
+                dd_svar["flux_rchiq"][isrc] = -1.0
+                dd_svar["flux_cpval"][isrc] = -1.0
 
-        # # Get the maximum flux variation from the mean
-        #
-        # dmag_min = np.abs(np.nanmin(lc["mag"], axis=1) - mag_mean)
-        # dmag = (dmag_max >= dmag_min) * dmag_max + (dmag_max < dmag_min) * dmag_min
+            # Maimum variation significance
+            dmag = np.abs(dd_bvar["mag"][idx1:idx2] - dd_svar["mag_mean"][isrc])
+            dmag_sig = dmag / dd_bvar["mag_err"][idx1:idx2]
+            dmax_sig_max_idx = np.argmax(dmag_sig)
 
-        # # Get maximum significance of flux variation compared to mean
-        # dmag_max_sig = np.nanmax(
-        #     np.abs((lc["mag"] - mag_mean[:, None]) / lc["mag_err"]), axis=1
-        # )
-
-        # # Get pos_err weighted average position
-        # weight_sum = np.nansum(1.0 / lc["pos_err"], axis=1)
-        # ra_av = np.nansum(lc["ra"] / lc["pos_err"], axis=1) / weight_sum
-        # dec_av = np.nansum(lc["dec"] / lc["pos_err"], axis=1) / weight_sum
-        # pos_err_mean = np.nanmean(lc["pos_err"], axis=1)
+            dd_svar["mag_dmax_sig"][isrc] = dmag_sig[dmax_sig_max_idx]
+            dd_svar["mag_dmax"][isrc] = dmag[dmax_sig_max_idx]
 
         # Write them into tt_sources
         self.tt_sources.add_index(id_name)
@@ -765,15 +761,3 @@ class TableCollection(object):
 
         for svar in ll_svar:
             self.tt_sources[svar][src_idx] = dd_svar[svar]  # tt_mean["mag"]
-        # self.tt_sources["mag_err_mean"][src_idx] = tt_mean["mag_err"]
-        # self.tt_sources["pos_err_mean"][src_idx] = tt_mean["pos_err"]
-
-        # self.tt_sources["mag_var"][src_idx] = tt_var["mag"]
-        # self.tt_sources["pos_var"][src_idx] = tt_var["pos"]
-
-        # # self.tt_sources["flux_cpval"][src_idx] = flux_cpval
-        # # self.tt_sources["flux_rchiq"][src_idx] = tt_sum["chiq"]
-        # # self.tt_sources["mag_dmax"][src_idx] = dmag
-        # # self.tt_sources["mag_dmax_sig"][src_idx] = dmag_max_sig
-        # self.tt_sources["ra"][src_idx] = tt_sum["ra_av"] / tt_sum["pos_w"]
-        # self.tt_sources["dec"][src_idx] = tt_sum["dec_av"] / tt_sum["pos_w"]

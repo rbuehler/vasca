@@ -10,7 +10,6 @@ from datetime import datetime
 import warnings
 
 import numpy as np
-from scipy.stats import chi2
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
