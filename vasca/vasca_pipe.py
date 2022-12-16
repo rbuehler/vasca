@@ -137,20 +137,8 @@ def run_field(obs_nr, field, vasca_cfg):
         **obs_cfg["cluster_det"]["meanshift"],
     )
 
-    # # Source selection
-    # field.select_rows(obs_cfg["selection"]["src_quality"], remove_unselected=True)
-
-    # # Remove detections with no source association
-    # field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=False)
-
-    # # Create light curve table
-    # field.set_light_curve(add_upper_limits=True)
-
     # # Calculate source variables from light curve
     # field.set_src_stats()
-
-    # # Select variable sources
-    # field.select_rows(obs_cfg["selection"]["src_variability"], remove_unselected=False)
 
     # Write out field
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
@@ -233,27 +221,23 @@ def run(vasca_cfg):
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)
 
-    rg.cluster_meanshift(
-        clus_srcs=True,
-        **vasca_cfg["cluster_src"]["meanshift"],
-    )
+    rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
 
-    # Add region source ids, making sure they are in synch among tables
-    # rg_src_ids = range(0, len(rg.tt_sources))
-    # rg.tt_sources["rg_src_id"][:] = rg_src_ids
+    # Calculate source statistics
+    rg.set_src_stats()
 
-    # # Store light curves
-    # rg.add_table_from_fields("ta_sources_lc")
-    # add_rg_src_id(rg.tt_sources, rg.ta_sources_lc)
+    # Remove sources with quality cuts
+    rg.select_rows(vasca_cfg["selection"]["src_quality"], remove_unselected=True)
 
-    # # Store reference sources
-    # if vasca_cfg["general"]["save_ref_srcs"]:
-    #     rg.add_table_from_fields("tt_ref_sources")
+    # Select variable sources
+    rg.select_rows(vasca_cfg["selection"]["src_variability"], remove_unselected=False)
 
-    # # Add detections table too, if asked for
-    # if vasca_cfg["general"]["save_dets"]:
+    # Remove detections not associated to selected sources
+    rg.select_rows(vasca_cfg["selection"]["det_association"], remove_unselected=True)
 
-    # add_rg_src_id(rg.tt_sources, rg.tt_detections)
+    # Store reference sources
+    if vasca_cfg["general"]["save_ref_srcs"]:
+        rg.add_table_from_fields("tt_ref_sources")
 
     # Write out regions
     rg.write_to_fits(

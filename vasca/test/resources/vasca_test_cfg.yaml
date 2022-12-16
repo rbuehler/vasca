@@ -16,8 +16,38 @@ ressources:
     load_products    : true             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null
-        visits_data_path : null 
+        visits_data_path : null
+
+cluster_src:
+    meanshift:
+        bandwidth     : 5               # In arcsec, to estimate it automatically specify "null"
+        seeds         : null
+        bin_seeding   : false
+        min_bin_freq  : 1
+        cluster_all   : true
+        n_jobs        : 2
+        max_iter      : 300
         
+selection:
+    src_quality:
+        table    : "tt_sources"
+        sel_type : "and"    # These are OR selections
+        range:
+            nr_det        : [1,.inf]          
+    src_variability:
+        table    : "tt_sources"
+        sel_type : "or"
+        range:        
+            flux_cpval     : [0.0,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
+           # mag_dmax      : [0.2,.inf]
+           # mag_dmax_sig  : [6.0,.inf]
+           # ul_weight    : [3.0,.inf]
+    det_association : 
+        table     : "tt_detections"
+        ref_table : "tt_sources"
+        sel_type  : "is_in"
+        var       : "fd_src_id"
+                    
 observations:
   - observatory   : "GALEX"
     obs_filter    : "NUV"
@@ -50,21 +80,3 @@ observations:
                 # Specify the ones to ignore (=keep row).
                 # For GALEX a description is at the end of this document
                 artifacts : [1,8,16,32,64,128,256,512]
-        src_quality:
-            table    : "tt_sources"
-            sel_type : "and"    # These are OR selections
-            range:
-                nr_det        : [1,.inf]          
-        src_variability:
-            table    : "tt_sources"
-            sel_type : "or"
-            range:        
-                flux_cpval     : [0.0,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
-               # mag_dmax      : [0.2,.inf]
-               # mag_dmax_sig  : [6.0,.inf]
-               # ul_weight    : [3.0,.inf]
-        det_association : 
-            table     : "tt_detections"
-            ref_table : "tt_sources"
-            sel_type  : "is_in"
-            var       : "fd_src_id"
