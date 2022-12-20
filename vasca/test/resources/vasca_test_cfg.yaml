@@ -46,7 +46,7 @@ selection:
         table     : "tt_detections"
         ref_table : "tt_sources"
         sel_type  : "is_in"
-        var       : "fd_src_id"
+        var       : "rg_src_id"
                     
 observations:
   - observatory   : "GALEX"
