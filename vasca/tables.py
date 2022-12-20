@@ -524,17 +524,22 @@ class TableCollection(object):
         lc_dict = dict()
 
         # Index field or region for source ID
-        self.ta_sources_lc.add_index(ids_type)
+        self.tt_detections.add_index(ids_type)
+        self.tt_visits.add_index("vis_id")
 
         # Loop over sources and get lc info
         for src_id in src_ids:
-            src_lc = self.ta_sources_lc.loc[src_id]
+            tt_src = self.tt_detections.loc[src_id]
+            vis_idx = self.tt_visits.loc_indices["vis_id", tt_src["vis_id"]]
+            tt_src["time_bin_start"] = self.tt_visits[vis_idx]["time_bin_start"]
+            tt_src["time_bin_size"] = self.tt_visits[vis_idx]["time_bin_size"]
+            tt_src.sort("time_bin_start")
             src_data = {
-                "time_start": np.array(src_lc["time_bin_start"]),
-                "time_delta": np.array(src_lc["time_bin_size"]),
-                "mag": np.array(src_lc["mag"]),
-                "mag_err": np.array(src_lc["mag_err"]),
-                "ul": np.array(src_lc["ul"]),
+                "time_start": np.array(tt_src["time_bin_start"]),
+                "time_delta": np.array(tt_src["time_bin_size"]),
+                "mag": np.array(tt_src["mag"]),
+                "mag_err": np.array(tt_src["mag_err"]),
+                #                "ul": np.array(src_lc["ul"]),
             }
             # Create and store table
             tt_lc = self.table_from_template(src_data, "base_field:tt_source_lc")

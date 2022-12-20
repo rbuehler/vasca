@@ -47,7 +47,7 @@ selection:
         table     : "tt_detections"
         ref_table : "tt_sources"
         sel_type  : "is_in"
-        var       : "fd_src_id"
+        var       : "rg_src_id"
                     
 observations:
   - observatory   : "GALEX"
@@ -55,8 +55,8 @@ observations:
     obs_field_ids :
         - 2592597978464124928  #PS_XMMLSS_MOS00
         - 2592668347208302592  #PS_XMMLSS_MOS01
-        - 2592738715952480256  #PS_XMMLSS_MOS02
-        - 2592809084696657920  #PS_XMMLSS_MOS03
+        # - 2592738715952480256  #PS_XMMLSS_MOS02
+        # - 2592809084696657920  #PS_XMMLSS_MOS03
         # - 2592879453440835584  #PS_XMMLSS_MOS04
         # - 2592949822185013248  #PS_XMMLSS_MOS05
         # - 2593020190929190912  #PS_XMMLSS_MOS06
