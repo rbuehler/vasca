@@ -6,12 +6,14 @@ Utilities for VASCA
 
 from itertools import zip_longest
 
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from astropy import units as uu
 from astropy.coordinates import SkyCoord, search_around_sky
 from astropy.nddata import Cutout2D
 from astropy.time import Time
-import pandas as pd
+from scipy.stats import binned_statistic
 
 # Global variable liking observator+obsfilter to a field ID addon
 # The number of Id adon letter has to be three
@@ -324,3 +326,79 @@ def add_rg_src_id(tt_ref, tt_add):
         loc_pair = (pd_add["rg_fd_id"][aidx], pd_add["fd_src_id"][aidx])
         idx = ridx.get_loc(loc_pair)
         tt_add[aidx]["rg_src_id"] = tt_ref[idx]["rg_src_id"]
+
+
+def nb_fig(num=0, gr_size=None, **kwargs):
+    """
+    Helper function for plotting in Jupyter notebooks.
+    Wraps :py:class:`matplotlib.pylplot.subplots`.
+
+    Parameters
+    ----------
+    num : :py:class:`int`, :py:class:`str`, optional
+        Figure number, i.e. name handle
+    gr_size : :py:class:`tuple`, optional
+        Golden ratio size. Figure width in inches. The hight
+        is calculated according to the golden ratio.
+    kwargs
+        Parameters passed to :py:class:`~matplotlib.pylplot.subplots`
+
+    Returns
+    -------
+    :py:class:`tuple`
+        Tuple containg the figure and plot axis.
+    """
+    # Close figure, Jupyter doesn't do it...
+    plt.close(num)
+
+    # Set figure aspect ratio to golden ratio
+    if gr_size is not None:
+        gr = (1 + 5**0.5) / 2
+        fig_size = (gr_size, gr_size / gr)
+    elif "figsize" in kwargs:
+        fig_size = kwargs.pop("figsize")
+    else:
+        fig_size = None
+
+    # Return figure and axis
+    fig, ax = plt.subplots(num=num, figsize=fig_size, **kwargs)
+    return (fig, ax)
+
+
+def binned_stat(
+    x,
+    values,
+    statistic="mean",
+    return_bin_edges=False,
+    return_bin_idx=False,
+    return_bin_centers=False,
+    **bining_kwargs,
+):
+    """
+    Compute a binned statistic for one or more sets of data.
+
+    This wraps :py:class:`scipy.stats.binned_statistic` in combination
+    with :py:class:`numpy.histogram_bin_edges`
+    to support automatic & optimized calculation of the bin edges.
+    """
+    # Calculates the bin edges using Numpy
+    edges = np.histogram_bin_edges(x, **bining_kwargs)
+
+    # Computes the statistic evaluated for values in each bin of x
+    results = binned_statistic(x=x, values=values, bins=edges, statistic=statistic)
+
+    # Return results according to optional paramters
+    out = list()
+    if not any([return_bin_edges, return_bin_centers, return_bin_idx]):
+        return results[0]
+    else:
+        out.append(results[0])
+
+    if return_bin_edges:
+        out.append(results[1])
+    if return_bin_idx:
+        out.append(results[2])
+    if return_bin_centers:
+        out.append(np.asarray((edges[:-1] + edges[1:]) / 2))
+
+    return tuple(out)
