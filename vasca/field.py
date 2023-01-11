@@ -6,8 +6,8 @@ Field classes for VASCA
 
 import os
 import time
-from datetime import datetime
 import warnings
+from datetime import datetime
 
 import numpy as np
 from astropy import units as uu
@@ -15,16 +15,15 @@ from astropy.coordinates import SkyCoord
 from astropy.io import fits
 from astropy.table import Column, Table, conf, vstack
 from astropy.time import Time
+from astropy.utils.exceptions import AstropyWarning
 from astropy.wcs import wcs
 from astroquery.mast import Observations
-from astropy.utils.exceptions import AstropyWarning
 from loguru import logger
 from requests.exceptions import HTTPError
 
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
 from vasca.utils import get_region_field_id
-
 
 # global paths
 # path to the dir. of this file
@@ -641,18 +640,18 @@ class GALEXField(BaseField):
         # Sets convenience class attributes
         gf.set_field_attr()
         # Check consistency
-        # if not gf.field_id == obs_id:
-        #     raise ValueError(
-        #         "Inconsistent data: Missmatch for 'field_id'. "
-        #         f"Expected '{obs_id}' but got '{gf.field_id}' "
-        #         f"from file '{fits_path.split(os.sep)[-1]}."
-        #     )
-        # elif not gf.obs_filter == obs_filter:
-        #     raise ValueError(
-        #         "Inconsistent data: Missmatch for 'obs_filter'. "
-        #         f"Expected '{obs_filter}' but got '{gf.obs_filter}' "
-        #         f"from file '{fits_path.split(os.sep)[-1]}."
-        #     )
+        if not gf.field_id == obs_id:
+            raise ValueError(
+                "Inconsistent data: Missmatch for 'field_id'. "
+                f"Expected '{obs_id}' but got '{gf.field_id}' "
+                f"from file '{fits_path.split(os.sep)[-1]}."
+            )
+        elif not gf.obs_filter == obs_filter:
+            raise ValueError(
+                "Inconsistent data: Missmatch for 'obs_filter'. "
+                f"Expected '{obs_filter}' but got '{gf.obs_filter}' "
+                f"from file '{fits_path.split(os.sep)[-1]}."
+            )
 
         logger.info(
             f"Loaded VASCA data for GALEX field '{obs_id}' "
@@ -832,17 +831,31 @@ class GALEXField(BaseField):
             field_kwargs.pop("refresh", None)
             field_kwargs.pop("write", None)
 
-            gf = GALEXField.from_VASCA(
-                obs_id=gfield_id,
-                obs_filter=obs_filter,
-                **field_kwargs,
-            )
+            try:
+                gf = GALEXField.from_VASCA(
+                    obs_id=gfield_id,
+                    obs_filter=obs_filter,
+                    **field_kwargs,
+                )
+            except FileNotFoundError as e:
+                logger.warning(
+                    f"Load method '{method}' failed due to FileNotFoundError ('{e}'). "
+                    "Falling back to method 'mast_remote'."
+                )
+                gf = GALEXField.from_MAST(
+                    obs_id=gfield_id,
+                    obs_filter=obs_filter,
+                    refresh=True,
+                    load_products=load_products,
+                    **field_kwargs,
+                )
         elif method == "auto":
-            pass
+            raise NotImplementedError(f"method '{method}' not operational.")
             # TODO: Lookahead via rm to check data availability.
             # Then "VASCA" is preferred for performance reasons.
             # Fallback to "MAST" & refresh=True if "VASCA" fails for some reason
             # (e.g. not complete set of tables stored in the fits file).
+            # Update (2023-01-11): Reevaluate if this option is still needed
 
         return gf
 
