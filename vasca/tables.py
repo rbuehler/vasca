@@ -8,17 +8,17 @@ import os
 
 import h5py
 import numpy as np
-from scipy.stats import chi2
 from astropy import units as uu
 from astropy.io import fits
 from astropy.nddata import bitmask
 from astropy.table import Table
 from astropy.wcs import wcs
 from loguru import logger
+from scipy.stats import chi2, skew
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import table_to_array, add_rg_src_id
+from vasca.utils import add_rg_src_id, table_to_array
 
 # import warnings
 # from astropy.io.fits.verify import VerifyWarning
@@ -699,12 +699,18 @@ class TableCollection(object):
             "pos_err_mean",
             "mag_var",
             "pos_var",
+            "mag_sig_int",
+            "mag_skew",
             "flux_cpval",
             "flux_rchiq",
             "mag_dmax",
             "mag_dmax_sig",
+            "mag_dmax_abs",
             "ra",
             "dec",
+            "ra_wsqrd",
+            "dec_wsqrd",
+            "pos_err_se",
         ]
 
         dd_svar = dict()
@@ -731,15 +737,34 @@ class TableCollection(object):
                 dd_svar["mag_var"][isrc] = -1
                 dd_svar["pos_var"][isrc] = -1
 
+            # Intrinsic variability
+            dd_svar["mag_sig_int"][isrc] = np.sqrt(
+                np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
+                - np.mean(dd_bvar["mag_err"][idx1:idx2]) ** 2
+            )
+
+            # Skewness
+            dd_svar["mag_skew"][isrc] = skew(dd_bvar["mag"][idx1:idx2], bias=False)
+
             # Weighted averages
             dd_svar["ra"][isrc] = np.average(
                 dd_bvar["ra"][idx1:idx2], weights=1.0 / dd_bvar["pos_err"][idx1:idx2]
             )
             dd_svar["dec"][isrc] = np.average(
-                dd_bvar["ra"][idx1:idx2], weights=1.0 / dd_bvar["pos_err"][idx1:idx2]
+                dd_bvar["dec"][idx1:idx2], weights=1.0 / dd_bvar["pos_err"][idx1:idx2]
             )
 
-            # Chsiquare
+            # see https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Variance-defined_weights
+            weights_sqrd = 1.0 / dd_bvar["pos_err"][idx1:idx2] ** 2
+            dd_svar["ra_wsqrd"][isrc] = np.average(
+                dd_bvar["ra"][idx1:idx2], weights=weights_sqrd
+            )
+            dd_svar["dec_wsqrd"][isrc] = np.average(
+                dd_bvar["dec"][idx1:idx2], weights=weights_sqrd
+            )
+            dd_svar["pos_err_se"][isrc] = np.sqrt(1.0 / np.sum(weights_sqrd))
+
+            # Chi square
             flux_mean = np.mean(dd_bvar["flux"][idx1:idx2])
             chiq_el = np.power(dd_bvar["flux"][idx1:idx2] - flux_mean, 2) / np.power(
                 dd_bvar["flux_err"][idx1:idx2], 2
@@ -752,13 +777,17 @@ class TableCollection(object):
                 dd_svar["flux_rchiq"][isrc] = -1.0
                 dd_svar["flux_cpval"][isrc] = -1.0
 
-            # Maimum variation significance
+            # Maximum variation significance
             dmag = np.abs(dd_bvar["mag"][idx1:idx2] - dd_svar["mag_mean"][isrc])
             dmag_sig = dmag / dd_bvar["mag_err"][idx1:idx2]
             dmax_sig_max_idx = np.argmax(dmag_sig)
 
             dd_svar["mag_dmax_sig"][isrc] = dmag_sig[dmax_sig_max_idx]
             dd_svar["mag_dmax"][isrc] = dmag[dmax_sig_max_idx]
+
+            # Maximum absolute variation
+            dmag_abs_max = dmag.max()
+            dd_svar["mag_dmax_abs"][isrc] = dmag_abs_max
 
         # Write them into tt_sources
         self.tt_sources.add_index(id_name)
