@@ -41,4 +41,4 @@ uvva/*
 uvva.egg-info
 
 #pipeline example output
-vasca/examples/vasca_pipeline
+vasca/examples/vasca_pipeline*
