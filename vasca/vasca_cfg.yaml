@@ -111,9 +111,9 @@ observations:
             table    : "tt_detections"
             sel_type : "and"  # These are all AND selections
             range:
-                s2n            : [4,.inf]
+                s2n            : [3.5,.inf]
                 r_fov          : [0.0,0.55]
-                point_src_prob : [0.95,1.0]
+                point_src_prob : [0.5,1.0]
                 bright_match   : [-0.5,0.5]
                 mag            : [18,26]
                 mag_err        : [0.000001,0.5]
