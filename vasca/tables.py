@@ -568,17 +568,17 @@ class TableCollection(object):
 
         # Select seed table, detections or sources
         clus_srcs = False
-        tt = self.tt_detections
+        tt_in = self.tt_detections
         if "Region" in self.__class__.__name__:
             clus_srcs = True
-            tt = self.tt_sources
+            tt_in = self.tt_sources
         logger.info(f"Clustering with MeanShift with clus_srcs: {clus_srcs}")
 
         # Selection
-        sel = tt["sel"]
+        sel = tt_in["sel"]
 
         # Get detection coordinates and run clustering
-        coords = table_to_array(tt[sel]["ra", "dec"])
+        coords = table_to_array(tt_in[sel]["ra", "dec"])
 
         # Do bandwidth determination "by hand" to print it out and convert
         # bandwidth unit from arc seconds into degerees
@@ -610,14 +610,17 @@ class TableCollection(object):
             }
 
             # Add rg_src_id to detections
-            tt["rg_src_id"][sel] = ms.labels_
-            add_rg_src_id(tt[sel], self.tt_detections)
+            tt_in["rg_src_id"][sel] = ms.labels_
+            add_rg_src_id(tt_in[sel], self.tt_detections)
 
             # Add total number of detections
             det_src_ids, src_nr_det = np.unique(
                 self.tt_detections["rg_src_id"].data,
                 return_counts=True,
             )
+            print("a", det_src_ids, len(det_src_ids))
+            print("b", src_ids, len(src_ids))
+
             src_idx = (det_src_ids[:, None] == src_ids).argmax(axis=0)
             srcs_data["nr_det"] = src_nr_det[src_idx]
 
@@ -626,8 +629,8 @@ class TableCollection(object):
             self._table_names.remove("tt_sources")
             self.add_table(srcs_data, "region:tt_sources")
 
-            nr_merged = len(tt[sel]) - len(src_ids)
-            perc_merged = np.round(100 * nr_merged / len(tt[sel]), 4)
+            nr_merged = len(tt_in[sel]) - len(src_ids)
+            perc_merged = np.round(100 * nr_merged / len(tt_in[sel]), 4)
             logger.debug(f"Merged sources: {nr_merged} ({perc_merged}%)")
 
         else:
