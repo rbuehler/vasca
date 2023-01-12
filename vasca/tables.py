@@ -712,7 +712,7 @@ class TableCollection(object):
             "mag_dmax",
             "mag_dmax_abs",
             "mag_dmax_sig",
-            "mag_sig_int",
+            "mag_sig_int2",
             "mag_skew",
         ]
 
@@ -760,9 +760,20 @@ class TableCollection(object):
             if src_nr_det[isrc] > 1:
                 dd_svar["flux_rchiq"][isrc] = chiq / (src_nr_det[isrc] - 1)
                 dd_svar["flux_cpval"][isrc] = chi2.sf(chiq, src_nr_det[isrc] - 1)
+
+                # Intrinsic variability
+                dd_svar["mag_sig_int2"][isrc] = (
+                    np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
+                    - np.mean(dd_bvar["mag_err"][idx1:idx2]) ** 2
+                )
+
+                # Skewness
+                dd_svar["mag_skew"][isrc] = skew(dd_bvar["mag"][idx1:idx2], bias=False)
             else:
                 dd_svar["flux_rchiq"][isrc] = -1.0
                 dd_svar["flux_cpval"][isrc] = -1.0
+                dd_svar["mag_sig_int2"][isrc] = -1.0
+                dd_svar["mag_skew"][isrc] = -100.0
 
             # Maximum variation significance
             dmag = np.abs(dd_bvar["mag"][idx1:idx2] - dd_svar["mag_mean"][isrc])
@@ -775,15 +786,6 @@ class TableCollection(object):
             # Maximum absolute variation
             dmag_abs_max = dmag.max()
             dd_svar["mag_dmax_abs"][isrc] = dmag_abs_max
-
-            # Intrinsic variability
-            dd_svar["mag_sig_int"][isrc] = np.sqrt(
-                np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
-                - np.mean(dd_bvar["mag_err"][idx1:idx2]) ** 2
-            )
-
-            # Skewness
-            dd_svar["mag_skew"][isrc] = skew(dd_bvar["mag"][idx1:idx2], bias=False)
 
         # Write them into tt_sources
         self.tt_sources.add_index(id_name)
