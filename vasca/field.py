@@ -639,8 +639,12 @@ class GALEXField(BaseField):
         gf.load_from_fits(fits_path)
         # Sets convenience class attributes
         gf.set_field_attr()
+        obs_field_id = get_region_field_id(
+            obs_field_id=obs_id, observaory="GALEX", obs_filter=obs_filter
+        )
+
         # Check consistency
-        if not gf.field_id == obs_id:
+        if not gf.field_id == obs_field_id:
             raise ValueError(
                 "Inconsistent data: Missmatch for 'field_id'. "
                 f"Expected '{obs_id}' but got '{gf.field_id}' "
