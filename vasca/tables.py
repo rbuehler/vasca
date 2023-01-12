@@ -14,7 +14,7 @@ from astropy.nddata import bitmask
 from astropy.table import Table
 from astropy.wcs import wcs
 from loguru import logger
-from scipy.stats import chi2, skew
+from scipy.stats import chi2
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.tables_dict import dd_vasca_tables
@@ -694,23 +694,19 @@ class TableCollection(object):
 
         # Prepare output data arrays
         ll_svar = [
+            "ra",
+            "dec",
+            "pos_err_mean",
+            "pos_err",
+            "pos_var",
             "mag_mean",
             "mag_err_mean",
-            "pos_err_mean",
             "mag_var",
-            "pos_var",
-            "mag_sig_int",
-            "mag_skew",
             "flux_cpval",
             "flux_rchiq",
             "mag_dmax",
-            "mag_dmax_sig",
             "mag_dmax_abs",
-            "ra",
-            "dec",
-            "ra_wsqrd",
-            "dec_wsqrd",
-            "pos_err_se",
+            "mag_dmax_sig",
         ]
 
         dd_svar = dict()
@@ -737,32 +733,16 @@ class TableCollection(object):
                 dd_svar["mag_var"][isrc] = -1
                 dd_svar["pos_var"][isrc] = -1
 
-            # Intrinsic variability
-            dd_svar["mag_sig_int"][isrc] = np.sqrt(
-                np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
-                - np.mean(dd_bvar["mag_err"][idx1:idx2]) ** 2
-            )
-
-            # Skewness
-            dd_svar["mag_skew"][isrc] = skew(dd_bvar["mag"][idx1:idx2], bias=False)
-
             # Weighted averages
+            pos_weight = 1.0 / dd_bvar["pos_err"][idx1:idx2] ** 2
             dd_svar["ra"][isrc] = np.average(
-                dd_bvar["ra"][idx1:idx2], weights=1.0 / dd_bvar["pos_err"][idx1:idx2]
+                dd_bvar["ra"][idx1:idx2], weights=pos_weight
             )
             dd_svar["dec"][isrc] = np.average(
-                dd_bvar["dec"][idx1:idx2], weights=1.0 / dd_bvar["pos_err"][idx1:idx2]
+                dd_bvar["dec"][idx1:idx2], weights=pos_weight
             )
 
-            # see https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Variance-defined_weights
-            weights_sqrd = 1.0 / dd_bvar["pos_err"][idx1:idx2] ** 2
-            dd_svar["ra_wsqrd"][isrc] = np.average(
-                dd_bvar["ra"][idx1:idx2], weights=weights_sqrd
-            )
-            dd_svar["dec_wsqrd"][isrc] = np.average(
-                dd_bvar["dec"][idx1:idx2], weights=weights_sqrd
-            )
-            dd_svar["pos_err_se"][isrc] = np.sqrt(1.0 / np.sum(weights_sqrd))
+            dd_svar["pos_err"][isrc] = np.sqrt(1.0 / np.sum(pos_weight))
 
             # Chi square
             flux_mean = np.mean(dd_bvar["flux"][idx1:idx2])
