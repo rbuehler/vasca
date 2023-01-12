@@ -766,13 +766,15 @@ class TableCollection(object):
                     np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
                     - np.mean(dd_bvar["mag_err"][idx1:idx2]) ** 2
                 )
-
-                # Skewness
-                dd_svar["mag_skew"][isrc] = skew(dd_bvar["mag"][idx1:idx2], bias=False)
             else:
                 dd_svar["flux_rchiq"][isrc] = -1.0
                 dd_svar["flux_cpval"][isrc] = -1.0
                 dd_svar["mag_sig_int2"][isrc] = -1.0
+
+            # Skewness
+            if src_nr_det[isrc] > 2:
+                dd_svar["mag_skew"][isrc] = skew(dd_bvar["mag"][idx1:idx2], bias=False)
+            else:
                 dd_svar["mag_skew"][isrc] = -100.0
 
             # Maximum variation significance
