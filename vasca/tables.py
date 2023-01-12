@@ -14,7 +14,7 @@ from astropy.nddata import bitmask
 from astropy.table import Table
 from astropy.wcs import wcs
 from loguru import logger
-from scipy.stats import chi2
+from scipy.stats import chi2, skew
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.tables_dict import dd_vasca_tables
@@ -618,11 +618,13 @@ class TableCollection(object):
                 self.tt_detections["rg_src_id"].data,
                 return_counts=True,
             )
-            print("a", det_src_ids, len(det_src_ids))
-            print("b", src_ids, len(src_ids))
 
-            src_idx = (det_src_ids[:, None] == src_ids).argmax(axis=0)
-            srcs_data["nr_det"] = src_nr_det[src_idx]
+            check_ids = det_src_ids[:, None] == src_ids
+            if type(check_ids) == bool and check_ids == True:
+                srcs_data["nr_det"] = src_nr_det
+            else:
+                src_idx = (det_src_ids[:, None] == src_ids).argmax(axis=0)
+                srcs_data["nr_det"] = src_nr_det[src_idx]
 
             # Remove existing table and add new one
             del self.__dict__["tt_sources"]
@@ -710,6 +712,8 @@ class TableCollection(object):
             "mag_dmax",
             "mag_dmax_abs",
             "mag_dmax_sig",
+            "mag_sig_int",
+            "mag_skew",
         ]
 
         dd_svar = dict()
@@ -771,6 +775,15 @@ class TableCollection(object):
             # Maximum absolute variation
             dmag_abs_max = dmag.max()
             dd_svar["mag_dmax_abs"][isrc] = dmag_abs_max
+
+            # Intrinsic variability
+            dd_svar["mag_sig_int"][isrc] = np.sqrt(
+                np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
+                - np.mean(dd_bvar["mag_err"][idx1:idx2]) ** 2
+            )
+
+            # Skewness
+            dd_svar["mag_skew"][isrc] = skew(dd_bvar["mag"][idx1:idx2], bias=False)
 
         # Write them into tt_sources
         self.tt_sources.add_index(id_name)
