@@ -613,24 +613,21 @@ class TableCollection(object):
             tt_in["rg_src_id"][sel] = ms.labels_
             add_rg_src_id(tt_in[sel], self.tt_detections)
 
-            # Add total number of detections
-            det_src_ids, src_nr_det = np.unique(
-                self.tt_detections["rg_src_id"].data,
-                return_counts=True,
-            )
-
-            check_ids = det_src_ids[:, None] == src_ids
-            if type(check_ids) == bool and check_ids == True:
-                srcs_data["nr_det"] = src_nr_det
-            else:
-                src_idx = (det_src_ids[:, None] == src_ids).argmax(axis=0)
-                srcs_data["nr_det"] = src_nr_det[src_idx]
-
             # Remove existing table and add new one
             del self.__dict__["tt_sources"]
             self._table_names.remove("tt_sources")
             self.add_table(srcs_data, "region:tt_sources")
 
+            # Add total number of detections
+            det_src_ids, src_nr_det = np.unique(
+                self.tt_detections["rg_src_id"].data,
+                return_counts=True,
+            )
+            self.tt_sources.add_index("rg_src_id")
+            src_idx = self.tt_sources.loc_indices["rg_src_id", det_src_ids]
+            self.tt_sources["nr_det"][src_idx] = src_nr_det
+
+            # Log percentage of merged sources
             nr_merged = len(tt_in[sel]) - len(src_ids)
             perc_merged = np.round(100 * nr_merged / len(tt_in[sel]), 4)
             logger.debug(f"Merged sources: {nr_merged} ({perc_merged}%)")

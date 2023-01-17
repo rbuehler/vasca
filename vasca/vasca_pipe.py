@@ -138,7 +138,7 @@ def run_field(obs_nr, field, vasca_cfg):
     )
 
     # # Calculate source variables from light curve
-    # field.set_src_stats()
+    field.set_src_stats()
 
     # Write out field
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
