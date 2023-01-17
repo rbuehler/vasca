@@ -158,6 +158,24 @@ class Region(TableCollection):
         self.add_table(dd_data, "region:" + table_name)
 
     def add_coverage_hp(self, nside=4096):
+        """
+        Creates healpix arrays of Nr visits, fields and total exposure.
+
+        Parameters
+        ----------
+        nside : int, optional
+            NSIDE of healpix binning. The default is 4096.
+
+        Returns
+        -------
+        hp_nr_vis : [int]
+            Array with number of visits per pixel
+        hp_exp : TYPE
+            Array with exposure per pixel
+        hp_nr_fds : TYPE
+            Array with number of fields
+
+        """
 
         npix = hpy.nside2npix(nside)
         pix_diam = hpy.nside2resol(nside, arcmin=True) / 60 * uu.deg
@@ -166,8 +184,9 @@ class Region(TableCollection):
             f"Healpix NSIDE: {nside}, NPIX: {npix}, pixel diameter: {pix_diam}"
         )
         pix_nrs = np.arange(npix)
-        hp_vis = np.zeros(npix, dtype="float32")
+        hp_nr_vis = np.zeros(npix, dtype="float32")
         hp_exp = np.zeros(npix, dtype="float32")
+        hp_nr_fds = np.zeros(npix, dtype="float32")
         for field in self.tt_fields:
             pos_vec = hpy.ang2vec(field["ra"], field["dec"], lonlat=True)
             rdisc = field["fov_diam"] / 2.0
@@ -176,21 +195,28 @@ class Region(TableCollection):
                 nside=nside, vec=pos_vec, radius=np.radians(rdisc)
             )
 
-            hp_vis[ipix_disc] += field["nr_vis"]
+            hp_nr_vis[ipix_disc] += field["nr_vis"]
             hp_exp[ipix_disc] += field["time_bin_size_sum"]
+            hp_nr_fds[ipix_disc] += 1
 
         # Write to table
-        sel_pix = hp_vis > 0
-        keys_data = ["pix_id", "nr_vis", "exp"]
-        ll_data = [pix_nrs[sel_pix], hp_vis[sel_pix], hp_exp[sel_pix]]
+        sel_pix = hp_nr_vis > 0
+        keys_data = ["pix_id", "nr_vis", "exp", "nr_fds"]
+        ll_data = [
+            pix_nrs[sel_pix],
+            hp_nr_vis[sel_pix],
+            hp_exp[sel_pix],
+            hp_nr_fds[sel_pix],
+        ]
         dd_data = dict(zip(keys_data, ll_data))
         self.add_table(dd_data, "region:tt_coverage_hp")
         self.tt_coverage_hp.meta["NSIDE"] = nside
 
         hp_exp[hp_exp < 1e-6] = hpy.UNSEEN
-        hp_vis[hp_vis < 1e-6] = hpy.UNSEEN
+        hp_nr_vis[hp_nr_vis < 1e-6] = hpy.UNSEEN
+        hp_nr_vis[hp_nr_fds < 1e-6] = hpy.UNSEEN
 
-        return hp_vis, hp_exp
+        return hp_nr_vis, hp_exp, hp_nr_fds
 
     def load_from_fits(self, file_name, load_fields=True):
         """
