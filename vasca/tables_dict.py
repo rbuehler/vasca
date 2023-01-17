@@ -524,11 +524,16 @@ region = {
         "meta": {**base_field["tt_visits"]["meta"]},
     },
     "tt_coverage_hp": {
-        "names": ["pix_id", "nr_vis", "exp"],
-        "dtype": ["uint32", "uint32", "float32"],
-        "units": ["1", "1", "1"],
-        "defaults": [0, 0, -1],
-        "descriptions": ["Healpix ID", "Nr of visits", "Total exposure"],
+        "names": ["pix_id", "nr_vis", "exp", "nr_fds"],
+        "dtype": ["uint32", "uint32", "float32", "uint32"],
+        "units": ["1", "1", "1", "1"],
+        "defaults": [0, 0, -1, 0],
+        "descriptions": [
+            "Healpix ID",
+            "Nr. of visits",
+            "Total exposure",
+            "Nr. of fields",
+        ],
         "meta": {
             "DATAPATH": "None",
             "INFO": "Region observations properties in healpix binning.\
