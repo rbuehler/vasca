@@ -254,7 +254,7 @@ def plot_region_sky_gnomeview(
     sel_srcs : bool, optional
         Show only selected sources. The default is True.
     gw_kwargs : dict, optional
-        Keyword arguments for healpy..gnomview. The default is None.
+        Keyword arguments for healpy.gnomview. The default is None.
     ps_kwargs : dict, optional
         Keyword arguments for healpy.projscatter. The default is None.
 
@@ -264,6 +264,12 @@ def plot_region_sky_gnomeview(
         Used Matplotlib axes.
 
     """
+    if not hasattr(region, "tt_coverage_hp"):
+        logger.warning(
+            "Create healpix coverage table first with region.add_coverage_hp. "
+            "Creating it now with default values."
+        )
+        region.add_coverage_hp()
 
     # Get healpix map of Nr of visits
     nside = region.tt_coverage_hp.meta["NSIDE"]
@@ -300,8 +306,64 @@ def plot_region_sky_gnomeview(
     # hpy.projscatter(
     #    [ra], [dec], lonlat=True, marker="o", s=4.0
     # )  # Mark center of gnomeview
-    # hpy.mollview(hp_map, title="Nr. of visits in log10",nest=False,cmap="nipy_spectral",xsize=4800)
-    # hpy.graticule(local=False,coord="C",dpar=1.0, color="white") # show graticules every 0.5 deg
+    return plt.gca()
+
+
+def plot_region_sky_mollview(region, var="nr_vis", mw_kwargs=None):
+    """
+    Plot the nr visits, fields or exposure on the sky. Coverage table has to be
+    previosly created with region.add_coverage_hp.
+
+    Parameters
+    ----------
+    region : vasca.region.Region
+        Region for which is plotted.
+    coord : str
+        Coordinate system, Galactic or ICKS
+    var: str
+        Variable to plot, exposure "exp", visits "nr_vis" or or fields "nr_fds"
+    mw_kwargs : dict, optional
+        Keyword arguments for healpy.mollview. The default is None.
+
+    Returns
+    -------
+    ax : axes
+        Used Matplotlib axes.
+
+    """
+    if not hasattr(region, "tt_coverage_hp"):
+        logger.warning(
+            "Create healpix coverage table first with region.add_coverage_hp. "
+            "Creating it now with default values."
+        )
+        region.add_coverage_hp()
+
+    # Get healpix map of Nr of visits
+    nside = region.tt_coverage_hp.meta["NSIDE"]
+    npix = hpy.nside2npix(nside)
+    hp_map = np.zeros(npix, dtype=np.float32)
+    pix_ids = region.tt_coverage_hp["pix_id"].data
+    hp_map[pix_ids] = region.tt_coverage_hp[var]
+
+    coord_sys = str(region.tt_coverage_hp.meta["COOR_SYS"])
+    dd_title = {
+        "nr_vis": "Number of vists in " + coord_sys + " coord.",
+        "nr_fds": "Number of fields in " + coord_sys + " coord.",
+        "exp": "Exposure in " + coord_sys + " coord.",
+    }
+
+    # Plot background map
+    plt_mw_kwargs = {
+        "title": dd_title[var],
+        "nest": False,
+        "xsize": 4800,
+        "cmap": "gist_stern",
+    }
+    if mw_kwargs is not None:
+        plt_mw_kwargs.update(mw_kwargs)
+
+    hpy.mollview(hp_map, **plt_mw_kwargs)
+
     return plt.gca()
 
 

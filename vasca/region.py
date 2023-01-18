@@ -5,13 +5,12 @@ import os
 import healpy as hpy
 import numpy as np
 from astropy import units as uu
+from astropy.coordinates import SkyCoord
 from loguru import logger
-from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.field import BaseField, GALEXField
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import table_to_array
 
 
 class Region(TableCollection):
@@ -157,7 +156,7 @@ class Region(TableCollection):
 
         self.add_table(dd_data, "region:" + table_name)
 
-    def add_coverage_hp(self, nside=4096):
+    def add_coverage_hp(self, nside=4096, coord_sys="galactic"):
         """
         Creates healpix arrays of Nr visits, fields and total exposure.
 
@@ -165,6 +164,8 @@ class Region(TableCollection):
         ----------
         nside : int, optional
             NSIDE of healpix binning. The default is 4096.
+        coord_sys : str, optional
+            Coordinate system, "galactic" or "icrs"
 
         Returns
         -------
@@ -188,7 +189,14 @@ class Region(TableCollection):
         hp_exp = np.zeros(npix, dtype="float32")
         hp_nr_fds = np.zeros(npix, dtype="float32")
         for field in self.tt_fields:
+
             pos_vec = hpy.ang2vec(field["ra"], field["dec"], lonlat=True)
+            if coord_sys == "galactic":
+                cel = SkyCoord(field["ra"], field["dec"], frame="icrs", unit="deg")
+                pos_vec = hpy.ang2vec(
+                    cel.galactic.l.degree, cel.galactic.b.degree, lonlat=True
+                )
+
             rdisc = field["fov_diam"] / 2.0
             # TODO: Here a more general querry_polygon will have to be done for ULTRASAT
             ipix_disc = hpy.query_disc(
@@ -211,6 +219,7 @@ class Region(TableCollection):
         dd_data = dict(zip(keys_data, ll_data))
         self.add_table(dd_data, "region:tt_coverage_hp")
         self.tt_coverage_hp.meta["NSIDE"] = nside
+        self.tt_coverage_hp.meta["COOR_SYS"] = coord_sys
 
         hp_exp[hp_exp < 1e-6] = hpy.UNSEEN
         hp_nr_vis[hp_nr_vis < 1e-6] = hpy.UNSEEN
