@@ -307,6 +307,20 @@ class Region(TableCollection):
         src._table_names.append("tt_source_lc")
         setattr(src, "tt_source_lc", src.get_light_curve(rg_src_ids=rg_src_id))
 
+        # Add fd_src_ids to each field
+        coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
+        fd_src_ids = list()
+        for field_id in src.tt_fields["field_id"]:
+            fd = self.fields[field_id]
+            coord_fd_srcs = SkyCoord(
+                fd.tt_sources["ra"], fd.tt_sources["dec"], frame="icrs"
+            )
+            idx, d2d, d3d = coord_src.match_to_catalog_sky(coord_fd_srcs)
+            fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
+        # print(fd_src_ids)
+        # print(src.tt_fields)
+        src.tt_fields["fd_src_id"] = fd_src_ids
+
         return src
 
     def get_src_from_sky_pos(self, coordx, coordy, frame="icrs"):
