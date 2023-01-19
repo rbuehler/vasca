@@ -396,9 +396,8 @@ class TableCollection(object):
         out_str = ""
         for key in self._table_names:
             if key in self.__dict__:
-                out_str += "\n" + self.__dict__[key].__str__()
+                out_str += "\n" + key + ":\n" + self.__dict__[key].__str__() + "\n"
 
-        return out_str
         return out_str
 
     def select_rows(self, selections, remove_unselected=False):
@@ -497,6 +496,10 @@ class TableCollection(object):
 
         """
 
+        logger.debug(
+            f"Getting light curve for fd_src_ids '{fd_src_ids}' and rg_src_ids '{rg_src_ids}'"
+        )
+
         # Setup input values depending on field or region
         src_ids = None
         ids_type = "none"
@@ -505,20 +508,16 @@ class TableCollection(object):
             ids_type = "rg_src_id"
         elif rg_src_ids is not None:
             src_ids = [rg_src_ids]
+            ids_type = "rg_src_id"
 
         if hasattr(fd_src_ids, "__iter__"):
             src_ids = list(fd_src_ids)
             ids_type = "fd_src_id"
         elif fd_src_ids is not None:
             src_ids = [fd_src_ids]
+            ids_type = "fd_src_id"
 
-        logger.debug(f"Getting lightcurve  {len(src_ids)} from {ids_type}")
-
-        if "ta_sources_lc" not in self._table_names:
-            logger.error(
-                "Light curve table does not exist, "
-                "for fields run 'set_light_curve()' first."
-            )
+        logger.debug(f"Getting lightcurve for {ids_type}: {src_ids}")
 
         # Dictionary to store light curve tables
         lc_dict = dict()
@@ -529,16 +528,16 @@ class TableCollection(object):
 
         # Loop over sources and get lc info
         for src_id in src_ids:
-            tt_src = self.tt_detections.loc[src_id]
-            vis_idx = self.tt_visits.loc_indices["vis_id", tt_src["vis_id"]]
-            tt_src["time_bin_start"] = self.tt_visits[vis_idx]["time_bin_start"]
-            tt_src["time_bin_size"] = self.tt_visits[vis_idx]["time_bin_size"]
-            tt_src.sort("time_bin_start")
+            tt_det_src = self.tt_detections.loc[[src_id]]
+            vis_idx = self.tt_visits.loc_indices["vis_id", tt_det_src["vis_id"]]
+            tt_det_src["time_bin_start"] = self.tt_visits[vis_idx]["time_bin_start"]
+            tt_det_src["time_bin_size"] = self.tt_visits[vis_idx]["time_bin_size"]
+            tt_det_src.sort("time_bin_start")
             src_data = {
-                "time_start": np.array(tt_src["time_bin_start"]),
-                "time_delta": np.array(tt_src["time_bin_size"]),
-                "mag": np.array(tt_src["mag"]),
-                "mag_err": np.array(tt_src["mag_err"]),
+                "time_start": np.array(tt_det_src["time_bin_start"]),
+                "time_delta": np.array(tt_det_src["time_bin_size"]),
+                "mag": np.array(tt_det_src["mag"]),
+                "mag_err": np.array(tt_det_src["mag_err"]),
                 #                "ul": np.array(src_lc["ul"]),
             }
             # Create and store table

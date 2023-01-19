@@ -6,10 +6,12 @@ import healpy as hpy
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
+from astropy.table import unique, Table
 from loguru import logger
 
 from vasca.field import BaseField, GALEXField
 from vasca.tables import TableCollection
+from vasca.source import Source
 from vasca.tables_dict import dd_vasca_tables
 
 
@@ -258,67 +260,88 @@ class Region(TableCollection):
                 )
                 self.fields[ff["field_id"]] = fd
 
+    def get_src_from_id(self, rg_src_id):
+        """
+        Get Source object containng all region table entries
+        relevant for the passed rg_src_id
 
-# def cluster_srcs_meanshift(self, **ms_kw):
-#     """
-#     Apply _MeanShift clustering algorithm using to sources for overlapping fields.
+        Parameters
+        ----------
+        rg_src_id : int
+            Region source ID.
 
-#     .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
+        Returns
+        -------
+        src : vasca.table.Source
+            VASCA source object.
 
-#     Parameters
-#     ----------
-#     ms_kw : dict, optional
-#         Keywords passed to the scikit MeanShift function. Note that the
-#         bandwidth is assumed to be in units of arc seconds.
+        """
 
-#     Returns
-#     -------
-#     int
-#         Number of detected clusters.
-#     """
-#     logger.info("Clustering sources with MeanShift")
+        logger.debug(f"Getting Source object for rg_src_id: {rg_src_id}")
 
-#     # Selection
-#     sel = self.tt_sources["sel"]
+        src = Source()
 
-#     # Get detection coordinates and run clustering
-#     coords = table_to_array(self.tt_sources[sel]["ra", "dec"])
+        # Adding source and detection table
+        for tt_name in ["tt_sources", "tt_detections"]:
+            self.__dict__[tt_name].add_index("rg_src_id")
+            src._table_names.append(tt_name)
+            setattr(
+                src,
+                tt_name,
+                Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]),
+            )
 
-#     # Do bandwidth determination "by hand" to print it out and convert
-#     # bandwidth unit from arc seconds into degerees
-#     dd_ms = ms_kw
-#     if "bandwidth" not in ms_kw or ms_kw["bandwidth"] is None:
-#         logger.debug("Estimating bandwidth")
-#         dd_ms["bandwidth"] = estimate_bandwidth(coords, quantile=0.2, n_samples=500)
-#     else:
-#         dd_ms["bandwidth"] = (ms_kw["bandwidth"] * uu.arcsec).to(uu.deg).value
+        # Add visits
+        self.tt_visits.add_index("vis_id")
+        vis_ids = (unique(src.tt_detections, keys="vis_id"))["vis_id"]
+        src._table_names.append("tt_visits")
+        setattr(src, "tt_visits", Table(self.tt_visits.loc["vis_id", vis_ids]))
 
-#     logger.debug(f"MeanShift with parameters (bandwith in degrees): '{dd_ms}' ")
-#     ms = MeanShift(**dd_ms)
+        # Add fields
+        self.tt_fields.add_index("rg_fd_id")
+        rg_fd_ids = (unique(src.tt_visits, keys="rg_fd_id"))["rg_fd_id"]
+        src._table_names.append("tt_fields")
+        setattr(src, "tt_fields", Table(self.tt_fields.loc["rg_fd_id", rg_fd_ids]))
 
-#     ms.fit(coords)
+        # Add light curve
+        src._table_names.append("tt_source_lc")
+        setattr(src, "tt_source_lc", src.get_light_curve(rg_src_ids=rg_src_id))
 
-#     # Fill in data into field tables
-#     fd_src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+        return src
 
-#     cluster_centers = ms.cluster_centers_
-#     nr_srcs = len(cluster_centers)
-#     srcs_data = {
-#         "fd_src_id": fd_src_ids,
-#         "ra": cluster_centers[:, 0],
-#         "dec": cluster_centers[:, 1],
-#         "nr_det": det_cts,
-#         "nr_uls": np.zeros(nr_srcs),
-#     }
+    def get_src_from_sky_pos(self, coordx, coordy, frame="icrs"):
+        """
+        Get Source object containng all region table entries
+        relevant for the passed source position. The nearest source is matched.
 
-#     # Fill information into tables.
-#     self.add_table(srcs_data, "base_field:tt_sources")
-#     self.tt_sources.meta["CLUSTALG"] = "MeanShift"
+        Parameters
+        ----------
+        coordx : str, float
+            First coordinate component in any astropy.SkyCoord compatible format.
+        coordx : str, float
+            Second coordinate component in any astropy.SkyCoord compatible format.
+        frame : str
+            Coordinate system. Any astropy compatible format,
+            see https://docs.astropy.org/en/stable/coordinates/skycoord.html
 
-#     # Update fd_src_id entries
-#     self.tt_detections["fd_src_id"][sel] = ms.labels_
+        Returns
+        -------
+        src : vasca.table.Source
+            VASCA source object.
+        dist: astropy.Quantity
+            Distance to the nearest source
+        """
 
-#     # Fill light curve data into tables
-#     self.remove_double_visit_detections()
+        logger.debug(f"Getting Source object for coord: {coordx},{coordy}")
 
-#     return nr_srcs
+        coord_srcs = SkyCoord(
+            self.tt_sources["ra"], self.tt_sources["dec"], frame="icrs"
+        )
+        coord_ref = SkyCoord(coordx, coordy, frame=frame)
+        idx, d2d, d3d = coord_ref.match_to_catalog_sky(coord_srcs)
+
+        rg_src_id = self.tt_sources[idx]["rg_src_id"]
+
+        src = self.get_src_from_id(rg_src_id)
+
+        return [src, *d2d]

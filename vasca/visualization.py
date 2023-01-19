@@ -674,7 +674,7 @@ def plot_light_curve(
     Parameters
     ----------
     tc : VASCA.table.TableCollection
-        Either field or region that contains the light curves.
+        Either field, region or source that contains the light curves.
     fd_src_ids : list or int
         List or single field source IDs to plot. Default is None.
     rg_src_ids : list or int
