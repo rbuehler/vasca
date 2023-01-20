@@ -20,7 +20,7 @@ ressources:
 
 cluster_src:
     meanshift:
-        bandwidth     : 5               # In arcsec, to estimate it automatically specify "null"
+        bandwidth     : 3               # In arcsec, to estimate it automatically specify "null"
         seeds         : null
         bin_seeding   : false
         min_bin_freq  : 1

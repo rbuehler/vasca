@@ -594,7 +594,7 @@ class TableCollection(object):
         ms.fit(coords)
 
         # Fill in data into source tables
-        src_ids, det_cts = np.unique(ms.labels_, return_counts=True)
+        src_ids, clu_cts = np.unique(ms.labels_, return_counts=True)
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
 
@@ -604,7 +604,7 @@ class TableCollection(object):
                 "rg_src_id": src_ids,
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
-                "nr_fds": det_cts,
+                "nr_fd_srcs": clu_cts,
                 "nr_uls": np.zeros(nr_srcs),
             }
 
@@ -636,7 +636,7 @@ class TableCollection(object):
                 "fd_src_id": src_ids,
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
-                "nr_det": det_cts,
+                "nr_det": clu_cts,
                 "nr_uls": np.zeros(nr_srcs),
             }
 
