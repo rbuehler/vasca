@@ -237,6 +237,7 @@ def plot_field_sky(
     return fig
 
 
+# TODO: Add coordinate system match check between tt_coverage_hp and this function
 def plot_region_sky_gnomeview(
     region, ra, dec, sel_srcs=True, gw_kwargs=None, ps_kwargs=None
 ):
@@ -575,7 +576,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["mag_mean"] = {}
             var_plt["mag_dmax"] = {}
             var_plt["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
-            var_plt["nr_fds"] = {}
+            var_plt["nr_fd_srcs"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
@@ -629,7 +630,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
-            var_plt[("nr_fds", "mag_mean")] = {
+            var_plt[("nr_fd_srcs", "mag_mean")] = {
                 "invert_yaxis": True,
                 "ylim": [17.5, 24.5],
             }
