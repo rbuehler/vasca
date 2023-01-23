@@ -130,7 +130,7 @@ def run_field(obs_nr, field, vasca_cfg):
     obs_cfg = vasca_cfg["observations"][obs_nr]
 
     # Apply selections
-    field.select_rows(obs_cfg["selection"]["det_quality"], remove_unselected=True)
+    field.select_rows(obs_cfg["selection"]["det_quality"], remove_unselected=False)
 
     # Run clustering
     field.cluster_meanshift(
@@ -146,7 +146,8 @@ def run_field(obs_nr, field, vasca_cfg):
     # # Remove some items which are not further needed to free memory
     # # del field.__dict__["tt_detections"]
     # # field._table_names.remove("tt_detections")
-    # field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
+    field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
+
     field.ref_img = None
     field.ref_wcs = None
 

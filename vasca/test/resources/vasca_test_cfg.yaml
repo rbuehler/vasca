@@ -76,3 +76,8 @@ observations:
                 mag_err        : [0,0.5]
             bitmask:
                 artifacts : [1,8,16,32,64,128,256,512]
+        det_association : 
+            table     : "tt_detections"
+            ref_table : "tt_sources"
+            sel_type  : "is_in"
+            var       : "fd_src_id"
