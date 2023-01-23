@@ -38,7 +38,7 @@ selection:
         table    : "tt_sources"
         sel_type : "or"
         range:        
-            flux_cpval     : [0.0,0.000000573303]            # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
+            flux_cpval     : [-0.5,0.000000573303]            # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
 
     det_association : 
         table     : "tt_detections"
