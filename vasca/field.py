@@ -220,104 +220,6 @@ class BaseField(TableCollection):
 
         self.add_table(tdata, "base_field:ta_sources_lc")
 
-    # # Calculation is done on a field level for easy numpy paralleization,
-    # # as this calculation is computationally intensive.
-    # def set_src_stats(self):
-    #     """
-    #     Calculates source parameters from detections and stores them
-    #     in the source table (tt_source).
-
-    #     Returns
-    #     -------
-    #     None.
-
-    #     """
-
-    #     logger.debug("Calculating source variability statistics.")
-
-    #     if "ta_sources_lc" not in self._table_names:
-    #         logger.error(
-    #             "Light curve table does not exist, run 'set_light_curve()' first."
-    #         )
-
-    #     # Get lightcurve as numpy arrays to calculate stats
-    #     lc_vars = ["mag", "mag_err", "ul", "ra", "dec", "pos_err"]
-    #     lc = dict()
-    #     for var in lc_vars:
-    #         lc[var] = np.array((self.ta_sources_lc[var].data).tolist())
-
-    #     # Check that variables are in good range for safety.
-    #     # Should not be needed with reasonable pre-cuts
-    #     # mask entires with no meassurement with nan
-    #     mask = lc["mag"] < 1e-7
-    #     mask_mag_err = lc["mag_err"] < 1e-7
-    #     mask_pos_err = lc["pos_err"] < 1e-9
-    #     if np.any(mask_mag_err != mask) or np.any(mask_pos_err != mask):
-    #         logger.warning("Invalid values encountered in 'ta_source_lc'")
-    #     for var in lc_vars:
-    #         if var == "ul":
-    #             lc["ul"][~mask] = np.nan
-    #         else:
-    #             lc[var][mask] = np.nan
-
-    #     # Calculate variability parameters
-    #     mag_mean = np.nanmean(lc["mag"], axis=1)
-    #     mag_err_mean = np.nanmean(lc["mag_err"], axis=1)
-    #     mag_var = np.nanvar(lc["mag"], ddof=1, axis=1)
-
-    #     # Calculate reduced chisquared based on flux
-    #     flux = uu.Magnitude(lc["mag"]).physical
-    #     flux_mean = np.nanmean(flux, axis=1)
-    #     flux_err = (uu.Magnitude(lc["mag"] - lc["mag_err"])).physical - flux
-    #     chiq_elem = (flux - flux_mean[:, None]) / flux_err
-    #     chiq_const = np.nansum(chiq_elem * chiq_elem, axis=1)
-    #     ndf = (~mask).sum(axis=1) - 1
-    #     rchiq_const = chiq_const / ndf
-    #     flux_cpval = chi2.sf(chiq_const, ndf)
-    #     # var_sig = norm.isf(flux_cpval / 2.0)  # Convert to gaussian sigma equivalent
-
-    #     # Get the maximum flux variation from the mean
-    #     dmag_max = np.abs(np.nanmax(lc["mag"], axis=1) - mag_mean)
-    #     dmag_min = np.abs(np.nanmin(lc["mag"], axis=1) - mag_mean)
-    #     dmag = (dmag_max >= dmag_min) * dmag_max + (dmag_max < dmag_min) * dmag_min
-
-    #     # Get maximum significance of flux variation compared to mean
-    #     dmag_max_sig = np.nanmax(
-    #         np.abs((lc["mag"] - mag_mean[:, None]) / lc["mag_err"]), axis=1
-    #     )
-
-    #     # Nr of upper limits below the mean flux (in magnitudes greater)
-    #     nr_ulmean = (mag_mean[:, None] < lc["ul"]).sum(axis=1)
-    #     nr_uls = mask.sum(axis=1)
-    #     ul_weight = nr_ulmean / np.sqrt(nr_uls + (nr_uls == 0) * 1e-6)
-
-    #     # Get pos_err weighted average position
-    #     weight_sum = np.nansum(1.0 / lc["pos_err"], axis=1)
-    #     ra_av = np.nansum(lc["ra"] / lc["pos_err"], axis=1) / weight_sum
-    #     dec_av = np.nansum(lc["dec"] / lc["pos_err"], axis=1) / weight_sum
-    #     ra_var = np.nanvar(lc["ra"], ddof=1, axis=1)
-    #     dec_var = np.nanvar(lc["dec"], ddof=1, axis=1)
-    #     pos_var = ra_var + dec_var
-    #     pos_err_mean = np.nanmean(lc["pos_err"], axis=1)
-
-    #     # Write them into tt_sources
-    #     fd_src_ids = self.ta_sources_lc["fd_src_id"]
-    #     self.tt_sources.add_index("fd_src_id")
-    #     fd_src_idx = self.tt_sources.loc_indices["fd_src_id", fd_src_ids]
-    #     self.tt_sources["nr_uls"][fd_src_idx] = nr_uls
-    #     self.tt_sources["mag_mean"][fd_src_idx] = mag_mean
-    #     self.tt_sources["mag_err_mean"][fd_src_idx] = mag_err_mean
-    #     self.tt_sources["mag_var"][fd_src_idx] = mag_var
-    #     self.tt_sources["flux_cpval"][fd_src_idx] = flux_cpval
-    #     self.tt_sources["flux_rchiq"][fd_src_idx] = rchiq_const
-    #     self.tt_sources["mag_dmax"][fd_src_idx] = dmag
-    #     self.tt_sources["mag_dmax_sig"][fd_src_idx] = dmag_max_sig
-    #     self.tt_sources["ul_weight"][fd_src_idx] = ul_weight
-    #     self.tt_sources["ra"][fd_src_idx] = ra_av
-    #     self.tt_sources["dec"][fd_src_idx] = dec_av
-    #     self.tt_sources["pos_err_mean"][fd_src_idx] = pos_err_mean
-    #     self.tt_sources["pos_var"][fd_src_idx] = pos_var
-
     def remove_double_visit_detections(self):
         """
         Helper function of cluster_meanshift().
@@ -1306,7 +1208,6 @@ class GALEXField(BaseField):
         if col_names is None:
             mast_col_names = [
                 "visit_id",
-                "source_id",
                 "ggoid_dec",
                 "alpha_j2000",  # take band-merged quantities?
                 "delta_j2000",  # take band-merged quantities?
@@ -1327,7 +1228,6 @@ class GALEXField(BaseField):
 
             vasca_col_names = [
                 "vis_id",
-                "fd_src_id",
                 "det_id",
                 "ra",
                 "dec",

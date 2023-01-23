@@ -549,7 +549,8 @@ class TableCollection(object):
 
     def cluster_meanshift(self, **ms_kw):
         """
-        Apply _MeanShift clustering algorithm using to derive sources.
+        Apply _MeanShift clustering algorithm using to derive sources. Runs only on selected
+        detections or sources.
 
         .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
 
@@ -644,7 +645,7 @@ class TableCollection(object):
             self.add_table(srcs_data, "base_field:tt_sources")
 
             # Update fd_src_id entries
-            self.tt_detections["fd_src_id"][sel] = ms.labels_
+            self.tt_detections["fd_src_id"][np.where(sel)] = ms.labels_
 
             # Fill light curve data into tables
             self.remove_double_visit_detections()
@@ -674,7 +675,8 @@ class TableCollection(object):
             id_name = "rg_src_id"
 
         # Prepare detection data
-        tt_det = Table(self.tt_detections, copy=True)
+        sel_det = self.tt_detections["sel"]
+        tt_det = Table(self.tt_detections[sel_det], copy=True)
         tt_det.sort(id_name)
 
         # Add flux and flux_err to table
