@@ -143,11 +143,8 @@ def run_field(obs_nr, field, vasca_cfg):
     # Write out field
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
 
-    # # Remove some items which are not further needed to free memory
-    # # del field.__dict__["tt_detections"]
-    # # field._table_names.remove("tt_detections")
+    # Remove some items which are not further needed to free memory
     field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
-
     field.ref_img = None
     field.ref_wcs = None
 

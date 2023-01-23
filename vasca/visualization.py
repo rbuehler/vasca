@@ -569,7 +569,9 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["r_fov"] = {"range": [0.0, 0.7]}
             var_plt["point_src_prob"] = {}
             var_plt["artifacts"] = {"histtype": "step"}
-            fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
+            var_plt["bright_match"] = {}
+            var_plt["pos_err"] = {"range": [0.0, 0.0025]}
+            fig, axs = plt.subplots(4, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {}
