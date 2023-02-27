@@ -3,8 +3,10 @@
 """
 Utilities for VASCA
 """
-
+from datetime import timedelta
+from functools import wraps
 from itertools import zip_longest
+from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -402,3 +404,143 @@ def binned_stat(
         out.append(np.asarray((edges[:-1] + edges[1:]) / 2))
 
     return tuple(out)
+
+
+def tgalex_to_astrotime(galex_timestamp, output_format=None, verbose=False):
+    """
+    Converts a GALEX time stamp to astropy.time.Time object
+    with unix format and UTC scale.
+    GALEX time is equal to UNIX time - 315964800.
+
+    Parameters
+    ----------
+    galex_timestamp : float
+        The GALEX time epoch.
+    output_format : {None, "iso", "tt"}, optional
+        Specifies the time format/scale of the return value
+        The default is None where the GALEX time stamp is converted and returned
+        astropy.time.Time object with format=unix and scale=utc.
+        Keywords "iso" and "tt" change return value to str using the astropy methods
+        astropy.time.Time.iso and astropy.time.Time.tt respectively.
+    verbose : bool, default False
+        Enable verbose printing to show format and scale if the converted time
+
+    Returns
+    -------
+    astropy.time.Time or str
+        An astropy.time.Time object or str depending on `output_format`.
+
+    Raises
+    ------
+    ValueError
+        Only floats or ints are supported for conversion
+    """
+    # parse input
+    if not isinstance(galex_timestamp, (float, int)):
+        raise ValueError("Time stamp must be float or integer.")
+
+    # apply offset and convert
+    galex_t_offset = 315964800
+    epoch = galex_timestamp + galex_t_offset
+    t = Time(epoch, format="unix")
+
+    # return
+    if output_format == "iso":
+        if verbose:
+            print(t.iso, t.iso.format, t.scale)
+        return t.iso
+    elif output_format == "tt":
+        if verbose:
+            print(t.tt, t.tt.format, t.tt.scale)
+        return t.tt
+    elif output_format == "mjd":
+        return t.mjd
+    elif output_format is None:
+        return t
+
+
+def galex_obs_info(lc, verbose=False):
+    """
+    Collects information form a light curve dataset
+    (e.g. fetched using gPhoton.gAperture) and returns a pandas.DataFrame.
+    The data frame contains columns for exposure time, observation gap time
+    as well as observation start and stop date
+
+    Parameters
+    ----------
+    lc : dictionary, data frame or astropy.Table
+        GALEX light curve dataset.
+        Requires existence of keys/columns named "t0" (start)
+        and "t1" (stop) each containing numerical arrays with
+        the start/stop time in GALEX time format.
+    verbose : bool, default False
+        Enable verbose printing
+
+    Returns
+    -------
+    pandas.DataFrame
+        A data frame containing the timing meta data of GALEX observations
+        in human readable formats.
+    """
+    # collect info from light curve dataset
+    obs_info = {
+        "exposure time [s]": list(),
+        "obs. gap [d,h:m:s]": list(),
+        "start date [utc]": list(),
+        "stop date [utc]": list(),
+    }
+    for run_idx in range(len(lc)):
+        exposure_time = tgalex_to_astrotime(lc["t1"][run_idx]) - tgalex_to_astrotime(
+            lc["t0"][run_idx]
+        )
+        # duration
+        obs_info["exposure time [s]"].append(exposure_time.sec)
+        # start
+        obs_info["start date [utc]"].append(
+            tgalex_to_astrotime(
+                lc["t0"][run_idx],
+                output_format="iso",
+                verbose=False,
+            )
+        )
+        # stop
+        obs_info["stop date [utc]"].append(
+            tgalex_to_astrotime(
+                lc["t1"][run_idx],
+                output_format="iso",
+                verbose=False,
+            )
+        )
+        # observation gap
+        if run_idx < len(lc) - 1:
+            obs_gap = tgalex_to_astrotime(lc["t0"][run_idx + 1]) - tgalex_to_astrotime(
+                lc["t1"][run_idx]
+            )
+            # format
+            sec = timedelta(seconds=obs_gap.sec)
+            obs_info["obs. gap [d,h:m:s]"].append(sec)
+        # fill last gap, witch is always zero, to match array dimensions
+        if run_idx == len(lc) - 1:
+            obs_info["obs. gap [d,h:m:s]"].append("0 days, 0:00:00")
+
+    df_obs_info = pd.DataFrame(obs_info)
+    if verbose:
+        print(df_obs_info)
+
+    return df_obs_info
+
+
+def timeit(f):
+    """
+    Decorator to track total processing time (work in progress).
+    """
+
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        print(f"func: {f.__name__:<15}, args: [{args}] took: {te-ts:10.2f} sec")
+        return result
+
+    return wrap
