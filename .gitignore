@@ -21,6 +21,7 @@ vasca.egg-info
 # Local debugging
 development/*
 out/*
+vasca/examples/gPhoton/out
 
 # Local documentation
 build/*
