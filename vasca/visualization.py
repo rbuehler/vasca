@@ -7,12 +7,18 @@ Visualization related methods for VASCA
 from collections import OrderedDict
 from itertools import cycle
 
+import astropy.units as u
 import healpy as hpy
 import matplotlib.pyplot as plt
 import numpy as np
+from astropy.coordinates import SkyCoord
+from astropy.nddata import Cutout2D
+from astropy.visualization.wcsaxes import SphericalCircle
 from astropy.wcs import WCS
 from loguru import logger
 from matplotlib.colors import LogNorm
+
+import vasca.utils as vutils
 
 # %% sky plotting
 
@@ -533,6 +539,7 @@ def plot_table_scatter(
 
 # %% pipeline diagnostic plotting
 
+
 # TODO: there are some GALEX specific variables
 # will need to be adapted to other missions
 def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
@@ -730,7 +737,6 @@ def plot_light_curve(
     src_ids = list(dd_lcs.keys())
 
     for src_id, col, mar in zip(src_ids, colors, markers):
-
         # Every 8 markers plot open symbols
         ctr += 1
         mfc = col
@@ -801,3 +807,344 @@ def plot_light_curve(
     #         )
     #         plt.close(fig_lc)
     #
+
+
+def get_cutout_bounds(cutout, data_shape, out_frame="icrs", include_diag=False):
+    """
+    Computes the cutout boundaries as coordinates for upper right and lower left
+    pixels in coordinate system of 'out_frame'.
+
+    Parameters
+    ----------
+    cutout : astropy.nddata.Cutout2D
+    data_shape : tuple
+    out_frame : str, optional
+    include_diag : bool
+
+    Returns
+    -------
+    astropy.coordinates.SkyCoord or tuple(astropy.coordinates.SkyCoord, Angle)
+
+    """
+    # corner pixels
+    # lower left
+    x_ll = 0
+    y_ll = 0
+    # upper right
+    x_ur = data_shape[1]
+    y_ur = data_shape[0]
+    # convert to world coordinates
+    ll = cutout.wcs.pixel_to_world(x_ll, y_ll)
+    ur = cutout.wcs.pixel_to_world(x_ur, y_ur)
+    # separtion
+    diag_sep = ll.separation(ur)
+    # boundary coordinates
+    bound_coords = SkyCoord(
+        [ll.ra, ur.ra], [ll.dec, ur.dec], frame=ll.frame
+    ).transform_to(out_frame)
+
+    if include_diag:
+        return (bound_coords, diag_sep)
+    else:
+        return bound_coords
+
+
+def select_cutout(tt_cat, cutout_bounds, frame="icrs"):
+    """
+    Computes a bool array to select a dataset for given cutout bounds
+
+    Parameters
+    ----------
+    tt_cat : astropy.table.Table
+    cutout_bounds : astropy.coordinates.SkyCoords
+    frame : str, optional
+
+    Returns
+    -------
+    numpy.ndarray
+    """
+    x, y = None, None
+    if frame == "icrs" or frame == "fk5":
+        x = "ra"
+        y = "dec"
+        mask_cutout_ra = (tt_cat[x] <= cutout_bounds[0].ra) * (
+            tt_cat[x] >= cutout_bounds[1].ra
+        )
+        mask_cutout_dec = (tt_cat[y] >= cutout_bounds[0].dec) * (
+            tt_cat[y] <= cutout_bounds[1].dec
+        )
+    elif frame == "galctic":
+        x = "lon"
+        y = "lat"
+        mask_cutout_ra = (tt_cat[x] <= cutout_bounds[0].l) * (
+            tt_cat[x] >= cutout_bounds[1].l
+        )
+        mask_cutout_dec = (tt_cat[y] >= cutout_bounds[0].b) * (
+            tt_cat[y] <= cutout_bounds[1].b
+        )
+
+    return mask_cutout_ra * mask_cutout_dec
+
+
+def plot_source_tumbnail(
+    coord_cat,
+    rg,
+    cutout_size=(30, 30),
+    fig_title=None,
+    marker_shows="field",
+    color_shows="source",
+):
+    """
+    Create detailed plot for a source closest to the target coordinate ``coord_cat``
+
+    Parameters
+    ----------
+    coord_cat : astropy.coordinates.SkyCoord
+    rg : vasca.Region
+    cutout_size : tuple, optional
+    fig_title : str, optional
+    marker_shows : str, optional
+    color_shows : str, optional
+    """
+    # Get Source instance by matching coordinates
+    src, dist = rg.get_src_from_sky_pos(coord_cat.ra, coord_cat.dec)
+
+    # Source coordinates
+    coord_src = SkyCoord(
+        src.tt_sources[0]["ra"] * u.deg, src.tt_sources[0]["dec"] * u.deg, frame="icrs"
+    )
+
+    # -> Todo: This should go to the logger
+    print(f"Matched source at distance {dist.to('arcsec'):1.2f}")
+
+    # Load reference map from field with longest total exposure time
+    # -> Todo: Allow user to specify field
+    fd_idx_max_xposure = np.argmax(src.tt_fields["time_bin_size_sum"])
+    fd = rg.fields[src.tt_fields[fd_idx_max_xposure]["field_id"]]
+    fd_src_id = src.tt_fields["fd_src_id"][fd_idx_max_xposure]
+
+    # Create rectangular cutout
+    fd_cutout = Cutout2D(
+        fd.ref_img,
+        position=coord_src,
+        size=u.Quantity(cutout_size, u.arcsec).to(u.deg),
+        wcs=fd.ref_wcs,
+    )
+    # Cutout boundary coordinates
+    fd_cutout_bounds = get_cutout_bounds(fd_cutout, fd_cutout.data.shape)
+
+    # IDs of fields and sources in cutout
+    sel_cutout = select_cutout(rg.tt_detections, fd_cutout_bounds)
+    field_ids = np.unique(rg.tt_detections[sel_cutout]["rg_fd_id"].data)
+    source_ids = np.unique(rg.tt_detections[sel_cutout]["rg_src_id"].data)
+
+    # Number of fields and sources in cutout
+    n_fields = len(field_ids)
+    n_sources = len(source_ids)
+
+    # Detections plotting: Markers and colors according to field_id/src_id
+    # (source colors/markers are fixed)
+    markers = dict.fromkeys(["field", "source"])
+    colors = dict.fromkeys(["field", "source"])
+    for key, ids, n_ids in zip(
+        ["field", "source"], [field_ids, source_ids], [n_fields, n_sources]
+    ):
+        markers[key] = {
+            id: m for id, m in zip(ids, vutils.marker_set(n_ids, exclude=["*", "X"]))
+        }
+        colors[key] = {
+            id: m for id, m in zip(ids, vutils.color_palette("turbo", n_ids))
+        }
+
+    def get_style(source_id, field_id):
+        """Helper function returning a tuple with color and marker"""
+        ids = {"field": field_id, "source": source_id}
+        color = colors[color_shows][ids[color_shows]]
+        marker = markers[marker_shows][ids[marker_shows]]
+        return (color, marker)
+
+    # Plot
+    # -> Todo:  This is not optimal, method should accept axis as well
+    plot_name = f"Source_{src.tt_sources['rg_src_id'][0]}"
+    plt.close(plot_name)
+    fig, ax = plt.subplots(
+        num=plot_name,
+        figsize=(6, 6),
+        subplot_kw=dict(projection=fd_cutout.wcs),
+        tight_layout=False,
+    )
+    if fig_title is not None:
+        fig.suptitle(f"{fig_title}: {plot_name.replace('_', ' ')}")
+
+    # Map
+    ax.imshow(fd_cutout.data, cmap="gray", norm=LogNorm(), interpolation=None)
+    ax.set_autoscale_on(False)
+
+    # Style settings
+    marker_size = 7**2
+    marker_edge_lw = 1.5
+    label_fontsize = 8
+
+    # Source
+    # Center
+    ax.scatter(
+        coord_src.ra,
+        coord_src.dec,
+        transform=ax.get_transform("world"),
+        s=marker_size,
+        edgecolor="red",
+        facecolor="none",
+        lw=marker_edge_lw,
+        marker="*",
+        label="Target source",
+        zorder=5,
+    )
+    # Positional error
+    s = SphericalCircle(
+        coord_src,
+        src.tt_sources["pos_err_mean"][0] * u.deg,
+        edgecolor=(1, 0, 0, 0.5),
+        facecolor=(1, 0, 0, 0.2),
+        lw=1.5,
+        transform=ax.get_transform("world"),
+        zorder=5,
+    )
+    ax.add_patch(s)
+
+    # Source detections
+    for det in src.tt_detections:
+        coord_det = SkyCoord(det["ra"] * u.deg, det["dec"] * u.deg, frame="icrs")
+
+        field_id_det = det["rg_fd_id"]
+        source_id_det = det["rg_src_id"]
+        _, marker = get_style(source_id_det, field_id_det)
+
+        # Center
+        ax.scatter(
+            coord_det.ra,
+            coord_det.dec,
+            transform=ax.get_transform("world"),
+            s=marker_size,
+            edgecolor="blue",
+            facecolor="none",
+            lw=1.5,
+            marker=marker,
+            label=f"src det. {field_id_det}",
+            zorder=4,
+        )
+        # Positional error
+        s_det = SphericalCircle(
+            coord_det,
+            det["pos_err"] * u.deg,
+            edgecolor=(0, 0, 1, 0.5),
+            facecolor=(0, 0, 1, 0.1),
+            lw=0.5,
+            transform=ax.get_transform("world"),
+            zorder=4,
+        )
+        ax.add_patch(s_det)
+
+    # Region sources
+    sel_cutout = select_cutout(rg.tt_sources, fd_cutout_bounds)
+    for rg_src in rg.tt_sources[sel_cutout]:
+        # Skip targeted source
+        rg_src_id = rg_src["rg_src_id"]
+        if rg_src_id == src.tt_sources["rg_src_id"]:
+            continue
+
+        coord_rg_src = SkyCoord(
+            rg_src["ra"] * u.deg, rg_src["dec"] * u.deg, frame="icrs"
+        )
+        # Fix source color
+        color = vutils.color_palette("YlOrRd", 1)[0]
+        # Center
+        ax.scatter(
+            coord_rg_src.ra,
+            coord_rg_src.dec,
+            transform=ax.get_transform("world"),
+            s=marker_size,
+            edgecolor=color,
+            facecolor="none",
+            lw=marker_edge_lw,
+            marker="X",
+            label=f"rg src {field_id_det}",
+            zorder=5,
+        )
+        # Positional error
+        s_det = SphericalCircle(
+            coord_rg_src,
+            rg_src["pos_err_mean"] * u.deg,
+            edgecolor=(*color[:3], 0.5),
+            facecolor=(*color[:3], 0.2),
+            lw=1.5,
+            transform=ax.get_transform("world"),
+            zorder=5,
+        )
+        ax.add_patch(s_det)
+
+    # Region detections
+    sel_cutout = select_cutout(rg.tt_detections, fd_cutout_bounds)
+    for det in rg.tt_detections[sel_cutout]:
+        coord_det = SkyCoord(det["ra"] * u.deg, det["dec"] * u.deg, frame="icrs")
+
+        field_id_det = det["rg_fd_id"]
+        source_id_det = det["rg_src_id"]
+        color, marker = get_style(source_id_det, field_id_det)
+
+        # Center
+        ax.scatter(
+            coord_det.ra,
+            coord_det.dec,
+            transform=ax.get_transform("world"),
+            s=marker_size,
+            edgecolor=color,
+            facecolor="none",
+            lw=marker_edge_lw,
+            marker=marker,
+            label=f"rg det. {field_id_det}",
+            alpha=0.5,
+            zorder=3,
+        )
+        # Positional error
+        s_det = SphericalCircle(
+            coord_det,
+            det["pos_err"] * u.deg,
+            edgecolor=(*color[:3], 0.5),
+            facecolor=(*color[:3], 0.1),
+            lw=0.5,
+            transform=ax.get_transform("world"),
+            zorder=3,
+        )
+        ax.add_patch(s_det)
+
+    # Modify grid
+    ax.coords.grid(True, color="gray", ls="-", lw=0.75, alpha=0.3)
+
+    # Set axis labels
+    ra = ax.coords["ra"]
+    dec = ax.coords["dec"]
+    ra.set_major_formatter("d.ddd")
+    dec.set_major_formatter("d.ddd")
+
+    ax.set_xlabel("Ra", fontsize=label_fontsize)
+    ax.set_ylabel("Dec", fontsize=label_fontsize)
+    ax.xaxis.set_tick_params(labelsize=label_fontsize)
+    ax.yaxis.set_tick_params(labelsize=label_fontsize)
+    ax.tick_params(
+        axis="x",
+        labelsize=label_fontsize,
+        bottom=True,
+        top=True,
+        direction="in",
+        which="both",
+        color="gray",
+    )
+    ax.tick_params(
+        axis="y",
+        labelsize=label_fontsize,
+        left=True,
+        right=True,
+        direction="in",
+        which="both",
+        color="gray",
+    )
