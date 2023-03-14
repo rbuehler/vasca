@@ -21,6 +21,9 @@ vasca.egg-info
 # Local debugging
 development/*
 out/*
+vasca/examples/gPhoton/out
+vasca/examples/Swift_coverage/*.fits
+vasca_pipeline*
 
 # Local documentation
 build/*

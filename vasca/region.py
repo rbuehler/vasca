@@ -2,16 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 import healpy as hpy
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
-from astropy.table import unique, Table
+from astropy.table import Table, unique
 from loguru import logger
 
 from vasca.field import BaseField, GALEXField
-from vasca.tables import TableCollection
 from vasca.source import Source
+from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
 
 
@@ -67,13 +68,10 @@ class Region(TableCollection):
         logger.debug("Loading fields from config file")
 
         for obs in vasca_cfg["observations"]:
-
             if obs["observatory"] == "GALEX":
-
                 # Loop over fields and store info
                 rg_fd_id = 0
                 for gfield_id in obs["obs_field_ids"]:
-
                     gf = GALEXField.load(
                         gfield_id,
                         obs_filter=obs["obs_filter"],
@@ -191,7 +189,6 @@ class Region(TableCollection):
         hp_exp = np.zeros(npix, dtype="float32")
         hp_nr_fds = np.zeros(npix, dtype="float32")
         for field in self.tt_fields:
-
             pos_vec = hpy.ang2vec(field["ra"], field["dec"], lonlat=True)
             if coord_sys == "galactic":
                 cel = SkyCoord(field["ra"], field["dec"], frame="icrs", unit="deg")

@@ -1,0 +1,50 @@
+{
+    "PS1-10jh": {
+        "ra": 242.368075,
+        "dec": 53.673492,
+        "trans_type": "TDE",
+        "pub_date": "2012"
+    },
+    "PS1-11af": {
+        "ra": 149.36175,
+        "dec": 3.23361,
+        "trans_type": "TDE",
+        "pub_date": "2013"
+    },
+    "D3-13": {
+        "ra": 214.8741,
+        "dec": 52.8684,
+        "trans_type": "TDE",
+        "pub_date": "2006"
+    },
+    "D1-9": {
+        "ra": 36.3207,
+        "dec": 4.5497,
+        "trans_type": "TDE",
+        "pub_date": "2008"
+    },
+    "D23H-1": {
+        "ra": 352.99804167,
+        "dec": 0.28738056,
+        "trans_type": "TDE",
+        "pub_date": "2009"
+    },
+    "PS1-13arp": {
+        "ra": 184.604295,
+        "dec": 46.616852,
+        "trans_type": "SN2p",
+        "pub_date": "2008"
+    },
+    "SN-2010aq": {
+        "ra": 150.5405875,
+        "dec": 1.23359444,
+        "trans_type": "SN2p",
+        "pub_date": "2010"
+    },
+    "test": {
+        "ra": 176.919525856024,
+        "dec": 0.255696872807351,
+        "trans_type": "test",
+        "pub_date": "0"
+    }
+}

@@ -3,8 +3,10 @@
 """
 Utilities for VASCA
 """
-
-from itertools import zip_longest
+from datetime import timedelta
+from functools import wraps
+from itertools import cycle, islice, zip_longest
+from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,6 +15,8 @@ from astropy import units as uu
 from astropy.coordinates import SkyCoord, search_around_sky
 from astropy.nddata import Cutout2D
 from astropy.time import Time
+from matplotlib import colormaps as cm
+from matplotlib.colors import ListedColormap, hex2color
 from scipy.stats import binned_statistic
 
 # Global variable liking observator+obsfilter to a field ID addon
@@ -402,3 +406,339 @@ def binned_stat(
         out.append(np.asarray((edges[:-1] + edges[1:]) / 2))
 
     return tuple(out)
+
+
+def tgalex_to_astrotime(galex_timestamp, output_format=None, verbose=False):
+    """
+    Converts a GALEX time stamp to astropy.time.Time object
+    with unix format and UTC scale.
+    GALEX time is equal to UNIX time - 315964800.
+
+    Parameters
+    ----------
+    galex_timestamp : float
+        The GALEX time epoch.
+    output_format : {None, "iso", "tt"}, optional
+        Specifies the time format/scale of the return value
+        The default is None where the GALEX time stamp is converted and returned
+        astropy.time.Time object with format=unix and scale=utc.
+        Keywords "iso" and "tt" change return value to str using the astropy methods
+        astropy.time.Time.iso and astropy.time.Time.tt respectively.
+    verbose : bool, default False
+        Enable verbose printing to show format and scale if the converted time
+
+    Returns
+    -------
+    astropy.time.Time or str
+        An astropy.time.Time object or str depending on `output_format`.
+
+    Raises
+    ------
+    ValueError
+        Only floats or ints are supported for conversion
+    """
+    # parse input
+    if not isinstance(galex_timestamp, (float, int)):
+        raise ValueError("Time stamp must be float or integer.")
+
+    # apply offset and convert
+    galex_t_offset = 315964800
+    epoch = galex_timestamp + galex_t_offset
+    t = Time(epoch, format="unix")
+
+    # return
+    if output_format == "iso":
+        if verbose:
+            print(t.iso, t.iso.format, t.scale)
+        return t.iso
+    elif output_format == "tt":
+        if verbose:
+            print(t.tt, t.tt.format, t.tt.scale)
+        return t.tt
+    elif output_format == "mjd":
+        return t.mjd
+    elif output_format is None:
+        return t
+
+
+def galex_obs_info(lc, verbose=False):
+    """
+    Collects information form a light curve dataset
+    (e.g. fetched using gPhoton.gAperture) and returns a pandas.DataFrame.
+    The data frame contains columns for exposure time, observation gap time
+    as well as observation start and stop date
+
+    Parameters
+    ----------
+    lc : dictionary, data frame or astropy.Table
+        GALEX light curve dataset.
+        Requires existence of keys/columns named "t0" (start)
+        and "t1" (stop) each containing numerical arrays with
+        the start/stop time in GALEX time format.
+    verbose : bool, default False
+        Enable verbose printing
+
+    Returns
+    -------
+    pandas.DataFrame
+        A data frame containing the timing meta data of GALEX observations
+        in human readable formats.
+    """
+    # collect info from light curve dataset
+    obs_info = {
+        "exposure time [s]": list(),
+        "obs. gap [d,h:m:s]": list(),
+        "start date [utc]": list(),
+        "stop date [utc]": list(),
+    }
+    for run_idx in range(len(lc)):
+        exposure_time = tgalex_to_astrotime(lc["t1"][run_idx]) - tgalex_to_astrotime(
+            lc["t0"][run_idx]
+        )
+        # duration
+        obs_info["exposure time [s]"].append(exposure_time.sec)
+        # start
+        obs_info["start date [utc]"].append(
+            tgalex_to_astrotime(
+                lc["t0"][run_idx],
+                output_format="iso",
+                verbose=False,
+            )
+        )
+        # stop
+        obs_info["stop date [utc]"].append(
+            tgalex_to_astrotime(
+                lc["t1"][run_idx],
+                output_format="iso",
+                verbose=False,
+            )
+        )
+        # observation gap
+        if run_idx < len(lc) - 1:
+            obs_gap = tgalex_to_astrotime(lc["t0"][run_idx + 1]) - tgalex_to_astrotime(
+                lc["t1"][run_idx]
+            )
+            # format
+            sec = timedelta(seconds=obs_gap.sec)
+            obs_info["obs. gap [d,h:m:s]"].append(sec)
+        # fill last gap, witch is always zero, to match array dimensions
+        if run_idx == len(lc) - 1:
+            obs_info["obs. gap [d,h:m:s]"].append("0 days, 0:00:00")
+
+    df_obs_info = pd.DataFrame(obs_info)
+    if verbose:
+        print(df_obs_info)
+
+    return df_obs_info
+
+
+def timeit(f):
+    """
+    Decorator to track total processing time (work in progress).
+    """
+
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        print(f"func: {f.__name__:<15}, args: [{args}] took: {te-ts:10.2f} sec")
+        return result
+
+    return wrap
+
+
+def marker_set(n, exclude=None, exclude_default=True):
+    """
+    Returns a list of `n` Matplotlib markers for use in plots.
+    The list is generated by selecting markers from a curated set of markers
+    supporting separate edge and face colors.
+    By default, a set of markers are excluded, which can be overridden by
+    providing the `exclude` argument.
+
+    Parameters
+    ----------
+    n : int
+        The number of markers to return.
+    exclude : str, None, optional
+        A list of markers to exclude from the selection.
+    exclude_default : bool, optional
+        Whether to exclude markers by default: ``[",", "8", "H"]``.
+
+    Returns
+    -------
+    list
+        A list of n markers
+    """
+
+    # All matplotlib markers with separate edge/face colors
+    # List is curated so that markers look distinct also at small sizes
+    # List is sorted such that neighboring markers don't look similar
+    mpl_markers = {
+        "o": "circle",
+        "s": "square",
+        "d": "thin_diamond",
+        "*": "star",
+        "v": "triangle_down",
+        "X": "x_filled",
+        "^": "triangle_up",
+        "h": "hexagon1",
+        "<": "triangle_left",
+        "P": "plus_filled",
+        ">": "triangle_right",
+        "p": "pentagon",
+        ".": "point",
+        "D": "diamond",
+        ",": "pixel",  # removed by default: looks the same as square
+        "8": "octagon",  # removed by default: too similar to circle
+        "H": "hexagon2",  # removed by default: too similar to hexagon1
+    }
+
+    # Combined list of excluded markers from user input and defaults
+    if exclude is None:
+        exclude = []
+    if exclude_default:
+        exclude = list(set([",", "8", "H", *exclude]))
+
+    # Remove excluded markers
+    mpl_markers_select = mpl_markers.copy()
+    for m in exclude:
+        del mpl_markers_select[m]
+
+    # Create list of n markers
+    markers = list(
+        islice(
+            cycle(list(mpl_markers_select.keys())),
+            n,
+        )
+    )
+
+    return markers
+
+
+def color_palette(name, n, show_in_notebook=False):
+    """
+    Return a palette of `n` colors from the matplotlib registry and additional
+    qualitative palettes adopted from seaborn.
+
+    For continuous palettes, evenly-spaced discrete samples are chosen while
+    excluding the minimum and maximum value in the colormap to provide better
+    contrast at the extremes.
+
+    For qualitative palettes (e.g. those from colorbrewer), exact values are
+    indexed (rather than interpolated).
+
+    Parameters
+    ----------
+    name : string
+        Name of the palette. This should be a named matplotlib colormap.
+    n : int
+        Number of discrete colors in the palette.
+    show_in_notebook : bool
+        Wether to show the returned colors in a juypter notebook
+    Returns
+    -------
+    list of RGBA tuples
+    """
+
+    # Defines qualitative color palettes from seaborn and matplotlib
+    # fmt: off
+    sns_qual_pals = dict(
+        deep=["#4C72B0", "#DD8452", "#55A868", "#C44E52", "#8172B3",
+              "#937860", "#DA8BC3", "#8C8C8C", "#CCB974", "#64B5CD"],
+        deep6=["#4C72B0", "#55A868", "#C44E52",
+               "#8172B3", "#CCB974", "#64B5CD"],
+        muted=["#4878D0", "#EE854A", "#6ACC64", "#D65F5F", "#956CB4",
+               "#8C613C", "#DC7EC0", "#797979", "#D5BB67", "#82C6E2"],
+        muted6=["#4878D0", "#6ACC64", "#D65F5F",
+                "#956CB4", "#D5BB67", "#82C6E2"],
+        pastel=["#A1C9F4", "#FFB482", "#8DE5A1", "#FF9F9B", "#D0BBFF",
+                "#DEBB9B", "#FAB0E4", "#CFCFCF", "#FFFEA3", "#B9F2F0"],
+        pastel6=["#A1C9F4", "#8DE5A1", "#FF9F9B",
+                 "#D0BBFF", "#FFFEA3", "#B9F2F0"],
+        bright=["#023EFF", "#FF7C00", "#1AC938", "#E8000B", "#8B2BE2",
+                "#9F4800", "#F14CC1", "#A3A3A3", "#FFC400", "#00D7FF"],
+        bright6=["#023EFF", "#1AC938", "#E8000B",
+                 "#8B2BE2", "#FFC400", "#00D7FF"],
+        dark=["#001C7F", "#B1400D", "#12711C", "#8C0800", "#591E71",
+              "#592F0D", "#A23582", "#3C3C3C", "#B8850A", "#006374"],
+        dark6=["#001C7F", "#12711C", "#8C0800",
+               "#591E71", "#B8850A", "#006374"],
+        colorblind=["#0173B2", "#DE8F05", "#029E73", "#D55E00", "#CC78BC",
+                    "#CA9161", "#FBAFE4", "#949494", "#ECE133", "#56B4E9"],
+        colorblind6=["#0173B2", "#029E73", "#D55E00",
+                     "#CC78BC", "#ECE133", "#56B4E9"]
+    )
+    mpl_qual_pals_size = {
+        "tab10": 10, "tab20": 20, "tab20b": 20, "tab20c": 20,
+        "Set1": 9, "Set2": 8, "Set3": 12,
+        "Accent": 8, "Paired": 12,
+        "Pastel1": 9, "Pastel2": 8, "Dark2": 8,
+    }
+    # fmt: on
+
+    # Number of colors per palette
+    qual_pals_size = {
+        **mpl_qual_pals_size,
+        **{k: len(v) for k, v in sns_qual_pals.items()},
+    }
+    # Collects all qualitative color palettes in RGBA
+    qual_pals = {
+        **{k: cm.get_cmap(k).colors for k in mpl_qual_pals_size},
+        **{k: tuple([hex2color(c) for c in sns_qual_pals[k]]) for k in sns_qual_pals},
+    }
+
+    # Lists all known named colormaps (including reversed variants)
+    known_cmaps = sorted(
+        list(
+            set(
+                [
+                    *list(cm.keys()),  # Matplotlib defaults
+                    *list(qual_pals.keys()),
+                    *[el + "_r" for el in qual_pals],
+                ]
+            )
+        )
+    )
+
+    # Raises error if colormap name does not exist
+    if name not in known_cmaps:
+        raise ValueError(f"Unknown name '{name}'. Choose one of {known_cmaps}")
+
+    # Determines wether colormap is in reversed order
+    is_reversed = True if name.endswith("_r") else False
+    # Colormap name without reverse-tag
+    subname = name.rstrip("_r")
+
+    # Computes color binning (between 0 and 1) and creates colormap objects
+    # in case of qualitative palettes.
+    # The binning is evenly spaced in case of continuous color maps
+    # whereas for qualitative palettes the values are exactly indexed
+    if subname in qual_pals:
+        bins = np.linspace(0, 1, qual_pals_size[subname])[:n]
+        if is_reversed:
+            cmap = ListedColormap(qual_pals[subname]).reversed()
+        else:
+            cmap = ListedColormap(qual_pals[subname])
+    else:
+        bins = np.linspace(0, 1, int(n) + 2)[1:-1]
+        cmap = cm.get_cmap(name)
+
+    # Compliles discrete color palette in RGBA
+    palette = list(map(tuple, cmap(bins)[:, :4]))
+
+    # Create list of n colors
+    colors = list(
+        islice(
+            cycle(palette),
+            n,
+        )
+    )
+
+    # Rich display of selected colors in jupyter notebooks
+    if show_in_notebook:
+        from IPython.display import display
+
+        display(ListedColormap(colors, name))
+
+    return colors
