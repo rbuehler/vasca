@@ -109,8 +109,15 @@ class BaseField(TableCollection):
         """
         logger.info(f"Loading skypmap from file: '{file_name}'")
         with fits.open(file_name) as ff:
-            self.ref_wcs = wcs.WCS(ff[0].header)
-            self.ref_img = ff[0].data
+            # If first image store WCS and ndarray
+            if self.ref_wcs == None:
+                self.ref_wcs = wcs.WCS(ff[0].header)
+                self.ref_img = ff[0].data
+            # Else add image to ndarray
+            else:
+                if self.ref_img.ndim == 2:
+                    self.ref_img = [self.ref_img]
+                self.ref_img = np.append(self.ref_img, [ff[0].data], axis=0)
 
     def get_upper_limits(self):
         """
@@ -973,7 +980,7 @@ class GALEXField(BaseField):
         obs_filter,
         col_names=None,
         dd_products=None,
-        ref_maps_only=True,
+        ref_maps_only=False,
         refresh=False,
     ):
         """
@@ -1282,6 +1289,9 @@ class GALEXField(BaseField):
                 "Local Path"
             ][0]
         )  # string
+
+        self.load_sky_map(path_int_map_ref)
+
         if not ref_maps_only:
             # Selects everything else but the coadd path
             path_int_map_visits = [
@@ -1290,6 +1300,8 @@ class GALEXField(BaseField):
                     np.logical_and(aa_sel_int_map, tt_down["ID"] != obs_id)
                 ]["Local Path"].data.astype(str)
             ]  # list
+            for vis_img_name in path_int_map_visits:
+                self.load_sky_map(vis_img_name)
 
-        self.load_sky_map(path_int_map_ref)
         # Future: Optional loading of visit sky maps may happen here.
+        # print(path_int_map_visits)
