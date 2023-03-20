@@ -171,7 +171,7 @@ class TableCollection(object):
         # Check if image data is set and add to primary HDU
         if hasattr(self, "ref_img"):
             if self.ref_img is not None and self.ref_wcs is not None:
-                logger.debug("Storing image data'")
+                logger.debug(f"Storing image data of shape {self.ref_img.shape}")
                 hdup = fits.PrimaryHDU(self.ref_img, header=self.ref_wcs.to_header())
 
         new_hdul = fits.HDUList([hdup])

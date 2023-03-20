@@ -185,7 +185,7 @@ def run(vasca_cfg):
     if not os.path.exists(region_dir):
         os.makedirs(region_dir)
 
-    # Prepare fields to run on
+    # Prepare fields to run on fot parellization
     fd_pars = list()
     obs_nr = 0
     rg.tt_fields.add_index("field_id")
