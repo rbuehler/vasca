@@ -166,15 +166,29 @@ class TableCollection(object):
         logger.info(f"Writing file with name '{file_name}'")
 
         # Create HDU list and write
-        hdup = fits.PrimaryHDU()
+        hdulist = [fits.PrimaryHDU()]
 
         # Check if image data is set and add to primary HDU
         if hasattr(self, "ref_img"):
             if self.ref_img is not None and self.ref_wcs is not None:
                 logger.debug(f"Storing image data of shape {self.ref_img.shape}")
-                hdup = fits.PrimaryHDU(self.ref_img, header=self.ref_wcs.to_header())
+                hdulist.append(
+                    fits.CompImageHDU(
+                        self.ref_img,
+                        header=self.ref_wcs.to_header(),
+                        name="ref_img",
+                    )
+                )
+                if hasattr(self, "vis_img"):
+                    hdulist.append(
+                        fits.CompImageHDU(
+                            data=self.vis_img,
+                            header=self.ref_wcs.to_header(),
+                            name="vis_img",
+                        )
+                    )
 
-        new_hdul = fits.HDUList([hdup])
+        new_hdul = fits.HDUList(hdulist)
         new_hdul.writeto(file_name, overwrite=overwrite, output_verify=fits_verify)
 
         for key in self._table_names:
@@ -222,13 +236,13 @@ class TableCollection(object):
                         hdula.append(hdu_ta)
 
         # Rename extensions to table names
-        ext_nr = 0
+        ext_nr = len(hdulist)  # First extensions reserved for images
         with fits.open(file_name, "update", output_verify=fits_verify) as ff:
             for key in self._table_names:
                 if key in self.__dict__:
-                    ext_nr += 1
                     ff[ext_nr].header["EXTNAME"] = key
                     ff.flush(output_verify=fits_verify)
+                    ext_nr += 1
         ff.close()
 
     def load_from_fits(self, file_name):
@@ -265,12 +279,16 @@ class TableCollection(object):
                 setattr(self, tt_name, Table.read(file_name, hdu=tt_name))
 
             # Load image data
+            img_names = [
+                hdu.header["EXTNAME"]
+                for hdu in ff[1:]
+                if hdu.header["EXTNAME"].lower().endswith("_img")
+            ]
             if hasattr(self, "ref_img"):
-                self.ref_img = ff[0].data
-                if self.ref_img is not None:
-                    self.ref_wcs = wcs.WCS(ff[0].header)
-                else:
-                    self.ref_wcs = None
+                for img_name in img_names:
+                    setattr(self, img_name.lower(), ff[img_name].data)
+                    if img_name.lower() == "ref_img":
+                        setattr(self, "ref_wcs", wcs.WCS(ff[img_name].header))
 
             # Load tables with vectors
             ta_names = [

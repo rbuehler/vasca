@@ -237,6 +237,9 @@ def run(vasca_cfg):
     if vasca_cfg["general"]["save_ref_srcs"]:
         rg.add_table_from_fields("tt_ref_sources")
 
+    # Set source id table
+    rg.set_src_id_info()
+
     # Write out regions
     rg.write_to_fits(
         file_name=region_dir + "/region_" + vasca_cfg["general"]["name"] + ".fits"
