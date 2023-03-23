@@ -90,10 +90,13 @@ class BaseField(TableCollection):
         #: Reference image
         self.ref_img = None
 
-        #: Reference wcs
+        #: Reference WCS
         self.ref_wcs = None
 
-    def load_sky_map(self, file_name):
+        #: Visit images (assumes same WCS as reference image)
+        self.vis_img = None
+
+    def load_sky_map(self, file_name, img_attr="ref_img"):
         """
         Load reference image and WCS from passed fits file
 
@@ -101,6 +104,9 @@ class BaseField(TableCollection):
         ----------
         filename : str
             File name of image FITS
+        img_attr: str
+            Class attribute to store the image in, 'ref_img' or 'vis_img'.
+            Default is 'ref_img'
 
         Returns
         -------
@@ -109,15 +115,26 @@ class BaseField(TableCollection):
         """
         logger.info(f"Loading skypmap from file: '{file_name}'")
         with fits.open(file_name) as ff:
-            # If first image store WCS and ndarray
-            if self.ref_wcs == None:
-                self.ref_wcs = wcs.WCS(ff[0].header)
+            if img_attr == "ref_img":
                 self.ref_img = ff[0].data
-            # Else add image to ndarray
-            else:
-                if self.ref_img.ndim == 2:
-                    self.ref_img = [self.ref_img]
-                self.ref_img = np.append(self.ref_img, [ff[0].data], axis=0)
+                self.ref_wcs = wcs.WCS(ff[0].header)
+            if img_attr == "vis_img":
+                if type(self.vis_img) == type(None):
+                    self.vis_img = ff[0].data
+                # If second or later image append
+                else:
+                    if self.vis_img.ndim == 2:
+                        self.vis_img = [self.vis_img]
+                    self.vis_img = np.append(self.vis_img, [ff[0].data], axis=0)
+
+            # if self.ref_wcs == None:
+            #     self.ref_wcs = wcs.WCS(ff[0].header)
+            #     self.ref_img = ff[0].data
+            # # Else add image to ndarray
+            # else:
+            #     if self.ref_img.ndim == 2:
+            #         self.ref_img = [self.ref_img]
+            #     self.ref_img = np.append(self.ref_img, [ff[0].data], axis=0)
 
     def get_upper_limits(self):
         """
@@ -1301,7 +1318,7 @@ class GALEXField(BaseField):
                 ]["Local Path"].data.astype(str)
             ]  # list
             for vis_img_name in path_int_map_visits:
-                self.load_sky_map(vis_img_name)
+                self.load_sky_map(vis_img_name, "vis_img")
 
         # Future: Optional loading of visit sky maps may happen here.
         # print(path_int_map_visits)

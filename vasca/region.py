@@ -320,6 +320,37 @@ class Region(TableCollection):
 
         return src
 
+    def set_src_id_info(self):
+        """
+        Stores the mapping of rg_src_id to rg_fd_id and fd_src_id
+        into tt_src_id_map table.
+
+        Returns
+        -------
+        None.
+
+        """
+        logger.debug("Settign table tt_src_id_map.")
+
+        dd_ids = {"rg_src_id": [], "rg_fd_id": [], "fd_src_id": [], "sel": []}
+        tt_ids = unique(
+            self.tt_detections["rg_src_id", "rg_fd_id", "fd_src_id", "sel"],
+            keys=["rg_fd_id", "fd_src_id"],
+        )
+        tt_ids.add_index("rg_src_id")
+
+        # TODO: This could be done much more effieciently
+        for rg_src_id in self.tt_sources["rg_src_id"]:
+            # tt_det = Table()
+            ids_idx = np.array(tt_ids.loc_indices["rg_src_id", [rg_src_id]]).flatten()
+            for key in dd_ids.keys():
+                if len(ids_idx) == 1:
+                    dd_ids[key].append(tt_ids[ids_idx[0]][key])
+                else:
+                    dd_ids[key].extend(tt_ids[ids_idx][key])
+
+        self.add_table(dd_ids, "region:tt_src_id_map")
+
     def get_src_from_sky_pos(self, coordx, coordy, frame="icrs"):
         """
         Get Source object containng all region table entries

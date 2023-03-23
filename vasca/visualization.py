@@ -117,7 +117,7 @@ def plot_field_sky_sources(
     return ax
 
 
-def plot_field_sky_map(field, ax=None, **img_kwargs):
+def plot_field_sky_map(field, ax=None, vis_idx=-1, **img_kwargs):
     """
     Plot the reference sky map.
 
@@ -127,6 +127,9 @@ def plot_field_sky_map(field, ax=None, **img_kwargs):
         VASCA field to be plotted.
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
+    vi_idx : int
+        Index nr of the visit in the tt_visits table (fist visit in the field).
+        Default is -1, which stands for the referece (co-add) image.
     **img_kwargs : dict
         Key word arguments for pyplot.imshow plotting.
 
@@ -155,7 +158,11 @@ def plot_field_sky_map(field, ax=None, **img_kwargs):
     if img_kwargs is not None:
         plt_img_kwargs.update(img_kwargs)
 
-    graph = ax.imshow(field.ref_img, **plt_img_kwargs)
+    # Check if image contains visits and plot visit if asked for
+    plot_img = field.ref_img
+    if field.ref_img.ndim == 3:
+        plot_img = field.ref_img[vis_idx + 1, :, :]
+    graph = ax.imshow(plot_img, **plt_img_kwargs)
 
     return graph
 
@@ -164,7 +171,7 @@ def plot_field_sky(
     field,
     plot_sources=True,
     plot_detections=True,
-    plot_map=True,
+    plot_map=-1,
     kwargs_fig=None,
     kwargs_map=None,
     kwargs_sources=None,
@@ -184,7 +191,9 @@ def plot_field_sky(
         Plot visit detections. The default is True.
         Detections are only plotted if ``plot_sources`` is True.
     plot_map : bool, optional
-        Plot reference image in the background. The default is True.
+        Plot image in the background. For no image set to -2, for the reference image
+        set to -1. For a visit set the visit index from the tt_visits table.
+        The default is -1.
     kwargs_* : dict, optional
         Keyword arguments passed to respective plotting functions.
 
@@ -214,7 +223,11 @@ def plot_field_sky(
 
     # Enforce Astropy WCS
     if isinstance(field.ref_wcs, WCS):
-        ax = plt.subplot(projection=field.ref_wcs)
+        # Check if visit images are stored and slice is needed
+        img_slice = None
+        if field.ref_img.ndim == 3:
+            img_slice = ("x", "y", plot_map + 1)
+        ax = plt.subplot(projection=field.ref_wcs, slices=img_slice)
         ax.coords["ra"].set_major_formatter("d.dd")
         ax.coords["dec"].set_major_formatter("d.dd")
         ax.set_xlabel("Ra")
@@ -225,11 +238,14 @@ def plot_field_sky(
             f"Expected WCS attribute for field, got {type(field.ref_wcs).__name__}"
         )
 
-    if plot_map:
+    if plot_map > -2:
         graph = plot_field_sky_map(
-            field, ax, **(kwargs_map if kwargs_map is not None else dict())
+            field,
+            ax,
+            vis_idx=plot_map,
+            **(kwargs_map if kwargs_map is not None else dict()),
         )
-        fig.colorbar(graph, label="Intensity [a.u.]", shrink=0.85)
+        # fig.colorbar(graph, label="Intensity [a.u.]", shrink=0.85)
 
     if plot_sources:
         plot_field_sky_sources(

@@ -5,6 +5,9 @@ Defines dictionary for the tables used by vasca.tables.TableCollection
 """
 # **dtype guidelines**
 #
+# >np.finfo(np.float16)
+# >finfo(resolution=0.001, min=-6.55040e+04, max=6.55040e+04, dtype=float16)
+#
 # >np.finfo(np.float32)
 # >finfo(resolution=1e-06, min=-3.4028235e+38, max=3.4028235e+38, dtype=float32)
 #
@@ -576,7 +579,7 @@ region = {
         "defaults": [*base_field["tt_sources"]["defaults"], -1, -1, -1],
         "descriptions": [
             *base_field["tt_sources"]["descriptions"],
-            "Field source ID nr.",
+            "Region field ID nr.",
             "Region source ID nr.",
             "Nr. of fields sources in the cluster.",
         ],
@@ -593,6 +596,19 @@ region = {
             "Region source ID nr.",
         ],
         "meta": {**base_field["ta_sources_lc"]["meta"]},
+    },
+    "tt_src_id_map": {
+        "names": ["rg_src_id", "rg_fd_id", "fd_src_id", "sel"],
+        "dtype": ["int32", "int32", "int32", "bool"],
+        "units": ["1", "1", "1", "1"],
+        "defaults": [-1, -1, -1, True],
+        "descriptions": [
+            "Region source ID nr.",
+            "Region field ID nr.",
+            "Field source ID nr.",
+            "Selection of rows for VASCA analysis.",
+        ],
+        "meta": {"INFO": "Map between region and field source IDs."},
     },
 }
 
