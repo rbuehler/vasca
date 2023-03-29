@@ -548,6 +548,12 @@ class TableCollection(object):
         for src_id in src_ids:
             tt_det_src = self.tt_detections.loc[[src_id]]
             vis_idx = self.tt_visits.loc_indices["vis_id", tt_det_src["vis_id"]]
+            if not hasattr(vis_idx, "__iter__"):
+                logger.warning(
+                    f"Found only one light curve points, vis_idx: {vis_idx}, src_id: {src_id}"
+                )
+                vis_idx = np.array([vis_idx])
+                tt_det_src = Table(tt_det_src)
             tt_det_src["time_bin_start"] = self.tt_visits[vis_idx]["time_bin_start"]
             tt_det_src["time_bin_size"] = self.tt_visits[vis_idx]["time_bin_size"]
             tt_det_src.sort("time_bin_start")

@@ -23,11 +23,11 @@ import vasca.utils as vutils
 # %% sky plotting
 
 
-def plot_field_sky_sources(
-    field,
+def plot_sky_sources(
+    tt_src,
+    tt_det=None,
     ax=None,
-    plot_detections=True,
-    plot_fd_src_id=True,
+    plot_src_id="rg_src_id",
     src_kwargs=None,
     det_kwargs=None,
 ):
@@ -36,14 +36,13 @@ def plot_field_sky_sources(
 
     Parameters
     ----------
-    field: vasca.BaseField
-        VASCA field to be plotted.
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
     plot_detections : bool, optional
         Plot the visit detections below the sources. The default is True.
-    plot_fd_src_ids: bool, optional
-        Write the source ID next to its marker. Default is True.
+    plot_src_ids: bool, optional
+        Write the source ID next to its marker, saved in the passec column name, typically
+        "rg_src_id" or "fd_src_id"
     src_kwargs : dict, optional
         Keyword arguments for pyplot.plot of the sources. The default is None.
     det_kwargs : dict, optional
@@ -55,15 +54,20 @@ def plot_field_sky_sources(
         Used Matplotlib axes.
 
     """
+
     logger.debug("Plotting sky sources")
 
     if ax is None:
         ax = plt.gca()
 
+    # Show only selected sources
+    sel = tt_src["sel"]
+    tt_src = tt_src[sel]
+
     # Set marker properties for sources
     plt_src_kwargs = {
         "marker": "o",
-        "markersize": 4.5,
+        "markersize": 6.5,
         "alpha": 0.5,
         "lw": 0,
         "markeredgewidth": 2.0,
@@ -85,17 +89,14 @@ def plot_field_sky_sources(
     if det_kwargs is not None:
         plt_det_kwargs.update(det_kwargs)
 
-    # Prepare data
-    sel = field.tt_sources["sel"]
-    tt_src = field.tt_sources[sel]
-    tt_det = field.tt_detections
-    tt_det.add_index("fd_src_id")
+    if type(tt_det) is not type(None):
+        tt_det.add_index(plot_src_id)
 
     # Loop over all srcs and plot
     colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
     for src, col in zip(tt_src, colors):
-        if plot_detections:
-            det_idx = tt_det.loc_indices["fd_src_id", src["fd_src_id"]]
+        if type(tt_det) is not type(None):
+            det_idx = tt_det.loc_indices[plot_src_id, src[plot_src_id]]
             ax.plot(
                 tt_det[det_idx]["ra"].data,
                 tt_det[det_idx]["dec"].data,
@@ -107,17 +108,16 @@ def plot_field_sky_sources(
         ax.text(
             src["ra"] + 0.007,
             src["dec"] + 0.006,
-            str(src["fd_src_id"]),
+            str(src[plot_src_id]),
             transform=plt_src_kwargs["transform"],
             fontsize=7,
             color=col,
             alpha=0.7,
         )
-
     return ax
 
 
-def plot_field_sky_map(field, ax=None, vis_idx=-1, **img_kwargs):
+def plot_field_sky_map(field, fig=None, ax=None, img_idx=-1, **img_kwargs):
     """
     Plot the reference sky map.
 
@@ -125,16 +125,20 @@ def plot_field_sky_map(field, ax=None, vis_idx=-1, **img_kwargs):
     ----------
     field: vasca.BaseField
         VASCA field to be plotted.
+    fig: figure, optional
+        Matplotlib figure to draw on, if None a new figure is created. The default is None.
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
-    vi_idx : int
-        Index nr of the visit in the tt_visits table (fist visit in the field).
-        Default is -1, which stands for the referece (co-add) image.
+    img_idx : int, optional
+        Index nr of the visit in the tt_visits table. If -1 is passed
+        the reference image is shown. Default is -1.
     **img_kwargs : dict
         Key word arguments for pyplot.imshow plotting.
 
     Returns
     -------
+    fig: figure
+        Matplotlib figure used to draw
     graph : AxesImage
         Matplotlib axes of 2D image.
 
@@ -145,118 +149,44 @@ def plot_field_sky_map(field, ax=None, vis_idx=-1, **img_kwargs):
     if field.ref_img is None:
         logger.error("No map to draw")
 
+    # Check if figure was passed
+    if type(fig) is type(None):
+        fig = plt.figure(figsize=(8, 7), constrained_layout=True)
+        ax = plt.subplot(projection=field.ref_wcs)
+        ax.coords["ra"].set_major_formatter("d.dd")
+        ax.coords["dec"].set_major_formatter("d.dd")
+        ax.set_xlabel("Ra")
+        ax.set_ylabel("Dec")
+    else:
+        plt.gcf()
+
+    # Check if axis was passed and setup axis
     if ax is None:
         ax = plt.gca()
 
+    # Add coordinate grid
+    ax.coords.grid(True, color="grey", ls="-", lw=0.5)
+
+    # Setup imshow parameters
     plt_img_kwargs = {
         "interpolation": "None",
         "cmap": "gray_r",
         "origin": "lower",
         "norm": LogNorm(),
     }
-
     if img_kwargs is not None:
         plt_img_kwargs.update(img_kwargs)
 
-    # Check if image contains visits and plot visit if asked for
+    # Check if reference or visit images should be plotted
     plot_img = field.ref_img
-    if field.ref_img.ndim == 3:
-        plot_img = field.ref_img[vis_idx + 1, :, :]
+    if img_idx > -1:
+        if field.vis_img.ndim == 3:
+            plot_img = field.vis_img[img_idx, :, :]
+        else:
+            plot_img = field.vis_img
     graph = ax.imshow(plot_img, **plt_img_kwargs)
 
-    return graph
-
-
-def plot_field_sky(
-    field,
-    plot_sources=True,
-    plot_detections=True,
-    plot_map=-1,
-    kwargs_fig=None,
-    kwargs_map=None,
-    kwargs_sources=None,
-    kwargs_detections=None,
-):
-    """
-    Optionally, plot field sources, with or without individual visit detections,
-    and reference image as background.
-
-    Parameters
-    ----------
-    field: :class:`~vasca.field.BaseField`
-        VASCA field to be plotted.
-    plot_sources : bool, optional
-        Plot field sources, The default is True.
-    plot_detections : bool, optional
-        Plot visit detections. The default is True.
-        Detections are only plotted if ``plot_sources`` is True.
-    plot_map : bool, optional
-        Plot image in the background. For no image set to -2, for the reference image
-        set to -1. For a visit set the visit index from the tt_visits table.
-        The default is -1.
-    kwargs_* : dict, optional
-        Keyword arguments passed to respective plotting functions.
-
-    Returns
-    -------
-    :py:class:`~matplotlib.figure.Figure`
-
-    """
-
-    logger.debug("Plotting sky map and/or sources'")
-
-    # Figure settings
-    kwargs_fig = {
-        "figsize": (8, 7),
-        "num": field.name,
-        "constrained_layout": True,
-        **(kwargs_fig if kwargs_fig is not None else dict()),
-    }
-
-    # Create new figure
-    plt.close(kwargs_fig["num"])
-    fig = plt.figure(**kwargs_fig)
-
-    # Return empty figure if source nor map is selected
-    if not plot_sources and not plot_map:
-        return fig
-
-    # Enforce Astropy WCS
-    if isinstance(field.ref_wcs, WCS):
-        # Check if visit images are stored and slice is needed
-        img_slice = None
-        if field.ref_img.ndim == 3:
-            img_slice = ("x", "y", plot_map + 1)
-        ax = plt.subplot(projection=field.ref_wcs, slices=img_slice)
-        ax.coords["ra"].set_major_formatter("d.dd")
-        ax.coords["dec"].set_major_formatter("d.dd")
-        ax.set_xlabel("Ra")
-        ax.set_ylabel("Dec")
-        ax.coords.grid(True, color="grey", ls="-", lw=0.5)
-    else:
-        raise ValueError(
-            f"Expected WCS attribute for field, got {type(field.ref_wcs).__name__}"
-        )
-
-    if plot_map > -2:
-        graph = plot_field_sky_map(
-            field,
-            ax,
-            vis_idx=plot_map,
-            **(kwargs_map if kwargs_map is not None else dict()),
-        )
-        # fig.colorbar(graph, label="Intensity [a.u.]", shrink=0.85)
-
-    if plot_sources:
-        plot_field_sky_sources(
-            field,
-            ax,
-            plot_detections=plot_detections,
-            **(kwargs_sources if kwargs_sources is not None else dict()),
-            **(kwargs_detections if kwargs_detections is not None else dict()),
-        )
-
-    return fig
+    return fig, graph
 
 
 # TODO: Add coordinate system match check between tt_coverage_hp and this function
@@ -1029,6 +959,7 @@ def plot_light_curve(
     tc,
     fd_src_ids=None,
     rg_src_ids=None,
+    fig=None,
     ax=None,
     ylim=None,
     legend_loc="upper center",
@@ -1046,6 +977,8 @@ def plot_light_curve(
         List or single field source IDs to plot. Default is None.
     rg_src_ids : list or int
         List or single region source IDs to plot. Default is None.
+    fig: figure, optional
+        Matplotlib figure to draw on, if None a new figure is created. The default is None.
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
     ylim : list, optional
@@ -1059,6 +992,8 @@ def plot_light_curve(
 
     Returns
     -------
+    fig: figure
+        Matplotlib figure used to draw
     ax : axes
         Used Matplotlib axes.
 
@@ -1066,13 +1001,21 @@ def plot_light_curve(
 
     logger.debug("Plotting lightcurves ")
 
-    # Setup plotting parameters
+    # Check if figure was passed
+    if type(fig) is type(None):
+        fig = plt.figure(figsize=(6, 6), constrained_layout=True)
+    else:
+        plt.gcf()
+
+    # Check if axis was passed
     if ax is None:
         ax = plt.gca()
+
     ax.invert_yaxis()
     if hasattr(ylim, "__iter__"):
         ax.set_ylim(ylim)
 
+    # Setup plotting parameters
     plt_errorbar_kwargs = {
         "markersize": 4,
         "alpha": 0.6,
@@ -1135,7 +1078,7 @@ def plot_light_curve(
     ax.set_xlabel("MJD")
     ax.set_ylabel("Magnitude")
 
-    return ax
+    return fig, ax
 
     # Code snippets to be added later
 

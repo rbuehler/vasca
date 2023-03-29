@@ -11,8 +11,10 @@ from astropy.time import Time
 from loguru import logger
 
 from vasca import vasca_pipe
+from vasca.region import Region
 from vasca.field import BaseField, GALEXField
 from vasca.resource_manager import ResourceManager
+import vasca.visualization as vvis
 
 
 @pytest.fixture
@@ -187,6 +189,23 @@ def test_pipeline(test_paths):
     # run pipeline
     vasca_pipe.run(vasca_cfg)
 
+    # Test visualizations
+    # Load region
+    region_name = "CrabGW"
+    region_fname = pipeline_out + "/" + region_name + "/region_" + region_name + ".fits"
+    rg = Region()
+    rg.load_from_fits(region_fname)
+
+    # Plot skypmap
+    fd = rg.fields[rg.tt_fields[0]["field_id"]]
+    fig, ax = vvis.plot_field_sky_map(fd)
+    ax = vvis.plot_sky_sources(rg.tt_sources, tt_det=rg.tt_detections)
+
+    # Plot light curve
+    sel = rg.tt_sources["nr_det"] > 1
+    fig_lc, ax_lc = vvis.plot_light_curve(
+        rg, rg_src_ids=rg.tt_sources[sel]["rg_src_id"][0]
+    )
     # delete field data from test resource directory
     # this forces to download the data from mast,
     # i.e., tests also the fallback from load method "MAST_LOCAL" to "MAST_REMOTE"
