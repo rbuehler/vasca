@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Test configuration file"
 
 general:
-    name          : "TDS_COSMOS_21-22"
+    name          : "CrabGW"
     out_dir_base  : "./vasca/test/out_pipe"                  # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                                # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                              # Will be written into "out_dir", if ""default" a default name will be created 
@@ -50,8 +50,8 @@ observations:
   - observatory   : "GALEX"
     obs_filter    : "NUV"
     obs_field_ids :
-        - 6388191295067652096
-        - 6381787756527353856
+        - 6388191295067652096 # NGC4993-GW170817 2 visits
+        - 6381787756527353856 # AIS_309_1_28 2 visits (Crab pulsar)
     
     cluster_det:
         meanshift:
