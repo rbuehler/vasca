@@ -18,6 +18,8 @@ from astropy.time import Time
 from astropy.utils.exceptions import AstropyWarning
 from astropy.wcs import wcs
 from astroquery.mast import Observations
+from regions import CircleSkyRegion
+
 from loguru import logger
 from requests.exceptions import HTTPError
 
@@ -75,6 +77,7 @@ class BaseField(TableCollection):
                 "name",
                 "ra",
                 "dec",
+                "fov_diam",
                 "observatory",
                 "obs_filter",
                 "center",
@@ -113,7 +116,7 @@ class BaseField(TableCollection):
         None.
 
         """
-        logger.info(f"Loading skypmap from file: '{file_name}'")
+        logger.debug(f"Loading skypmap from file: '{file_name}'")
         with fits.open(file_name) as ff:
             if img_attr == "ref_img":
                 self.ref_img = ff[0].data
@@ -126,15 +129,6 @@ class BaseField(TableCollection):
                     if self.vis_img.ndim == 2:
                         self.vis_img = [self.vis_img]
                     self.vis_img = np.append(self.vis_img, [ff[0].data], axis=0)
-
-            # if self.ref_wcs == None:
-            #     self.ref_wcs = wcs.WCS(ff[0].header)
-            #     self.ref_img = ff[0].data
-            # # Else add image to ndarray
-            # else:
-            #     if self.ref_img.ndim == 2:
-            #         self.ref_img = [self.ref_img]
-            #     self.ref_img = np.append(self.ref_img, [ff[0].data], axis=0)
 
     def get_upper_limits(self):
         """
@@ -417,6 +411,20 @@ class BaseField(TableCollection):
                 par = par * unit
 
         return par
+
+    def get_sky_region(self):
+        """Get region on the sky of the field.
+
+        Returns
+        -------
+        region : regions.SkyRegion
+            Region on the sky of the field.
+        """
+        if self.observatory.casefold() == "GALEX".casefold():
+            return CircleSkyRegion(center=self.center, radius=self.fov_diam)
+        else:
+            logger.warning(f"No region known for observatory {self.observatory}")
+            return None
 
     def load_from_fits(self, file_name="tables.fits"):
         """

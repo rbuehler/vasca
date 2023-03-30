@@ -31,10 +31,19 @@ import numpy as np
 # %% Base field
 base_field = {
     "tt_field": {
-        "names": ["field_id", "name", "ra", "dec", "observatory", "obs_filter", "sel"],
-        "dtype": ["S22", "S22", "float64", "float64", "S22", "S22", "bool"],
-        "units": ["1", "", "degree", "degree", "", "", "1"],
-        "defaults": [-1, "none", -1.0, -1.0, "none", "none", True],
+        "names": [
+            "field_id",
+            "name",
+            "ra",
+            "dec",
+            "observatory",
+            "obs_filter",
+            "fov_diam",
+            "sel",
+        ],
+        "dtype": ["S22", "S22", "float64", "float64", "S22", "S22", "float32", "bool"],
+        "units": ["1", "", "degree", "degree", "", "", "degree", "1"],
+        "defaults": [-1, "none", -1.0, -1.0, "none", "none", -1.0, True],
         "descriptions": [
             "Field source ID nr.",
             "Field name",
@@ -42,6 +51,7 @@ base_field = {
             "Center Dec of the field (J2000)",
             "Telescope of the observation (e.g. GALEX)",
             "Filter of the observation (e.g. NUV)",
+            "Field radius or box size (depending on the observatory)",
             "Selection of rows for VASCA analysis.",
         ],
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
@@ -478,7 +488,6 @@ region = {
     "tt_fields": {
         "names": [
             *base_field["tt_field"]["names"],
-            "fov_diam",  # TODO: Add sky angle for ULTRASAT squared FoV
             "nr_vis",
             "time_bin_size_sum",
             "time_start",
@@ -487,17 +496,15 @@ region = {
         ],
         "dtype": [
             *base_field["tt_field"]["dtype"],
-            "float32",
             "int32",
             "float32",
             "float64",
             "float64",
             "int32",
         ],
-        "units": [*base_field["tt_field"]["units"], "degree", "1", "s", "d", "d", "1"],
+        "units": [*base_field["tt_field"]["units"], "1", "s", "d", "d", "1"],
         "defaults": [
             *base_field["tt_field"]["defaults"],
-            -1.0,
             -1,
             -1.0,
             -1.0,
@@ -506,7 +513,6 @@ region = {
         ],
         "descriptions": [
             *base_field["tt_field"]["descriptions"],
-            "Field radius or box size (depending on the observatory)",
             "Total number of visits of the field",
             "Total exposure time",
             "Start time of first exposure",
