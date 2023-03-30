@@ -178,13 +178,16 @@ def plot_field_sky_map(field, fig=None, ax=None, img_idx=-1, **img_kwargs):
         plt_img_kwargs.update(img_kwargs)
 
     # Check if reference or visit images should be plotted
+    fig_title = "Reference image"
     plot_img = field.ref_img
     if img_idx > -1:
+        fig_title = f"Visit image Idx. {img_idx}"
         if field.vis_img.ndim == 3:
             plot_img = field.vis_img[img_idx, :, :]
         else:
             plot_img = field.vis_img
     graph = ax.imshow(plot_img, **plt_img_kwargs)
+    ax.set_title(fig_title)
 
     return fig, graph
 
