@@ -207,7 +207,11 @@ def test_pipeline_vis(test_paths):
         rg, rg_src_ids=rg.tt_sources[sel]["rg_src_id"][0]
     )
 
-    # Plot both fields
+    # Plot all fields
+    rg.add_coverage_hp(nside=4096, coord_sys="icrs")
+    vvis.plot_region_sky_mollview(rg, var="nr_vis")
+    vvis.plot_region_sky_mollview(rg, var="nr_fds")
+    vvis.plot_region_sky_mollview(rg, var="exp")
     vvis.plot_region_sky_gnomeview(rg, rg.tt_fields[0]["ra"], rg.tt_fields[0]["dec"])
 
     # Plot pipeline diagnostics
