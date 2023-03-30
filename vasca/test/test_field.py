@@ -171,7 +171,7 @@ def test_base_field_io_alt(test_paths, new_field):
     assert os.path.isfile(file_path)
 
 
-def test_pipeline(test_paths):
+def test_pipeline_vis(test_paths):
     # get pipeline config
     vasca_cfg = vasca_pipe.set_config(test_paths["pipeline_cfg"])
 
@@ -199,13 +199,22 @@ def test_pipeline(test_paths):
     # Plot skypmap
     fd = rg.fields[rg.tt_fields[0]["field_id"]]
     fig, ax = vvis.plot_field_sky_map(fd)
-    ax = vvis.plot_sky_sources(rg.tt_sources, tt_det=rg.tt_detections)
+    vvis.plot_sky_sources(rg.tt_sources, tt_det=rg.tt_detections)
 
     # Plot light curve
     sel = rg.tt_sources["nr_det"] > 1
     fig_lc, ax_lc = vvis.plot_light_curve(
         rg, rg_src_ids=rg.tt_sources[sel]["rg_src_id"][0]
     )
+
+    # Plot both fields
+    vvis.plot_region_sky_gnomeview(rg, rg.tt_fields[0]["ra"], rg.tt_fields[0]["dec"])
+
+    # Plot pipeline diagnostics
+    vvis.plot_pipe_diagnostic(rg, "tt_sources", "scatter")
+    vvis.plot_pipe_diagnostic(rg, "tt_sources", "hist")
+    vvis.plot_pipe_diagnostic(fd, "tt_detections", "hist", fig_size=(8, 10))
+
     # delete field data from test resource directory
     # this forces to download the data from mast,
     # i.e., tests also the fallback from load method "MAST_LOCAL" to "MAST_REMOTE"
