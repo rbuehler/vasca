@@ -80,7 +80,7 @@ class Region(TableCollection):
                         **vasca_cfg["ressources"]["field_kwargs"],
                     )
                     field_info = dict(gf.tt_field[0])
-                    field_info["fov_diam"] = 1.10
+                    field_info["fov_diam"] = gf.fov_diam
                     field_info["nr_vis"] = gf.nr_vis
                     field_info["time_bin_size_sum"] = gf.time_bin_size_sum
                     field_info["time_start"] = gf.time_start.mjd

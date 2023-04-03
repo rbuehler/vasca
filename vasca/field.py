@@ -421,7 +421,7 @@ class BaseField(TableCollection):
             Region on the sky of the field.
         """
         if self.observatory.casefold() == "GALEX".casefold():
-            return CircleSkyRegion(center=self.center, radius=self.fov_diam)
+            return CircleSkyRegion(center=self.center, radius=self.fov_diam / 2.0)
         else:
             logger.warning(f"No region known for observatory {self.observatory}")
             return None
@@ -915,6 +915,9 @@ class GALEXField(BaseField):
         dd_coadd_select = {}
         for col in mast_col_names:
             dd_coadd_select[col_names[col]] = tt_coadd_select[col].data
+
+        # Add fov size info
+        dd_coadd_select["fov_diam"] = 1.2 * np.ones(len(tt_coadd_select["obs_id"]))
 
         self.add_table(dd_coadd_select, "base_field:tt_field")
 

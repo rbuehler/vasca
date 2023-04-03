@@ -28,6 +28,7 @@ def plot_sky_sources(
     tt_det=None,
     ax=None,
     plot_src_id="rg_src_id",
+    sky_region_wcs=None,
     src_kwargs=None,
     det_kwargs=None,
 ):
@@ -36,13 +37,19 @@ def plot_sky_sources(
 
     Parameters
     ----------
+    tt_src : astropy.Table
+        Source list to plot. Has to contain "ra", "dec" and "sel" and srd id columns.
+    tt_det : astropy.Table, optional
+        Detection list to plot. Has to contain "ra", "dec" and src_id columns.
+        Default is None.
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
-    plot_detections : bool, optional
-        Plot the visit detections below the sources. The default is True.
     plot_src_ids: bool, optional
         Write the source ID next to its marker, saved in the passec column name, typically
         "rg_src_id" or "fd_src_id"
+    sky_region_wcs: (regions.SkyRegion, WCS) , optional
+        Plot only sources within the sky region. A WCS has to be passed along ina tupple.
+        Default is None.
     src_kwargs : dict, optional
         Keyword arguments for pyplot.plot of the sources. The default is None.
     det_kwargs : dict, optional
@@ -63,6 +70,15 @@ def plot_sky_sources(
     # Show only selected sources
     sel = tt_src["sel"]
     tt_src = tt_src[sel]
+
+    # select sources within the region
+    sel_reg = np.ones(len(tt_src), dtype=np.bool)
+    if type(sky_region_wcs) is not type(None):
+        src_coords = SkyCoord(
+            tt_src["ra"].quantity, tt_src["dec"].quantity, frame="icrs"
+        )
+        sel_reg = sky_region_wcs[0].contains(src_coords, sky_region_wcs[1])
+        logger.debug(f"Limiting to region {sky_region_wcs[0]}")
 
     # Set marker properties for sources
     plt_src_kwargs = {
@@ -94,7 +110,7 @@ def plot_sky_sources(
 
     # Loop over all srcs and plot
     colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
-    for src, col in zip(tt_src, colors):
+    for src, col in zip(tt_src[sel_reg], colors):
         if type(tt_det) is not type(None):
             det_idx = tt_det.loc_indices[plot_src_id, src[plot_src_id]]
             ax.plot(
@@ -117,7 +133,9 @@ def plot_sky_sources(
     return ax
 
 
-def plot_field_sky_map(field, fig=None, ax=None, img_idx=-1, **img_kwargs):
+def plot_field_sky_map(
+    field, fig=None, ax=None, img_idx=-1, sky_region=None, **img_kwargs
+):
     """
     Plot the reference sky map.
 
@@ -132,6 +150,9 @@ def plot_field_sky_map(field, fig=None, ax=None, img_idx=-1, **img_kwargs):
     img_idx : int, optional
         Index nr of the visit in the tt_visits table. If -1 is passed
         the reference image is shown. Default is -1.
+    sky_region: regions.SkyRegion , optional
+        Plot only within the sky region. The field WCS will be used
+        Default is None.
     **img_kwargs : dict
         Key word arguments for pyplot.imshow plotting.
 
@@ -146,26 +167,8 @@ def plot_field_sky_map(field, fig=None, ax=None, img_idx=-1, **img_kwargs):
 
     logger.debug("Plotting sky map'")
 
-    if field.ref_img is None:
+    if field.ref_img is None and field.vis_img is None:
         logger.error("No map to draw")
-
-    # Check if figure was passed
-    if type(fig) is type(None):
-        fig = plt.figure(figsize=(8, 7), constrained_layout=True)
-        ax = plt.subplot(projection=field.ref_wcs)
-        ax.coords["ra"].set_major_formatter("d.dd")
-        ax.coords["dec"].set_major_formatter("d.dd")
-        ax.set_xlabel("Ra")
-        ax.set_ylabel("Dec")
-    else:
-        plt.gcf()
-
-    # Check if axis was passed and setup axis
-    if ax is None:
-        ax = plt.gca()
-
-    # Add coordinate grid
-    ax.coords.grid(True, color="grey", ls="-", lw=0.5)
 
     # Setup imshow parameters
     plt_img_kwargs = {
@@ -186,7 +189,40 @@ def plot_field_sky_map(field, fig=None, ax=None, img_idx=-1, **img_kwargs):
             plot_img = field.vis_img[img_idx, :, :]
         else:
             plot_img = field.vis_img
+
+    # Check if plotting should be restricted to one region only
+    wcs = field.ref_wcs
+    if type(sky_region) is not type(None):
+        box = sky_region.to_pixel(field.ref_wcs).bounding_box
+        # plt_img_kwargs["extent"] = box.extent
+        cutout = Cutout2D(
+            plot_img, position=box.center, size=box.shape, wcs=field.ref_wcs, copy=True
+        )
+        plot_img = cutout.data
+        wcs = cutout.wcs
+
+    # Start drawing
+    # Check if figure was passed
+    if type(fig) is type(None):
+        fig = plt.figure(figsize=(8, 7), constrained_layout=True)
+        ax = plt.subplot(projection=wcs)
+        ax.coords["ra"].set_major_formatter("d.dd")
+        ax.coords["dec"].set_major_formatter("d.dd")
+        ax.set_xlabel("Ra")
+        ax.set_ylabel("Dec")
+    else:
+        plt.gcf()
+
+    # Check if axis was passed and setup axis
+    if ax is None:
+        ax = plt.gca()
+
+    # Add coordinate grid
+    ax.coords.grid(True, color="grey", ls="-", lw=0.5)
+
     graph = ax.imshow(plot_img, **plt_img_kwargs)
+    # if type(pix_patch) is not type(None):
+    # graph.set_clip_path(pix_patch)
     ax.set_title(fig_title)
 
     return fig, graph
