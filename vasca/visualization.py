@@ -14,7 +14,6 @@ import numpy as np
 from astropy.coordinates import SkyCoord
 from astropy.nddata import Cutout2D
 from astropy.visualization.wcsaxes import SphericalCircle
-from astropy.wcs import WCS
 from loguru import logger
 from matplotlib.colors import LogNorm
 
@@ -27,7 +26,7 @@ def plot_sky_sources(
     tt_src,
     tt_det=None,
     ax=None,
-    plot_src_id="rg_src_id",
+    src_id="rg_src_id",
     sky_region_wcs=None,
     src_kwargs=None,
     det_kwargs=None,
@@ -38,15 +37,15 @@ def plot_sky_sources(
     Parameters
     ----------
     tt_src : astropy.Table
-        Source list to plot. Has to contain "ra", "dec" and "sel" and srd id columns.
+        Source list to plot. Has to contain "ra", "dec" and srd id columns.
     tt_det : astropy.Table, optional
         Detection list to plot. Has to contain "ra", "dec" and src_id columns.
         Default is None.
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
-    plot_src_ids: bool, optional
+    src_id: str, optional
         Write the source ID next to its marker, saved in the passec column name, typically
-        "rg_src_id" or "fd_src_id"
+        "rg_src_id", "fd_src_id" or None. Default is ""rg_src_id""
     sky_region_wcs: (regions.SkyRegion, WCS) , optional
         Plot only sources within the sky region. A WCS has to be passed along ina tupple.
         Default is None.
@@ -68,7 +67,9 @@ def plot_sky_sources(
         ax = plt.gca()
 
     # Show only selected sources
-    sel = tt_src["sel"]
+    sel = np.ones(len(tt_src), dtype=bool)
+    if "sel" in tt_src.colnames:
+        sel = tt_src["sel"]
     tt_src = tt_src[sel]
 
     # select sources within the region
@@ -105,31 +106,42 @@ def plot_sky_sources(
     if det_kwargs is not None:
         plt_det_kwargs.update(det_kwargs)
 
+    plt_txt_kwargs = {
+        "transform": ax.get_transform("world"),
+        "fontsize": 7,
+        "alpha": 0.7,
+    }
+
     if type(tt_det) is not type(None):
-        tt_det.add_index(plot_src_id)
+        tt_det.add_index(src_id)
 
     # Loop over all srcs and plot
-    colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
+    colors = cycle("bgrcmybgrcmybgrcmybgrcmy")
     for src, col in zip(tt_src[sel_reg], colors):
         if type(tt_det) is not type(None):
-            det_idx = tt_det.loc_indices[plot_src_id, src[plot_src_id]]
+
+            # Set colors in tandem for srcs, det and label
+            plt_src_kwargs["color"] = col
+            plt_det_kwargs["color"] = col
+            plt_txt_kwargs["color"] = col
+
+            det_idx = tt_det.loc_indices[src_id, src[src_id]]
             ax.plot(
                 tt_det[det_idx]["ra"].data,
                 tt_det[det_idx]["dec"].data,
-                color=col,
                 **plt_det_kwargs,
             )
-        ax.plot(src["ra"], src["dec"], color=col, **plt_src_kwargs)
 
-        ax.text(
-            src["ra"] + 0.007,
-            src["dec"] + 0.006,
-            str(src[plot_src_id]),
-            transform=plt_src_kwargs["transform"],
-            fontsize=7,
-            color=col,
-            alpha=0.7,
-        )
+        ax.plot(src["ra"], src["dec"], **plt_src_kwargs)
+
+        # Add labels if src_id was passed
+        if type(src_id) is not type(None):
+            ax.text(
+                src["ra"] + 0.007,
+                src["dec"] + 0.006,
+                str(src[src_id]),
+                **plt_txt_kwargs,
+            )
     return ax
 
 
