@@ -147,6 +147,7 @@ def run_field(obs_nr, field, vasca_cfg):
     field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
     field.ref_img = None
     field.ref_wcs = None
+    field.vis_img = None
 
     # Keep only base class columns
     for tt_name in field._table_names:
