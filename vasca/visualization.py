@@ -193,10 +193,10 @@ def plot_field_sky_map(
         plt_img_kwargs.update(img_kwargs)
 
     # Check if reference or visit images should be plotted
-    fig_title = "Reference image"
+    fig_title = f"Field {field.field_id} reference image."
     plot_img = field.ref_img
     if img_idx > -1:
-        fig_title = f"Visit image Idx. {img_idx}"
+        fig_title = f"Field {field.field_id} visit image Idx. {img_idx}"
         if field.vis_img.ndim == 3:
             plot_img = field.vis_img[img_idx, :, :]
         else:
