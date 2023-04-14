@@ -463,11 +463,17 @@ class TableCollection(object):
             # Apply bitmask cuts
             if "bitmask" in selections.keys():
                 for var, vals in selections["bitmask"].items():
-                    no_art = sel * (tt[var].data.astype("int") == 0)
-                    bit = bitmask.bitfield_to_boolean_mask(tt[var], ignore_flags=vals)
-                    sel = sel * (no_art + bit)
+                    # See https://docs.astropy.org/en/stable/api/astropy.nddata.bitfield_to_boolean_mask.html
+                    bit = bitmask.bitfield_to_boolean_mask(
+                        tt[var],
+                        flip_bits=True,
+                        dtype=bool,
+                        good_mask_value=0,
+                        ignore_flags=vals,
+                    )
+                    sel = sel * ~bit
                     logger.info(
-                        f"AND selecting bitmask '{var}' keep {vals}, "
+                        f"AND selecting bitmask '{var}' removing {vals}, "
                         f"kept: {100*sel.sum()/nr_sel : .4f}%"
                     )
         elif selections["sel_type"] == "or":

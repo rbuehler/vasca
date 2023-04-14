@@ -76,7 +76,7 @@ observations:
                 mag_err        : [0.000001,0.5]
                 pos_err        : [0.00000001,0.002]
             bitmask:
-                artifacts : [1,8,16,32,64,128,256,512]
+                artifacts : [2,4]
         det_association : 
             table     : "tt_detections"
             ref_table : "tt_sources"

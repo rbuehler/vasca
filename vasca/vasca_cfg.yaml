@@ -7,7 +7,7 @@ general:
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                         # Will be written into "out_dir", if ""default" a default name will be created 
-    nr_cpus         : 4                                 # Number of CPUs to use. If "null" all available are used.
+    nr_cpus         : 3                                 # Number of CPUs to use. If "null" all available are used.
     save_dets       : false                            # Store selected field detections into region file
     save_ref_srcs   : false                             # Store referenze sources into region file
     
@@ -25,7 +25,7 @@ cluster_src:
         bin_seeding   : false
         min_bin_freq  : 1
         cluster_all   : true
-        n_jobs        : 4
+        n_jobs        : 3
         max_iter      : 300
         
 selection:
@@ -119,9 +119,9 @@ observations:
                 mag_err        : [0.000001,0.5]
                 pos_err        : [0.00000001,0.002]
             bitmask:
-                # Specify the ones to ignore (=keep row).
+                # Specify the artifacts to remove
                 # For GALEX a description is at the end of this document
-                artifacts : [1,8,16,32,64,128,256,512]
+                artifacts : [2,4]
         det_association : 
             table     : "tt_detections"
             ref_table : "tt_sources"
