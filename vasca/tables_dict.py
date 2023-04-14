@@ -73,7 +73,6 @@ base_field = {
         "names": [
             "vis_id",
             "fd_src_id",
-            "det_id",
             "ra",
             "dec",
             "pos_err",
@@ -85,7 +84,6 @@ base_field = {
         "dtype": [
             "int64",
             "int32",
-            "int64",
             "float64",
             "float64",
             "float32",
@@ -97,7 +95,6 @@ base_field = {
         "units": [
             "1",
             "1",
-            "1",
             "degree",
             "degree",
             "degree",
@@ -106,11 +103,10 @@ base_field = {
             "1",
             "1",
         ],
-        "defaults": [-1, -1, -1, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, True],
+        "defaults": [-1, -1, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, True],
         "descriptions": [
             "Visit ID associated to the visit detection",
             "Source ID associated to the visit detection",
-            "Visit detection ID",
             "Visit detection RA (J2000)",
             "Visit detection Dec (J2000)",
             "Visit position error",
@@ -358,6 +354,7 @@ galex_field = {
     "tt_detections": {
         "names": [
             *base_field["tt_detections"]["names"],
+            "det_id",
             "r_fov",
             "artifacts",
             "point_src_prob",
@@ -370,6 +367,7 @@ galex_field = {
         ],
         "dtype": [
             *base_field["tt_detections"]["dtype"],
+            "int64",
             "float32",
             "int64",
             "float32",
@@ -382,6 +380,7 @@ galex_field = {
         ],
         "units": [
             *base_field["tt_detections"]["units"],
+            "1",
             "degree",
             "1",
             "1",
@@ -394,6 +393,7 @@ galex_field = {
         ],
         "defaults": [
             *base_field["tt_detections"]["defaults"],
+            -1,
             -1.0,
             -1,
             -1.0,
@@ -406,6 +406,7 @@ galex_field = {
         ],
         "descriptions": [
             *base_field["tt_detections"]["descriptions"],
+            "Visit detection ID",
             "Distance from center of FOV in degrees",
             "Logical OR of artifact flags",
             "Point-source probability: 0.0 (resolved), 1.0 (unresolved, mcat file filter_CLASS_STAR variable)",  # noqa E501
