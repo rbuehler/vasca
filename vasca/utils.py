@@ -21,13 +21,15 @@ from scipy.stats import binned_statistic
 
 # Global variable liking observator+obsfilter to a field ID addon
 # The number of Id adon letter has to be three
-# See get_region_field_id funtion below.
+# See get_field_id funtion below.
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
 
 
-def get_region_field_id(obs_field_id, observaory, obs_filter):
+def get_field_id(obs_field_id, observaory, obs_filter):
     """
-    Return region field id, which also includes observatory and filter identifier.
+    Return VASCA field id, which also includes observatory and filter identifier.
+    The first 3 characters characterize the observatory and filer. Afterards the
+    observatory field ID is attached.
 
     Parameters
     ----------

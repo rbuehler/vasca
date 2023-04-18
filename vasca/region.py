@@ -44,7 +44,10 @@ class Region(TableCollection):
         # Setup empty tables to fill
         self.add_table(None, "region:tt_fields")
 
-        self.fields = {}  # dictionary of field IDs and objects
+        # Path where region and fields are stored
+        self.region_path = None
+
+        self.fields = {}  # dictionary of field_id and field objects
 
     @classmethod
     def load_from_config(cls, vasca_cfg):
@@ -67,6 +70,7 @@ class Region(TableCollection):
 
         logger.debug("Loading fields from config file")
 
+        # Loop over all observations
         for obs in vasca_cfg["observations"]:
             if obs["observatory"] == "GALEX":
                 # Loop over fields and store info
@@ -79,7 +83,8 @@ class Region(TableCollection):
                         load_products=vasca_cfg["ressources"]["load_products"],
                         **vasca_cfg["ressources"]["field_kwargs"],
                     )
-                    field_info = dict(gf.tt_field[0])
+
+                    field_info = dict(gf.tt_fields[0])
                     field_info["fov_diam"] = gf.fov_diam
                     field_info["nr_vis"] = gf.nr_vis
                     field_info["time_bin_size_sum"] = gf.time_bin_size_sum
@@ -89,14 +94,19 @@ class Region(TableCollection):
                     rg.tt_fields.add_row(field_info)
 
                     if vasca_cfg["ressources"]["load_products"]:
-                        rg.fields[rg_fd_id] = gf
-                    else:
-                        rg.fields[rg_fd_id] = None
+                        rg.fields[gf.field_id] = gf
+                    # else:
+                    #     rg.fields[rg_fd_id] = None
                     rg_fd_id += 1
             else:
                 logger.waring(
                     "Selected observatory `" + obs["observatory"] + "` not supported"
                 )
+
+        # Add region path
+        rg.region_path = (
+            vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"]
+        )
 
         return rg
 
@@ -125,8 +135,11 @@ class Region(TableCollection):
             logger.warning(f"Table '{table_name}' already exists, overwriting")
 
         # Loop over fields and add field_id column and field id table
+        self.tt_fields.add_index("field_id")
+
         ll_tt = []  # List of "table_name" tables for all fields
-        for rg_fd_id, field in self.fields.items():
+        for field_id, field in self.fields.items():
+            rg_fd_id = self.tt_fields.loc["field_id", [field_id]]["rg_fd_id"]
             tt = field.__dict__[table_name]
 
             # Apply row selection
@@ -226,17 +239,17 @@ class Region(TableCollection):
 
         return hp_nr_vis, hp_exp, hp_nr_fds
 
-    def load_from_fits(self, file_name, load_fields=True):
+    def load_from_fits(self, file_name, load_fields=False):
         """
         Loads field from a fits file
 
         Parameters
         ----------
         file_name : str, optional
-            Region file name. The default is "field_default.fits".
+            Region file name.
         load_fields : bool,
-            Load the fields, which have to be located as fits in the subfolder "fields"
-            of the region file in "file_name". Default is True.
+            Load the fields, which have to be located as fits in the subfolder "./fields/"
+            of the region file in "file_name". Default is False.
 
         Returns
         -------
@@ -246,16 +259,14 @@ class Region(TableCollection):
 
         # Load file from TableCollection base class
         super().load_from_fits(file_name)
-        region_path = os.path.dirname(file_name)
+        self.region_path = os.path.dirname(file_name)
 
         # Load fields
         if load_fields:
             for ff in self.tt_fields:
-                fd = BaseField()
-                fd.load_from_fits(
-                    region_path + "/fields/field_" + ff["field_id"] + ".fits"
+                self.get_field(
+                    field_id=ff["field_id"], load_method="FITS", add_field=True
                 )
-                self.fields[ff["field_id"]] = fd
 
     def get_src_from_id(self, rg_src_id):
         """
@@ -308,14 +319,14 @@ class Region(TableCollection):
         coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
         fd_src_ids = list()
         for field_id in src.tt_fields["field_id"]:
-            fd = self.fields[field_id]
+            fd = self.get_field(
+                field_id=field_id, load_method="FITS", add_field=False
+            )  # self.fields[field_id]
             coord_fd_srcs = SkyCoord(
                 fd.tt_sources["ra"], fd.tt_sources["dec"], frame="icrs"
             )
             idx, d2d, d3d = coord_src.match_to_catalog_sky(coord_fd_srcs)
             fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
-        # print(fd_src_ids)
-        # print(src.tt_fields)
         src.tt_fields["fd_src_id"] = fd_src_ids
 
         return src
@@ -387,3 +398,72 @@ class Region(TableCollection):
         src = self.get_src_from_id(rg_src_id)
 
         return [src, *d2d]
+
+    def get_field(
+        self, field_id=None, rg_fd_id=None, load_method="FITS", add_field=False
+    ):
+        """
+        Load a field from a region, tt_fields table needs to include this field.
+
+        Parameters
+        ----------
+        field_id : TYPE, str
+            Field ID. The default is None.
+        rg_fd_id : TYPE, int
+            Region field ID. The default is None.
+        load_method : TYPE, optional
+            Method to load the field. Either from "FITS", from "MAST" or from "VASCA".
+            The default is "FITS". Note that if the field is already in the
+            region.fields dictionary, this will be ignored and the later be returned.
+        add_field : TYPE, optional
+            Add the field to the region.fields dictionary. The default is True.
+
+        Returns
+        -------
+        field
+            VASCA field
+
+        """
+
+        # Select field and set both field ids
+        if type(field_id) is not type(None):
+            sel_fd = self.tt_fields["field_id"] == field_id
+            rg_fd_id = self.tt_fields[sel_fd]["rg_fd_id"]
+        elif type(rg_fd_id) is not type(None):
+            sel_fd = self.tt_fields["rg_fd_id"] == rg_fd_id
+            field_id = self.tt_fields[sel_fd]["field_id"]
+        else:
+            logger.warning("Need to specify either field_id or rg_fd_id")
+
+        fd_row = self.tt_fields[sel_fd]
+        if len(fd_row) != 1:
+            logger.warning(
+                f"Could not identify single field for {field_id}, {rg_fd_id}"
+            )
+        # ** Load field accorading to passed method **
+
+        # If already loaded insto field dictionary return it
+        if field_id in self.fields.keys():
+            return self.fields(field_id)
+
+        # If it shall be loaded from a fits file
+        elif load_method == "FITS":
+            fd = BaseField()
+            fd.load_from_fits(self.region_path + "/fields/field_" + field_id + ".fits")
+            if add_field:
+                self.fields[field_id] = fd
+            return fd
+
+        # If it should be loaded from MAST or VASCA-MAST file database
+        elif fd_row["observatory"] == "GALEX":
+            gf = GALEXField.load(
+                gfield_id=int(str(fd_row["field_id"][0])[3:]),
+                obs_filter=str(fd_row["obs_filter"][0]),
+                method=load_method,
+                load_products=True,
+            )
+            if add_field:
+                self.fields[field_id] = gf
+            return gf
+        else:
+            logger.warning("Usupported loading method")

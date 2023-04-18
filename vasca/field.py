@@ -25,7 +25,7 @@ from requests.exceptions import HTTPError
 
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
-from vasca.utils import get_region_field_id
+from vasca.utils import get_field_id
 
 # global paths
 # path to the dir. of this file
@@ -72,7 +72,7 @@ class BaseField(TableCollection):
         #: with corresponding tables
         #: to be set as class attributes for convenience.
         self._dd_attr_names = {
-            "tt_field": [
+            "tt_fields": [
                 "field_id",
                 "name",
                 "ra",
@@ -144,7 +144,7 @@ class BaseField(TableCollection):
         observatory = (
             self.observatory
             if hasattr(self, "observatory")
-            else self.get_field_par("observatory", "tt_field")
+            else self.get_field_par("observatory", "tt_fields")
         )
         upper_limit = None
 
@@ -345,7 +345,7 @@ class BaseField(TableCollection):
         Raises
         ------
         AssertionError
-            If :attr: `~vasca.field.BaseField.tt_field` has not exactly one row
+            If :attr: `~vasca.field.BaseField.tt_fields` has not exactly one row
 
         """
         # Check data availability
@@ -358,18 +358,18 @@ class BaseField(TableCollection):
             return None
 
         # Consistency checks
-        # tt_field must be single-rowed
-        if table_name == "tt_field" and len(self.tt_field) != 1:
+        # tt_fields must be single-rowed
+        if table_name == "tt_fields" and len(self.tt_fields) != 1:
             raise ValueError(
                 "Inconsistent data. Expeted single-rowed "
-                f"field metadata table 'tt_field', got {len(self.tt_field)}."
+                f"field metadata table 'tt_fields', got {len(self.tt_fields)}."
             )
 
         # Indirectly derived parameters
         if par_name == "center":
             par = SkyCoord(
-                self.get_field_par("ra", "tt_field"),
-                self.get_field_par("dec", "tt_field"),
+                self.get_field_par("ra", "tt_fields"),
+                self.get_field_par("dec", "tt_fields"),
                 frame="icrs",
             )
         elif par_name == "nr_vis":
@@ -395,11 +395,11 @@ class BaseField(TableCollection):
             par = None
         else:
             # retrieve parameter
-            par = self.tt_field[par_name].data[0]
+            par = self.tt_fields[par_name].data[0]
             # Maintains unit
             # Some combinations of unit and dtype need special handling
-            unit = self.tt_field[par_name].unit
-            dtype_kind = self.tt_field[par_name].dtype.kind
+            unit = self.tt_fields[par_name].unit
+            dtype_kind = self.tt_fields[par_name].dtype.kind
             logger.debug(f"Getting parameter '{par_name}': {par}, {unit}, {dtype_kind}")
             # check (byte-)string or unicode
             if dtype_kind in ["U", "S"]:
@@ -573,28 +573,28 @@ class GALEXField(BaseField):
         gf.load_from_fits(fits_path)
         # Sets convenience class attributes
         gf.set_field_attr()
-        obs_field_id = get_region_field_id(
+        field_id = get_field_id(
             obs_field_id=obs_id, observaory="GALEX", obs_filter=obs_filter
         )
 
-        # Check consistency
-        if not gf.field_id == obs_field_id:
-            raise ValueError(
-                "Inconsistent data: Missmatch for 'field_id'. "
-                f"Expected '{obs_id}' but got '{gf.field_id}' "
-                f"from file '{fits_path.split(os.sep)[-1]}."
-            )
-        elif not gf.obs_filter == obs_filter:
-            raise ValueError(
-                "Inconsistent data: Missmatch for 'obs_filter'. "
-                f"Expected '{obs_filter}' but got '{gf.obs_filter}' "
-                f"from file '{fits_path.split(os.sep)[-1]}."
-            )
+        # # Check consistency
+        # if not gf.field_id == field_id:
+        #     raise ValueError(
+        #         "Inconsistent data: Missmatch for 'field_id'. "
+        #         f"Expected '{obs_id}' but got '{gf.field_id}' "
+        #         f"from file '{fits_path.split(os.sep)[-1]}."
+        #     )
+        # elif not gf.obs_filter == obs_filter:
+        #     raise ValueError(
+        #         "Inconsistent data: Missmatch for 'obs_filter'. "
+        #         f"Expected '{obs_filter}' but got '{gf.obs_filter}' "
+        #         f"from file '{fits_path.split(os.sep)[-1]}."
+        #     )
 
-        logger.info(
-            f"Loaded VASCA data for GALEX field '{obs_id}' "
-            f"with obs_filter '{obs_filter}'."
-        )
+        # logger.info(
+        #     f"Loaded VASCA data for GALEX field '{obs_id}' "
+        #     f"with obs_filter '{obs_filter}'."
+        # )
 
         return gf
 
@@ -649,7 +649,7 @@ class GALEXField(BaseField):
         # Bootstrap the initialization procedure using the base class
         gf = cls(obs_id, obs_filter, **kwargs)  # new GALEXField instance
 
-        # Sets ``gf.tt_field``
+        # Sets ``gf.tt_fields``
         gf._load_galex_field_info(obs_id, obs_filter, refresh=refresh)
         # Sets ``gf.tt_visits``
         gf._load_galex_visits_info(obs_id, obs_filter)
@@ -889,7 +889,7 @@ class GALEXField(BaseField):
             tt_coadd = Table.read(path_tt_coadd)
 
         # Constructs field info table
-        logger.debug("Constructing 'tt_field'.")
+        logger.debug("Constructing 'tt_fields'.")
 
         # Selects columns and strip mask
         if tt_coadd.masked is True:
@@ -907,7 +907,7 @@ class GALEXField(BaseField):
 
         # Converts obs_id colimn  into VASCA field_id
         for row in tt_coadd_select:
-            row["obs_id"] = get_region_field_id(
+            row["obs_id"] = get_field_id(
                 obs_field_id=row["obs_id"], observaory="GALEX", obs_filter=obs_filter
             )
 
@@ -919,7 +919,7 @@ class GALEXField(BaseField):
         # Add fov size info
         dd_coadd_select["fov_diam"] = 1.2 * np.ones(len(tt_coadd_select["obs_id"]))
 
-        self.add_table(dd_coadd_select, "base_field:tt_field")
+        self.add_table(dd_coadd_select, "base_field:tt_fields")
 
     def _load_galex_visits_info(self, obs_id, obs_filter, col_names=None):
         """
@@ -1026,7 +1026,7 @@ class GALEXField(BaseField):
             List of columns to store from raw data.
         dd_products : dict, optional
             Dictionary of listing the data products to be loaded.
-        re_maps_only : bool, optional
+        ref_maps_only : bool, optional
             If True, only the reference/coadd maps are loaded (default).
             If False, also the visit maps are included.
         refresh : bool, optional
@@ -1330,6 +1330,3 @@ class GALEXField(BaseField):
             ]  # list
             for vis_img_name in path_int_map_visits:
                 self.load_sky_map(vis_img_name, "vis_img")
-
-        # Future: Optional loading of visit sky maps may happen here.
-        # print(path_int_map_visits)
