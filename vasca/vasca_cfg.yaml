@@ -12,7 +12,7 @@ general:
     save_ref_srcs   : false                             # Store referenze sources into region file
     
 ressources:                      
-    load_method      : "VASCA"    # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_method      : "MAST_LOCAL"   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : false             # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null
@@ -67,13 +67,13 @@ observations:
         # - 2593934984603500544  #PS_CDFS_MOS04
         # - 2594005353347678208  #PS_CDFS_MOS05
         # - 2594075722091855872  #PS_CDFS_MOS06
-        # - 2597312684324028416  #PS_ELAISN1_MOS10
-        # - 2597383053068206080  #PS_ELAISN1_MOS11
-        # - 2597453421812383744  #PS_ELAISN1_MOS12
-        # - 2597523790556561408  #PS_ELAISN1_MOS13
-        # - 2597594159300739072  #PS_ELAISN1_MOS14
+        - 2597312684324028416  #PS_ELAISN1_MOS10
+        - 2597383053068206080  #PS_ELAISN1_MOS11
+        - 2597453421812383744  #PS_ELAISN1_MOS12
+        - 2597523790556561408  #PS_ELAISN1_MOS13
+        - 2597594159300739072  #PS_ELAISN1_MOS14
         - 2597664528044916736  #PS_ELAISN1_MOS15
-        # - 2597734896789094400  #PS_ELAISN1_MOS16
+        - 2597734896789094400  #PS_ELAISN1_MOS16
         # - 2597875634277449728  #PS_VVDS22H_MOS00
         # - 2597946003021627392  #PS_VVDS22H_MOS01
         # - 2598016371765805056  #PS_VVDS22H_MOS02

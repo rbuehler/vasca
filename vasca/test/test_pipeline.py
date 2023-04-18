@@ -60,7 +60,7 @@ def test_pipeline_vis(test_paths):
     rg.load_from_fits(region_fname)
 
     # Plot skypmap
-    fd = rg.fields[rg.tt_fields[0]["field_id"]]
+    fd = rg.get_field(field_id=rg.tt_fields[0]["field_id"])
     fig, ax = vvis.plot_field_sky_map(fd)
     vvis.plot_sky_sources(rg.tt_sources, tt_det=rg.tt_detections)
 
