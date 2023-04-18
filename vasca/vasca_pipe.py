@@ -14,7 +14,7 @@ import yaml
 from loguru import logger
 
 from vasca.region import Region
-from vasca.utils import get_region_field_id
+from vasca.utils import get_field_id
 from vasca.tables_dict import dd_vasca_tables
 
 
@@ -177,46 +177,49 @@ def run(vasca_cfg):
 
     # Load region fields
     rg = Region.load_from_config(vasca_cfg)
-    rg.add_table_from_fields("tt_visits")
 
     # Setup output directory
-    region_dir = (
-        vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"] + "/"
-    )
-    if not os.path.exists(region_dir):
-        os.makedirs(region_dir)
+    if not os.path.exists(rg.region_path):
+        os.makedirs(rg.region_path)
 
     # Prepare fields to run on fot parellization
     fd_pars = list()
     obs_nr = 0
-    rg.tt_fields.add_index("field_id")
+
     for obs in vasca_cfg["observations"]:
-        for field_id in obs["obs_field_ids"]:
-            field_id = get_region_field_id(
-                obs_field_id=field_id,
+        for gfield_id in obs["obs_field_ids"]:
+            field_id = get_field_id(
+                obs_field_id=gfield_id,
                 observaory=obs["observatory"],
                 obs_filter=obs["obs_filter"],
             )
-            fd = rg.tt_fields.loc["field_id", field_id]
-            rg_fd_id = fd["rg_fd_id"]
-            fd_pars.append([obs_nr, rg.fields[rg_fd_id]])
+            fd_pars.append([obs_nr, field_id])
         obs_nr += 1
 
     # Run each field in a separate process in parallel
     with Pool(vasca_cfg["general"]["nr_cpus"]) as pool:
         pool_return = pool.starmap(
             run_field,
-            [(*fd_par, vasca_cfg) for fd_par in fd_pars],
+            [
+                (
+                    fd_par[0],
+                    rg.get_field(
+                        field_id=fd_par[1],
+                        load_method=vasca_cfg["ressources"]["load_method"],
+                    ),
+                    vasca_cfg,
+                )
+                for fd_par in fd_pars
+            ],
         )
     pool.join()
 
     # update region fields
     for field in pool_return:
-        fd = rg.tt_fields.loc["field_id", field.field_id]
-        rg_fd_id = fd["rg_fd_id"]
-        rg.fields[rg_fd_id] = field
+        rg.fields[field.field_id] = field
 
     # Add field tables to region
+    rg.add_table_from_fields("tt_visits")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)
 
@@ -243,11 +246,13 @@ def run(vasca_cfg):
 
     # Write out regions
     rg.write_to_fits(
-        file_name=region_dir + "/region_" + vasca_cfg["general"]["name"] + ".fits"
+        file_name=rg.region_path + "/region_" + vasca_cfg["general"]["name"] + ".fits"
     )
 
     # Write used config file
-    yaml_out_name = region_dir + "/cfg_ran_" + vasca_cfg["general"]["name"] + ".yaml"
+    yaml_out_name = (
+        rg.region_path + "/cfg_ran_" + vasca_cfg["general"]["name"] + ".yaml"
+    )
     with open(yaml_out_name, "w") as yaml_file:
         yaml.dump(vasca_cfg, yaml_file)
 

@@ -30,7 +30,7 @@ import numpy as np
 
 # %% Base field
 base_field = {
-    "tt_field": {
+    "tt_fields": {
         "names": [
             "field_id",
             "name",
@@ -488,7 +488,7 @@ galex_field = {
 region = {
     "tt_fields": {
         "names": [
-            *base_field["tt_field"]["names"],
+            *base_field["tt_fields"]["names"],
             "nr_vis",
             "time_bin_size_sum",
             "time_start",
@@ -496,16 +496,16 @@ region = {
             "rg_fd_id",
         ],
         "dtype": [
-            *base_field["tt_field"]["dtype"],
+            *base_field["tt_fields"]["dtype"],
             "int32",
             "float32",
             "float64",
             "float64",
             "int32",
         ],
-        "units": [*base_field["tt_field"]["units"], "1", "s", "d", "d", "1"],
+        "units": [*base_field["tt_fields"]["units"], "1", "s", "d", "d", "1"],
         "defaults": [
-            *base_field["tt_field"]["defaults"],
+            *base_field["tt_fields"]["defaults"],
             -1,
             -1.0,
             -1.0,
@@ -513,14 +513,14 @@ region = {
             -1,
         ],
         "descriptions": [
-            *base_field["tt_field"]["descriptions"],
+            *base_field["tt_fields"]["descriptions"],
             "Total number of visits of the field",
             "Total exposure time",
             "Start time of first exposure",
             "End time of last exposure",
             "Region field ID Nr.",
         ],
-        "meta": {**base_field["tt_field"]["meta"]},
+        "meta": {**base_field["tt_fields"]["meta"]},
     },
     "tt_visits": {
         "names": [*base_field["tt_visits"]["names"], "rg_fd_id"],
