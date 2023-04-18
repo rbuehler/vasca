@@ -110,7 +110,7 @@ def new_field():
     }
 
     bf = BaseField()
-    bf.add_table(field_data, "base_field:tt_field")
+    bf.add_table(field_data, "base_field:tt_fields")
     bf.add_table(visits_data, "base_field:tt_visits")
     return bf
 
