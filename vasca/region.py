@@ -80,7 +80,7 @@ class Region(TableCollection):
                         gfield_id,
                         obs_filter=obs["obs_filter"],
                         method=vasca_cfg["ressources"]["load_method"],
-                        load_products=vasca_cfg["ressources"]["load_products"],
+                        load_products="NONE",
                         **vasca_cfg["ressources"]["field_kwargs"],
                     )
 
@@ -93,10 +93,6 @@ class Region(TableCollection):
                     field_info["rg_fd_id"] = rg_fd_id
                     rg.tt_fields.add_row(field_info)
 
-                    if vasca_cfg["ressources"]["load_products"]:
-                        rg.fields[gf.field_id] = gf
-                    # else:
-                    #     rg.fields[rg_fd_id] = None
                     rg_fd_id += 1
             else:
                 logger.waring(
@@ -400,7 +396,12 @@ class Region(TableCollection):
         return [src, *d2d]
 
     def get_field(
-        self, field_id=None, rg_fd_id=None, load_method="FITS", add_field=False
+        self,
+        field_id=None,
+        rg_fd_id=None,
+        load_method="FITS",
+        add_field=False,
+        mast_products="TABLES",
     ):
         """
         Load a field from a region, tt_fields table needs to include this field.
@@ -417,6 +418,9 @@ class Region(TableCollection):
             region.fields dictionary, this will be ignored and the later be returned.
         add_field : TYPE, optional
             Add the field to the region.fields dictionary. The default is True.
+        mast_products : str, optional
+            load_products option of field.load_from_MAST. Sets to what level data
+            products are downloaded.
 
         Returns
         -------
@@ -444,7 +448,7 @@ class Region(TableCollection):
 
         # If already loaded insto field dictionary return it
         if field_id in self.fields.keys():
-            return self.fields(field_id)
+            return self.fields[field_id]
 
         # If it shall be loaded from a fits file
         elif load_method == "FITS":
@@ -460,7 +464,7 @@ class Region(TableCollection):
                 gfield_id=int(str(fd_row["field_id"][0])[3:]),
                 obs_filter=str(fd_row["obs_filter"][0]),
                 method=load_method,
-                load_products=True,
+                load_products=mast_products,
             )
             if add_field:
                 self.fields[field_id] = gf

@@ -604,7 +604,7 @@ class GALEXField(BaseField):
         obs_id,
         obs_filter="NUV",
         refresh=False,
-        load_products=True,
+        load_products="TABLES",
         write=True,
         **kwargs,
     ):
@@ -628,9 +628,9 @@ class GALEXField(BaseField):
         refresh : bool, optional
             Selects if data is freshly loaded from MAST (refresh=True) or
             from cashed data on disc (refresh=False, default).
-        load_products : bool, optional
-            Selects if data products shall be loaded. Othervise only field and
-            visit information is loaded.
+        load_products : str, optional
+            Selects if data products shall be loaded: "NONE", "TABLES" for tables,
+            and reference image, "ALL" for tables and visit images.
         write: bool, optional
             If load_products is enabled, stores the data as VASCA tables in the cloud
             for faster loading in the future. Default is True.
@@ -658,8 +658,17 @@ class GALEXField(BaseField):
         gf.set_field_attr()
 
         # Sets ``gf.tt_detections``, ``gf.tt_ref_sources`` and loads the ref image
-        if load_products:
-            gf._load_galex_archive_products(obs_id, obs_filter, refresh=refresh)
+        if load_products != "NONE":
+            if load_products == "ALL":
+                gf._load_galex_archive_products(
+                    obs_id, obs_filter, refresh=refresh, ref_maps_only=False
+                )
+            elif load_products == "TABLES":
+                gf._load_galex_archive_products(
+                    obs_id, obs_filter, refresh=refresh, ref_maps_only=True
+                )
+            else:
+                logger.warning(f"load_product option not valid: {load_products}")
             meta_only = "."
             if write:
                 fits_name = f"{gf.data_path}/{gf.vasca_file_prefix}_field_data.fits"
@@ -679,7 +688,7 @@ class GALEXField(BaseField):
         gfield_id,
         obs_filter="NUV",
         method="MAST_LOCAL",
-        load_products=True,
+        load_products="TABLES",
         **field_kwargs,
     ):
         """
@@ -709,9 +718,9 @@ class GALEXField(BaseField):
             The default directory where field data availability is checked is
             defined by the "data_path" attribute of GALEXField and can be passed
             explicitly via the "field_kwargs".
-        load_products : bool, optional
-            Specifies if GALEXField should be loaded completely with the
-            full set of data products (default) or just containing metadata (False).
+        load_products : str, optional
+            Selects if data products shall be loaded: "NONE", "TABLES" for tables,
+            and reference image, "ALL" for tables and visit images.
         field_kwargs
             All additional keyword arguments are passed to the load methods
             `~GALEXField.from_MAST()` and `~GALEXField.from_VASCA()`,

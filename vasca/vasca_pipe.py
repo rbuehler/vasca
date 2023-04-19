@@ -206,6 +206,7 @@ def run(vasca_cfg):
                     rg.get_field(
                         field_id=fd_par[1],
                         load_method=vasca_cfg["ressources"]["load_method"],
+                        mast_products=vasca_cfg["ressources"]["load_products"],
                     ),
                     vasca_cfg,
                 )

@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "TDS_ELAI"
+    name            : "TDS_ELAISN1"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                         # Will be written into "out_dir", if ""default" a default name will be created 
@@ -12,8 +12,8 @@ general:
     save_ref_srcs   : false                             # Store referenze sources into region file
     
 ressources:                      
-    load_method      : "MAST_LOCAL"   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
-    load_products    : false             # Get data products from MAST, if false only meta data is loaded
+    load_method      : "MAST_LOCAL"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_products    : "TABLES"                       # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     field_kwargs:
         data_path        : null
         visits_data_path : null 

@@ -197,7 +197,11 @@ def plot_field_sky_map(
     plot_img = field.ref_img
     if img_idx > -1:
         fig_title = f"Field {field.field_id} visit image Idx. {img_idx}"
-        if field.vis_img.ndim == 3:
+        if type(field.vis_img) == type(None):
+            raise TypeError(
+                f"Visit images not set, got image type '{type(field.vis_img)}'."
+            )
+        elif field.vis_img.ndim == 3:
             plot_img = field.vis_img[img_idx, :, :]
         else:
             plot_img = field.vis_img
