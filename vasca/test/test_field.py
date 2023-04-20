@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
 
 import astropy.units as uu
 import pytest
@@ -10,11 +9,8 @@ from astropy.coordinates import SkyCoord
 from astropy.time import Time
 from loguru import logger
 
-from vasca import vasca_pipe
-from vasca.region import Region
 from vasca.field import BaseField, GALEXField
 from vasca.resource_manager import ResourceManager
-import vasca.visualization as vvis
 
 
 @pytest.fixture
