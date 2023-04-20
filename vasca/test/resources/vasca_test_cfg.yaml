@@ -12,7 +12,7 @@ general:
     save_ref_srcs   : false
     
 ressources:                      
-    load_method      : "MAST_REMOTE"                         # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_method      : "MAST_LOCAL"                         # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : "TABLES"                                   # Get data products from MAST, if false only meta data is loaded
     field_kwargs:
         data_path        : null

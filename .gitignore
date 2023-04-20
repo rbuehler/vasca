@@ -45,3 +45,4 @@ uvva.egg-info
 
 #pipeline example output
 vasca/examples/vasca_pipeline*
+/vasca/test/resources/6388191295067652096/VASCA_GALEX_6388191295067652096_NUV_field_data.fits
