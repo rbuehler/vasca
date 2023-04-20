@@ -402,6 +402,7 @@ class Region(TableCollection):
         load_method="FITS",
         add_field=False,
         mast_products="TABLES",
+        field_kwargs=dict(),
     ):
         """
         Load a field from a region, tt_fields table needs to include this field.
@@ -465,6 +466,7 @@ class Region(TableCollection):
                 obs_filter=str(fd_row["obs_filter"][0]),
                 method=load_method,
                 load_products=mast_products,
+                **field_kwargs,
             )
             if add_field:
                 self.fields[field_id] = gf

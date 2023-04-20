@@ -207,6 +207,7 @@ def run(vasca_cfg):
                         field_id=fd_par[1],
                         load_method=vasca_cfg["ressources"]["load_method"],
                         mast_products=vasca_cfg["ressources"]["load_products"],
+                        field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
                     ),
                     vasca_cfg,
                 )
