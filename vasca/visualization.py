@@ -14,6 +14,7 @@ import numpy as np
 from astropy.coordinates import SkyCoord
 from astropy.nddata import Cutout2D
 from astropy.visualization.wcsaxes import SphericalCircle
+from astropy.time import Time
 from loguru import logger
 from matplotlib.colors import LogNorm
 
@@ -961,7 +962,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "xscale": "log",
                 "xlim": [1e-23, 1.0],
                 "invert_yaxis": True,
-                "ylim": [17.5, 24.5],
+                "ylim": [14.5, 24.5],
             }
             var_plt[("flux_cpval", "mag_dmax_sig")] = {
                 "xscale": "log",
@@ -972,18 +973,18 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "xscale": "log",
                 "xlim": [1e-23, 1.0],
             }
-            var_plt[("flux_cpval", "flux_rchiq")] = {
-                "xscale": "log",
+            var_plt[("mag_mean", "flux_rchiq")] = {
+                "invert_xaxis": True,
+                "xlim": [14.5, 24.5],
                 "yscale": "log",
-                "xlim": [1e-23, 2],
             }
             var_plt[("nr_det", "mag_mean")] = {
                 "invert_yaxis": True,
-                "ylim": [17.5, 24.5],
+                "ylim": [14.5, 24.5],
             }
             var_plt[("nr_fd_srcs", "mag_mean")] = {
                 "invert_yaxis": True,
-                "ylim": [17.5, 24.5],
+                "ylim": [14.5, 24.5],
             }
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
         else:
@@ -1017,7 +1018,6 @@ def plot_light_curve(
     fig=None,
     ax=None,
     ylim=None,
-    legend_loc="upper center",
     plot_upper_limits=True,
     **errorbar_kwargs,
 ):
@@ -1038,8 +1038,6 @@ def plot_light_curve(
         Matplotlib axes to plot on. The default is None.
     ylim : list, optional
         Limits of the y axis. Default is None
-    legend_loc : string, optional
-        Position of the legend in the figure. The default is "upper right".
     plot_upper_limits : bool
         Plot upper limits to the lightcurve. The default is True.
     **errorbar_kwargs : TYPE
@@ -1077,7 +1075,7 @@ def plot_light_curve(
         "capsize": 0,
         "lw": 0.1,
         "linestyle": "dotted",
-        "elinewidth": 0.6,
+        "elinewidth": 0.7,
     }
     if errorbar_kwargs is not None:
         plt_errorbar_kwargs.update(errorbar_kwargs)
@@ -1116,6 +1114,11 @@ def plot_light_curve(
             mags = mags * ~uplims + ul * uplims
             mags_err = mags_err * ~uplims + 0.1 * uplims
 
+        # Draw mean value
+        t_mean = [np.min(lc["time_start"][sel]), np.max(lc["time_start"][sel])]
+        mag_mean = [np.mean(mags[sel]), np.mean(mags[sel])]
+        plt.plot(t_mean, mag_mean, ls=":", color=col, linewidth=0.5)
+
         # Plot
         plt.errorbar(
             lc["time_start"][sel],  # TODO: Move this to the bin center
@@ -1129,9 +1132,26 @@ def plot_light_curve(
             label=src_lab,
             **plt_errorbar_kwargs,
         )
-    ax.legend(loc=legend_loc, ncol=7, fontsize="small", handletextpad=0.05)
+
+    ax.legend(
+        loc="upper left",
+        fontsize="small",
+        handletextpad=0.05,
+        bbox_to_anchor=(1.01, 1),
+    )
+    # plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
     ax.set_xlabel("MJD")
-    ax.set_ylabel("Magnitude")
+    ax.set_ylabel("AB Magnitude")
+
+    # Add a second time axis on top showing years
+    def mjd2yr(mjd):
+        return Time(mjd, format="mjd").jyear
+
+    def yr2mjd(jyr):
+        return Time(jyr, format="jyear").mjd
+
+    secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
+    secax.set_xlabel("Year")
 
     return fig, ax
 

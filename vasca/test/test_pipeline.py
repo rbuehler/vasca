@@ -80,6 +80,8 @@ def test_pipeline_vis(test_paths):
     vvis.plot_pipe_diagnostic(rg, "tt_sources", "hist")
     vvis.plot_pipe_diagnostic(fd, "tt_detections", "hist", fig_size=(8, 10))
 
+    print(rg)
+
     # delete field data from test resource directory
     # this forces to download the data from mast,
     # i.e., tests also the fallback from load method "MAST_LOCAL" to "MAST_REMOTE"
