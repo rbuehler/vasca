@@ -925,13 +925,13 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {}
-            var_plt["mag_mean"] = {}
-            var_plt["mag_dmax"] = {}
-            var_plt["mag_dmax_sig"] = {"logx": True, "range": [-3, 2]}
+            var_plt["mag"] = {}
+            var_plt["mag_var_ex"] = {}
+            var_plt["pos_var_ex"] = {}
             var_plt["nr_fd_srcs"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
         else:
-            logger.warning("Diegnostic for table '{table_name}' not defined")
+            logger.warning("Diagnostic for table '{table_name}' not defined")
 
     elif plot_type == "scatter":
         # Detections diagnostic
@@ -958,34 +958,33 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             }
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
-            var_plt[("flux_cpval", "mag_mean")] = {
+            var_plt[("flux_cpval", "mag")] = {
                 "xscale": "log",
                 "xlim": [1e-23, 1.0],
                 "invert_yaxis": True,
                 "ylim": [14.5, 24.5],
             }
-            var_plt[("flux_cpval", "mag_dmax_sig")] = {
-                "xscale": "log",
-                "xlim": [1e-23, 1.0],
-                "ylim": [0, 15],
+            var_plt[("pos_var_ex", "mag")] = {
+                "invert_yaxis": True,
+                "ylim": [14.5, 24.5],
+            }
+            var_plt[("mag_var_ex", "mag")] = {
+                "invert_yaxis": True,
+                "ylim": [14.5, 24.5],
+            }
+            var_plt[("nr_det", "mag")] = {
+                "invert_yaxis": True,
+                "ylim": [14.5, 24.5],
+            }
+            var_plt[("nr_fd_srcs", "mag")] = {
+                "invert_yaxis": True,
+                "ylim": [14.5, 24.5],
             }
             var_plt[("flux_cpval", "nr_det")] = {
                 "xscale": "log",
                 "xlim": [1e-23, 1.0],
             }
-            var_plt[("mag_mean", "flux_rchiq")] = {
-                "invert_xaxis": True,
-                "xlim": [14.5, 24.5],
-                "yscale": "log",
-            }
-            var_plt[("nr_det", "mag_mean")] = {
-                "invert_yaxis": True,
-                "ylim": [14.5, 24.5],
-            }
-            var_plt[("nr_fd_srcs", "mag_mean")] = {
-                "invert_yaxis": True,
-                "ylim": [14.5, 24.5],
-            }
+
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
@@ -1116,8 +1115,9 @@ def plot_light_curve(
 
         # Draw mean value
         t_mean = [np.min(lc["time_start"][sel]), np.max(lc["time_start"][sel])]
-        mag_mean = [np.mean(mags[sel]), np.mean(mags[sel])]
-        plt.plot(t_mean, mag_mean, ls=":", color=col, linewidth=0.5)
+        mag_weight = 1.0 / lc["mag_err"][sel] ** 2
+        mag_mean = np.average(lc["mag"][sel], weights=mag_weight)
+        plt.plot(t_mean, [mag_mean, mag_mean], ls=":", color=col, linewidth=0.5)
 
         # Plot
         plt.errorbar(
