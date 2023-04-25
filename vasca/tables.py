@@ -720,106 +720,119 @@ class TableCollection(object):
         )
 
         # Buffer input data
-        ll_bvar = ["mag", "mag_err", "pos_err", "ra", "dec", "flux", "flux_err"]
-        dd_bvar = dict()
-        for bvar in ll_bvar:
-            dd_bvar[bvar] = tt_det[bvar].data
+        ll_det_var = ["mag", "mag_err", "pos_err", "ra", "dec", "flux", "flux_err"]
+        dd_det_var = dict()
+        for bvar in ll_det_var:
+            dd_det_var[bvar] = tt_det[bvar].data
 
         # Prepare output data arrays
-        ll_svar = [
+        ll_src_var = [
             "ra",
             "dec",
-            "pos_err_mean",
             "pos_err",
+            "pos_var_ex",
             "pos_var",
-            "mag_mean",
-            "mag_err_mean",
+            "mag",
+            "mag_err",
+            "mag_var_ex",
             "mag_var",
             "flux_cpval",
             "flux_rchiq",
-            "mag_dmax",
-            "mag_dmax_abs",
-            "mag_dmax_sig",
-            "mag_sig_int2",
+            "mag_dmagmax_abs",
+            "mag_sigmax",
+            "mag_sigmax_dmag",
             "mag_skew",
         ]
 
-        dd_svar = dict()
-        for svar in ll_svar:
-            dd_svar[svar] = np.zeros(len(src_ids))
+        dd_src_var = dict()
+        for svar in ll_src_var:
+            dd_src_var[svar] = np.zeros(len(src_ids))
 
         # Do loop and calculate stats variables
         for isrc, srcid in enumerate(src_ids):
             idx1 = src_indices[isrc]
             idx2 = idx1 + src_nr_det[isrc]
 
-            # Mean magnitude
-            dd_svar["mag_mean"][isrc] = np.mean(dd_bvar["mag"][idx1:idx2])
-            dd_svar["mag_err_mean"][isrc] = np.mean(dd_bvar["mag_err"][idx1:idx2])
-            dd_svar["pos_err_mean"][isrc] = np.mean(dd_bvar["pos_err"][idx1:idx2])
+            # Weighted mean magnitude
+            mag_weight = 1.0 / dd_det_var["mag_err"][idx1:idx2] ** 2
+            dd_src_var["mag"][isrc] = np.average(
+                dd_det_var["mag"][idx1:idx2], weights=mag_weight
+            )
+            mag_var_err = np.mean(dd_det_var["mag_err"][idx1:idx2] ** 2)
+            dd_src_var["mag_err"][isrc] = np.sqrt(mag_var_err)
 
-            # Variances
+            # Weighted mean position
+            pos_weight = 1.0 / dd_det_var["pos_err"][idx1:idx2] ** 2
+            dd_src_var["ra"][isrc] = np.average(
+                dd_det_var["ra"][idx1:idx2], weights=pos_weight
+            )
+            dd_src_var["dec"][isrc] = np.average(
+                dd_det_var["dec"][idx1:idx2], weights=pos_weight
+            )
+            pos_var_err = np.mean(dd_det_var["pos_err"][idx1:idx2] ** 2)
+            dd_src_var["pos_err"][isrc] = np.sqrt(pos_var_err)
+
+            # Variances and excess variance on magnitude and position
             if src_nr_det[isrc] > 1:
-                dd_svar["mag_var"][isrc] = np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
-                dd_svar["pos_var"][isrc] = np.var(
-                    dd_bvar["ra"][idx1:idx2], ddof=1
-                ) + np.var(dd_bvar["dec"][idx1:idx2], ddof=1)
+                dd_src_var["mag_var"][isrc] = np.var(
+                    dd_det_var["mag"][idx1:idx2], ddof=1
+                )
+                dd_src_var["mag_var_ex"][isrc] = (
+                    dd_src_var["mag_var"][isrc] - mag_var_err
+                )
+
+                dd_src_var["pos_var"][isrc] = np.var(
+                    dd_det_var["ra"][idx1:idx2], ddof=1
+                ) + np.var(dd_det_var["dec"][idx1:idx2], ddof=1)
+                dd_src_var["pos_var_ex"][isrc] = (
+                    dd_src_var["pos_var"][isrc] - pos_var_err
+                )
             else:
-                dd_svar["mag_var"][isrc] = -1
-                dd_svar["pos_var"][isrc] = -1
+                dd_src_var["mag_var"][isrc] = -1
+                dd_src_var["mag_var_ex"][isrc] = -1
 
-            # Weighted averages
-            pos_weight = 1.0 / dd_bvar["pos_err"][idx1:idx2] ** 2
-            dd_svar["ra"][isrc] = np.average(
-                dd_bvar["ra"][idx1:idx2], weights=pos_weight
-            )
-            dd_svar["dec"][isrc] = np.average(
-                dd_bvar["dec"][idx1:idx2], weights=pos_weight
-            )
+                dd_src_var["pos_var"][isrc] = -1
+                dd_src_var["pos_var_ex"][isrc] = -1
 
-            dd_svar["pos_err"][isrc] = np.sqrt(1.0 / np.sum(pos_weight))
+            # Chi square using flux
+            flux_weight = 1.0 / dd_det_var["flux_err"][idx1:idx2] ** 2
+            flux_mean = np.average(dd_det_var["flux"][idx1:idx2], weights=flux_weight)
 
-            # Chi square
-            flux_mean = np.mean(dd_bvar["flux"][idx1:idx2])
-            chiq_el = np.power(dd_bvar["flux"][idx1:idx2] - flux_mean, 2) / np.power(
-                dd_bvar["flux_err"][idx1:idx2], 2
+            chiq_el = np.power(dd_det_var["flux"][idx1:idx2] - flux_mean, 2) / np.power(
+                dd_det_var["flux_err"][idx1:idx2], 2
             )
             chiq = np.sum(chiq_el)
             if src_nr_det[isrc] > 1:
-                dd_svar["flux_rchiq"][isrc] = chiq / (src_nr_det[isrc] - 1)
-                dd_svar["flux_cpval"][isrc] = chi2.sf(chiq, src_nr_det[isrc] - 1)
+                dd_src_var["flux_rchiq"][isrc] = chiq / (src_nr_det[isrc] - 1)
+                dd_src_var["flux_cpval"][isrc] = chi2.sf(chiq, src_nr_det[isrc] - 1)
 
-                # Intrinsic variability
-                dd_svar["mag_sig_int2"][isrc] = (
-                    np.var(dd_bvar["mag"][idx1:idx2], ddof=1)
-                    - np.mean(dd_bvar["mag_err"][idx1:idx2]) ** 2
-                )
             else:
-                dd_svar["flux_rchiq"][isrc] = -1.0
-                dd_svar["flux_cpval"][isrc] = -1.0
-                dd_svar["mag_sig_int2"][isrc] = -1.0
+                dd_src_var["flux_rchiq"][isrc] = -1.0
+                dd_src_var["flux_cpval"][isrc] = -1.0
 
             # Skewness
             if src_nr_det[isrc] > 2:
-                dd_svar["mag_skew"][isrc] = skew(dd_bvar["mag"][idx1:idx2], bias=False)
+                dd_src_var["mag_skew"][isrc] = skew(
+                    dd_det_var["mag"][idx1:idx2], bias=False
+                )
             else:
-                dd_svar["mag_skew"][isrc] = -100.0
+                dd_src_var["mag_skew"][isrc] = -100.0
 
             # Maximum variation significance
-            dmag = np.abs(dd_bvar["mag"][idx1:idx2] - dd_svar["mag_mean"][isrc])
-            dmag_sig = dmag / dd_bvar["mag_err"][idx1:idx2]
+            dmag = np.abs(dd_det_var["mag"][idx1:idx2] - dd_src_var["mag"][isrc])
+            dmag_sig = dmag / dd_det_var["mag_err"][idx1:idx2]
             dmax_sig_max_idx = np.argmax(dmag_sig)
 
-            dd_svar["mag_dmax_sig"][isrc] = dmag_sig[dmax_sig_max_idx]
-            dd_svar["mag_dmax"][isrc] = dmag[dmax_sig_max_idx]
+            dd_src_var["mag_sigmax"][isrc] = dmag_sig[dmax_sig_max_idx]
+            dd_src_var["mag_sigmax_dmag"][isrc] = dmag[dmax_sig_max_idx]
 
             # Maximum absolute variation
             dmag_abs_max = dmag.max()
-            dd_svar["mag_dmax_abs"][isrc] = dmag_abs_max
+            dd_src_var["mag_dmagmax_abs"][isrc] = dmag_abs_max
 
         # Write them into tt_sources
         self.tt_sources.add_index(id_name)
         src_idx = self.tt_sources.loc_indices[id_name, src_ids]  # src_ids]
 
-        for svar in ll_svar:
-            self.tt_sources[svar][src_idx] = dd_svar[svar]  # tt_mean["mag"]
+        for svar in ll_src_var:
+            self.tt_sources[svar][src_idx] = dd_src_var[svar]  # tt_mean["mag"]
