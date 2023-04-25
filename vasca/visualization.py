@@ -926,7 +926,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {}
             var_plt["mag"] = {}
-            var_plt["mag_var_ex"] = {}
+            var_plt["mag_var_ex"] = {"range": [-0.01, 0.05]}
             var_plt["pos_var_ex"] = {}
             var_plt["nr_fd_srcs"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
@@ -971,6 +971,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt[("mag_var_ex", "mag")] = {
                 "invert_yaxis": True,
                 "ylim": [14.5, 24.5],
+                "xlim": [-0.01, 0.05],
             }
             var_plt[("nr_det", "mag")] = {
                 "invert_yaxis": True,
