@@ -59,7 +59,8 @@ def plot_sky_sources(
     -------
     ax : axes
         Used Matplotlib axes.
-
+    src_ids: [int]
+        Source IDs plotted, either "rg_src_id" "fd_src_id"
     """
 
     logger.debug("Plotting sky sources")
@@ -119,13 +120,12 @@ def plot_sky_sources(
     # Loop over all srcs and plot
     colors = cycle("bgrcmybgrcmybgrcmybgrcmy")
     for src, col in zip(tt_src[sel_reg], colors):
+        # Set colors in tandem for srcs, det and label
+        plt_src_kwargs["color"] = col
+        plt_det_kwargs["color"] = col
+        plt_txt_kwargs["color"] = col
+
         if type(tt_det) is not type(None):
-
-            # Set colors in tandem for srcs, det and label
-            plt_src_kwargs["color"] = col
-            plt_det_kwargs["color"] = col
-            plt_txt_kwargs["color"] = col
-
             det_idx = tt_det.loc_indices[src_id, src[src_id]]
             ax.plot(
                 tt_det[det_idx]["ra"].data,
@@ -143,7 +143,7 @@ def plot_sky_sources(
                 str(src[src_id]),
                 **plt_txt_kwargs,
             )
-    return ax
+    return ax, tt_src[sel_reg][src_id].data
 
 
 def plot_field_sky_map(
@@ -222,6 +222,7 @@ def plot_field_sky_map(
     # Check if figure was passed
     if type(fig) is type(None):
         fig = plt.figure(figsize=(8, 7), constrained_layout=True)
+    if type(ax) is type(None):
         ax = plt.subplot(projection=wcs)
         ax.coords["ra"].set_major_formatter("d.dd")
         ax.coords["dec"].set_major_formatter("d.dd")

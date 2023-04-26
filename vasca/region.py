@@ -433,10 +433,10 @@ class Region(TableCollection):
         # Select field and set both field ids
         if type(field_id) is not type(None):
             sel_fd = self.tt_fields["field_id"] == field_id
-            rg_fd_id = self.tt_fields[sel_fd]["rg_fd_id"]
+            rg_fd_id = self.tt_fields[sel_fd]["rg_fd_id"][0]
         elif type(rg_fd_id) is not type(None):
             sel_fd = self.tt_fields["rg_fd_id"] == rg_fd_id
-            field_id = self.tt_fields[sel_fd]["field_id"]
+            field_id = self.tt_fields[sel_fd]["field_id"][0]
         else:
             logger.warning("Need to specify either field_id or rg_fd_id")
 
@@ -447,7 +447,7 @@ class Region(TableCollection):
             )
         # ** Load field accorading to passed method **
 
-        # If already loaded insto field dictionary return it
+        # If already loaded into field dictionary return it
         if field_id in self.fields.keys():
             return self.fields[field_id]
 
