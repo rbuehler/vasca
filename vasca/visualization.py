@@ -915,8 +915,8 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
         # Detections diagnostic
         if table_name == "tt_detections":
             var_plt["s2n"] = {"logx": True}
-            var_plt["mag"] = {"range": [14.5, 26.5]}
-            var_plt["mag_err"] = {"range": [0.0, 3.0]}
+            var_plt["flux"] = {"logx": True}  # "range": [14.5, 26.5]
+            var_plt["flux_err"] = {"logx": True}  # "range": [0.0, 3.0]
             var_plt["r_fov"] = {"range": [0.0, 0.7]}
             var_plt["point_src_prob"] = {}
             var_plt["artifacts"] = {"histtype": "step"}
@@ -926,10 +926,10 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {}
-            var_plt["mag"] = {}
-            var_plt["mag_var_ex"] = {"range": [-0.01, 0.05]}
-            var_plt["pos_var_ex"] = {}
+            var_plt["flux_nxv"] = {"logx": True}  # "range": [-0.01, 0.05]
+            var_plt["pos_nxv"] = {}
             var_plt["nr_fd_srcs"] = {}
+            var_plt["pos_cpval"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diagnostic for table '{table_name}' not defined")
@@ -937,50 +937,60 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
     elif plot_type == "scatter":
         # Detections diagnostic
         if table_name == "tt_detections":
-            var_plt[("s2n", "mag")] = {
-                "invert_yaxis": True,
+            var_plt[("s2n", "flux")] = {
+                "yscale": "log",
+                # "invert_yaxis": True,
                 "xlim": [1, 100],
-                "ylim": [14.5, 26.5],
+                # "ylim": [14.5, 26.5],
             }
-            var_plt[("r_fov", "mag")] = {"invert_yaxis": True, "ylim": [15.5, 26.5]}
-            var_plt[("point_src_prob", "mag")] = {
-                "invert_yaxis": True,
-                "ylim": [14.5, 26.5],
+            var_plt[
+                ("r_fov", "flux")
+            ] = {}  # "invert_yaxis": True, "ylim": [15.5, 26.5]
+            var_plt[("point_src_prob", "flux")] = {
+                "yscale": "log",
+                # "invert_yaxis": True,
+                # "ylim": [14.5, 26.5],
             }
-            var_plt[("artifacts", "mag")] = {
-                "invert_yaxis": True,
-                "ylim": [14.5, 26.5],
+            var_plt[("artifacts", "flux")] = {
+                "yscale": "log",
+                # "invert_yaxis": True,
+                # "ylim": [14.5, 26.5],
             }
             var_plt[("r_fov", "artifacts")] = {}
-            var_plt[("mag_err", "mag")] = {
+            var_plt[("flux_err", "flux")] = {
                 "xlim": [0.01, 3],
-                "invert_yaxis": True,
+                # "invert_yaxis": True,
                 "ylim": [14.5, 26.5],
             }
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
-            var_plt[("flux_cpval", "mag")] = {
+            var_plt[("flux_cpval", "flux")] = {
                 "xscale": "log",
                 "xlim": [1e-23, 1.0],
-                "invert_yaxis": True,
-                "ylim": [14.5, 24.5],
+                "yscale": "log",
+                # "invert_yaxis": True,
+                # "ylim": [14.5, 24.5],
             }
-            var_plt[("pos_var_ex", "mag")] = {
-                "invert_yaxis": True,
-                "ylim": [14.5, 24.5],
+            var_plt[("pos_nxv", "flux")] = {
+                "yscale": "log",
+                # "invert_yaxis": True,
+                # "ylim": [14.5, 24.5],
             }
-            var_plt[("mag_var_ex", "mag")] = {
-                "invert_yaxis": True,
-                "ylim": [14.5, 24.5],
-                "xlim": [-0.01, 0.05],
+            var_plt[("flux_nxv", "flux")] = {
+                # "invert_yaxis": True,
+                "yscale": "log",
+                # "ylim": [14.5, 24.5],
+                # "xlim": [-0.01, 0.05],
             }
-            var_plt[("nr_det", "mag")] = {
-                "invert_yaxis": True,
-                "ylim": [14.5, 24.5],
+            var_plt[("nr_det", "flux")] = {
+                "yscale": "log",
+                # "invert_yaxis": True,
+                # "ylim": [14.5, 24.5],
             }
-            var_plt[("nr_fd_srcs", "mag")] = {
-                "invert_yaxis": True,
-                "ylim": [14.5, 24.5],
+            var_plt[("nr_fd_srcs", "flux")] = {
+                "yscale": "log",
+                # "invert_yaxis": True,
+                # "ylim": [14.5, 24.5],
             }
             var_plt[("flux_cpval", "nr_det")] = {
                 "xscale": "log",
@@ -1023,7 +1033,7 @@ def plot_light_curve(
     **errorbar_kwargs,
 ):
     """
-    Plot the magnitude light curves of the passed sources.
+    Plot the light curves of the passed sources.
 
     Parameters
     ----------
@@ -1065,7 +1075,8 @@ def plot_light_curve(
     if ax is None:
         ax = plt.gca()
 
-    ax.invert_yaxis()
+    # ax.invert_yaxis()
+    ax.set_yscale("log")
     if hasattr(ylim, "__iter__"):
         ax.set_ylim(ylim)
 
@@ -1103,29 +1114,29 @@ def plot_light_curve(
         # Get arrays
         src_lab = str(src_id)
         uplims = np.zeros(len(lc))
-        sel = lc["mag"] > 0
-        mags = lc["mag"]
-        mags_err = lc["mag_err"]
+        sel = lc["flux"] > 0
+        fluxs = lc["flux"]
+        fluxs_err = lc["flux_err"]
         ul = lc["ul"]
 
         # Modify arrays if upper limits are plotted
         if plot_upper_limits:
-            uplims = lc["mag"] < 0
+            uplims = lc["flux"] < 0
             sel = np.ones(len(lc), dtype=bool)
-            mags = mags * ~uplims + ul * uplims
-            mags_err = mags_err * ~uplims + 0.1 * uplims
+            fluxs = fluxs * ~uplims + ul * uplims
+            fluxs_err = fluxs_err * ~uplims + 0.1 * uplims
 
         # Draw mean value
         t_mean = [np.min(lc["time_start"][sel]), np.max(lc["time_start"][sel])]
-        mag_weight = 1.0 / lc["mag_err"][sel] ** 2
-        mag_mean = np.average(lc["mag"][sel], weights=mag_weight)
-        plt.plot(t_mean, [mag_mean, mag_mean], ls=":", color=col, linewidth=0.5)
+        flux_weight = 1.0 / lc["flux_err"][sel] ** 2
+        flux_mean = np.average(lc["flux"][sel], weights=flux_weight)
+        plt.plot(t_mean, [flux_mean, flux_mean], ls=":", color=col, linewidth=0.5)
 
         # Plot
         plt.errorbar(
             lc["time_start"][sel],  # TODO: Move this to the bin center
-            mags[sel],
-            yerr=mags_err[sel],
+            fluxs[sel],
+            yerr=fluxs_err[sel],
             lolims=uplims[sel],
             color=col,
             markeredgecolor=col,
@@ -1143,7 +1154,7 @@ def plot_light_curve(
     )
     # plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
     ax.set_xlabel("MJD")
-    ax.set_ylabel("AB Magnitude")
+    ax.set_ylabel(r"Flux [$\mu$Jy]")
 
     # Add a second time axis on top showing years
     def mjd2yr(mjd):

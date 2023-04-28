@@ -25,6 +25,60 @@ from scipy.stats import binned_statistic
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
 
 
+def flux2mag(flux, flux_err=None):
+    """
+    Converts flux in Jy into AB magnitudes
+
+    Parameters
+    ----------
+    flux : [Astropy Quantitiy]
+        Flux density array
+    flux_err : [Astropy Quantitiy]
+        Flux error array. Default is none.
+
+    Returns
+    -------
+    mag : [Astropy Quantitiy]
+        AB magnitude array. If flux was zero or positive -1 is returned.
+    dmag : [Astropy Quantitiy], optional
+        AB magnitude error array. If flux was zero or positive -1 is returned.
+        If no flux errors are passed None is returned.
+
+    """
+    valid = flux > 0
+
+    mag = -np.ones(len(flux)) * uu.ABmag
+    mag[valid] = flux[valid].to("ABflux") * uu.ABmag
+
+    mag_err = None
+    if type(flux_err) is not type(None):
+        mag_err = -np.ones(len(flux)) * uu.mag
+        if type(flux_err) is not type(None):
+            valid = valid * flux_err > 0
+
+        mag_err[valid] = mag[valid] - (flux + flux_err)[valid].to("ABflux") * uu.ABmag
+
+    return mag, mag_err
+
+
+def mag2flux(mag):
+    """
+    Converts AB magnitudes to flux in Jansky
+
+    Parameters
+    ----------
+    mag : [float]
+        Array of AB magnitudes
+
+    Returns
+    -------
+    TYPE
+        Flux in Jy
+
+    """
+    return (np.array(mag) * uu.ABmag).to("Jy")
+
+
 def get_field_id(obs_field_id, observaory, obs_filter):
     """
     Return VASCA field id, which also includes observatory and filter identifier.

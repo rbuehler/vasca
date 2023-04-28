@@ -18,7 +18,7 @@ from scipy.stats import chi2, skew
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import add_rg_src_id, table_to_array
+from vasca.utils import add_rg_src_id, table_to_array, flux2mag
 
 # import warnings
 # from astropy.io.fits.verify import VerifyWarning
@@ -210,8 +210,8 @@ class TableCollection(object):
                         # TODO: Make this more general and read type from tables_dict
                         col_for = "PD()"
                         if (
-                            colname == "mag"
-                            or colname == "mag_err"
+                            colname == "flux"
+                            or colname == "flux_err"
                             or colname == "ul"
                             or colname == "pos_err"
                             or colname == "time_bin_size"
@@ -566,8 +566,8 @@ class TableCollection(object):
             src_data = {
                 "time_start": np.array(tt_det_src["time_bin_start"]),
                 "time_delta": np.array(tt_det_src["time_bin_size"]),
-                "mag": np.array(tt_det_src["mag"]),
-                "mag_err": np.array(tt_det_src["mag_err"]),
+                "flux": np.array(tt_det_src["flux"]),
+                "flux_err": np.array(tt_det_src["flux_err"]),
                 #                "ul": np.array(src_lc["ul"]),
             }
             # Create and store table
@@ -699,6 +699,29 @@ class TableCollection(object):
 
         logger.debug("Calculating source statistics.")
 
+        def get_var_stat(vals, vals_err):
+            "Helper function to calculate error weighted average mean and its error"
+            rr = {}
+            wght = 1.0 / vals_err**2
+            rr["wght_mean"] = np.average(vals, weights=wght)
+            rr["wght_mean_err"] = np.sqrt(1.0 / np.sum(wght))
+            chiq_el = np.power(vals - rr["wght_mean"], 2) / np.power(vals_err, 2)
+            chiq = np.sum(chiq_el)
+            nr_vals = len(vals)
+
+            if nr_vals > 1:
+                rr["var"] = np.var(vals, ddof=1)
+                rr["nxv"] = (rr["var"] - np.mean(vals_err**2)) / (
+                    rr["wght_mean"] * rr["wght_mean"]
+                )
+                rr["rchiq"] = chiq / (nr_vals - 1)
+                rr["cpval"] = chi2.sf(chiq, nr_vals - 1)
+            else:
+                rr["var"] = rr["nxv"] = -100
+                rr["rchiq"] = rr["cpval"] = -1.0
+
+            return rr
+
         # Check if field or region
         id_name = "fd_src_id"
         if "Region" in self.__class__.__name__:
@@ -709,18 +732,13 @@ class TableCollection(object):
         tt_det = Table(self.tt_detections[sel_det], copy=True)
         tt_det.sort(id_name)
 
-        # Add flux and flux_err to table
-        tt_det["flux"] = (np.array(tt_det["mag"]) * uu.ABmag).physical
-        tt_det["flux_err"] = (
-            (np.array(tt_det["mag"]) - np.array(tt_det["mag_err"])) * uu.ABmag
-        ).physical - tt_det["flux"]
-
+        # Get src_ids, src_index and det_nr
         src_ids, src_indices, src_nr_det = np.unique(
             tt_det[id_name].data, return_index=True, return_counts=True
         )
 
         # Buffer input data
-        ll_det_var = ["mag", "mag_err", "pos_err", "ra", "dec", "flux", "flux_err"]
+        ll_det_var = ["flux", "flux_err", "pos_err", "ra", "dec", "flux", "flux_err"]
         dd_det_var = dict()
         for bvar in ll_det_var:
             dd_det_var[bvar] = tt_det[bvar].data
@@ -730,20 +748,22 @@ class TableCollection(object):
             "ra",
             "dec",
             "pos_err",
-            "pos_var_ex",
+            "pos_nxv",
             "pos_var",
-            "mag",
-            "mag_err",
-            "mag_var_ex",
-            "mag_var",
+            "pos_cpval",
+            "flux",
+            "flux_err",
+            "flux_nxv",
+            "flux_var",
             "flux_cpval",
             "flux_rchiq",
-            "mag_dmagmax_abs",
-            "mag_sigmax",
-            "mag_sigmax_dmag",
-            "mag_skew",
+            "flux_dmaxabs",
+            "flux_sigmax",
+            "flux_sigmax_dflux",
+            "flux_skew",
         ]
 
+        # Dictionary to store calculated source parameters
         dd_src_var = dict()
         for svar in ll_src_var:
             dd_src_var[svar] = np.zeros(len(src_ids))
@@ -753,86 +773,67 @@ class TableCollection(object):
             idx1 = src_indices[isrc]
             idx2 = idx1 + src_nr_det[isrc]
 
-            # Weighted mean magnitude
-            mag_weight = 1.0 / dd_det_var["mag_err"][idx1:idx2] ** 2
-            dd_src_var["mag"][isrc] = np.average(
-                dd_det_var["mag"][idx1:idx2], weights=mag_weight
+            # Flux statistical variables
+            rr_flux = get_var_stat(
+                dd_det_var["flux"][idx1:idx2], dd_det_var["flux_err"][idx1:idx2]
             )
-            mag_var_err = np.mean(dd_det_var["mag_err"][idx1:idx2] ** 2)
-            dd_src_var["mag_err"][isrc] = np.sqrt(mag_var_err)
+            dd_src_var["flux"][isrc] = rr_flux["wght_mean"]
+            dd_src_var["flux_err"][isrc] = rr_flux["wght_mean_err"]
+            dd_src_var["flux_nxv"][isrc] = rr_flux["nxv"]
+            dd_src_var["flux_var"][isrc] = rr_flux["var"]
+            dd_src_var["flux_cpval"][isrc] = rr_flux["cpval"]
+            dd_src_var["flux_rchiq"][isrc] = rr_flux["rchiq"]
 
-            # Weighted mean position
-            pos_weight = 1.0 / dd_det_var["pos_err"][idx1:idx2] ** 2
-            dd_src_var["ra"][isrc] = np.average(
-                dd_det_var["ra"][idx1:idx2], weights=pos_weight
+            # Position variables
+
+            # In 2d the 68% conficdence level is at 1.515 sigma1d for a symmetric 2d Gaussian
+            # Therefore converting back 2d to 1d coonfidence interval
+            # pos_err_1d = dd_det_var["pos_err"][idx1:idx2]  # / 1.515
+            rr_ra = get_var_stat(
+                dd_det_var["ra"][idx1:idx2], dd_det_var["pos_err"][idx1:idx2]
             )
-            dd_src_var["dec"][isrc] = np.average(
-                dd_det_var["dec"][idx1:idx2], weights=pos_weight
+            rr_dec = get_var_stat(
+                dd_det_var["dec"][idx1:idx2], dd_det_var["pos_err"][idx1:idx2]
             )
-            pos_var_err = np.mean(dd_det_var["pos_err"][idx1:idx2] ** 2)
-            dd_src_var["pos_err"][isrc] = np.sqrt(pos_var_err)
-
-            # Variances and excess variance on magnitude and position
-            if src_nr_det[isrc] > 1:
-                dd_src_var["mag_var"][isrc] = np.var(
-                    dd_det_var["mag"][idx1:idx2], ddof=1
-                )
-                dd_src_var["mag_var_ex"][isrc] = (
-                    dd_src_var["mag_var"][isrc] - mag_var_err
-                )
-
-                dd_src_var["pos_var"][isrc] = np.var(
-                    dd_det_var["ra"][idx1:idx2], ddof=1
-                ) + np.var(dd_det_var["dec"][idx1:idx2], ddof=1)
-                dd_src_var["pos_var_ex"][isrc] = (
-                    dd_src_var["pos_var"][isrc] - pos_var_err
-                )
-            else:
-                dd_src_var["mag_var"][isrc] = -1
-                dd_src_var["mag_var_ex"][isrc] = -1
-
-                dd_src_var["pos_var"][isrc] = -1
-                dd_src_var["pos_var_ex"][isrc] = -1
-
-            # Chi square using flux
-            flux_weight = 1.0 / dd_det_var["flux_err"][idx1:idx2] ** 2
-            flux_mean = np.average(dd_det_var["flux"][idx1:idx2], weights=flux_weight)
-
-            chiq_el = np.power(dd_det_var["flux"][idx1:idx2] - flux_mean, 2) / np.power(
-                dd_det_var["flux_err"][idx1:idx2], 2
+            dd_src_var["ra"][isrc] = rr_ra["wght_mean"]
+            dd_src_var["dec"][isrc] = rr_dec["wght_mean"]
+            dd_src_var["pos_err"][isrc] = (
+                rr_ra["wght_mean_err"] + rr_dec["wght_mean_err"] / 2.0
             )
-            chiq = np.sum(chiq_el)
-            if src_nr_det[isrc] > 1:
-                dd_src_var["flux_rchiq"][isrc] = chiq / (src_nr_det[isrc] - 1)
-                dd_src_var["flux_cpval"][isrc] = chi2.sf(chiq, src_nr_det[isrc] - 1)
-
-            else:
-                dd_src_var["flux_rchiq"][isrc] = -1.0
-                dd_src_var["flux_cpval"][isrc] = -1.0
+            dd_src_var["pos_nxv"][isrc] = (rr_ra["nxv"] + rr_dec["nxv"]) / 2.0
+            dd_src_var["pos_var"][isrc] = (rr_ra["var"] + rr_dec["var"]) / 2.0
+            dd_src_var["pos_cpval"][isrc] = rr_ra["cpval"] * rr_dec["cpval"]
 
             # Skewness
             if src_nr_det[isrc] > 2:
-                dd_src_var["mag_skew"][isrc] = skew(
-                    dd_det_var["mag"][idx1:idx2], bias=False
+                dd_src_var["flux_skew"][isrc] = skew(
+                    dd_det_var["flux"][idx1:idx2], bias=False
                 )
             else:
-                dd_src_var["mag_skew"][isrc] = -100.0
+                dd_src_var["flux_skew"][isrc] = -100.0
 
             # Maximum variation significance
-            dmag = np.abs(dd_det_var["mag"][idx1:idx2] - dd_src_var["mag"][isrc])
-            dmag_sig = dmag / dd_det_var["mag_err"][idx1:idx2]
-            dmax_sig_max_idx = np.argmax(dmag_sig)
+            dflux = np.abs(dd_det_var["flux"][idx1:idx2] - dd_src_var["flux"][isrc])
+            dflux_sig = dflux / dd_det_var["flux_err"][idx1:idx2]
+            dmax_sig_max_idx = np.argmax(dflux_sig)
 
-            dd_src_var["mag_sigmax"][isrc] = dmag_sig[dmax_sig_max_idx]
-            dd_src_var["mag_sigmax_dmag"][isrc] = dmag[dmax_sig_max_idx]
+            dd_src_var["flux_sigmax"][isrc] = dflux_sig[dmax_sig_max_idx]
+            dd_src_var["flux_sigmax_dflux"][isrc] = dflux[dmax_sig_max_idx]
 
             # Maximum absolute variation
-            dmag_abs_max = dmag.max()
-            dd_src_var["mag_dmagmax_abs"][isrc] = dmag_abs_max
+            dflux_abs_max = dflux.max()
+            dd_src_var["flux_dmaxabs"][isrc] = dflux_abs_max
 
         # Write them into tt_sources
         self.tt_sources.add_index(id_name)
-        src_idx = self.tt_sources.loc_indices[id_name, src_ids]  # src_ids]
+        src_idx = self.tt_sources.loc_indices[id_name, src_ids]
 
         for svar in ll_src_var:
-            self.tt_sources[svar][src_idx] = dd_src_var[svar]  # tt_mean["mag"]
+            self.tt_sources[svar][src_idx] = dd_src_var[svar]
+
+        # Add magnitudes to source info
+        mag, mag_err = flux2mag(
+            self.tt_sources["flux"].quantity, self.tt_sources["flux_err"].quantity
+        )
+        self.tt_sources["mag"][:] = mag
+        self.tt_sources["mag_err"][:] = mag_err

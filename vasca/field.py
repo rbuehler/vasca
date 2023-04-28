@@ -164,7 +164,7 @@ class BaseField(TableCollection):
         ----------
         add_upper_limits : bool, optional
             Add upper limits to the tt_sources_lc, for visits with no detection.
-            Upper limits are stored in the mag_err columns for none detections.
+            Upper limits are stored in the flux_err columns for none detections.
             The default is True.
 
         Returns
@@ -187,8 +187,8 @@ class BaseField(TableCollection):
         # Dictionary to collect lightcurve data
         tdata = {
             "fd_src_id": list(),
-            "mag": list(),
-            "mag_err": list(),
+            "flux": list(),
+            "flux_err": list(),
             "ul": list(),
             "time_bin_start": list(),
             "time_bin_size": list(),
@@ -205,11 +205,11 @@ class BaseField(TableCollection):
             fd_src_id = tt_det["fd_src_id"][0]
             tdata["fd_src_id"].append(fd_src_id.tolist())
 
-            # Add magnitudes and errors, array has length of Nr of visits.
+            # Add flux and errors, array has length of Nr of visits.
             # Values is 0, except for detections.
             vis_idxs = self.tt_visits.loc_indices["vis_id", tt_det["vis_id"]]
 
-            det_vars = ["mag", "mag_err", "ra", "dec", "pos_err"]
+            det_vars = ["flux", "flux_err", "ra", "dec", "pos_err"]
 
             for det_var in det_vars:
                 np_var = np.zeros(nr_vis) - 1
@@ -226,12 +226,12 @@ class BaseField(TableCollection):
             # Store upper limits if no detection in a visit
             # TODO: make this more general and not GALEX specific
             if add_upper_limits:
-                np_mag_ul = self.get_upper_limits()
-                tdata["ul"].append(np_mag_ul.tolist())
+                np_flux_ul = self.get_upper_limits()
+                tdata["ul"].append(np_flux_ul.tolist())
 
         # Add light curve table, convert type to allow for variable length array
-        tdata["mag"] = np.array(tdata["mag"], dtype=np.object_)
-        tdata["mag_err"] = np.array(tdata["mag_err"], dtype=np.object_)
+        tdata["flux"] = np.array(tdata["flux"], dtype=np.object_)
+        tdata["flux_err"] = np.array(tdata["flux_err"], dtype=np.object_)
         tdata["ul"] = np.array(tdata["ul"], dtype=np.object_)
         tdata["time_bin_start"] = np.array(tdata["time_bin_start"], dtype=np.object_)
         tdata["time_bin_size"] = np.array(tdata["time_bin_size"], dtype=np.object_)
@@ -1256,8 +1256,8 @@ class GALEXField(BaseField):
                 "alpha_j2000",  # take band-merged quantities?
                 "delta_j2000",  # take band-merged quantities?
                 f"{obs_filter_l}_poserr",
-                f"{obs_filter_l}_mag",
-                f"{obs_filter_l}_magerr",
+                f"{obs_filter_l}_flux",
+                f"{obs_filter_l}_fluxerr",
                 f"{obs_filter_l}_s2n",
                 "fov_radius",
                 f"{obs_filter_l}_artifact",
@@ -1268,6 +1268,8 @@ class GALEXField(BaseField):
                 f"{obs_filter}_FLUX_APER_3",
                 f"{obs_filter}_FLUXERR_APER_3",
                 "E_bv",
+                f"{obs_filter_l}_mag",
+                f"{obs_filter_l}_magerr",
             ]
 
             vasca_col_names = [
@@ -1276,8 +1278,8 @@ class GALEXField(BaseField):
                 "ra",
                 "dec",
                 "pos_err",
-                "mag",
-                "mag_err",
+                "flux",
+                "flux_err",
                 "s2n",
                 "r_fov",
                 "artifacts",
@@ -1288,6 +1290,8 @@ class GALEXField(BaseField):
                 "flux_f38",
                 "flux_f38_err",
                 "E_bv",
+                "mag",
+                "mag_err",
             ]
 
             col_names = dict(zip(mast_col_names, vasca_col_names))
