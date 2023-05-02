@@ -124,7 +124,7 @@ observations:
                 artifacts : [2,4,8,128]
             #If below/above this value will set it to min/max
             set_range:
-                pos_err : [0.0001389,0.002] # 1 arcsec = 0.0002777, 0.5 arcsec = 0.0001389
+                pos_err : [0.0002,0.002] # 1 arcsec = 0.0002777, 0.5 arcsec = 0.0001389
         det_association : 
             table     : "tt_detections"
             ref_table : "tt_sources"
