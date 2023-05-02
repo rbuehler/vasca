@@ -915,8 +915,8 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
         # Detections diagnostic
         if table_name == "tt_detections":
             var_plt["s2n"] = {"logx": True}
-            var_plt["flux"] = {"logx": True}  # "range": [14.5, 26.5]
-            var_plt["flux_err"] = {"logx": True}  # "range": [0.0, 3.0]
+            var_plt["flux"] = {"logx": True}
+            var_plt["flux_err"] = {"logx": True}
             var_plt["r_fov"] = {"range": [0.0, 0.7]}
             var_plt["point_src_prob"] = {}
             var_plt["artifacts"] = {"histtype": "step"}
@@ -926,8 +926,8 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {}
-            var_plt["flux_nxv"] = {"logx": True}  # "range": [-0.01, 0.05]
-            var_plt["pos_nxv"] = {}
+            var_plt["flux_nxv"] = {"logx": True}
+            var_plt["pos_rchiq"] = {}
             var_plt["nr_fd_srcs"] = {}
             var_plt["pos_cpval"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
@@ -939,22 +939,14 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
         if table_name == "tt_detections":
             var_plt[("s2n", "flux")] = {
                 "yscale": "log",
-                # "invert_yaxis": True,
                 "xlim": [1, 100],
-                # "ylim": [14.5, 26.5],
             }
-            var_plt[
-                ("r_fov", "flux")
-            ] = {}  # "invert_yaxis": True, "ylim": [15.5, 26.5]
+            var_plt[("r_fov", "flux")] = {}
             var_plt[("point_src_prob", "flux")] = {
                 "yscale": "log",
-                # "invert_yaxis": True,
-                # "ylim": [14.5, 26.5],
             }
             var_plt[("artifacts", "flux")] = {
                 "yscale": "log",
-                # "invert_yaxis": True,
-                # "ylim": [14.5, 26.5],
             }
             var_plt[("r_fov", "artifacts")] = {}
             var_plt[("flux_err", "flux")] = {
@@ -968,29 +960,22 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "xscale": "log",
                 "xlim": [1e-23, 1.0],
                 "yscale": "log",
-                # "invert_yaxis": True,
-                # "ylim": [14.5, 24.5],
             }
-            var_plt[("pos_nxv", "flux")] = {
+            var_plt[("pos_cpval", "flux")] = {
+                "yscale": "log",
+            }
+            var_plt[("pos_rchiq", "flux")] = {
+                # "xlim": [-0.001, 0.01],
                 "yscale": "log",
                 # "invert_yaxis": True,
-                # "ylim": [14.5, 24.5],
-            }
-            var_plt[("flux_nxv", "flux")] = {
-                # "invert_yaxis": True,
-                "yscale": "log",
                 # "ylim": [14.5, 24.5],
                 # "xlim": [-0.01, 0.05],
             }
             var_plt[("nr_det", "flux")] = {
                 "yscale": "log",
-                # "invert_yaxis": True,
-                # "ylim": [14.5, 24.5],
             }
             var_plt[("nr_fd_srcs", "flux")] = {
                 "yscale": "log",
-                # "invert_yaxis": True,
-                # "ylim": [14.5, 24.5],
             }
             var_plt[("flux_cpval", "nr_det")] = {
                 "xscale": "log",
@@ -1167,31 +1152,3 @@ def plot_light_curve(
     secax.set_xlabel("Year")
 
     return fig, ax
-
-    # Code snippets to be added later
-
-    # from itertools import zip_longest
-    # Draw selected  light curves
-    # sel_srcs = field.tt_sources["sel"]
-    # if sel_srcs.sum() > 0:
-    #     all_srcs_ids = field.tt_sources[sel_srcs]["fd_src_id"].data
-
-    #     # Loop over list in chuks of 14
-    #     for fd_src_ids_chunk in zip_longest(
-    #         *([np.nditer(all_srcs_ids)]) * 14, fillvalue=-1
-    #     ):
-    #         fig_lc = plt.figure(figsize=(10, 10))
-    #         fd_src_ids_chunk = np.array(fd_src_ids_chunk, dtype=np.int64).flatten()
-    #         fd_src_ids_chunk = np.delete(
-    #             fd_src_ids_chunk, np.where(fd_src_ids_chunk == -1)
-    #         )
-    #         vvis.plot_light_curve(field, fd_src_ids=fd_src_ids_chunk, ylim=[24.5, 15.5])
-    #         plt.tight_layout()
-    #         srcs_name = "_".join([str(elem) for elem in fd_src_ids_chunk])
-
-    #         fig_lc.savefig(
-    #             field_dir + "lcs/lc_" + str(field.field_id) + "_" + srcs_name + ".png",
-    #             dpi=150,
-    #         )
-    #         plt.close(fig_lc)
-    #

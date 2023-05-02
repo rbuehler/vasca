@@ -39,6 +39,8 @@ selection:
         sel_type : "or"
         range:        
             flux_cpval     : [-0.5,0.000000573303]            # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
+            pos_cpval      : [1e-4,.inf] 
+            flux_nxv      : [0.0006,.inf] 
 
     det_association : 
         table     : "tt_detections"
@@ -77,6 +79,8 @@ observations:
                 pos_err        : [0.00000001,0.002]
             bitmask:
                 artifacts : [2,4]
+            set_range:
+                pos_err : [0.0001389,0.002] # 1 arcsec = 0.0002777, 0.5 arcsec = 0.0001389
         det_association : 
             table     : "tt_detections"
             ref_table : "tt_sources"

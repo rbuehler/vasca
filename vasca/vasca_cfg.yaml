@@ -12,7 +12,7 @@ general:
     save_ref_srcs   : false                             # Store referenze sources into region file
     
 ressources:                      
-    load_method      : "MAST_LOCAL"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_method      : "VASCA"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : "TABLES"                       # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     field_kwargs:
         data_path        : null
@@ -39,7 +39,8 @@ selection:
         sel_type : "and"
         range:        
             flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
-            #flux_var_ex     : [0.0004,.inf]           # Excess variance above (0.02mag)²
+            pos_cpval      : [0.00000001,.inf] 
+            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%        
 
     #Select detections associated to sources
     det_association : 
@@ -121,6 +122,9 @@ observations:
                 # Specify the artifacts to remove
                 # For GALEX a description is at the end of this document
                 artifacts : [2,4,8,128]
+            #If below/above this value will set it to min/max
+            set_range:
+                pos_err : [0.0001389,0.002] # 1 arcsec = 0.0002777, 0.5 arcsec = 0.0001389
         det_association : 
             table     : "tt_detections"
             ref_table : "tt_sources"
