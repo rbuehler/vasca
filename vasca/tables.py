@@ -444,6 +444,7 @@ class TableCollection(object):
         if "sel" not in tt.colnames:
             logger.error("Table does not have selection column")
 
+        # Get selected events
         sel = tt["sel"].data.astype("bool")
         nr_sel = sel.sum()
         sel = tt["sel"].data.astype("bool")
@@ -498,6 +499,21 @@ class TableCollection(object):
 
         if remove_unselected:
             tt = tt[sel]
+
+        # Set minimum and maximum values if asked
+        if "set_range" in selections.keys():
+            for var, vals in selections["set_range"].items():
+                logger.info(f"Setting range for '{var}' to '{vals}'")
+                tt[var][:] = (tt[var] >= vals[0]) * tt[var] + (
+                    tt[var] < vals[0]
+                ) * vals[
+                    0
+                ]  # Set minimum
+                tt[var][:] = (tt[var] <= vals[1]) * tt[var] + (
+                    tt[var] > vals[1]
+                ) * vals[
+                    1
+                ]  # Set maximum
 
         self.__dict__[table_name] = tt
 
@@ -751,6 +767,7 @@ class TableCollection(object):
             "pos_nxv",
             "pos_var",
             "pos_cpval",
+            "pos_rchiq",
             "flux",
             "flux_err",
             "flux_nxv",
@@ -803,6 +820,7 @@ class TableCollection(object):
             dd_src_var["pos_nxv"][isrc] = (rr_ra["nxv"] + rr_dec["nxv"]) / 2.0
             dd_src_var["pos_var"][isrc] = (rr_ra["var"] + rr_dec["var"]) / 2.0
             dd_src_var["pos_cpval"][isrc] = rr_ra["cpval"] * rr_dec["cpval"]
+            dd_src_var["pos_rchiq"][isrc] = (rr_ra["rchiq"] + rr_dec["rchiq"]) / 2.0
 
             # Skewness
             if src_nr_det[isrc] > 2:
