@@ -38,7 +38,7 @@ selection:
         table    : "tt_sources"
         sel_type : "and"
         range:        
-            flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
+            flux_cpval     : [-0.5,0.001]  
             pos_cpval      : [0.00000001,.inf] 
             flux_nxv       : [0.0006,.inf] 
 
@@ -51,9 +51,6 @@ selection:
 observations:
   - observatory   : "GALEX"
     obs_filter    : "NUV"
-    obs_field_ids :
-        - 6388191295067652096 # NGC4993-GW170817 2 visits
-        - 6381787756527353856 # AIS_309_1_28 2 visits (Crab pulsar)
     
     cluster_det:
         meanshift:
@@ -75,14 +72,17 @@ observations:
                 point_src_prob : [0.5,1.0]
                 bright_match   : [-0.5,0.5]
                 mag            : [16,26]
-                mag_err        : [0.000001,0.5]
-                pos_err        : [0.00000001,0.002]
+                #mag_err        : [0.000001,0.5]
+                #pos_err        : [0.00000001,0.002]
             bitmask:
                 artifacts : [2,4]
             set_range:
-                pos_err : [0.0001389,0.002] # 1 arcsec = 0.0002777, 0.5 arcsec = 0.0001389
+                pos_err : [0.5,5] # 1 arcsec = 0.0002777, 0.5 arcsec = 0.0001389
         det_association : 
             table     : "tt_detections"
             ref_table : "tt_sources"
             sel_type  : "is_in"
             var       : "fd_src_id"
+    obs_field_ids :
+        - 6388191295067652096 # NGC4993-GW170817 2 visits
+        - 6381787756527353856 # AIS_309_1_28 2 visits (Crab pulsar)

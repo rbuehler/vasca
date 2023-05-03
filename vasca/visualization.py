@@ -221,7 +221,7 @@ def plot_field_sky_map(
     # Start drawing
     # Check if figure was passed
     if type(fig) is type(None):
-        fig = plt.figure(figsize=(8, 7), constrained_layout=True)
+        fig = plt.figure(figsize=(8, 7))  # , constrained_layout=True
     if type(ax) is type(None):
         ax = plt.subplot(projection=wcs)
         ax.coords["ra"].set_major_formatter("d.dd")
@@ -921,7 +921,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["point_src_prob"] = {}
             var_plt["artifacts"] = {"histtype": "step"}
             var_plt["bright_match"] = {}
-            var_plt["pos_err"] = {"range": [0.0, 0.0025]}
+            var_plt["pos_err"] = {"range": [0.0, 5]}
             fig, axs = plt.subplots(4, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
@@ -941,18 +941,17 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "yscale": "log",
                 "xlim": [1, 100],
             }
-            var_plt[("r_fov", "flux")] = {}
-            var_plt[("point_src_prob", "flux")] = {
+            var_plt[("mag", "flux")] = {
                 "yscale": "log",
+                "invert_xaxis": True,
+                "xlim": [14.5, 24.5],
             }
-            var_plt[("artifacts", "flux")] = {
-                "yscale": "log",
-            }
+            var_plt[("point_src_prob", "flux")] = {"yscale": "log"}
+            var_plt[("pos_err", "flux")] = {"yscale": "log"}
             var_plt[("r_fov", "artifacts")] = {}
             var_plt[("flux_err", "flux")] = {
-                "xlim": [0.01, 3],
-                # "invert_yaxis": True,
-                "ylim": [14.5, 26.5],
+                "xlim": [0.0, 50],
+                "yscale": "log",
             }
             fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
@@ -967,8 +966,6 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt[("pos_rchiq", "flux")] = {
                 # "xlim": [-0.001, 0.01],
                 "yscale": "log",
-                # "invert_yaxis": True,
-                # "ylim": [14.5, 24.5],
                 # "xlim": [-0.01, 0.05],
             }
             var_plt[("nr_det", "flux")] = {
@@ -1052,7 +1049,7 @@ def plot_light_curve(
 
     # Check if figure was passed
     if type(fig) is type(None):
-        fig = plt.figure(figsize=(6, 6), constrained_layout=True)
+        fig = plt.figure(figsize=(6, 6))  # , constrained_layout=True
     else:
         plt.gcf()
 
