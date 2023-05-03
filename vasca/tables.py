@@ -753,11 +753,12 @@ class TableCollection(object):
             tt_det[id_name].data, return_index=True, return_counts=True
         )
 
-        # Buffer input data
-        ll_det_var = ["flux", "flux_err", "pos_err", "ra", "dec", "flux", "flux_err"]
+        # Buffer input data and convert position errors to degrees
+        ll_det_var = ["flux", "flux_err", "ra", "dec", "flux", "flux_err"]
         dd_det_var = dict()
         for bvar in ll_det_var:
             dd_det_var[bvar] = tt_det[bvar].data
+        dd_det_var["pos_err_deg"] = tt_det["pos_err"].data.astype(np.float64) / 3600.0
 
         # Prepare output data arrays
         ll_src_var = [
@@ -807,18 +808,22 @@ class TableCollection(object):
             # Therefore converting back 2d to 1d coonfidence interval
             # pos_err_1d = dd_det_var["pos_err"][idx1:idx2]  # / 1.515
             rr_ra = get_var_stat(
-                dd_det_var["ra"][idx1:idx2], dd_det_var["pos_err"][idx1:idx2]
+                dd_det_var["ra"][idx1:idx2],
+                dd_det_var["pos_err_deg"][idx1:idx2],
             )
             rr_dec = get_var_stat(
-                dd_det_var["dec"][idx1:idx2], dd_det_var["pos_err"][idx1:idx2]
+                dd_det_var["dec"][idx1:idx2],
+                dd_det_var["pos_err_deg"][idx1:idx2],
             )
             dd_src_var["ra"][isrc] = rr_ra["wght_mean"]
             dd_src_var["dec"][isrc] = rr_dec["wght_mean"]
             dd_src_var["pos_err"][isrc] = (
-                rr_ra["wght_mean_err"] + rr_dec["wght_mean_err"] / 2.0
+                (rr_ra["wght_mean_err"] + rr_dec["wght_mean_err"]) * 3600 / 2.0
             )
             dd_src_var["pos_nxv"][isrc] = (rr_ra["nxv"] + rr_dec["nxv"]) / 2.0
-            dd_src_var["pos_var"][isrc] = (rr_ra["var"] + rr_dec["var"]) / 2.0
+            dd_src_var["pos_var"][isrc] = (
+                (rr_ra["var"] + rr_dec["var"]) * (3600**2) / 2.0
+            )
             dd_src_var["pos_cpval"][isrc] = rr_ra["cpval"] * rr_dec["cpval"]
             dd_src_var["pos_rchiq"][isrc] = (rr_ra["rchiq"] + rr_dec["rchiq"]) / 2.0
 

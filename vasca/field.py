@@ -1238,16 +1238,6 @@ class GALEXField(BaseField):
 
         obs_filter_l = obs_filter.lower()  # lower case obs_filter name
 
-        # Convert positional error to degree
-        # See GALEX docs mor details:
-        # http://www.galex.caltech.edu/wiki/GCAT_Manual#Catalog_Column_Description
-        for tbl in [tt_detections_raw, tt_ref_sources_raw]:
-            tbl[f"{obs_filter_l}_poserr"].unit = uu.arcsec
-            tbl.replace_column(
-                f"{obs_filter_l}_poserr",
-                Column(tbl[f"{obs_filter_l}_poserr"].to(uu.degree), dtype="float64"),
-            )
-
         # Add to tables as class attributes
         if col_names is None:
             mast_col_names = [
