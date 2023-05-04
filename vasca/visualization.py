@@ -26,6 +26,7 @@ import vasca.utils as vutils
 def plot_sky_sources(
     tt_src,
     tt_det=None,
+    only_selected=True,
     ax=None,
     src_id="rg_src_id",
     sky_region_wcs=None,
@@ -42,6 +43,8 @@ def plot_sky_sources(
     tt_det : astropy.Table, optional
         Detection list to plot. Has to contain "ra", "dec" and src_id columns.
         Default is None.
+    only_selected: bool, optional
+        Show only selected sources. tt_src must have a "sel" column. default is True.
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
     src_id: str, optional
@@ -53,7 +56,7 @@ def plot_sky_sources(
     src_kwargs : dict, optional
         Keyword arguments for pyplot.plot of the sources. The default is None.
     det_kwargs : dict, optional
-        Keyword arguments for pyplot.plot of the detections. The default is None.
+        Keyword arguments for pyplot.patches.Polygon of the detections. The default is None.
 
     Returns
     -------
@@ -70,22 +73,20 @@ def plot_sky_sources(
 
     # Show only selected sources
     sel = np.ones(len(tt_src), dtype=bool)
-    if "sel" in tt_src.colnames:
+    if only_selected and "sel" in tt_src.colnames:
         sel = tt_src["sel"]
     tt_src = tt_src[sel]
 
     # select sources within the region
     sel_reg = np.ones(len(tt_src), dtype=np.bool)
     if type(sky_region_wcs) is not type(None):
-        src_coords = SkyCoord(
-            tt_src["ra"].quantity, tt_src["dec"].quantity, frame="icrs"
-        )
+        src_coords = SkyCoord(tt_src["ra"], tt_src["dec"], frame="icrs")
         sel_reg = sky_region_wcs[0].contains(src_coords, sky_region_wcs[1])
         logger.debug(f"Limiting to region {sky_region_wcs[0]}")
 
     # Set marker properties for sources
     plt_src_kwargs = {
-        "marker": "o",
+        "marker": "+",
         "markersize": 6.5,
         "alpha": 0.5,
         "lw": 0,
@@ -98,49 +99,52 @@ def plot_sky_sources(
 
     # Set marker properties for detections
     plt_det_kwargs = {
-        "marker": ".",
-        "markersize": 3.0,
-        "alpha": 0.5,
-        "markeredgewidth": 1.0,
-        "lw": 0.0,
+        "fill": False,
+        "lw": 0.5,
         "transform": ax.get_transform("world"),
     }
     if det_kwargs is not None:
         plt_det_kwargs.update(det_kwargs)
 
     plt_txt_kwargs = {
-        "transform": ax.get_transform("world"),
-        "fontsize": 7,
-        "alpha": 0.7,
+        "xycoords": ax.get_transform("world"),
+        "fontsize": 8,
     }
 
     if type(tt_det) is not type(None):
         tt_det.add_index(src_id)
 
     # Loop over all srcs and plot
-    colors = cycle("bgrcmybgrcmybgrcmybgrcmy")
+    colors = cycle("rbgcmrbgcmrbgcmrbgcm")
     for src, col in zip(tt_src[sel_reg], colors):
+
         # Set colors in tandem for srcs, det and label
         plt_src_kwargs["color"] = col
         plt_det_kwargs["color"] = col
         plt_txt_kwargs["color"] = col
 
         if type(tt_det) is not type(None):
-            det_idx = tt_det.loc_indices[src_id, src[src_id]]
-            ax.plot(
-                tt_det[det_idx]["ra"].data,
-                tt_det[det_idx]["dec"].data,
-                **plt_det_kwargs,
-            )
+            det_idxs = tt_det.loc_indices[src_id, src[src_id]]
+            for det_idx in det_idxs:
+                coord_det = SkyCoord(
+                    tt_det[det_idx]["ra"].data * u.deg,
+                    tt_det[det_idx]["dec"].data * u.deg,
+                    frame="icrs",
+                )
+                s_det = SphericalCircle(
+                    coord_det,
+                    tt_det[det_idx]["pos_err"].data * u.arcsec,
+                    **plt_det_kwargs,
+                )
+                ax.add_patch(s_det)
 
-        ax.plot(src["ra"], src["dec"], **plt_src_kwargs)
+        ax.plot(src["ra"], src["dec"], label=str(src[src_id]), **plt_src_kwargs)
 
         # Add labels if src_id was passed
         if type(src_id) is not type(None):
-            ax.text(
-                src["ra"] + 0.007,
-                src["dec"] + 0.006,
+            ax.annotate(
                 str(src[src_id]),
+                (src["ra"], src["dec"]),
                 **plt_txt_kwargs,
             )
     return ax, tt_src[sel_reg][src_id].data
@@ -211,9 +215,12 @@ def plot_field_sky_map(
     wcs = field.ref_wcs
     if type(sky_region) is not type(None):
         box = sky_region.to_pixel(field.ref_wcs).bounding_box
-        # plt_img_kwargs["extent"] = box.extent
         cutout = Cutout2D(
-            plot_img, position=box.center, size=box.shape, wcs=field.ref_wcs, copy=True
+            plot_img,
+            position=[box.center[1], box.center[0]],
+            size=[box.shape[1], box.shape[0]],
+            wcs=field.ref_wcs,
+            copy=True,
         )
         plot_img = cutout.data
         wcs = cutout.wcs
@@ -238,12 +245,12 @@ def plot_field_sky_map(
     # Add coordinate grid
     ax.coords.grid(True, color="grey", ls="-", lw=0.5)
 
-    graph = ax.imshow(plot_img, **plt_img_kwargs)
+    ax.imshow(plot_img, **plt_img_kwargs)
     # if type(pix_patch) is not type(None):
     # graph.set_clip_path(pix_patch)
     ax.set_title(fig_title)
 
-    return fig, graph
+    return ax, wcs
 
 
 # TODO: Add coordinate system match check between tt_coverage_hp and this function
