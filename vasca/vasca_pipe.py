@@ -144,6 +144,7 @@ def run_field(obs_nr, field, vasca_cfg):
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
 
     # Remove some items which are not further needed to free memory
+    # Remove detections which did not pass the selection and where not used in clustering
     field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
     field.ref_img = None
     field.ref_wcs = None
@@ -237,7 +238,10 @@ def run(vasca_cfg):
     rg.select_rows(vasca_cfg["selection"]["src_variability"], remove_unselected=False)
 
     # Remove detections not associated to selected sources
-    rg.select_rows(vasca_cfg["selection"]["det_association"], remove_unselected=True)
+    if "det_association" in vasca_cfg["selection"].keys():
+        rg.select_rows(
+            vasca_cfg["selection"]["det_association"], remove_unselected=True
+        )
 
     # Store reference sources
     if vasca_cfg["general"]["save_ref_srcs"]:

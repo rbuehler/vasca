@@ -79,6 +79,7 @@ def test_pipeline_vis(test_paths):
     vvis.plot_pipe_diagnostic(rg, "tt_sources", "scatter")
     vvis.plot_pipe_diagnostic(rg, "tt_sources", "hist")
     vvis.plot_pipe_diagnostic(fd, "tt_detections", "hist", fig_size=(8, 10))
+    vvis.plot_pipe_diagnostic(fd, "tt_detections", "scatter", fig_size=(8, 10))
 
     print(rg)
 

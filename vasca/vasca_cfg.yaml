@@ -3,13 +3,13 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "TDS"
+    name            : "TDS_ELAISN1"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                         # Will be written into "out_dir", if ""default" a default name will be created 
     nr_cpus         : 3                                 # Number of CPUs to use. If "null" all available are used.
     save_dets       : false                            # Store selected field detections into region file
-    save_ref_srcs   : false                             # Store referenze sources into region file
+    save_ref_srcs   : true                             # Store referenze sources into region file
     
 ressources:                      
     load_method      : "VASCA"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
@@ -40,14 +40,15 @@ selection:
         range:        
             flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
             pos_cpval      : [0.0000000001,.inf] 
-            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%        
+            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%  
+            mag            : [17,26]      
 
-    #Select detections associated to sources
-    det_association : 
-        table     : "tt_detections"
-        ref_table : "tt_sources"
-        sel_type  : "is_in"
-        var       : "rg_src_id"
+    #Remove detections not associated to selected sources
+    # det_association : 
+    #     table     : "tt_detections"
+    #     ref_table : "tt_sources"
+    #     sel_type  : "is_in"
+    #     var       : "rg_src_id"
                     
 observations:
   - observatory   : "GALEX"
@@ -71,7 +72,7 @@ observations:
                 r_fov          : [0.0,0.55]
                 point_src_prob : [0.6,1.0]
                 bright_match   : [-0.5,0.5]
-                mag            : [15,26]
+                #mag            : [15,26]
                 #mag_err        : [0.000001,0.5]
                 #pos_err        : [0.00001,5]  # In arcsec
             bitmask:
@@ -87,20 +88,20 @@ observations:
             sel_type  : "is_in"
             var       : "fd_src_id"
     obs_field_ids :
-        - 2592597978464124928  #PS_XMMLSS_MOS00
-        - 2592668347208302592  #PS_XMMLSS_MOS01
-        - 2592738715952480256  #PS_XMMLSS_MOS02
-        - 2592809084696657920  #PS_XMMLSS_MOS03
-        - 2592879453440835584  #PS_XMMLSS_MOS04
-        - 2592949822185013248  #PS_XMMLSS_MOS05
-        - 2593020190929190912  #PS_XMMLSS_MOS06
-        - 2593653509626789888  #PS_CDFS_MOS00
-        - 2593723878370967552  #PS_CDFS_MOS01
-        - 2593794247115145216  #PS_CDFS_MOS02
-        - 2593864615859322880  #PS_CDFS_MOS03
-        - 2593934984603500544  #PS_CDFS_MOS04
-        - 2594005353347678208  #PS_CDFS_MOS05
-        - 2594075722091855872  #PS_CDFS_MOS06
+        # - 2592597978464124928  #PS_XMMLSS_MOS00
+        # - 2592668347208302592  #PS_XMMLSS_MOS01
+        # - 2592738715952480256  #PS_XMMLSS_MOS02
+        # - 2592809084696657920  #PS_XMMLSS_MOS03
+        # - 2592879453440835584  #PS_XMMLSS_MOS04
+        # - 2592949822185013248  #PS_XMMLSS_MOS05
+        # - 2593020190929190912  #PS_XMMLSS_MOS06
+        # - 2593653509626789888  #PS_CDFS_MOS00
+        # - 2593723878370967552  #PS_CDFS_MOS01
+        # - 2593794247115145216  #PS_CDFS_MOS02
+        # - 2593864615859322880  #PS_CDFS_MOS03
+        # - 2593934984603500544  #PS_CDFS_MOS04
+        # - 2594005353347678208  #PS_CDFS_MOS05
+        # - 2594075722091855872  #PS_CDFS_MOS06
         - 2597312684324028416  #PS_ELAISN1_MOS10
         - 2597383053068206080  #PS_ELAISN1_MOS11
         - 2597453421812383744  #PS_ELAISN1_MOS12
@@ -108,27 +109,27 @@ observations:
         - 2597594159300739072  #PS_ELAISN1_MOS14
         - 2597664528044916736  #PS_ELAISN1_MOS15
         - 2597734896789094400  #PS_ELAISN1_MOS16
-        - 2597875634277449728  #PS_VVDS22H_MOS00
-        - 2597946003021627392  #PS_VVDS22H_MOS01
-        - 2598016371765805056  #PS_VVDS22H_MOS02
-        - 2598086740509982720  #PS_VVDS22H_MOS03
-        - 2598157109254160384  #PS_VVDS22H_MOS04
-        - 2598227477998338048  #PS_VVDS22H_MOS05
-        - 2598297846742515712  #PS_VVDS22H_MOS06
-        - 2604912508670050304  #PS_COSMOS_MOS21
-        - 2604982877414227968  #PS_COSMOS_MOS22
-        - 2605053246158405632  #PS_COSMOS_MOS23
-        - 2605123614902583296  #PS_COSMOS_MOS24
-        - 2605193983646760960  #PS_COSMOS_MOS25
-        - 2605264352416104448  #PS_COSMOS_MOS26
-        - 2605334721135116288  #PS_COSMOS_MOS27
-        - 2607023571020546048  #PS_GROTH_MOS01
-        - 2607093939764723712  #PS_GROTH_MOS02
-        - 2607164308508901376  #PS_GROTH_MOS03
-        - 2607234677253079040  #PS_GROTH_MOS04
-        - 2607305045997256704  #PS_GROTH_MOS05
-        - 2607375414741434368  #PS_GROTH_MOS06
-        - 2607445783485612032  #PS_GROTH_MOS07
+        # - 2597875634277449728  #PS_VVDS22H_MOS00
+        # - 2597946003021627392  #PS_VVDS22H_MOS01
+        # - 2598016371765805056  #PS_VVDS22H_MOS02
+        # - 2598086740509982720  #PS_VVDS22H_MOS03
+        # - 2598157109254160384  #PS_VVDS22H_MOS04
+        # - 2598227477998338048  #PS_VVDS22H_MOS05
+        # - 2598297846742515712  #PS_VVDS22H_MOS06
+        # - 2604912508670050304  #PS_COSMOS_MOS21
+        # - 2604982877414227968  #PS_COSMOS_MOS22
+        # - 2605053246158405632  #PS_COSMOS_MOS23
+        # - 2605123614902583296  #PS_COSMOS_MOS24
+        # - 2605193983646760960  #PS_COSMOS_MOS25
+        # - 2605264352416104448  #PS_COSMOS_MOS26
+        # - 2605334721135116288  #PS_COSMOS_MOS27
+        # - 2607023571020546048  #PS_GROTH_MOS01
+        # - 2607093939764723712  #PS_GROTH_MOS02
+        # - 2607164308508901376  #PS_GROTH_MOS03
+        # - 2607234677253079040  #PS_GROTH_MOS04
+        # - 2607305045997256704  #PS_GROTH_MOS05
+        # - 2607375414741434368  #PS_GROTH_MOS06
+        # - 2607445783485612032  #PS_GROTH_MOS07
   
 # GALEX artifact flags
 # ( 1): edge; Detector bevel edge reflection (NUV only).
