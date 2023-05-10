@@ -128,13 +128,13 @@ def plot_sky_sources(
             det_idxs = tt_det.loc_indices[src_id, src[src_id]]
             for det_idx in det_idxs:
                 coord_det = SkyCoord(
-                    tt_det[det_idx]["ra"].data * uu.deg,
-                    tt_det[det_idx]["dec"].data * uu.deg,
+                    tt_det[det_idx]["ra"] * uu.deg,
+                    tt_det[det_idx]["dec"] * uu.deg,
                     frame="icrs",
                 )
                 s_det = SphericalCircle(
                     coord_det,
-                    tt_det[det_idx]["pos_err"].data * uu.arcsec,
+                    tt_det[det_idx]["pos_err"] * uu.arcsec,
                     **plt_det_kwargs,
                 )
                 ax.add_patch(s_det)
