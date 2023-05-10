@@ -288,7 +288,7 @@ class BaseField(TableCollection):
             nr_rm_det = len(rm_det_ids)
             perc_rm_det = 100 * nr_rm_det / len(self.tt_detections[sel])
             logger.warning(
-                f"Removed double-visit detections: {nr_rm_det} ({perc_rm_det: .2f} %)"
+                f"Removed double-visit detections: {nr_rm_det} ({perc_rm_det: .4f} %)"
             )
 
             # remove the doubled detections from tt_detections

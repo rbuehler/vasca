@@ -31,10 +31,10 @@ def flux2mag(flux, flux_err=None):
 
     Parameters
     ----------
-    flux : [Astropy Quantitiy]
-        Flux density array
-    flux_err : [Astropy Quantitiy]
-        Flux error array. Default is none.
+    flux : [Astropy Quantitiy or numpy array]
+        Flux density array in micro Jy
+    flux_err : [Astropy Quantitiy  or numpy array]
+        Flux error array in micro Jy. Default is none.
 
     Returns
     -------
@@ -45,6 +45,16 @@ def flux2mag(flux, flux_err=None):
         If no flux errors are passed None is returned.
 
     """
+    # print("in", flux)
+
+    if type(flux) is not uu.quantity.Quantity:
+        flux = np.array(flux) * 1e-6 * uu.Jy
+    if (type(flux_err) is not type(None)) and (
+        type(flux_err) is not uu.quantity.Quantity
+    ):
+        flux_err = np.array(flux_err) * 1e-6 * uu.Jy
+
+    # Select valid fluxes
     valid = flux > 0
 
     mag = -np.ones(len(flux)) * uu.ABmag
@@ -58,6 +68,7 @@ def flux2mag(flux, flux_err=None):
 
         mag_err[valid] = mag[valid] - (flux + flux_err)[valid].to("ABflux") * uu.ABmag
 
+    # print("returning", mag, mag_err)
     return mag, mag_err
 
 
@@ -72,11 +83,13 @@ def mag2flux(mag):
 
     Returns
     -------
-    TYPE
-        Flux in Jy
+    astropy Quantity
+        Flux in micro Jy
 
     """
-    return (np.array(mag) * uu.ABmag).to("Jy")
+    # print("drin", mag)
+    # print("giving", (np.array(mag) * uu.ABmag).to("Jy"))
+    return (np.array(mag) * uu.ABmag).to("1e-6Jy")
 
 
 def get_field_id(obs_field_id, observaory, obs_filter):
