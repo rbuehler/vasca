@@ -109,7 +109,7 @@ def plot_sky_sources(
 
     plt_txt_kwargs = {
         "xycoords": ax.get_transform("world"),
-        "fontsize": 8,
+        "fontsize": 12,
     }
 
     if type(tt_det) is not type(None):
@@ -119,13 +119,15 @@ def plot_sky_sources(
     colors = cycle("rbgcmrbgcmrbgcmrbgcm")
     for src, col in zip(tt_src[sel_reg], colors):
 
-        # Set colors in tandem for srcs, det and label
+        # Set colors in tandem for srcs, det and label, unless specific color passed
+        if src_kwargs is not None and "color" in src_kwargs.keys():
+            col = plt_src_kwargs["color"]
         plt_src_kwargs["color"] = col
         plt_det_kwargs["color"] = col
         plt_txt_kwargs["color"] = col
 
-        if type(tt_det) is not type(None):
-            det_idxs = tt_det.loc_indices[src_id, src[src_id]]
+        if type(tt_det) is not type(None) and src[src_id] in tt_det[src_id]:
+            det_idxs = np.array(tt_det.loc_indices[src_id, src[src_id]]).flatten()
             for det_idx in det_idxs:
                 coord_det = SkyCoord(
                     tt_det[det_idx]["ra"] * uu.deg,
@@ -199,11 +201,13 @@ def plot_field_sky_map(
         plt_img_kwargs.update(img_kwargs)
 
     # Check if reference or visit images should be plotted
-    fig_title = f"Field {field.field_id} reference image."
+    fig_title = f"Field {field.field_id} reference image"
     plot_img = field.ref_img
     if img_idx > -1:
-        fig_title = f"Field {field.field_id} visit image Idx. {img_idx}"
-        if type(field.vis_img) == type(None):
+        # Check if visit images are there and get the right image from the cube
+        if img_idx > len(field.tt_visits) - 2:
+            logger.error(f"Requested image index {img_idx} is out of range")
+        elif type(field.vis_img) == type(None):
             raise TypeError(
                 f"Visit images not set, got image type '{type(field.vis_img)}'."
             )
@@ -211,6 +215,7 @@ def plot_field_sky_map(
             plot_img = field.vis_img[img_idx, :, :]
         else:
             plot_img = field.vis_img
+        fig_title = f"Visit {field.tt_visits[img_idx]['vis_id']} image"
 
     # Check if plotting should be restricted to one region only
     wcs = field.ref_wcs

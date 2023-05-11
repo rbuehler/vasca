@@ -129,8 +129,9 @@ def run_field(obs_nr, field, vasca_cfg):
     # Get configuration for this field
     obs_cfg = vasca_cfg["observations"][obs_nr]
 
-    # Apply selections
+    # Apply detections selections
     field.select_rows(obs_cfg["selection"]["det_quality"], remove_unselected=False)
+    field.select_rows(obs_cfg["selection"]["coadd_det_quality"], remove_unselected=True)
 
     # Run clustering
     field.cluster_meanshift(
@@ -225,8 +226,11 @@ def run(vasca_cfg):
     rg.add_table_from_fields("tt_visits")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)
+    rg.add_table_from_fields("tt_coadd_detections")
 
+    # Cluster field sources and codds
     rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
+    rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
 
     # Calculate source statistics
     rg.set_src_stats()
@@ -242,10 +246,6 @@ def run(vasca_cfg):
         rg.select_rows(
             vasca_cfg["selection"]["det_association"], remove_unselected=True
         )
-
-    # Store reference sources
-    if vasca_cfg["general"]["save_ref_srcs"]:
-        rg.add_table_from_fields("tt_ref_sources")
 
     # Set source id table
     rg.set_src_id_info()

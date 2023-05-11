@@ -8,12 +8,12 @@ general:
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                         # Will be written into "out_dir", if ""default" a default name will be created 
     nr_cpus         : 3                                 # Number of CPUs to use. If "null" all available are used.
-    save_dets       : false                            # Store selected field detections into region file
+   # save_dets       : false                            # Store selected field detections into region file
     save_ref_srcs   : true                             # Store referenze sources into region file
     
 ressources:                      
-    load_method      : "VASCA"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
-    load_products    : "TABLES"                       # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
+    load_method      : "MAST_LOCAL"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_products    : "ALL"                       # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     field_kwargs:
         data_path        : null
         visits_data_path : null 
@@ -27,6 +27,18 @@ cluster_src:
         cluster_all   : true
         n_jobs        : 3
         max_iter      : 300
+        table_name    : "tt_sources"
+
+cluster_coadd_dets:
+    meanshift:
+        bandwidth     : 3               # In arcsec, to estimate it automatically specify "null"
+        seeds         : null
+        bin_seeding   : false
+        min_bin_freq  : 1
+        cluster_all   : true
+        n_jobs        : 3
+        max_iter      : 300
+        table_name    : "tt_coadd_detections"
         
 selection:
     src_quality:
@@ -62,6 +74,7 @@ observations:
             cluster_all   : true
             n_jobs        : null
             max_iter      : 300
+            table_name    : "tt_detections"
 
     selection:
         det_quality:
@@ -78,7 +91,7 @@ observations:
             bitmask:
                 # Specify the artifacts to remove
                 # For GALEX a description is at the end of this document
-                artifacts : [2,4,8,128]
+                artifacts : [1,2,4,8,128]
             #If below/above this value will set it to min/max
             set_range:
                 pos_err : [0.5,5] # In arcsec
@@ -87,6 +100,13 @@ observations:
             ref_table : "tt_sources"
             sel_type  : "is_in"
             var       : "fd_src_id"
+        coadd_det_quality:
+            table    : "tt_coadd_detections"
+            sel_type : "and"  # These are all AND selections
+            range:
+                s2n            : [3.5,.inf]
+                r_fov          : [0.0,0.55]
+            
     obs_field_ids :
         # - 2592597978464124928  #PS_XMMLSS_MOS00
         # - 2592668347208302592  #PS_XMMLSS_MOS01
@@ -102,13 +122,13 @@ observations:
         # - 2593934984603500544  #PS_CDFS_MOS04
         # - 2594005353347678208  #PS_CDFS_MOS05
         # - 2594075722091855872  #PS_CDFS_MOS06
-        - 2597312684324028416  #PS_ELAISN1_MOS10
-        - 2597383053068206080  #PS_ELAISN1_MOS11
-        - 2597453421812383744  #PS_ELAISN1_MOS12
-        - 2597523790556561408  #PS_ELAISN1_MOS13
+        # - 2597312684324028416  #PS_ELAISN1_MOS10
+        # - 2597383053068206080  #PS_ELAISN1_MOS11
+        # - 2597453421812383744  #PS_ELAISN1_MOS12
+        # - 2597523790556561408  #PS_ELAISN1_MOS13
         - 2597594159300739072  #PS_ELAISN1_MOS14
         - 2597664528044916736  #PS_ELAISN1_MOS15
-        - 2597734896789094400  #PS_ELAISN1_MOS16
+        # - 2597734896789094400  #PS_ELAISN1_MOS16
         # - 2597875634277449728  #PS_VVDS22H_MOS00
         # - 2597946003021627392  #PS_VVDS22H_MOS01
         # - 2598016371765805056  #PS_VVDS22H_MOS02
