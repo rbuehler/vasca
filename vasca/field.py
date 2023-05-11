@@ -657,7 +657,7 @@ class GALEXField(BaseField):
         # Sets convenience class attributes
         gf.set_field_attr()
 
-        # Sets ``gf.tt_detections``, ``gf.tt_ref_sources`` and loads the ref image
+        # Sets ``gf.tt_detections``, ``gf.tt_coadd_detections`` and loads the ref image
         if load_products != "NONE":
             if load_products == "ALL":
                 gf._load_galex_archive_products(
@@ -1198,7 +1198,7 @@ class GALEXField(BaseField):
         # Opens reference catalog
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", AstropyWarning)
-            tt_ref_sources_raw = Table.read(path_tt_ref)
+            tt_coadd_detections_raw = Table.read(path_tt_ref)
 
         # Opens visit catalogs, add columns for visit and source IDs
         # and stack all catalogs
@@ -1302,11 +1302,11 @@ class GALEXField(BaseField):
         logger.debug("Constructed 'tt_detections'.")
 
         dd_ref_sources_raw = {}
-        for col in mast_col_names[2:]:
-            dd_ref_sources_raw[col_names[col]] = tt_ref_sources_raw[col].data
+        for col in mast_col_names[1:]:
+            dd_ref_sources_raw[col_names[col]] = tt_coadd_detections_raw[col].data
 
-        self.add_table(dd_ref_sources_raw, "galex_field:tt_ref_sources")
-        logger.debug("Constructed 'tt_ref_sources'.")
+        self.add_table(dd_ref_sources_raw, "galex_field:tt_coadd_detections")
+        logger.debug("Constructed 'tt_coadd_detections'.")
 
         # Intensity maps
         aa_sel_int_map = np.char.endswith(

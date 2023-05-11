@@ -613,12 +613,10 @@ class TableCollection(object):
         """
 
         # Select seed table, detections or sources
-        clus_srcs = False
-        tt_in = self.tt_detections
-        if "Region" in self.__class__.__name__:
-            clus_srcs = True
-            tt_in = self.tt_sources
-        logger.info(f"Clustering with MeanShift with clus_srcs: {clus_srcs}")
+        table_name = ms_kw["table_name"]
+        del ms_kw["table_name"]
+        tt_in = self.__dict__[table_name]
+        logger.info(f"Clustering with MeanShift with table: {table_name}")
 
         # Selection
         sel = tt_in["sel"]
@@ -645,8 +643,9 @@ class TableCollection(object):
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
 
+        # How to store clusters depends on table, check cases
         # Store clusters in tt_source table
-        if clus_srcs:
+        if table_name == "tt_sources":
             srcs_data = {
                 "rg_src_id": src_ids,
                 "ra": cluster_centers[:, 0],
@@ -678,7 +677,7 @@ class TableCollection(object):
             perc_merged = np.round(100 * nr_merged / len(tt_in[sel]), 4)
             logger.debug(f"Merged sources: {nr_merged} ({perc_merged}%)")
 
-        else:
+        elif table_name == "tt_detections":
             srcs_data = {
                 "fd_src_id": src_ids,
                 "ra": cluster_centers[:, 0],
@@ -695,6 +694,21 @@ class TableCollection(object):
 
             # Fill light curve data into tables
             self.remove_double_visit_detections()
+        elif table_name == "tt_coadd_detections":
+            coadd_data = {
+                "coadd_src_id": src_ids,
+                "ra": cluster_centers[:, 0],
+                "dec": cluster_centers[:, 1],
+                "nr_det": clu_cts,
+                "nr_uls": np.zeros(nr_srcs),
+            }
+
+            # Fill information into tables.
+            self.add_table(coadd_data, "region:tt_coadd_sources")
+            self.tt_coadd_detections["coadd_src_id"][np.where(sel)] = ms.labels_
+
+        else:
+            logger.error("Unkown table name")
 
         self.tt_sources.meta["CLUSTALG"] = "MeanShift"
 

@@ -117,7 +117,7 @@ base_field = {
         ],
         "meta": {"INFO": "Visit detections table"},
     },
-    "tt_ref_sources": {
+    "tt_coadd_detections": {
         "names": [
             "det_id",
             "ra",
@@ -470,9 +470,9 @@ galex_field = {
         ],
         "meta": {**base_field["tt_detections"]["meta"], "PRECUTS": "List of pre-cuts"},
     },
-    "tt_ref_sources": {
+    "tt_coadd_detections": {
         "names": [
-            *base_field["tt_ref_sources"]["names"],
+            *base_field["tt_coadd_detections"]["names"],
             "r_fov",
             "artifacts",
             "point_src_prob",
@@ -484,7 +484,7 @@ galex_field = {
             "E_bv",
         ],
         "dtype": [
-            *base_field["tt_ref_sources"]["dtype"],
+            *base_field["tt_coadd_detections"]["dtype"],
             "float32",
             "int64",
             "float32",
@@ -496,7 +496,7 @@ galex_field = {
             "float32",
         ],
         "units": [
-            *base_field["tt_ref_sources"]["units"],
+            *base_field["tt_coadd_detections"]["units"],
             "degree",
             "1",
             "1",
@@ -508,7 +508,7 @@ galex_field = {
             "1e-6Jy",
         ],
         "defaults": [
-            *base_field["tt_ref_sources"]["defaults"],
+            *base_field["tt_coadd_detections"]["defaults"],
             -1.0,
             -1,
             -1.0,
@@ -520,7 +520,7 @@ galex_field = {
             -1.0,
         ],
         "descriptions": [
-            *base_field["tt_ref_sources"]["descriptions"],
+            *base_field["tt_coadd_detections"]["descriptions"],
             "Distance from center of FOV in degrees",
             "Logical OR of artifact flags",
             "Point-source probability: 0.0 (resolved), 1.0 (unresolved)",
@@ -531,7 +531,10 @@ galex_field = {
             "Flux error in a fixed circular 3.8 arcsec radius aperture in cts/sec",
             "Galactic reddening expressed as E(B-V)",
         ],
-        "meta": {**base_field["tt_ref_sources"]["meta"], "PRECUTS": "List of pre-cuts"},
+        "meta": {
+            **base_field["tt_coadd_detections"]["meta"],
+            "PRECUTS": "List of pre-cuts",
+        },
     },
 }
 
@@ -602,16 +605,21 @@ region = {
             "NSIDE": "None",
         },
     },
-    "tt_ref_sources": {
-        "names": [*base_field["tt_ref_sources"]["names"], "rg_fd_id"],
-        "dtype": [*base_field["tt_ref_sources"]["dtype"], "int32"],
-        "units": [*base_field["tt_ref_sources"]["units"], "1"],
-        "defaults": [*base_field["tt_ref_sources"]["defaults"], -1],
-        "descriptions": [
-            *base_field["tt_ref_sources"]["descriptions"],
-            "Field source ID nr.",
+    "tt_coadd_detections": {
+        "names": [
+            *base_field["tt_coadd_detections"]["names"],
+            "rg_fd_id",
+            "coadd_src_id",
         ],
-        "meta": {**base_field["tt_ref_sources"]["meta"]},
+        "dtype": [*base_field["tt_coadd_detections"]["dtype"], "int32", "int32"],
+        "units": [*base_field["tt_coadd_detections"]["units"], "1", "1"],
+        "defaults": [*base_field["tt_coadd_detections"]["defaults"], -1, -1],
+        "descriptions": [
+            *base_field["tt_coadd_detections"]["descriptions"],
+            "Field source ID nr.",
+            "Coadd source ID nr.",
+        ],
+        "meta": {**base_field["tt_coadd_detections"]["meta"]},
     },
     "tt_detections": {
         "names": [*base_field["tt_detections"]["names"], "rg_fd_id", "rg_src_id"],
@@ -640,6 +648,24 @@ region = {
             "Region field ID nr.",
             "Region source ID nr.",
             "Nr. of fields sources in the cluster.",
+        ],
+        "meta": {**base_field["tt_sources"]["meta"]},
+    },
+    "tt_coadd_sources": {
+        "names": [
+            *base_field["tt_sources"]["names"],
+            "rg_fd_id",
+            "coadd_src_id",
+            "nr_fd_dets",
+        ],
+        "dtype": [*base_field["tt_sources"]["dtype"], "int32", "int32", "int32"],
+        "units": [*base_field["tt_sources"]["units"], "1", "1", "1"],
+        "defaults": [*base_field["tt_sources"]["defaults"], -1, -1, -1],
+        "descriptions": [
+            *base_field["tt_sources"]["descriptions"],
+            "Region field ID nr.",
+            "Region coadd source ID nr.",
+            "Nr. of fields coadd detections in the cluster.",
         ],
         "meta": {**base_field["tt_sources"]["meta"]},
     },
