@@ -8,7 +8,6 @@ general:
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                         # Will be written into "out_dir", if ""default" a default name will be created 
     nr_cpus         : 3                                 # Number of CPUs to use. If "null" all available are used.
-   # save_dets       : false                            # Store selected field detections into region file
     save_ref_srcs   : true                             # Store referenze sources into region file
     
 ressources:                      

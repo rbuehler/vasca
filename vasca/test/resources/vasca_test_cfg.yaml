@@ -8,7 +8,6 @@ general:
     log_level       : "DEBUG"                                # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                              # Will be written into "out_dir", if ""default" a default name will be created 
     nr_cpus         : 2                                      # Number of CPUs to use. If "null" all available are used.
-    save_dets       : false                                  # Store selected field detections into region file
     save_ref_srcs   : false
     
 ressources:                      
@@ -27,6 +26,18 @@ cluster_src:
         cluster_all   : true
         n_jobs        : 2
         max_iter      : 300
+        table_name    : "tt_sources"
+
+cluster_coadd_dets:
+    meanshift:
+        bandwidth     : 3               # In arcsec, to estimate it automatically specify "null"
+        seeds         : null
+        bin_seeding   : false
+        min_bin_freq  : 1
+        cluster_all   : true
+        n_jobs        : 3
+        max_iter      : 300
+        table_name    : "tt_coadd_detections"
         
 selection:
     src_quality:
@@ -61,6 +72,7 @@ observations:
             cluster_all   : true
             n_jobs        : null
             max_iter      : 300
+            table_name    : "tt_detections"
 
     selection:
         det_quality:
@@ -72,12 +84,16 @@ observations:
                 point_src_prob : [0.5,1.0]
                 bright_match   : [-0.5,0.5]
                 mag            : [16,26]
-                #mag_err        : [0.000001,0.5]
-                #pos_err        : [0.00000001,0.002]
             bitmask:
                 artifacts : [2,4]
             set_range:
                 pos_err : [0.5,5] # 1 arcsec = 0.0002777, 0.5 arcsec = 0.0001389
+        coadd_det_quality:
+            table    : "tt_coadd_detections"
+            sel_type : "and"  # These are all AND selections
+            range:
+                s2n            : [3.5,.inf]
+                r_fov          : [0.0,0.55]
         det_association : 
             table     : "tt_detections"
             ref_table : "tt_sources"
