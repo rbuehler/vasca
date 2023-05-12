@@ -716,7 +716,7 @@ class TableCollection(object):
 
     # Calculation is done on a field level for easy numpy paralleization,
     # as this calculation is computationally intensive.
-    def set_src_stats(self):
+    def set_src_stats(self, src_id_name="fd_src_id"):
         """
         Calculates source parameters from detections and stores them
         in the source table (tt_source).
@@ -752,19 +752,22 @@ class TableCollection(object):
 
             return rr
 
-        # Check if field or region
-        id_name = "fd_src_id"
-        if "Region" in self.__class__.__name__:
-            id_name = "rg_src_id"
+        # Setup table names
+        if src_id_name == "fd_src_id" or src_id_name == "rg_src_id":
+            tt_det_name = "tt_detections"
+            tt_src_name = "tt_sources"
+        else:
+            tt_det_name = "tt_coadd_detections"
+            tt_src_name = "tt_coadd_sources"
 
         # Prepare detection data
-        sel_det = self.tt_detections["sel"]
-        tt_det = Table(self.tt_detections[sel_det], copy=True)
-        tt_det.sort(id_name)
+        sel_det = self.__dict__[tt_det_name]["sel"]
+        tt_det = Table(self.__dict__[tt_det_name][sel_det], copy=True)
+        tt_det.sort(src_id_name)
 
         # Get src_ids, src_index and det_nr
         src_ids, src_indices, src_nr_det = np.unique(
-            tt_det[id_name].data, return_index=True, return_counts=True
+            tt_det[src_id_name].data, return_index=True, return_counts=True
         )
 
         # Buffer input data and convert position errors to degrees
@@ -862,15 +865,16 @@ class TableCollection(object):
             dd_src_var["flux_dmaxabs"][isrc] = dflux_abs_max
 
         # Write them into tt_sources
-        self.tt_sources.add_index(id_name)
-        src_idx = self.tt_sources.loc_indices[id_name, src_ids]
+        self.__dict__[tt_src_name].add_index(src_id_name)
+        src_idx = self.__dict__[tt_src_name].loc_indices[src_id_name, src_ids]
 
         for svar in ll_src_var:
-            self.tt_sources[svar][src_idx] = dd_src_var[svar]
+            self.__dict__[tt_src_name][svar][src_idx] = dd_src_var[svar]
 
         # Add magnitudes to source info
         mag, mag_err = flux2mag(
-            self.tt_sources["flux"].quantity, self.tt_sources["flux_err"].quantity
+            self.__dict__[tt_src_name]["flux"].quantity,
+            self.__dict__[tt_src_name]["flux_err"].quantity,
         )
-        self.tt_sources["mag"][:] = mag
-        self.tt_sources["mag_err"][:] = mag_err
+        self.__dict__[tt_src_name]["mag"][:] = mag
+        self.__dict__[tt_src_name]["mag_err"][:] = mag_err
