@@ -139,7 +139,7 @@ def run_field(obs_nr, field, vasca_cfg):
     )
 
     # # Calculate source variables from light curve
-    # field.set_src_stats()
+    # field.set_src_stats(src_id_name = "fd_src_id")
 
     # Write out field
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
@@ -233,7 +233,8 @@ def run(vasca_cfg):
     rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
 
     # Calculate source statistics
-    rg.set_src_stats()
+    rg.set_src_stats(src_id_name="rg_src_id")
+    rg.set_src_stats(src_id_name="coadd_src_id")
 
     # Remove sources with quality cuts
     rg.select_rows(vasca_cfg["selection"]["src_quality"], remove_unselected=True)
