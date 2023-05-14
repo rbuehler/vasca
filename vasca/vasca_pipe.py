@@ -236,6 +236,9 @@ def run(vasca_cfg):
     rg.set_src_stats(src_id_name="rg_src_id")
     rg.set_src_stats(src_id_name="coadd_src_id")
 
+    # Match sources to coadd sources
+    rg.cross_match(tt_cat=rg.tt_coadd_sources, table_name="tt_sources")
+
     # Remove sources with quality cuts
     rg.select_rows(vasca_cfg["selection"]["src_quality"], remove_unselected=True)
 

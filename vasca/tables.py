@@ -16,6 +16,7 @@ from astropy.wcs import wcs
 from loguru import logger
 from scipy.stats import chi2, skew
 from sklearn.cluster import MeanShift, estimate_bandwidth
+from astropy.coordinates import SkyCoord
 
 from vasca.tables_dict import dd_vasca_tables
 from vasca.utils import add_rg_src_id, table_to_array, flux2mag
@@ -878,3 +879,38 @@ class TableCollection(object):
         )
         self.__dict__[tt_src_name]["mag"][:] = mag
         self.__dict__[tt_src_name]["mag_err"][:] = mag_err
+
+    def cross_match(self, tt_cat, cat_id_name="coadd_src_id", table_name="tt_sources"):
+        """
+        Cross match sources to a catalog
+
+        Parameters
+        ----------
+        tt_cat : astropy.Table
+            Catalog table. Has to contain "ra","dec" (in deg), "flux" (in microJy)
+            and "cat_id_name" columns.
+        cat_id_name : str, optional
+            Catalog ID Br. variable name. The default is "coadd_src_id".
+        table_name : TYPE, optional
+            Table to crossmatch to catalog. The default is "tt_sources".
+
+        Returns
+        -------
+        None.
+
+        """
+
+        logger.debug(f"Cross matching table {table_name}")
+
+        # Get source positions
+        tt_srcs = self.__dict__[table_name]
+        pos_srcs = SkyCoord(
+            ra=tt_srcs["ra"], dec=tt_srcs["dec"], unit="deg", frame="icrs"
+        )
+        pos_cat = SkyCoord(ra=tt_cat["ra"], dec=tt_cat["dec"], unit="deg", frame="icrs")
+
+        idx_cat, dist_cat, _ = pos_srcs.match_to_catalog_sky(pos_cat)
+
+        tt_srcs["assoc_id"] = tt_cat[idx_cat][cat_id_name]
+        tt_srcs["assoc_dist"] = dist_cat.to("arcsec")
+        tt_srcs["flux"] = tt_cat[idx_cat]["flux"]
