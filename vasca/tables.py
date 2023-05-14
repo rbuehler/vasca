@@ -911,6 +911,6 @@ class TableCollection(object):
 
         idx_cat, dist_cat, _ = pos_srcs.match_to_catalog_sky(pos_cat)
 
-        tt_srcs["assoc_id"] = tt_cat[idx_cat][cat_id_name]
-        tt_srcs["assoc_dist"] = dist_cat.to("arcsec")
-        tt_srcs["flux"] = tt_cat[idx_cat]["flux"]
+        tt_srcs["assoc_id"][:] = tt_cat[idx_cat][cat_id_name]
+        tt_srcs["assoc_dist"][:] = dist_cat.to("arcsec")
+        tt_srcs["assoc_flux"][:] = tt_cat[idx_cat]["flux"]
