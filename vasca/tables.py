@@ -920,7 +920,7 @@ class TableCollection(object):
 
         idx_cat, dist_cat, _ = pos_srcs.match_to_catalog_sky(pos_cat)
 
-        sel = dist_cat < dist_max
+        sel = dist_cat.to("arcsec") < dist_max.to("arcsec")
 
         tt_srcs["assoc_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
         tt_srcs["assoc_dist"][sel] = dist_cat[sel].to("arcsec")
@@ -936,4 +936,4 @@ class TableCollection(object):
         # Mark as selected, if selection column exists
         if "sel" in tt_cat.colnames:
             tt_cat["sel"][:] = np.zeros(len(tt_cat), dtype=bool)
-            tt_cat[idx_cat[sel]]["sel"] = np.ones(len(idx_cat[sel]), dtype=bool)
+            tt_cat["sel"][idx_cat[sel]] = np.ones(len(idx_cat[sel]), dtype=bool)
