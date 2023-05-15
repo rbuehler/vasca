@@ -982,6 +982,8 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             }
             var_plt[("assoc_ffactor", "flux")] = {
                 "yscale": "log",
+                "xlim": [0.1, 100],
+                "xscale": "log",
             }
             var_plt[("nr_det", "flux")] = {
                 "yscale": "log",
