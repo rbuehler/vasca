@@ -880,19 +880,28 @@ class TableCollection(object):
         self.__dict__[tt_src_name]["mag"][:] = mag
         self.__dict__[tt_src_name]["mag_err"][:] = mag_err
 
-    def cross_match(self, tt_cat, cat_id_name="coadd_src_id", table_name="tt_sources"):
+    def cross_match(
+        self,
+        tt_cat,
+        cat_id_name="coadd_src_id",
+        table_name="tt_sources",
+        dist_max=5 * uu.arcsec,
+    ):
         """
-        Cross match sources to a catalog
+        Cross match sources to a catalog.
 
         Parameters
         ----------
         tt_cat : astropy.Table
             Catalog table. Has to contain "ra","dec" (in deg), "flux" (in microJy)
-            and "cat_id_name" columns.
+            and "cat_id_name" columns.  Marks associated catalog sources
+            in the "sel" column of the catalog table, if it exists.
         cat_id_name : str, optional
             Catalog ID Br. variable name. The default is "coadd_src_id".
-        table_name : TYPE, optional
+        table_name : str, optional
             Table to crossmatch to catalog. The default is "tt_sources".
+        dist_max astropy.Quantity
+            Maximum angular distance. The default is "10 arcsec".
 
         Returns
         -------
@@ -911,6 +920,20 @@ class TableCollection(object):
 
         idx_cat, dist_cat, _ = pos_srcs.match_to_catalog_sky(pos_cat)
 
-        tt_srcs["assoc_id"][:] = tt_cat[idx_cat][cat_id_name]
-        tt_srcs["assoc_dist"][:] = dist_cat.to("arcsec")
-        tt_srcs["assoc_flux"][:] = tt_cat[idx_cat]["flux"]
+        sel = dist_cat < dist_max
+
+        tt_srcs["assoc_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
+        tt_srcs["assoc_dist"][sel] = dist_cat[sel].to("arcsec")
+        tt_srcs["assoc_ffactor"][sel] = (
+            tt_srcs["flux"][sel] / tt_cat[idx_cat[sel]]["flux"]
+        )
+        flux_diff = tt_srcs["flux"][sel] - tt_cat[idx_cat[sel]]["flux"]
+        flux_diff_err = np.sqrt(
+            tt_srcs["flux_err"][sel] ** 2 + tt_cat[idx_cat[sel]]["flux_err"] ** 2
+        )
+        tt_srcs["assoc_fdiff_s2n"][sel] = flux_diff / flux_diff_err
+
+        # Mark as selected, if selection column exists
+        if "sel" in tt_cat.colnames:
+            tt_cat["sel"][:] = np.zeros(len(tt_cat), dtype=bool)
+            tt_cat[idx_cat[sel]]["sel"] = np.ones(len(idx_cat[sel]), dtype=bool)

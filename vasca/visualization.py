@@ -940,10 +940,16 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {}
             var_plt["flux_nxv"] = {"logx": True}
-            var_plt["pos_rchiq"] = {}
+            var_plt["assoc_ffactor"] = {}
             var_plt["nr_fd_srcs"] = {}
             var_plt["pos_cpval"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
+        elif table_name == "tt_coadd_sources":
+            var_plt["nr_det"] = {}
+            var_plt["flux_cpval"] = {}
+            var_plt["pos_cpval"] = {}
+            var_plt["flux"] = {"logx": True}
+            fig, axs = plt.subplots(1, 4, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diagnostic for table '{table_name}' not defined")
 
@@ -954,10 +960,8 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "yscale": "log",
                 "xlim": [1, 100],
             }
-            var_plt[("mag", "flux")] = {
+            var_plt[("artifacts", "flux")] = {
                 "yscale": "log",
-                "invert_xaxis": True,
-                "xlim": [14.5, 24.5],
             }
             var_plt[("point_src_prob", "flux")] = {"yscale": "log"}
             var_plt[("pos_err", "flux")] = {"yscale": "log"}
@@ -976,10 +980,8 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt[("pos_cpval", "flux")] = {
                 "yscale": "log",
             }
-            var_plt[("pos_rchiq", "flux")] = {
-                # "xlim": [-0.001, 0.01],
+            var_plt[("assoc_ffactor", "flux")] = {
                 "yscale": "log",
-                # "xlim": [-0.01, 0.05],
             }
             var_plt[("nr_det", "flux")] = {
                 "yscale": "log",
@@ -993,6 +995,19 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             }
 
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
+        elif table_name == "tt_coadd_sources":
+            var_plt[("flux_cpval", "flux")] = {
+                "xscale": "log",
+                "yscale": "log",
+            }
+            var_plt[("pos_cpval", "flux")] = {
+                "yscale": "log",
+            }
+            var_plt[("nr_det", "flux")] = {
+                "yscale": "log",
+            }
+
+            fig, axs = plt.subplots(1, 3, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
     else:
