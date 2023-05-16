@@ -931,16 +931,16 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["flux"] = {"logx": True}
             var_plt["flux_err"] = {"logx": True}
             var_plt["r_fov"] = {"range": [0.0, 0.7]}
-            var_plt["point_src_prob"] = {}
+            var_plt["class_star"] = {}
             var_plt["artifacts"] = {"histtype": "step"}
-            var_plt["bright_match"] = {}
+            var_plt["chkobj_type"] = {}
             var_plt["pos_err"] = {"range": [0.0, 5]}
             fig, axs = plt.subplots(4, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {}
             var_plt["flux_nxv"] = {"logx": True}
-            var_plt["assoc_ffactor"] = {}
+            var_plt["assoc_fdiff_s2n"] = {"range": [-10, 25]}
             var_plt["nr_fd_srcs"] = {}
             var_plt["pos_cpval"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
@@ -963,7 +963,7 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt[("artifacts", "flux")] = {
                 "yscale": "log",
             }
-            var_plt[("point_src_prob", "flux")] = {"yscale": "log"}
+            var_plt[("class_star", "flux")] = {"yscale": "log"}
             var_plt[("pos_err", "flux")] = {"yscale": "log"}
             var_plt[("r_fov", "artifacts")] = {}
             var_plt[("flux_err", "flux")] = {
@@ -988,8 +988,10 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt[("nr_det", "flux")] = {
                 "yscale": "log",
             }
-            var_plt[("nr_fd_srcs", "flux")] = {
+            var_plt[("assoc_fdiff_s2n", "assoc_ffactor")] = {
+                "xlim": [-10, 25],
                 "yscale": "log",
+                "ylim": [0.1, 100],
             }
             var_plt[("flux_cpval", "nr_det")] = {
                 "xscale": "log",
