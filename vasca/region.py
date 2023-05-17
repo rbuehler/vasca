@@ -313,7 +313,6 @@ class Region(TableCollection):
 
         # Add coadd source
         assoc_id = src.tt_sources["assoc_id"][0]
-        print(assoc_id)
         if assoc_id > -1:
             self.tt_coadd_sources.add_index("coadd_src_id")
             src._table_names.append("tt_coadd_sources")

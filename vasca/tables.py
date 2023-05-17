@@ -885,7 +885,8 @@ class TableCollection(object):
         tt_cat,
         cat_id_name="coadd_src_id",
         table_name="tt_sources",
-        dist_max=5 * uu.arcsec,
+        dist_max=1 * uu.arcsec,
+        dist_s2n_max=3,
     ):
         """
         Cross match sources to a catalog.
@@ -901,7 +902,11 @@ class TableCollection(object):
         table_name : str, optional
             Table to crossmatch to catalog. The default is "tt_sources".
         dist_max astropy.Quantity
-            Maximum angular distance. The default is "10 arcsec".
+            Maximum angular distance under which all associations are done, independent
+            of dist_s2n. The default is "1 arcsec".
+        dist_s2n_max float
+            Maximum distance in units of position error. All sources below this cut are
+            associated, independently of the dist_max selection.
 
         Returns
         -------
@@ -920,7 +925,15 @@ class TableCollection(object):
 
         idx_cat, dist_cat, _ = pos_srcs.match_to_catalog_sky(pos_cat)
 
-        sel = dist_cat.to("arcsec") < dist_max.to("arcsec")
+        sel_dist = dist_cat.to("arcsec") < dist_max.to("arcsec")
+
+        # Check how compatible positions are within errors
+        sigma_dist = (
+            np.sqrt(tt_srcs["pos_err"] ** 2 + tt_cat["pos_err"][idx_cat] ** 2) / 1.515
+        )  # Convert to 68% containment radius for 2D gaussian
+        sel_dist_s2n = (dist_cat.to("arcsec") / sigma_dist.to("arcsec")) < dist_s2n_max
+
+        sel = sel_dist + sel_dist_s2n
 
         tt_srcs["assoc_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
         tt_srcs["assoc_dist"][sel] = dist_cat[sel].to("arcsec")

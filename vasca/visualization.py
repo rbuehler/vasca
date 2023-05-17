@@ -1184,12 +1184,10 @@ def plot_light_curve(
     # Add a second flux axis in magnitudes
     def flux2mag_np(flux):
         return_mag = np.reshape(np.array(flux2mag(flux.flatten())[0]), (-1, 1))
-        # print("in flux", flux, "return_mag", return_mag)
         return return_mag
 
     def mag2flux_np(mag):
         return_flux = np.reshape(np.array(mag2flux(mag.flatten())), (-1, 1))
-        # print("in mag", mag, "return_flux", return_flux)
         return return_flux
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
