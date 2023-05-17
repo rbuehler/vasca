@@ -880,19 +880,33 @@ class TableCollection(object):
         self.__dict__[tt_src_name]["mag"][:] = mag
         self.__dict__[tt_src_name]["mag_err"][:] = mag_err
 
-    def cross_match(self, tt_cat, cat_id_name="coadd_src_id", table_name="tt_sources"):
+    def cross_match(
+        self,
+        tt_cat,
+        cat_id_name="coadd_src_id",
+        table_name="tt_sources",
+        dist_max=1 * uu.arcsec,
+        dist_s2n_max=3,
+    ):
         """
-        Cross match sources to a catalog
+        Cross match sources to a catalog.
 
         Parameters
         ----------
         tt_cat : astropy.Table
             Catalog table. Has to contain "ra","dec" (in deg), "flux" (in microJy)
-            and "cat_id_name" columns.
+            and "cat_id_name" columns.  Marks associated catalog sources
+            in the "sel" column of the catalog table, if it exists.
         cat_id_name : str, optional
             Catalog ID Br. variable name. The default is "coadd_src_id".
-        table_name : TYPE, optional
+        table_name : str, optional
             Table to crossmatch to catalog. The default is "tt_sources".
+        dist_max astropy.Quantity
+            Maximum angular distance under which all associations are done, independent
+            of dist_s2n. The default is "1 arcsec".
+        dist_s2n_max float
+            Maximum distance in units of position error. All sources below this cut are
+            associated, independently of the dist_max selection.
 
         Returns
         -------
@@ -911,6 +925,28 @@ class TableCollection(object):
 
         idx_cat, dist_cat, _ = pos_srcs.match_to_catalog_sky(pos_cat)
 
-        tt_srcs["assoc_id"][:] = tt_cat[idx_cat][cat_id_name]
-        tt_srcs["assoc_dist"][:] = dist_cat.to("arcsec")
-        tt_srcs["assoc_flux"][:] = tt_cat[idx_cat]["flux"]
+        sel_dist = dist_cat.to("arcsec") < dist_max.to("arcsec")
+
+        # Check how compatible positions are within errors
+        sigma_dist = (
+            np.sqrt(tt_srcs["pos_err"] ** 2 + tt_cat["pos_err"][idx_cat] ** 2) / 1.515
+        )  # Convert to 68% containment radius for 2D gaussian
+        sel_dist_s2n = (dist_cat.to("arcsec") / sigma_dist.to("arcsec")) < dist_s2n_max
+
+        sel = sel_dist + sel_dist_s2n
+
+        tt_srcs["assoc_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
+        tt_srcs["assoc_dist"][sel] = dist_cat[sel].to("arcsec")
+        tt_srcs["assoc_ffactor"][sel] = (
+            tt_srcs["flux"][sel] / tt_cat[idx_cat[sel]]["flux"]
+        )
+        flux_diff = tt_srcs["flux"][sel] - tt_cat[idx_cat[sel]]["flux"]
+        flux_diff_err = np.sqrt(
+            tt_srcs["flux_err"][sel] ** 2 + tt_cat[idx_cat[sel]]["flux_err"] ** 2
+        )
+        tt_srcs["assoc_fdiff_s2n"][sel] = flux_diff / flux_diff_err
+
+        # Mark as selected, if selection column exists
+        if "sel" in tt_cat.colnames:
+            tt_cat["sel"][:] = np.zeros(len(tt_cat), dtype=bool)
+            tt_cat["sel"][idx_cat[sel]] = np.ones(len(idx_cat[sel]), dtype=bool)

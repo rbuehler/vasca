@@ -931,19 +931,25 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt["flux"] = {"logx": True}
             var_plt["flux_err"] = {"logx": True}
             var_plt["r_fov"] = {"range": [0.0, 0.7]}
-            var_plt["point_src_prob"] = {}
+            var_plt["class_star"] = {}
             var_plt["artifacts"] = {"histtype": "step"}
-            var_plt["bright_match"] = {}
+            var_plt["chkobj_type"] = {}
             var_plt["pos_err"] = {"range": [0.0, 5]}
             fig, axs = plt.subplots(4, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {}
             var_plt["flux_nxv"] = {"logx": True}
-            var_plt["pos_rchiq"] = {}
+            var_plt["assoc_fdiff_s2n"] = {"range": [-10, 25]}
             var_plt["nr_fd_srcs"] = {}
             var_plt["pos_cpval"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
+        elif table_name == "tt_coadd_sources":
+            var_plt["nr_det"] = {}
+            var_plt["flux_cpval"] = {}
+            var_plt["pos_cpval"] = {}
+            var_plt["flux"] = {"logx": True}
+            fig, axs = plt.subplots(1, 4, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diagnostic for table '{table_name}' not defined")
 
@@ -954,12 +960,10 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
                 "yscale": "log",
                 "xlim": [1, 100],
             }
-            var_plt[("mag", "flux")] = {
+            var_plt[("artifacts", "flux")] = {
                 "yscale": "log",
-                "invert_xaxis": True,
-                "xlim": [14.5, 24.5],
             }
-            var_plt[("point_src_prob", "flux")] = {"yscale": "log"}
+            var_plt[("class_star", "flux")] = {"yscale": "log"}
             var_plt[("pos_err", "flux")] = {"yscale": "log"}
             var_plt[("r_fov", "artifacts")] = {}
             var_plt[("flux_err", "flux")] = {
@@ -976,16 +980,18 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             var_plt[("pos_cpval", "flux")] = {
                 "yscale": "log",
             }
-            var_plt[("pos_rchiq", "flux")] = {
-                # "xlim": [-0.001, 0.01],
+            var_plt[("assoc_ffactor", "flux")] = {
                 "yscale": "log",
-                # "xlim": [-0.01, 0.05],
+                "xlim": [0.1, 100],
+                "xscale": "log",
             }
             var_plt[("nr_det", "flux")] = {
                 "yscale": "log",
             }
-            var_plt[("nr_fd_srcs", "flux")] = {
+            var_plt[("assoc_fdiff_s2n", "assoc_ffactor")] = {
+                "xlim": [-10, 25],
                 "yscale": "log",
+                "ylim": [0.1, 100],
             }
             var_plt[("flux_cpval", "nr_det")] = {
                 "xscale": "log",
@@ -993,6 +999,19 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
             }
 
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
+        elif table_name == "tt_coadd_sources":
+            var_plt[("flux_cpval", "flux")] = {
+                "xscale": "log",
+                "yscale": "log",
+            }
+            var_plt[("pos_cpval", "flux")] = {
+                "yscale": "log",
+            }
+            var_plt[("nr_det", "flux")] = {
+                "yscale": "log",
+            }
+
+            fig, axs = plt.subplots(1, 3, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
     else:
@@ -1165,12 +1184,10 @@ def plot_light_curve(
     # Add a second flux axis in magnitudes
     def flux2mag_np(flux):
         return_mag = np.reshape(np.array(flux2mag(flux.flatten())[0]), (-1, 1))
-        # print("in flux", flux, "return_mag", return_mag)
         return return_mag
 
     def mag2flux_np(mag):
         return_flux = np.reshape(np.array(mag2flux(mag.flatten())), (-1, 1))
-        # print("in mag", mag, "return_flux", return_flux)
         return return_flux
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
