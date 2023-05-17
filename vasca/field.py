@@ -13,7 +13,7 @@ import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import Column, Table, conf, vstack
+from astropy.table import Table, conf, vstack
 from astropy.time import Time
 from astropy.utils.exceptions import AstropyWarning
 from astropy.wcs import wcs
