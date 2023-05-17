@@ -13,7 +13,7 @@ import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import Column, Table, conf, vstack
+from astropy.table import Table, conf, vstack
 from astropy.time import Time
 from astropy.utils.exceptions import AstropyWarning
 from astropy.wcs import wcs
@@ -1273,8 +1273,8 @@ class GALEXField(BaseField):
                 "s2n",
                 "r_fov",
                 "artifacts",
-                "point_src_prob",
-                "bright_match",
+                "class_star",
+                "chkobj_type",
                 "flux_f60",
                 "flux_f60_err",
                 "flux_f38",
