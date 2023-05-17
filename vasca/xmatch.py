@@ -1,3 +1,7 @@
+"""
+VASCA x-matching functions.
+"""
+
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
