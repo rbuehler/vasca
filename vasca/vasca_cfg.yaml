@@ -60,9 +60,8 @@ selection:
         presel_type : "or"
         sel_type    : "and"
         range:
-            nr_det          : [2,.inf]
-            pos_cpval       : [0.0000000001,.inf]    
-            assoc_ffactor   : [1.5,.inf]
+            nr_det          : [1,.inf]   
+            assoc_ffactor   : [2.0,.inf]
             assoc_fdiff_s2n : [7,.inf]
                     
 observations:
