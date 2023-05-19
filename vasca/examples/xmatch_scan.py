@@ -40,6 +40,6 @@ for catalog in tqdm(acms_cat_list, total=len(acms_cat_list), desc="ACMS Catalogs
         out_file = f"{out}/tt_matched_{catalog}.csv"
         if not os.path.isfile(out_file):
             logger.info(f"Writing query results to '{out_file}'")
-            tt_matched.write(f"{out}")
+            tt_matched.write(f"{out}", format="csv", overwrite=True)
     except Exception as e:
         logger.exception(f"Failed to query catalog '{catalog}'. Exception:\n{e}")
