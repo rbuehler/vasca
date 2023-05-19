@@ -41,7 +41,7 @@ for catalog in tqdm(acms_cat_list, total=len(acms_cat_list), desc="ACMS Catalogs
             )
 
             logger.info(f"Writing query results to '{out_file}'")
-            tt_matched.write(f"{out}", format="csv", overwrite=True)
+            tt_matched.write(f"{out_file}", format="csv", overwrite=True)
         else:
             logger.info(
                 f"Skipping x-matching for catalog '{catalog}'. "
