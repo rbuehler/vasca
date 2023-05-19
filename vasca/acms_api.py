@@ -166,7 +166,7 @@ def acms_xmatch_query(
     if response.status_code == html_err:
         logger.warning(f"RequestException: HTML Status {html_err}. ")
         if response.headers:
-            logger.warning(f"Response header: {response.header}. ")
+            logger.warning(f"Response header: {response.headers}. ")
         if not crash_hard:
             logger.warning("Returning None")
             return None
@@ -179,7 +179,7 @@ def acms_xmatch_query(
     except Exception as e:
         logger.warning(f"Could not extract json. Exception {e}. ")
         if response.headers:
-            logger.warning(f"Response header: {response.header}. ")
+            logger.warning(f"Response header: {response.headers}. ")
         logger.warning("Returning None")
         if not crash_hard:
             logger.warning("Returning None")
