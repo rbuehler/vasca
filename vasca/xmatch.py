@@ -198,7 +198,7 @@ def xmatch_ampel(
         data.append(row_data)
 
         # Mitigates server-side rate limit
-        sleep(0.05)
+        sleep(0.06)
 
     # Creates astropy table
     tt_matched = Table(rows=data)
