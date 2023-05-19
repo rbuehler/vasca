@@ -20,10 +20,20 @@ def backoff_hdlr(details):
     )
 
 
+def giveup_hdlr(details):
+    logger.warning(
+        f'Backoff retries failed after {details["wait"]:0.1f} seconds '
+        f'and {details["tries"]} tries. Raising ValueError.'
+    )
+    raise ValueError("ACMS query not possible atm.")
+
+
 @backoff.on_exception(
     backoff.expo,
     (requests.exceptions.RequestException, json.JSONDecodeError),
     max_time=60,
+    on_backoff=backoff_hdlr,
+    on_giveup=giveup_hdlr,
 )
 def get_acms_cat_info(queryurl=None):
     """
@@ -55,6 +65,7 @@ def get_acms_cat_info(queryurl=None):
     in case of `requests.exceptions.RequestException` or `json.JSONDecodeError`.
     The maximum time for retrying is set to 60 seconds.
     """
+    logger.debug("Fetching available catalogs from Ampel Catalog Matching Service.")
 
     if queryurl is None:
         queryurl = f"{API_CATALOGMATCH_URL}/catalogs/"
@@ -78,7 +89,6 @@ def get_acms_cat_info(queryurl=None):
     else:
         return None
 
-    logger.debug("Fetching available catalogs from Ampel Catalog Matching Service.")
     return cat_info
 
 
@@ -87,6 +97,7 @@ def get_acms_cat_info(queryurl=None):
     requests.exceptions.RequestException,
     max_time=600,
     on_backoff=backoff_hdlr,
+    on_giveup=giveup_hdlr,
 )
 def acms_xmatch_query(
     catalog: str,
