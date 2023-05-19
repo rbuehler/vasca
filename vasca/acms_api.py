@@ -12,6 +12,14 @@ API_BASEURL = "https://ampel.zeuthen.desy.de"
 API_CATALOGMATCH_URL = API_BASEURL + "/api/catalogmatch"
 
 
+def backoff_hdlr(details):
+    logger.warning(
+        f'Backing off {details["wait"]:0.1f} seconds after {details["tries"]} tries '
+        f'calling function {details["target"]} with args {details["args"]} and kwargs '
+        f'{details["kwargs"]}'
+    )
+
+
 @backoff.on_exception(
     backoff.expo,
     (requests.exceptions.RequestException, json.JSONDecodeError),
@@ -74,7 +82,12 @@ def get_acms_cat_info(queryurl=None):
     return cat_info
 
 
-@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_time=600)
+@backoff.on_exception(
+    backoff.expo,
+    requests.exceptions.RequestException,
+    max_time=600,
+    on_backoff=backoff_hdlr,
+)
 def acms_xmatch_query(
     catalog: str,
     catalog_type: str,
