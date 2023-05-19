@@ -446,12 +446,11 @@ class TableCollection(object):
             logger.error("Table does not have selection column")
 
         # Get selected events
-        sel = tt["sel"].data.astype("bool")
-        nr_sel = sel.sum()
-        sel = tt["sel"].data.astype("bool")
-        nr_sel = sel.sum()
+        presel = tt["sel"].data.astype("bool")
+        nr_presel = presel.sum()
 
         if selections["sel_type"] == "and":
+            sel = np.ones(len(tt), dtype=bool)
 
             # Apply min/max cuts
             if "range" in selections.keys():
@@ -459,7 +458,7 @@ class TableCollection(object):
                     sel = sel * (tt[var] >= vals[0]) * (tt[var] <= vals[1])
                     logger.info(
                         f"AND selecting '{var}' {vals}, "
-                        f"kept: {100*sel.sum()/nr_sel : .4f}%"
+                        f"kept: {100*sel.sum()/nr_presel : .4f}%"
                     )
 
             # Apply bitmask cuts
@@ -476,30 +475,33 @@ class TableCollection(object):
                     sel = sel * ~bit
                     logger.info(
                         f"AND selecting bitmask '{var}' removing {vals}, "
-                        f"kept: {100*sel.sum()/nr_sel : .4f}%"
+                        f"kept: {100*sel.sum()/nr_presel : .4f}%"
                     )
         elif selections["sel_type"] == "or":
-            sel_or = np.zeros(len(sel))
+            sel = np.zeros(len(sel), dtype=bool)
 
             if "range" in selections.keys():
                 for var, vals in selections["range"].items():
-                    sel_or = sel_or + (tt[var] >= vals[0]) * (tt[var] <= vals[1])
+                    sel = sel + (tt[var] >= vals[0]) * (tt[var] <= vals[1])
                     logger.info(
                         f"OR selecting '{var}' {vals}, "
-                        f"kept: {100*sel_or.sum()/nr_sel : .4f}%"
+                        f"kept: {100*sel.sum()/nr_presel : .4f}%"
                     )
-                sel = sel * sel_or
         elif selections["sel_type"] == "is_in":
             tt_ref = self.__dict__[selections["ref_table"]]
             sel = np.in1d(tt[selections["var"]], tt_ref[selections["var"]])
         else:
             logger.error("Unkown selection type.")
 
-        sel = sel.astype("bool")
-        tt.replace_column("sel", sel)
+        # combine with preselection
+        sel_tot = presel * sel
+        if selections["presel_type"].casefold() == "or".casefold():
+            sel_tot = presel + sel
+
+        tt.replace_column("sel", sel_tot.astype("bool"))
 
         if remove_unselected:
-            tt = tt[sel]
+            tt = tt[sel_tot]
 
         # Set minimum and maximum values if asked
         if "set_range" in selections.keys():
@@ -928,8 +930,8 @@ class TableCollection(object):
         sel_dist = dist_cat.to("arcsec") < dist_max.to("arcsec")
 
         # Check how compatible positions are within errors
-        sigma_dist = (
-            np.sqrt(tt_srcs["pos_err"] ** 2 + tt_cat["pos_err"][idx_cat] ** 2) / 1.515
+        sigma_dist = np.sqrt(
+            tt_srcs["pos_err"] ** 2 + tt_cat["pos_err"][idx_cat] ** 2
         )  # Convert to 68% containment radius for 2D gaussian
         sel_dist_s2n = (dist_cat.to("arcsec") / sigma_dist.to("arcsec")) < dist_s2n_max
 

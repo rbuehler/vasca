@@ -12,6 +12,7 @@ from multiprocessing import Pool
 
 import yaml
 from loguru import logger
+from astropy import units as uu
 
 from vasca.region import Region
 from vasca.utils import get_field_id
@@ -237,13 +238,16 @@ def run(vasca_cfg):
     rg.set_src_stats(src_id_name="coadd_src_id")
 
     # Match sources to coadd sources
-    rg.cross_match(tt_cat=rg.tt_coadd_sources, table_name="tt_sources")
-
-    # Remove sources with quality cuts
-    rg.select_rows(vasca_cfg["selection"]["src_quality"], remove_unselected=True)
+    rg.cross_match(
+        tt_cat=rg.tt_coadd_sources,
+        table_name="tt_sources",
+        dist_max=vasca_cfg["assoc_src_coadd"]["dist_max"] * uu.arcsec,
+        dist_s2n_max=vasca_cfg["assoc_src_coadd"]["dist_s2n_max"],
+    )
 
     # Select variable sources
     rg.select_rows(vasca_cfg["selection"]["src_variability"], remove_unselected=False)
+    rg.select_rows(vasca_cfg["selection"]["src_coadd_diff"], remove_unselected=False)
 
     # Remove detections not associated to selected sources
     if "det_association" in vasca_cfg["selection"].keys():
