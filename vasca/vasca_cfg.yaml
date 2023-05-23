@@ -12,7 +12,7 @@ general:
     
 ressources:                      
     load_method      : "MAST_LOCAL"                     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
-    load_products    : "ALL"                       # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
+    load_products    : "TABLES"                         # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     field_kwargs:
         data_path        : null
         visits_data_path : null 
@@ -41,8 +41,7 @@ cluster_coadd_dets:
 
 assoc_src_coadd:
     dist_max      : 1        # Associate nearest source below this distance in arc_sec  OR
-    dist_s2n_max  : 3        # Associate nearest source with this distance in units of "squared sumed position error"
-    
+    dist_s2n_max  : 3        # Associate nearest source with this distance in units of "squared sumed position error"   
         
 selection:
     src_variability:
@@ -126,13 +125,102 @@ observations:
         # - 2593934984603500544  #PS_CDFS_MOS04
         # - 2594005353347678208  #PS_CDFS_MOS05
         # - 2594075722091855872  #PS_CDFS_MOS06
-        - 2597312684324028416  #PS_ELAISN1_MOS10
-        - 2597383053068206080  #PS_ELAISN1_MOS11
-        - 2597453421812383744  #PS_ELAISN1_MOS12
-        - 2597523790556561408  #PS_ELAISN1_MOS13
-        - 2597594159300739072  #PS_ELAISN1_MOS14
+        # - 2597312684324028416  #PS_ELAISN1_MOS10
+        # - 2597383053068206080  #PS_ELAISN1_MOS11
+        # - 2597453421812383744  #PS_ELAISN1_MOS12
+        # - 2597523790556561408  #PS_ELAISN1_MOS13
+        #- 2597594159300739072  #PS_ELAISN1_MOS14
         - 2597664528044916736  #PS_ELAISN1_MOS15
-        - 2597734896789094400  #PS_ELAISN1_MOS16
+        # - 2597734896789094400  #PS_ELAISN1_MOS16
+        # - 2597875634277449728  #PS_VVDS22H_MOS00
+        # - 2597946003021627392  #PS_VVDS22H_MOS01
+        # - 2598016371765805056  #PS_VVDS22H_MOS02
+        # - 2598086740509982720  #PS_VVDS22H_MOS03
+        # - 2598157109254160384  #PS_VVDS22H_MOS04
+        # - 2598227477998338048  #PS_VVDS22H_MOS05
+        # - 2598297846742515712  #PS_VVDS22H_MOS06
+        # - 2604912508670050304  #PS_COSMOS_MOS21
+        # - 2604982877414227968  #PS_COSMOS_MOS22
+        # - 2605053246158405632  #PS_COSMOS_MOS23
+        # - 2605123614902583296  #PS_COSMOS_MOS24
+        # - 2605193983646760960  #PS_COSMOS_MOS25
+        # - 2605264352416104448  #PS_COSMOS_MOS26
+        # - 2605334721135116288  #PS_COSMOS_MOS27
+        # - 2607023571020546048  #PS_GROTH_MOS01
+        # - 2607093939764723712  #PS_GROTH_MOS02
+        # - 2607164308508901376  #PS_GROTH_MOS03
+        # - 2607234677253079040  #PS_GROTH_MOS04
+        # - 2607305045997256704  #PS_GROTH_MOS05
+        # - 2607375414741434368  #PS_GROTH_MOS06
+        # - 2607445783485612032  #PS_GROTH_MOS07
+  - observatory   : "GALEX"
+    obs_filter    : "FUV"
+    cluster_det:
+        meanshift:
+            bandwidth     : 4               # In arcsec, to estimate it automatically specify "null"
+            seeds         : null
+            bin_seeding   : false
+            min_bin_freq  : 1
+            cluster_all   : true
+            n_jobs        : null
+            max_iter      : 300
+            table_name    : "tt_detections"
+
+    selection:
+        det_quality:
+            table       : "tt_detections"
+            presel_type : "and"
+            sel_type    : "and"
+            # See variable description http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1
+            range:
+                s2n            : [3.5,.inf]
+                r_fov          : [0.0,0.55]
+                class_star     : [0.6,1.0]        # Extension classifier (extended=0, point like=1)
+                chkobj_type    : [-0.5,0.5]       # Matched to a bright star (0=no, 1=yes)
+            bitmask:
+                # Specify the artifacts to remove
+                # For GALEX a description is at the end of this document
+                artifacts : [1,2,4,8,128]
+            #If below/above this value will set it to min/max
+            set_range:
+                pos_err : [0.5,5] # In arcsec
+        det_association :
+            table       : "tt_detections"
+            ref_table   : "tt_sources"
+            presel_type : "and"
+            sel_type    : "is_in"
+            var         : "fd_src_id"
+        coadd_det_quality:
+            table    : "tt_coadd_detections"
+            presel_type : "and"
+            sel_type : "and"  # These are all AND selections
+            range:
+                s2n            : [4,.inf]
+                r_fov          : [0.0,0.55]
+            
+    obs_field_ids :
+        # All TDS fields
+        # - 2592597978464124928  #PS_XMMLSS_MOS00
+        # - 2592668347208302592  #PS_XMMLSS_MOS01
+        # - 2592738715952480256  #PS_XMMLSS_MOS02
+        # - 2592809084696657920  #PS_XMMLSS_MOS03
+        # - 2592879453440835584  #PS_XMMLSS_MOS04
+        # - 2592949822185013248  #PS_XMMLSS_MOS05
+        # - 2593020190929190912  #PS_XMMLSS_MOS06
+        # - 2593653509626789888  #PS_CDFS_MOS00
+        # - 2593723878370967552  #PS_CDFS_MOS01
+        # - 2593794247115145216  #PS_CDFS_MOS02
+        # - 2593864615859322880  #PS_CDFS_MOS03
+        # - 2593934984603500544  #PS_CDFS_MOS04
+        # - 2594005353347678208  #PS_CDFS_MOS05
+        # - 2594075722091855872  #PS_CDFS_MOS06
+        # - 2597312684324028416  #PS_ELAISN1_MOS10
+        # - 2597383053068206080  #PS_ELAISN1_MOS11
+        # - 2597453421812383744  #PS_ELAISN1_MOS12
+        # - 2597523790556561408  #PS_ELAISN1_MOS13
+        #- 2597594159300739072  #PS_ELAISN1_MOS14
+        - 2597664528044916736  #PS_ELAISN1_MOS15
+        # - 2597734896789094400  #PS_ELAISN1_MOS16
         # - 2597875634277449728  #PS_VVDS22H_MOS00
         # - 2597946003021627392  #PS_VVDS22H_MOS01
         # - 2598016371765805056  #PS_VVDS22H_MOS02

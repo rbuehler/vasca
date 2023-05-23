@@ -71,10 +71,10 @@ class Region(TableCollection):
         logger.debug("Loading fields from config file")
 
         # Loop over all observations
+        rg_fd_id = 0
         for obs in vasca_cfg["observations"]:
             if obs["observatory"] == "GALEX":
                 # Loop over fields and store info
-                rg_fd_id = 0
                 for gfield_id in obs["obs_field_ids"]:
                     gf = GALEXField.load(
                         gfield_id,

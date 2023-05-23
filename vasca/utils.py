@@ -23,6 +23,7 @@ from scipy.stats import binned_statistic
 # The number of Id adon letter has to be three
 # See get_field_id funtion below.
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
+dd_filter_id = {"NUV": 1, "FUV": 2}
 
 
 def flux2mag(flux, flux_err=None):

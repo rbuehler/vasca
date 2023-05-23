@@ -13,6 +13,7 @@ from multiprocessing import Pool
 import yaml
 from loguru import logger
 from astropy import units as uu
+from astropy.table import unique
 
 from vasca.region import Region
 from vasca.utils import get_field_id
@@ -225,6 +226,7 @@ def run(vasca_cfg):
 
     # Add field tables to region
     rg.add_table_from_fields("tt_visits")
+    rg.tt_visits = unique(rg.tt_visits, keys="vis_id")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)
     rg.add_table_from_fields("tt_coadd_detections")

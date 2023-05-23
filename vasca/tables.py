@@ -655,11 +655,20 @@ class TableCollection(object):
                 "dec": cluster_centers[:, 1],
                 "nr_fd_srcs": clu_cts,
                 "nr_uls": np.zeros(nr_srcs),
+                "filter_id": list(),
             }
 
             # Add rg_src_id to detections
             tt_in["rg_src_id"][sel] = ms.labels_
             add_rg_src_id(tt_in[sel], self.tt_detections)
+
+            # Add filter info
+            # TODO: Write this vecotrized for speed increase
+            tt_in.add_index("rg_src_id")
+            for rg_src_id in src_ids:
+                idxs = tt_in.loc_indices["rg_src_id", rg_src_id]
+                filter_ids = np.unique(tt_in["filter_id"][idxs].data)
+                srcs_data["filter_id"].append(filter_ids.sum())
 
             # Remove existing table and add new one
             del self.__dict__["tt_sources"]
@@ -681,12 +690,18 @@ class TableCollection(object):
             logger.debug(f"Merged sources: {nr_merged} ({perc_merged}%)")
 
         elif table_name == "tt_detections":
+
+            # Assume all detections have the same filter_id
+            # TODO: This might have to be extendet to the general case in the future.
+            filter_id = self.tt_detections["filter_id"][0]
+
             srcs_data = {
                 "fd_src_id": src_ids,
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
                 "nr_det": clu_cts,
                 "nr_uls": np.zeros(nr_srcs),
+                "filter_id": np.zeros(nr_srcs) + filter_id,
             }
 
             # Fill information into tables.
@@ -695,8 +710,9 @@ class TableCollection(object):
             # Update fd_src_id entries
             self.tt_detections["fd_src_id"][np.where(sel)] = ms.labels_
 
-            # Fill light curve data into tables
+            # Remove two detections in the same visit (keep the closer one)
             self.remove_double_visit_detections()
+
         elif table_name == "tt_coadd_detections":
             coadd_data = {
                 "coadd_src_id": src_ids,
@@ -704,11 +720,23 @@ class TableCollection(object):
                 "dec": cluster_centers[:, 1],
                 "nr_det": clu_cts,
                 "nr_uls": np.zeros(nr_srcs),
+                "filter_id": list(),
             }
+
+            # Add source label to coadd detections
+            self.tt_coadd_detections["coadd_src_id"][np.where(sel)] = ms.labels_
+
+            # Add filter id
+            self.tt_coadd_detections.add_index("coadd_src_id")
+            for coadd_src_id in src_ids:
+                idxs = self.tt_coadd_detections.loc_indices[
+                    "coadd_src_id", coadd_src_id
+                ]
+                filter_ids = np.unique(self.tt_coadd_detections["filter_id"][idxs].data)
+                coadd_data["filter_id"].append(filter_ids.sum())
 
             # Fill information into tables.
             self.add_table(coadd_data, "region:tt_coadd_sources")
-            self.tt_coadd_detections["coadd_src_id"][np.where(sel)] = ms.labels_
 
         else:
             logger.error("Unkown table name")

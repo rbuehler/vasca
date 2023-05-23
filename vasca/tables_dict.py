@@ -79,6 +79,7 @@ base_field = {
             "flux",
             "flux_err",
             "s2n",
+            "filter_id",
             "sel",
         ],
         "dtype": [
@@ -90,6 +91,7 @@ base_field = {
             "float32",
             "float32",
             "float32",
+            "int32",
             "bool",
         ],
         "units": [
@@ -102,8 +104,9 @@ base_field = {
             "1e-6Jy",
             "1",
             "1",
+            "1",
         ],
-        "defaults": [-1, -1, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, True],
+        "defaults": [-1, -1, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0, True],
         "descriptions": [
             "Visit ID associated to the visit detection",
             "Source ID associated to the visit detection",
@@ -113,6 +116,7 @@ base_field = {
             "Visit detection flux density",
             "Visit detection flux density error",
             "Signal to noise",
+            "Filter ID number",
             "Selection of rows for VASCA analysis.",
         ],
         "meta": {"INFO": "Visit detections table"},
@@ -128,6 +132,7 @@ base_field = {
             "s2n",
             "mag",
             "mag_err",
+            "filter_id",
             "sel",
         ],
         "dtype": [
@@ -140,6 +145,7 @@ base_field = {
             "float32",
             "float32",
             "float32",
+            "int32",
             "bool",
         ],
         "units": [
@@ -153,8 +159,9 @@ base_field = {
             "mag",
             "mag",
             "1",
+            "1",
         ],
-        "defaults": [-1, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, True],
+        "defaults": [-1, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 0, True],
         "descriptions": [
             "Reference source ID nr.",
             "Reference source RA (J2000)",
@@ -165,6 +172,7 @@ base_field = {
             "Signal to noise",
             "AB magnitude",
             "AB magnitude error",
+            "Filter ID number",
             "Selection of rows for VASCA analysis.",
         ],
         "meta": {"INFO": "Reference detections table"},
@@ -197,6 +205,7 @@ base_field = {
             "assoc_dist",
             "assoc_ffactor",
             "assoc_fdiff_s2n",
+            "filter_id",
             "sel",
         ],
         "dtype": [
@@ -226,6 +235,7 @@ base_field = {
             "float32",
             "float32",
             "float32",
+            "int32",
             "bool",
         ],
         "units": [
@@ -253,6 +263,7 @@ base_field = {
             "mag",
             "1",
             "arcsec",
+            "1",
             "1",
             "1",
             "1",
@@ -284,6 +295,7 @@ base_field = {
             -1.0,
             -100.0,
             -10000.0,
+            0,
             True,
         ],
         "descriptions": [
@@ -313,6 +325,7 @@ base_field = {
             "Angular distance to associated source",
             "Source flux divided by flux of the associated source",
             "Signal to noise of the flux difference",
+            "Filter ID number",
             "Selection of rows for VASCA analysis.",
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
