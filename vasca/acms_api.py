@@ -12,10 +12,28 @@ API_BASEURL = "https://ampel.zeuthen.desy.de"
 API_CATALOGMATCH_URL = API_BASEURL + "/api/catalogmatch"
 
 
+def backoff_hdlr(details):
+    logger.warning(
+        f'Backing off {details["wait"]:0.1f} seconds after {details["tries"]} tries '
+        f'calling function {details["target"]} with args {details["args"]} and kwargs '
+        f'{details["kwargs"]}'
+    )
+
+
+def giveup_hdlr(details):
+    logger.warning(
+        f'Backoff retries failed after {details["wait"]:0.1f} seconds '
+        f'and {details["tries"]} tries. Raising ValueError.'
+    )
+    raise ValueError("ACMS query not possible atm.")
+
+
 @backoff.on_exception(
     backoff.expo,
     (requests.exceptions.RequestException, json.JSONDecodeError),
     max_time=60,
+    on_backoff=backoff_hdlr,
+    on_giveup=giveup_hdlr,
 )
 def get_acms_cat_info(queryurl=None):
     """
@@ -47,6 +65,7 @@ def get_acms_cat_info(queryurl=None):
     in case of `requests.exceptions.RequestException` or `json.JSONDecodeError`.
     The maximum time for retrying is set to 60 seconds.
     """
+    logger.debug("Fetching available catalogs from Ampel Catalog Matching Service.")
 
     if queryurl is None:
         queryurl = f"{API_CATALOGMATCH_URL}/catalogs/"
@@ -70,11 +89,16 @@ def get_acms_cat_info(queryurl=None):
     else:
         return None
 
-    logger.debug("Fetching available catalogs from Ampel Catalog Matching Service.")
     return cat_info
 
 
-@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_time=600)
+@backoff.on_exception(
+    backoff.expo,
+    requests.exceptions.RequestException,
+    max_time=600,
+    on_backoff=backoff_hdlr,
+    on_giveup=giveup_hdlr,
+)
 def acms_xmatch_query(
     catalog: str,
     catalog_type: str,
@@ -166,7 +190,7 @@ def acms_xmatch_query(
     if response.status_code == html_err:
         logger.warning(f"RequestException: HTML Status {html_err}. ")
         if response.headers:
-            logger.warning(f"Response header: {response.header}. ")
+            logger.warning(f"Response header: {response.headers}. ")
         if not crash_hard:
             logger.warning("Returning None")
             return None
@@ -179,7 +203,7 @@ def acms_xmatch_query(
     except Exception as e:
         logger.warning(f"Could not extract json. Exception {e}. ")
         if response.headers:
-            logger.warning(f"Response header: {response.header}. ")
+            logger.warning(f"Response header: {response.headers}. ")
         logger.warning("Returning None")
         if not crash_hard:
             logger.warning("Returning None")

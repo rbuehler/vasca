@@ -1,6 +1,7 @@
 """
 VASCA x-matching functions.
 """
+from time import sleep
 
 import numpy as np
 from astropy import units as uu
@@ -186,7 +187,7 @@ def xmatch_ampel(
             search_radius_arcsec=search_radius_arcsec,
             search_type="nearest",
             cache_dir=None,
-            crash_hard=False,
+            crash_hard=True,
         )
 
         # Collects data if response is valid
@@ -195,6 +196,9 @@ def xmatch_ampel(
             row_data.update({"vasca_dist": res["dist_arcsec"], **res["body"]})
 
         data.append(row_data)
+
+        # Mitigates server-side rate limit
+        sleep(0.06)
 
     # Creates astropy table
     tt_matched = Table(rows=data)
