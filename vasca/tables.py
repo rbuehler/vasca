@@ -654,7 +654,6 @@ class TableCollection(object):
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
                 "nr_fd_srcs": clu_cts,
-                "nr_uls": np.zeros(nr_srcs),
                 "filter_id": list(),
             }
 
@@ -700,7 +699,6 @@ class TableCollection(object):
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
                 "nr_det": clu_cts,
-                "nr_uls": np.zeros(nr_srcs),
                 "filter_id": np.zeros(nr_srcs) + filter_id,
             }
 
@@ -719,7 +717,6 @@ class TableCollection(object):
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
                 "nr_det": clu_cts,
-                "nr_uls": np.zeros(nr_srcs),
                 "filter_id": list(),
             }
 
@@ -794,21 +791,23 @@ class TableCollection(object):
         # Prepare detection data
         sel_det = self.__dict__[tt_det_name]["sel"]
         tt_det = Table(self.__dict__[tt_det_name][sel_det], copy=True)
-        tt_det.sort(src_id_name)
+        tt_det.sort([src_id_name, "filter_id"])
 
         # Get src_ids, src_index and det_nr
         src_ids, src_indices, src_nr_det = np.unique(
             tt_det[src_id_name].data, return_index=True, return_counts=True
         )
 
-        # Buffer input data and convert position errors to degrees
-        ll_det_var = ["flux", "flux_err", "ra", "dec", "flux", "flux_err"]
-        dd_det_var = dict()
+        # Check which filter ids are present
+        filter_ids = np.sort(np.unique(tt_det["filter_id"].data))
+        nr_filters = len(filter_ids)
+
+        # Buffer input data for speed and convert position errors to degrees
+        dd_det_var = {"pos_err_deg": tt_det["pos_err"].data.astype(np.float64) / 3600.0}
+        ll_det_var = ["flux", "flux_err", "ra", "dec", "filter_id"]
         for bvar in ll_det_var:
             dd_det_var[bvar] = tt_det[bvar].data
-        dd_det_var["pos_err_deg"] = tt_det["pos_err"].data.astype(np.float64) / 3600.0
 
-        # Prepare output data arrays
         ll_src_var = [
             "ra",
             "dec",
@@ -823,38 +822,19 @@ class TableCollection(object):
             "flux_var",
             "flux_cpval",
             "flux_rchiq",
-            "flux_dmaxabs",
-            "flux_sigmax",
-            "flux_sigmax_dflux",
-            "flux_skew",
         ]
 
         # Dictionary to store calculated source parameters
         dd_src_var = dict()
         for svar in ll_src_var:
-            dd_src_var[svar] = np.zeros(len(src_ids))
+            dd_src_var[svar] = list()  # np.zeros(len(src_ids))
 
-        # Do loop and calculate stats variables
+        # Do loop over all sources and calculate stats variables
         for isrc, srcid in enumerate(src_ids):
             idx1 = src_indices[isrc]
             idx2 = idx1 + src_nr_det[isrc]
 
-            # Flux statistical variables
-            rr_flux = get_var_stat(
-                dd_det_var["flux"][idx1:idx2], dd_det_var["flux_err"][idx1:idx2]
-            )
-            dd_src_var["flux"][isrc] = rr_flux["wght_mean"]
-            dd_src_var["flux_err"][isrc] = rr_flux["wght_mean_err"]
-            dd_src_var["flux_nxv"][isrc] = rr_flux["nxv"]
-            dd_src_var["flux_var"][isrc] = rr_flux["var"]
-            dd_src_var["flux_cpval"][isrc] = rr_flux["cpval"]
-            dd_src_var["flux_rchiq"][isrc] = rr_flux["rchiq"]
-
             # Position variables
-
-            # In 2d the 68% conficdence level is at 1.515 sigma1d for a symmetric 2d Gaussian
-            # Therefore converting back 2d to 1d coonfidence interval
-            # pos_err_1d = dd_det_var["pos_err"][idx1:idx2]  # / 1.515
             rr_ra = get_var_stat(
                 dd_det_var["ra"][idx1:idx2],
                 dd_det_var["pos_err_deg"][idx1:idx2],
@@ -863,52 +843,58 @@ class TableCollection(object):
                 dd_det_var["dec"][idx1:idx2],
                 dd_det_var["pos_err_deg"][idx1:idx2],
             )
-            dd_src_var["ra"][isrc] = rr_ra["wght_mean"]
-            dd_src_var["dec"][isrc] = rr_dec["wght_mean"]
-            dd_src_var["pos_err"][isrc] = (
-                (rr_ra["wght_mean_err"] + rr_dec["wght_mean_err"]) * 3600 / 2.0
+            dd_src_var["ra"].append(rr_ra["wght_mean"])
+            dd_src_var["dec"].append(rr_dec["wght_mean"])
+            dd_src_var["pos_err"].append(
+                ((rr_ra["wght_mean_err"] + rr_dec["wght_mean_err"]) * 3600 / 2.0)
             )
-            dd_src_var["pos_nxv"][isrc] = (rr_ra["nxv"] + rr_dec["nxv"]) / 2.0
-            dd_src_var["pos_var"][isrc] = (
-                (rr_ra["var"] + rr_dec["var"]) * (3600**2) / 2.0
+            dd_src_var["pos_nxv"].append((rr_ra["nxv"] + rr_dec["nxv"]) / 2.0)
+            dd_src_var["pos_var"].append(
+                ((rr_ra["var"] + rr_dec["var"]) * (3600**2) / 2.0)
             )
-            dd_src_var["pos_cpval"][isrc] = rr_ra["cpval"] * rr_dec["cpval"]
-            dd_src_var["pos_rchiq"][isrc] = (rr_ra["rchiq"] + rr_dec["rchiq"]) / 2.0
+            dd_src_var["pos_cpval"].append(rr_ra["cpval"] * rr_dec["cpval"])
+            dd_src_var["pos_rchiq"].append((rr_ra["rchiq"] + rr_dec["rchiq"]) / 2.0)
 
-            # Skewness
-            if src_nr_det[isrc] > 2:
-                dd_src_var["flux_skew"][isrc] = skew(
-                    dd_det_var["flux"][idx1:idx2], bias=False
+            # Check at what index filter changes and analyse separatelly
+            idxfs = np.where(
+                np.diff(dd_det_var["filter_id"][idx1:idx2], prepend=np.nan)
+            )[0]
+            idxfs = np.append(idxfs, idx2 - idx1)
+
+            # Create empty array
+            # TODO: bring defaults, etc automatically in synch with tables_dict.py info
+            aa_zero = np.zeros(nr_filters, dtype=np.float32)
+            dd_src_var["flux"].append(np.copy(aa_zero) - 1.0)
+            dd_src_var["flux_err"].append(np.copy(aa_zero) - 1.0)
+            dd_src_var["flux_nxv"].append(np.copy(aa_zero) - 100.0)
+            dd_src_var["flux_var"].append(np.copy(aa_zero) - 1.0)
+            dd_src_var["flux_cpval"].append(np.copy(aa_zero) - 1.0)
+            dd_src_var["flux_rchiq"].append(np.copy(aa_zero) - 1.0)
+
+            # Loop over all filters
+            for ii in range(len(idxfs) - 1):
+                rr_flux = get_var_stat(
+                    dd_det_var["flux"][idx1 + idxfs[ii] : idx2 + idxfs[ii + 1]],
+                    dd_det_var["flux_err"][idx1 + idxfs[ii] : idx2 + idxfs[ii + 1]],
                 )
-            else:
-                dd_src_var["flux_skew"][isrc] = -100.0
-
-            # Maximum variation significance
-            dflux = np.abs(dd_det_var["flux"][idx1:idx2] - dd_src_var["flux"][isrc])
-            dflux_sig = dflux / dd_det_var["flux_err"][idx1:idx2]
-            dmax_sig_max_idx = np.argmax(dflux_sig)
-
-            dd_src_var["flux_sigmax"][isrc] = dflux_sig[dmax_sig_max_idx]
-            dd_src_var["flux_sigmax_dflux"][isrc] = dflux[dmax_sig_max_idx]
-
-            # Maximum absolute variation
-            dflux_abs_max = dflux.max()
-            dd_src_var["flux_dmaxabs"][isrc] = dflux_abs_max
+                filter_id = dd_det_var["filter_id"][idx1 + idxfs[ii]]
+                filter_nr = np.where(filter_ids == filter_id)
+                dd_src_var["flux"][-1][filter_nr] = rr_flux["wght_mean"]
+                dd_src_var["flux_err"][-1][filter_nr] = rr_flux["wght_mean_err"]
+                dd_src_var["flux_nxv"][-1][filter_nr] = rr_flux["nxv"]
+                dd_src_var["flux_var"][-1][filter_nr] = rr_flux["var"]
+                dd_src_var["flux_cpval"][-1][filter_nr] = rr_flux["cpval"]
+                dd_src_var["flux_rchiq"][-1][filter_nr] = rr_flux["rchiq"]
 
         # Write them into tt_sources
-        self.__dict__[tt_src_name].add_index(src_id_name)
-        src_idx = self.__dict__[tt_src_name].loc_indices[src_id_name, src_ids]
+        # self.__dict__[tt_src_name].add_index(src_id_name)
+        # src_idx = self.__dict__[tt_src_name].loc_indices[src_id_name, src_ids]
+        # print("1", src_idx, len(src_idx))
+        # print("2", src_ids, len(src_ids))
 
         for svar in ll_src_var:
-            self.__dict__[tt_src_name][svar][src_idx] = dd_src_var[svar]
-
-        # Add magnitudes to source info
-        mag, mag_err = flux2mag(
-            self.__dict__[tt_src_name]["flux"].quantity,
-            self.__dict__[tt_src_name]["flux_err"].quantity,
-        )
-        self.__dict__[tt_src_name]["mag"][:] = mag
-        self.__dict__[tt_src_name]["mag_err"][:] = mag_err
+            print(svar)
+            self.__dict__[tt_src_name].replace_column(svar, dd_src_var[svar])
 
     def cross_match(
         self,
