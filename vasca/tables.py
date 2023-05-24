@@ -454,8 +454,16 @@ class TableCollection(object):
 
             # Apply min/max cuts
             if "range" in selections.keys():
+
                 for var, vals in selections["range"].items():
-                    sel = sel * (tt[var] >= vals[0]) * (tt[var] <= vals[1])
+
+                    # Check if variable is stored in verctor for all filters
+                    var_vals = tt[var]
+                    if len(np.array(var_vals[0]).flatten()) > 1:
+                        var_vals = var_vals[:, selections["filter_idx"]]
+
+                    sel = sel * (var_vals >= vals[0]) * (var_vals <= vals[1])
+
                     logger.info(
                         f"AND selecting '{var}' {vals}, "
                         f"kept: {100*sel.sum()/nr_presel : .4f}%"
@@ -482,7 +490,13 @@ class TableCollection(object):
 
             if "range" in selections.keys():
                 for var, vals in selections["range"].items():
-                    sel = sel + (tt[var] >= vals[0]) * (tt[var] <= vals[1])
+
+                    # Check if variable is stored in verctor for all filters
+                    var_vals = tt[var]
+                    if len(np.array(var_vals[0]).flatten()) > 1:
+                        var_vals = var_vals[:, selections["filter_idx"]]
+
+                    sel = sel + (var_vals >= vals[0]) * (var_vals <= vals[1])
                     logger.info(
                         f"OR selecting '{var}' {vals}, "
                         f"kept: {100*sel.sum()/nr_presel : .4f}%"
