@@ -822,6 +822,7 @@ class TableCollection(object):
             "flux_var",
             "flux_cpval",
             "flux_rchiq",
+            "nr_det",
         ]
 
         # Dictionary to store calculated source parameters
@@ -870,6 +871,7 @@ class TableCollection(object):
             dd_src_var["flux_var"].append(np.copy(aa_zero) - 1.0)
             dd_src_var["flux_cpval"].append(np.copy(aa_zero) - 1.0)
             dd_src_var["flux_rchiq"].append(np.copy(aa_zero) - 1.0)
+            dd_src_var["nr_det"].append(np.zeros(nr_filters, dtype=np.int32) - 1)
 
             # Loop over all filters
             for ii in range(len(idxfs) - 1):
@@ -885,15 +887,9 @@ class TableCollection(object):
                 dd_src_var["flux_var"][-1][filter_nr] = rr_flux["var"]
                 dd_src_var["flux_cpval"][-1][filter_nr] = rr_flux["cpval"]
                 dd_src_var["flux_rchiq"][-1][filter_nr] = rr_flux["rchiq"]
-
-        # Write them into tt_sources
-        # self.__dict__[tt_src_name].add_index(src_id_name)
-        # src_idx = self.__dict__[tt_src_name].loc_indices[src_id_name, src_ids]
-        # print("1", src_idx, len(src_idx))
-        # print("2", src_ids, len(src_ids))
+                dd_src_var["nr_det"][-1][filter_nr] = idxfs[ii + 1] - idxfs[ii]
 
         for svar in ll_src_var:
-            print(svar)
             self.__dict__[tt_src_name].replace_column(svar, dd_src_var[svar])
 
     def cross_match(
