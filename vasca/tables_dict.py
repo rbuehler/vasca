@@ -80,6 +80,14 @@ dd_vasca_columns = {
         "default": "none",
         "description": "Filter of the observation (e.g. NUV)",
     },
+    # %%% obs_filter_idx
+    "obs_filter_idx": {
+        "name": "obs_filter_idx",
+        "dtype": "int32",
+        "unit": "1",
+        "default": -1,
+        "description": "Filter index in filter dependent arrays",
+    },
     # %%% fov_diam
     "fov_diam": {
         "name": "fov_diam",
@@ -152,9 +160,9 @@ dd_vasca_columns = {
         "default": -1.0,
         "description": "Signal to noise",
     },
-    # %%% filter_id
-    "filter_id": {
-        "name": "filter_id",
+    # %%% obs_filter_id
+    "obs_filter_id": {
+        "name": "obs_filter_id",
         "dtype": "int32",
         "unit": "1",
         "default": 0,
@@ -520,7 +528,7 @@ base_field = {
             "flux",
             "flux_err",
             "s2n",
-            "filter_id",
+            "obs_filter_id",
             "sel",
         ],
         "meta": {"INFO": "Visit detections table"},
@@ -536,7 +544,7 @@ base_field = {
             "s2n",
             "mag",
             "mag_err",
-            "filter_id",
+            "obs_filter_id",
             "sel",
         ],
         "meta": {"INFO": "Reference detections table"},
@@ -554,7 +562,7 @@ base_field = {
             "pos_rchiq",
             "assoc_id",
             "assoc_dist",
-            "filter_id",
+            "obs_filter_id",
             "sel",
             "flux",
             "flux_err",
@@ -576,10 +584,7 @@ base_field = {
 galex_field = {
     "tt_visits": {
         "names": [
-            "vis_id",
-            "time_bin_start",
-            "time_bin_size",
-            "sel",
+            *base_field["tt_visits"]["names"],
             "time_bin_size_alt_filt",
             "ra",
             "dec",
@@ -588,16 +593,7 @@ galex_field = {
     },
     "tt_detections": {
         "names": [
-            "vis_id",
-            "fd_src_id",
-            "ra",
-            "dec",
-            "pos_err",
-            "flux",
-            "flux_err",
-            "s2n",
-            "filter_id",
-            "sel",
+            *base_field["tt_detections"]["names"],
             "det_id",
             "r_fov",
             "artifacts",
@@ -615,17 +611,7 @@ galex_field = {
     },
     "tt_coadd_detections": {
         "names": [
-            "det_id",
-            "ra",
-            "dec",
-            "pos_err",
-            "flux",
-            "flux_err",
-            "s2n",
-            "mag",
-            "mag_err",
-            "filter_id",
-            "sel",
+            *base_field["tt_coadd_detections"]["names"],
             "r_fov",
             "artifacts",
             "class_star",
@@ -643,14 +629,7 @@ galex_field = {
 region = {
     "tt_fields": {
         "names": [
-            "field_id",
-            "field_name",
-            "ra",
-            "dec",
-            "observatory",
-            "obs_filter",
-            "fov_diam",
-            "sel",
+            *base_field["tt_fields"]["names"],
             "nr_vis",
             "time_bin_size_sum",
             "time_start",
@@ -660,75 +639,32 @@ region = {
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
     },
     "tt_visits": {
-        "names": ["vis_id", "time_bin_start", "time_bin_size", "sel", "rg_fd_id"],
+        "names": [*base_field["tt_visits"]["names"], "rg_fd_id"],
         "meta": {"INFO": "Visit information table"},
     },
     "tt_coverage_hp": {
         "names": ["pix_id", "nr_vis", "exp", "nr_fds"],
         "meta": {
             "DATAPATH": "None",
-            "INFO": "Region observations properties in healpix binning.                     RING ordering and equatorial coordinates",
+            "INFO": "Region observations properties in healpix binning. RING ordering and equatorial coordinates",
             "NSIDE": "None",
         },
     },
     "tt_coadd_detections": {
         "names": [
-            "det_id",
-            "ra",
-            "dec",
-            "pos_err",
-            "flux",
-            "flux_err",
-            "s2n",
-            "mag",
-            "mag_err",
-            "filter_id",
-            "sel",
+            *base_field["tt_coadd_detections"]["names"],
             "rg_fd_id",
             "coadd_src_id",
         ],
         "meta": {"INFO": "Reference detections table"},
     },
     "tt_detections": {
-        "names": [
-            "vis_id",
-            "fd_src_id",
-            "ra",
-            "dec",
-            "pos_err",
-            "flux",
-            "flux_err",
-            "s2n",
-            "filter_id",
-            "sel",
-            "rg_fd_id",
-            "rg_src_id",
-        ],
+        "names": [*base_field["tt_detections"]["names"], "rg_fd_id", "rg_src_id"],
         "meta": {"INFO": "Visit detections table"},
     },
     "tt_sources": {
         "names": [
-            "fd_src_id",
-            "nr_det",
-            "ra",
-            "dec",
-            "pos_err",
-            "pos_nxv",
-            "pos_var",
-            "pos_cpval",
-            "pos_rchiq",
-            "assoc_id",
-            "assoc_dist",
-            "filter_id",
-            "sel",
-            "flux",
-            "flux_err",
-            "flux_nxv",
-            "flux_var",
-            "flux_cpval",
-            "flux_rchiq",
-            "assoc_ffactor",
-            "assoc_fdiff_s2n",
+            *base_field["tt_sources"]["names"],
             "rg_fd_id",
             "rg_src_id",
             "nr_fd_srcs",
@@ -737,27 +673,7 @@ region = {
     },
     "tt_coadd_sources": {
         "names": [
-            "fd_src_id",
-            "nr_det",
-            "ra",
-            "dec",
-            "pos_err",
-            "pos_nxv",
-            "pos_var",
-            "pos_cpval",
-            "pos_rchiq",
-            "assoc_id",
-            "assoc_dist",
-            "filter_id",
-            "sel",
-            "flux",
-            "flux_err",
-            "flux_nxv",
-            "flux_var",
-            "flux_cpval",
-            "flux_rchiq",
-            "assoc_ffactor",
-            "assoc_fdiff_s2n",
+            *base_field["tt_sources"]["names"],
             "rg_fd_id",
             "coadd_src_id",
             "nr_fd_dets",
@@ -768,6 +684,12 @@ region = {
         "names": ["rg_src_id", "rg_fd_id", "fd_src_id", "sel"],
         "meta": {"INFO": "Map between region and field source IDs"},
     },
+    "tt_filters": {
+        "names": ["obs_filter_id", "obs_filter", "obs_filter_idx"],
+        "meta": {
+            "INFO": "Filters, their IDs and index, the last is specific for this region."
+        },
+    },
 }
 
 # global, combined dictionary
@@ -775,7 +697,7 @@ class_keys = ["base_field", "galex_field", "region"]
 class_dicts = [base_field, galex_field, region]
 dd_vasca_tables = {c_key: c_dict for c_key, c_dict in zip(class_keys, class_dicts)}
 
-# Add columns to tables
+# Add columns to tables dictionary
 for tab_type, table_group in dd_vasca_tables.items():
     for tab_name, tab in table_group.items():
         tab["dtype"] = []

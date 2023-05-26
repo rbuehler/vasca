@@ -1299,9 +1299,9 @@ class GALEXField(BaseField):
         for col in mast_col_names:
             dd_detections_raw[col_names[col]] = tt_detections_raw[col].data
         # Add filter_id
-        dd_detections_raw["filter_id"] = dd_filter2id[obs_filter.upper()] + np.zeros(
-            len(tt_detections_raw)
-        )
+        dd_detections_raw["obs_filter_id"] = dd_filter2id[
+            obs_filter.upper()
+        ] + np.zeros(len(tt_detections_raw))
         self.add_table(dd_detections_raw, "galex_field:tt_detections")
         logger.debug("Constructed 'tt_detections'.")
 
@@ -1309,9 +1309,9 @@ class GALEXField(BaseField):
         for col in mast_col_names[1:]:
             dd_ref_sources_raw[col_names[col]] = tt_coadd_detections_raw[col].data
         # Add filter_id
-        dd_ref_sources_raw["filter_id"] = dd_filter2id[obs_filter.upper()] + np.zeros(
-            len(tt_coadd_detections_raw)
-        )
+        dd_ref_sources_raw["obs_filter_id"] = dd_filter2id[
+            obs_filter.upper()
+        ] + np.zeros(len(tt_coadd_detections_raw))
         self.add_table(dd_ref_sources_raw, "galex_field:tt_coadd_detections")
         logger.debug("Constructed 'tt_coadd_detections'.")
 
