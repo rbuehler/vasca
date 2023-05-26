@@ -19,11 +19,17 @@ from matplotlib import colormaps as cm
 from matplotlib.colors import ListedColormap, hex2color
 from scipy.stats import binned_statistic
 
+# Dictionaries to define "VASCA consistent" filter ID Nr
+# Note that filter_idhe need to be powers of 2, to be able to be used as bitmask 1,2,4,8,..
+dd_filter2id = {"NUV": 1, "FUV": 2}
+dd_id2filter = dict(
+    (v, k) for (k, v) in dd_filter2id.items()
+)  # Inverted key&value dictionary
+
 # Global variable liking observator+obsfilter to a field ID addon
 # The number of Id adon letter has to be three
 # See get_field_id funtion below.
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
-dd_filter_id = {"NUV": 1, "FUV": 2}
 
 
 def flux2mag(flux, flux_err=None):
