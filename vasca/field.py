@@ -25,7 +25,7 @@ from requests.exceptions import HTTPError
 
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
-from vasca.utils import get_field_id, dd_filter_id
+from vasca.utils import get_field_id, dd_filter2id
 
 # global paths
 # path to the dir. of this file
@@ -74,7 +74,7 @@ class BaseField(TableCollection):
         self._dd_attr_names = {
             "tt_fields": [
                 "field_id",
-                "name",
+                "field_name",
                 "ra",
                 "dec",
                 "fov_diam",
@@ -857,7 +857,7 @@ class GALEXField(BaseField):
             # in the MAST database
             col_names = {
                 "obs_id": "field_id",
-                "target_name": "name",
+                "target_name": "field_name",
                 "s_ra": "ra",
                 "s_dec": "dec",
                 "instrument_name": "observatory",
@@ -1299,7 +1299,7 @@ class GALEXField(BaseField):
         for col in mast_col_names:
             dd_detections_raw[col_names[col]] = tt_detections_raw[col].data
         # Add filter_id
-        dd_detections_raw["filter_id"] = dd_filter_id[obs_filter.upper()] + np.zeros(
+        dd_detections_raw["filter_id"] = dd_filter2id[obs_filter.upper()] + np.zeros(
             len(tt_detections_raw)
         )
         self.add_table(dd_detections_raw, "galex_field:tt_detections")
@@ -1309,7 +1309,7 @@ class GALEXField(BaseField):
         for col in mast_col_names[1:]:
             dd_ref_sources_raw[col_names[col]] = tt_coadd_detections_raw[col].data
         # Add filter_id
-        dd_ref_sources_raw["filter_id"] = dd_filter_id[obs_filter.upper()] + np.zeros(
+        dd_ref_sources_raw["filter_id"] = dd_filter2id[obs_filter.upper()] + np.zeros(
             len(tt_coadd_detections_raw)
         )
         self.add_table(dd_ref_sources_raw, "galex_field:tt_coadd_detections")

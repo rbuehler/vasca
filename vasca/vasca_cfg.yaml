@@ -43,20 +43,13 @@ assoc_src_coadd:
     dist_max      : 1        # Associate nearest source below this distance in arc_sec  OR
     dist_s2n_max  : 3        # Associate nearest source with this distance in units of "squared sumed position error"   
 
-filters:                         # Define filter index labelling and indexing here
-    - name       : "NUV"
-      filter_id  : 1             # ID has to be 2**N number, where N is an integer, so 1,2,4,8,16 (to be assignable to bitmasks)
-      filter_idx : 0             # Filter indices have to be contiinuous integers starting from zero
-    - name       : "FUV"
-      filter_id  : 2
-      filter_idx : 1
         
 selection:
     src_variability:
         table       : "tt_sources"
         presel_type : "and"
         sel_type    : "and"
-        filter_idx  : 0                             # Select filter to apply cut on, see "filters" block for definition
+        obs_filter  : "NUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
         range:
             nr_det         : [2,.inf]
             pos_cpval      : [0.0000000001,.inf]            
@@ -71,6 +64,8 @@ selection:
             nr_det          : [1,.inf]   
             assoc_ffactor   : [2.0,.inf]
             assoc_fdiff_s2n : [7,.inf]
+
+obs_filters: ["NUV","FUV"]                              # Predefine filters to be used
                     
 observations:
   - observatory   : "GALEX"
