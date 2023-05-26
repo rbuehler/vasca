@@ -14,12 +14,12 @@ from astropy.nddata import bitmask
 from astropy.table import Table
 from astropy.wcs import wcs
 from loguru import logger
-from scipy.stats import chi2, skew
+from scipy.stats import chi2
 from sklearn.cluster import MeanShift, estimate_bandwidth
 from astropy.coordinates import SkyCoord
 
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import add_rg_src_id, table_to_array, flux2mag
+from vasca.utils import add_rg_src_id, table_to_array
 
 # import warnings
 # from astropy.io.fits.verify import VerifyWarning
@@ -460,7 +460,7 @@ class TableCollection(object):
                     # Check if variable is stored in verctor for all filters
                     var_vals = tt[var]
                     if len(np.array(var_vals[0]).flatten()) > 1:
-                        var_vals = var_vals[:, selections["filter_idx"]]
+                        var_vals = var_vals[:, selections["obs_filter_idx"]]
 
                     sel = sel * (var_vals >= vals[0]) * (var_vals <= vals[1])
 
@@ -494,7 +494,7 @@ class TableCollection(object):
                     # Check if variable is stored in verctor for all filters
                     var_vals = tt[var]
                     if len(np.array(var_vals[0]).flatten()) > 1:
-                        var_vals = var_vals[:, selections["filter_idx"]]
+                        var_vals = var_vals[:, selections["obs_filter_idx"]]
 
                     sel = sel + (var_vals >= vals[0]) * (var_vals <= vals[1])
                     logger.info(
@@ -668,7 +668,7 @@ class TableCollection(object):
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
                 "nr_fd_srcs": clu_cts,
-                "filter_id": list(),
+                "obs_filter_id": list(),
             }
 
             # Add rg_src_id to detections
@@ -680,8 +680,8 @@ class TableCollection(object):
             tt_in.add_index("rg_src_id")
             for rg_src_id in src_ids:
                 idxs = tt_in.loc_indices["rg_src_id", rg_src_id]
-                filter_ids = np.unique(tt_in["filter_id"][idxs].data)
-                srcs_data["filter_id"].append(filter_ids.sum())
+                filter_ids = np.unique(tt_in["obs_filter_id"][idxs].data)
+                srcs_data["obs_filter_id"].append(filter_ids.sum())
 
             # Remove existing table and add new one
             del self.__dict__["tt_sources"]
@@ -706,14 +706,14 @@ class TableCollection(object):
 
             # Assume all detections have the same filter_id
             # TODO: This might have to be extendet to the general case in the future.
-            filter_id = self.tt_detections["filter_id"][0]
+            filter_id = self.tt_detections["obs_filter_id"][0]
 
             srcs_data = {
                 "fd_src_id": src_ids,
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
                 "nr_det": clu_cts,
-                "filter_id": np.zeros(nr_srcs) + filter_id,
+                "obs_filter_id": np.zeros(nr_srcs) + filter_id,
             }
 
             # Fill information into tables.
@@ -731,7 +731,7 @@ class TableCollection(object):
                 "ra": cluster_centers[:, 0],
                 "dec": cluster_centers[:, 1],
                 "nr_det": clu_cts,
-                "filter_id": list(),
+                "obs_filter_id": list(),
             }
 
             # Add source label to coadd detections
@@ -743,8 +743,10 @@ class TableCollection(object):
                 idxs = self.tt_coadd_detections.loc_indices[
                     "coadd_src_id", coadd_src_id
                 ]
-                filter_ids = np.unique(self.tt_coadd_detections["filter_id"][idxs].data)
-                coadd_data["filter_id"].append(filter_ids.sum())
+                filter_ids = np.unique(
+                    self.tt_coadd_detections["obs_filter_id"][idxs].data
+                )
+                coadd_data["obs_filter_id"].append(filter_ids.sum())
 
             # Fill information into tables.
             self.add_table(coadd_data, "region:tt_coadd_sources")
@@ -805,7 +807,7 @@ class TableCollection(object):
         # Prepare detection data
         sel_det = self.__dict__[tt_det_name]["sel"]
         tt_det = Table(self.__dict__[tt_det_name][sel_det], copy=True)
-        tt_det.sort([src_id_name, "filter_id"])
+        tt_det.sort([src_id_name, "obs_filter_id"])
 
         # Get src_ids, src_index and det_nr
         src_ids, src_indices, src_nr_det = np.unique(
@@ -813,12 +815,12 @@ class TableCollection(object):
         )
 
         # Check which filter ids are present
-        filter_ids = np.sort(np.unique(tt_det["filter_id"].data))
+        filter_ids = np.sort(np.unique(tt_det["obs_filter_id"].data))
         nr_filters = len(filter_ids)
 
         # Buffer input data for speed and convert position errors to degrees
         dd_det_var = {"pos_err_deg": tt_det["pos_err"].data.astype(np.float64) / 3600.0}
-        ll_det_var = ["flux", "flux_err", "ra", "dec", "filter_id"]
+        ll_det_var = ["flux", "flux_err", "ra", "dec", "obs_filter_id"]
         for bvar in ll_det_var:
             dd_det_var[bvar] = tt_det[bvar].data
 
@@ -872,7 +874,7 @@ class TableCollection(object):
 
             # Check at what index filter changes and analyse separatelly
             idxfs = np.where(
-                np.diff(dd_det_var["filter_id"][idx1:idx2], prepend=np.nan)
+                np.diff(dd_det_var["obs_filter_id"][idx1:idx2], prepend=np.nan)
             )[0]
             idxfs = np.append(idxfs, idx2 - idx1)
 
@@ -893,7 +895,7 @@ class TableCollection(object):
                     dd_det_var["flux"][idx1 + idxfs[ii] : idx2 + idxfs[ii + 1]],
                     dd_det_var["flux_err"][idx1 + idxfs[ii] : idx2 + idxfs[ii + 1]],
                 )
-                filter_id = dd_det_var["filter_id"][idx1 + idxfs[ii]]
+                filter_id = dd_det_var["obs_filter_id"][idx1 + idxfs[ii]]
                 filter_nr = np.where(filter_ids == filter_id)
                 dd_src_var["flux"][-1][filter_nr] = rr_flux["wght_mean"]
                 dd_src_var["flux_err"][-1][filter_nr] = rr_flux["wght_mean_err"]

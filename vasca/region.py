@@ -14,6 +14,7 @@ from vasca.field import BaseField, GALEXField
 from vasca.source import Source
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
+from vasca.utils import dd_filter2id
 
 
 class Region(TableCollection):
@@ -103,6 +104,13 @@ class Region(TableCollection):
         rg.region_path = (
             vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"]
         )
+
+        # Add filter table
+        rg.add_table(None, "region:tt_filters")
+        for flt, flt_id in dd_filter2id.items():
+            rg.tt_filters.add_row(
+                {"obs_filter": flt, "obs_filter_id": flt_id, "obs_filter_idx": -1}
+            )
 
         return rg
 
