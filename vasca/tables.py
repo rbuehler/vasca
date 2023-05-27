@@ -457,10 +457,13 @@ class TableCollection(object):
 
                 for var, vals in selections["range"].items():
 
-                    # Check if variable is stored in verctor for all filters
+                    # Check if variable is stored in vector for all filters
                     var_vals = tt[var]
                     if len(np.array(var_vals[0]).flatten()) > 1:
-                        var_vals = var_vals[:, selections["obs_filter_idx"]]
+                        obs_filter_idx = self.tt_filters["obs_filter_idx"][
+                            self.tt_filters["obs_filter"] == selections["obs_filter"]
+                        ][0]
+                        var_vals = var_vals[:, obs_filter_idx]
 
                     sel = sel * (var_vals >= vals[0]) * (var_vals <= vals[1])
 
@@ -817,6 +820,11 @@ class TableCollection(object):
         # Check which filter ids are present
         filter_ids = np.sort(np.unique(tt_det["obs_filter_id"].data))
         nr_filters = len(filter_ids)
+
+        # Include field index info to tt_fields
+        self.tt_filters.add_index("obs_filter_id")
+        flt_idx = self.tt_filters.loc_indices["obs_filter_id", filter_ids]
+        self.tt_filters["obs_filter_idx"][flt_idx] = np.array(range(0, nr_filters))
 
         # Buffer input data for speed and convert position errors to degrees
         dd_det_var = {"pos_err_deg": tt_det["pos_err"].data.astype(np.float64) / 3600.0}

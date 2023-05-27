@@ -49,7 +49,7 @@ selection:
         table       : "tt_sources"
         presel_type : "and"
         sel_type    : "and"
-        obs_filter_idx  : 0                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
+        obs_filter  : "NUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
         range:
             nr_det         : [2,.inf]
             pos_cpval      : [0.0000000001,.inf]            

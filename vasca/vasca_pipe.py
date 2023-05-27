@@ -12,7 +12,6 @@ from multiprocessing import Pool
 
 import yaml
 from loguru import logger
-from astropy import units as uu
 from astropy.table import unique
 
 from vasca.region import Region
