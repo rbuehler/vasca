@@ -6,6 +6,7 @@ Visualization related methods for VASCA
 
 from collections import OrderedDict
 from itertools import cycle
+import warnings
 
 import astropy.units as uu
 import healpy as hpy
@@ -15,11 +16,13 @@ from astropy.coordinates import SkyCoord
 from astropy.nddata import Cutout2D
 from astropy.visualization.wcsaxes import SphericalCircle
 from astropy.time import Time
+from astropy.table import Table
+from astropy.utils.exceptions import AstropyWarning
 from loguru import logger
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import ScalarFormatter
 
-from vasca.utils import flux2mag, mag2flux
+from vasca.utils import flux2mag, mag2flux, dd_id2filter
 
 # %% sky plotting
 
@@ -737,7 +740,7 @@ def plot_region_sky_mollview(region, var="nr_vis", mw_kwargs=None):
 # %% table variable plotting
 
 
-def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
+def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwargs):
     """
     Plot histogram for passed astropy.Table and variable
 
@@ -766,6 +769,9 @@ def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
     """
     logger.debug(f"Plotting histogram of variable '{var}'")
 
+    # Make copy of table
+    tt = Table(tt)
+
     if ax is None:
         ax = plt.gca()
 
@@ -779,11 +785,22 @@ def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
     if hist_kwargs is not None:
         plot_kwargs.update(hist_kwargs)
 
-    col = tt[var]
+    nr_flts = len(np.array(tt[0][var]).flatten())  # Check if var entries are arrays
+    if obs_filter_id is not None:
+        # If obs_id is in the table, select on it
+        if nr_flts == 1:
+            tt = tt[tt["obs_filter_id"] == obs_filter_id]
+        else:
+            flt_idx = np.where(tt["obs_filter_id"][0] == obs_filter_id)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", AstropyWarning)
+                tt[var] = tt[var][:, flt_idx].data.flatten()
     sel = tt["sel"]
+    col = tt[var]
+
     str_nrsel = str(sel.sum())
     str_nrnotsel = str((~sel).sum())
-    data = [col[~sel], col[sel]]
+    data = [np.array(col[~sel]), np.array(col[sel])]
     xlabel = var + " [" + str(col.unit) + "]"
     if str(col.unit) == "None" or str(col.unit) == "":
         xlabel = var
@@ -797,6 +814,9 @@ def plot_table_hist(tt, var, ax=None, logx=False, **hist_kwargs):
         label=["unselected_" + str_nrnotsel, "selected_" + str_nrsel],
         **plot_kwargs,
     )
+
+    if obs_filter_id is not None:
+        xlabel = xlabel + " - " + dd_id2filter[obs_filter_id]
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel("Counts")
@@ -902,7 +922,9 @@ def plot_table_scatter(
 
 # TODO: there are some GALEX specific variables
 # will need to be adapted to other missions
-def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
+def plot_pipe_diagnostic(
+    tc, table_name, plot_type, fig_size=(12, 8), obs_filter_id=None
+):
     """
     Diagnotic plots for VASCA pipe
 
@@ -930,28 +952,28 @@ def plot_pipe_diagnostic(tc, table_name, plot_type, fig_size=(12, 8)):
     if plot_type == "hist":
         # Detections diagnostic
         if table_name == "tt_detections":
-            var_plt["s2n"] = {"logx": True}
-            var_plt["flux"] = {"logx": True}
-            var_plt["flux_err"] = {"logx": True}
-            var_plt["r_fov"] = {"range": [0.0, 0.7]}
-            var_plt["class_star"] = {}
-            var_plt["artifacts"] = {"histtype": "step"}
-            var_plt["chkobj_type"] = {}
-            var_plt["pos_err"] = {"range": [0.0, 5]}
+            var_plt["s2n"] = {"logx": True, "obs_filter_id": obs_filter_id}
+            var_plt["flux"] = {"logx": True, "obs_filter_id": obs_filter_id}
+            var_plt["flux_err"] = {"logx": True, "obs_filter_id": obs_filter_id}
+            var_plt["r_fov"] = {"range": [0.0, 0.7], "obs_filter_id": obs_filter_id}
+            var_plt["class_star"] = {"obs_filter_id": obs_filter_id}
+            var_plt["artifacts"] = {"histtype": "step", "obs_filter_id": obs_filter_id}
+            var_plt["chkobj_type"] = {"obs_filter_id": obs_filter_id}
+            var_plt["pos_err"] = {"range": [0.0, 5], "obs_filter_id": obs_filter_id}
             fig, axs = plt.subplots(4, 2, figsize=fig_size, squeeze=False)
         elif table_name == "tt_sources":
-            var_plt["nr_det"] = {}
-            var_plt["flux_cpval"] = {}
-            var_plt["flux_nxv"] = {"logx": True}
+            var_plt["nr_det"] = {"obs_filter_id": obs_filter_id}
+            var_plt["flux_cpval"] = {"obs_filter_id": obs_filter_id}
+            var_plt["flux_nxv"] = {"logx": True, "obs_filter_id": obs_filter_id}
             var_plt["assoc_fdiff_s2n"] = {"range": [-10, 25]}
             var_plt["nr_fd_srcs"] = {}
             var_plt["pos_cpval"] = {}
             fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
         elif table_name == "tt_coadd_sources":
-            var_plt["nr_det"] = {}
-            var_plt["flux_cpval"] = {}
+            var_plt["nr_det"] = {"obs_filter_id": obs_filter_id}
+            var_plt["flux_cpval"] = {"obs_filter_id": obs_filter_id}
             var_plt["pos_cpval"] = {}
-            var_plt["flux"] = {"logx": True}
+            var_plt["flux"] = {"logx": True, "obs_filter_id": obs_filter_id}
             fig, axs = plt.subplots(1, 4, figsize=fig_size, squeeze=False)
         else:
             logger.warning("Diagnostic for table '{table_name}' not defined")
