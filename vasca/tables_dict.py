@@ -75,7 +75,7 @@ dd_vasca_columns = {
     # %%% obs_filter
     "obs_filter": {
         "name": "obs_filter",
-        "dtype": "S22",
+        "dtype": "S8",
         "unit": "",
         "default": "none",
         "description": "Filter of the observation (e.g. NUV)",
@@ -87,6 +87,14 @@ dd_vasca_columns = {
         "unit": "1",
         "default": -1,
         "description": "Filter index in filter dependent arrays",
+    },
+    # %%% obs_filter_id
+    "obs_filter_id": {
+        "name": "obs_filter_id",
+        "dtype": "int32",
+        "unit": "1",
+        "default": 0,
+        "description": "Filter ID number",
     },
     # %%% fov_diam
     "fov_diam": {
@@ -159,14 +167,6 @@ dd_vasca_columns = {
         "unit": "1",
         "default": -1.0,
         "description": "Signal to noise",
-    },
-    # %%% obs_filter_id
-    "obs_filter_id": {
-        "name": "obs_filter_id",
-        "dtype": "int32",
-        "unit": "1",
-        "default": 0,
-        "description": "Filter ID number",
     },
     # %%% det_id
     "det_id": {

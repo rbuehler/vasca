@@ -937,13 +937,14 @@ class TableCollection(object):
                 dd_src_var["nr_det"][-1][filter_nr] = idxfs[ii + 1] - idxfs[ii]
 
         for svar in ll_src_var:
-            self.replace_column(
+            self.add_column(
                 table_name=tt_src_name, col_name=svar, col_data=dd_src_var[svar]
             )
 
-    def replace_column(self, table_name, col_name, col_data):
+    def add_column(self, table_name, col_name, col_data):
         """
-        Replaces existing column in a table, using the predefined VASCA columns.
+        Adds column in a table, using the predefined VASCA columns.
+        If column exists already replace it.
 
         Parameters
         ----------
@@ -963,7 +964,11 @@ class TableCollection(object):
         col_template_copy = dd_vasca_columns[col_name].copy()
         del col_template_copy["default"]
         col = Column(col_data, **col_template_copy)
-        self.__dict__[table_name].replace_column(col_name, col)
+        if col_name in self.__dict__[table_name].colnames:
+            logger.debug(f"Replacing column {col_name}")
+            self.__dict__[table_name].replace_column(col_name, col)
+        else:
+            self.__dict__[table_name][col_name] = col
 
     def cross_match(
         self,

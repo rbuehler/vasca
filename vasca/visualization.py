@@ -101,7 +101,7 @@ def plot_sky_sources(
     # Set marker properties for detections
     plt_det_kwargs = {
         "fill": False,
-        "lw": 0.7,
+        "lw": 0.8,
         "transform": ax.get_transform("world"),
     }
     if det_kwargs is not None:
@@ -117,7 +117,7 @@ def plot_sky_sources(
 
     # Loop over all srcs and plot
     colors = cycle("rbgcmrbgcmrbgcmrbgcm")
-    lss = ["-", "--"]
+    lss = [":", "-", "--", "_."]
     for src, col in zip(tt_src[sel_reg], colors):
 
         # Set colors in tandem for srcs, det and label, unless specific color passed
@@ -139,7 +139,7 @@ def plot_sky_sources(
                 s_det = SphericalCircle(
                     coord_det,
                     tt_det[det_idx]["pos_err"] * uu.arcsec,
-                    ls=lss[int(tt_det[det_idx]["obs_filter_id"] % 2)],
+                    ls=lss[int(tt_det[det_idx]["obs_filter_id"] % 4)],
                     **plt_det_kwargs,
                 )
                 ax.add_patch(s_det)
@@ -1121,8 +1121,10 @@ def plot_light_curve(
 
     for src_id, col, mar in zip(src_ids, colors, markers):
         ctr += 1
-        mfc = col
-        ls = ":"
+
+        # Arrays to plot filters differently
+        mfc = ["None", col]
+        ls = ["--", ":"]
 
         # Get light curve
         lc = dd_lcs[src_id]
@@ -1131,13 +1133,9 @@ def plot_light_curve(
 
         # Check if one one filter present
         filter_ids = np.sort(np.unique(lc["obs_filter_id"].data))
-        # nr_filters = len(filter_ids)
-        ftl_ctr = 0
+
         for flt_id in filter_ids:
-            ftl_ctr += 1
-            if ftl_ctr > 1:
-                mfc = "None"
-                ls = "--"
+            flt_plot = flt_id % 2
             #  Select filter to show
             sel = (lc["flux"] > 0) * (lc["obs_filter_id"] == flt_id)
             src_lab = str(src_id) + " " + str(lc[sel]["obs_filter"][0])
@@ -1158,7 +1156,13 @@ def plot_light_curve(
             t_mean = [np.min(lc["time_start"][sel]), np.max(lc["time_start"][sel])]
             flux_weight = 1.0 / lc["flux_err"][sel] ** 2
             flux_mean = np.average(lc["flux"][sel], weights=flux_weight)
-            plt.plot(t_mean, [flux_mean, flux_mean], ls=ls, color=col, linewidth=0.5)
+            plt.plot(
+                t_mean,
+                [flux_mean, flux_mean],
+                ls=ls[flt_plot],
+                color=col,
+                linewidth=0.5,
+            )
 
             # Plot
             plt.errorbar(
@@ -1167,7 +1171,7 @@ def plot_light_curve(
                 yerr=fluxs_err[sel],
                 color=col,
                 markeredgecolor=col,
-                markerfacecolor=mfc,
+                markerfacecolor=mfc[flt_plot],
                 marker=mar,
                 label=src_lab,
                 **plt_errorbar_kwargs,
