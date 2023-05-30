@@ -870,6 +870,7 @@ class TableCollection(object):
             "flux_cpval",
             "flux_rchiq",
             "nr_det",
+            "obs_filter_id",
         ]
 
         # Dictionary to store calculated source parameters
@@ -919,6 +920,7 @@ class TableCollection(object):
             dd_src_var["flux_cpval"].append(np.copy(aa_zero) - 1.0)
             dd_src_var["flux_rchiq"].append(np.copy(aa_zero) - 1.0)
             dd_src_var["nr_det"].append(np.zeros(nr_filters, dtype=np.int32) - 1)
+            dd_src_var["obs_filter_id"].append(np.zeros(nr_filters, dtype=np.int32) - 1)
 
             # Loop over all filters
             for ii in range(len(idxfs) - 1):
@@ -935,6 +937,7 @@ class TableCollection(object):
                 dd_src_var["flux_cpval"][-1][filter_nr] = rr_flux["cpval"]
                 dd_src_var["flux_rchiq"][-1][filter_nr] = rr_flux["rchiq"]
                 dd_src_var["nr_det"][-1][filter_nr] = idxfs[ii + 1] - idxfs[ii]
+                dd_src_var["obs_filter_id"][-1][filter_nr] = filter_id
 
         for svar in ll_src_var:
             self.add_column(
@@ -965,7 +968,7 @@ class TableCollection(object):
         del col_template_copy["default"]
         col = Column(col_data, **col_template_copy)
         if col_name in self.__dict__[table_name].colnames:
-            logger.debug(f"Replacing column {col_name}")
+            # logger.debug(f"Replacing column {col_name}")
             self.__dict__[table_name].replace_column(col_name, col)
         else:
             self.__dict__[table_name][col_name] = col

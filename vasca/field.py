@@ -33,7 +33,7 @@ FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 
 dimless = uu.dimensionless_unscaled
-conf.replace_warnings = ["always"]
+# conf.replace_warnings = ["always"]
 
 
 class BaseField(TableCollection):
