@@ -11,14 +11,14 @@ import numpy as np
 from astropy import units as uu
 from astropy.io import fits
 from astropy.nddata import bitmask
-from astropy.table import Table
+from astropy.table import Table, Column
 from astropy.wcs import wcs
 from loguru import logger
 from scipy.stats import chi2
 from sklearn.cluster import MeanShift, estimate_bandwidth
 from astropy.coordinates import SkyCoord
 
-from vasca.tables_dict import dd_vasca_tables
+from vasca.tables_dict import dd_vasca_tables, dd_vasca_columns
 from vasca.utils import add_rg_src_id, table_to_array
 
 # import warnings
@@ -582,9 +582,17 @@ class TableCollection(object):
         # Dictionary to store light curve tables
         lc_dict = dict()
 
-        # Index field or region for source ID
+        # Add indices for later lookup
         self.tt_detections.add_index(ids_type)
         self.tt_visits.add_index("vis_id")
+
+        self.tt_filters.add_index("obs_filter_id")
+        # nr_flts =
+        # flt_idxs = np.array(range(nr_flts), dtype=np.int32)
+        # print(flt_idxs, nr_flts, tt_det_src["flux"])
+        # flt_names_idx = self.tt_filters.loc_indices["obs_filter_idx", flt_idxs]
+        # flt_names = self.tt_filters["obs_filter"][flt_names_idx]
+        # obs_filters = [flt_names for ii in range(len(tt_det_src["flux"]))]
 
         # Loop over sources and get lc info
         for src_id in src_ids:
@@ -599,11 +607,20 @@ class TableCollection(object):
             tt_det_src["time_bin_start"] = self.tt_visits[vis_idx]["time_bin_start"]
             tt_det_src["time_bin_size"] = self.tt_visits[vis_idx]["time_bin_size"]
             tt_det_src.sort("time_bin_start")
+
+            # Get filter name
+            flt_names_idx = self.tt_filters.loc_indices[
+                "obs_filter_id", tt_det_src["obs_filter_id"]
+            ]
+            flt_names = self.tt_filters["obs_filter"][flt_names_idx]
+
             src_data = {
                 "time_start": np.array(tt_det_src["time_bin_start"]),
                 "time_delta": np.array(tt_det_src["time_bin_size"]),
                 "flux": np.array(tt_det_src["flux"]),
                 "flux_err": np.array(tt_det_src["flux_err"]),
+                "obs_filter": flt_names,
+                "obs_filter_id": tt_det_src["obs_filter_id"]
                 #                "ul": np.array(src_lc["ul"]),
             }
             # Create and store table
@@ -768,6 +785,12 @@ class TableCollection(object):
         Calculates source parameters from detections and stores them
         in the source table (tt_source).
 
+        Parameters
+        ----------
+        src_id_name : str, optional
+            Name of the src_id to calculate statistics for (usually rg_src_id or fd_src_id)
+
+
         Returns
         -------
         None.
@@ -914,7 +937,33 @@ class TableCollection(object):
                 dd_src_var["nr_det"][-1][filter_nr] = idxfs[ii + 1] - idxfs[ii]
 
         for svar in ll_src_var:
-            self.__dict__[tt_src_name].replace_column(svar, dd_src_var[svar])
+            self.replace_column(
+                table_name=tt_src_name, col_name=svar, col_data=dd_src_var[svar]
+            )
+
+    def replace_column(self, table_name, col_name, col_data):
+        """
+        Replaces existing column in a table, using the predefined VASCA columns.
+
+        Parameters
+        ----------
+        table_name : str
+            Name of the table.
+        col_name: str
+            Name of the column
+        col_data  dict or array
+            Data to be inserted
+
+        Returns
+        -------
+        None.
+
+        """
+
+        col_template_copy = dd_vasca_columns[col_name].copy()
+        del col_template_copy["default"]
+        col = Column(col_data, **col_template_copy)
+        self.__dict__[table_name].replace_column(col_name, col)
 
     def cross_match(
         self,
