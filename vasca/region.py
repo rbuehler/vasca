@@ -311,9 +311,12 @@ class Region(TableCollection):
 
         # Add fields
         self.tt_fields.add_index("rg_fd_id")
-        rg_fd_ids = (unique(src.tt_visits, keys="rg_fd_id"))["rg_fd_id"]
+        rg_fd_ids = (unique(src.tt_detections, keys="rg_fd_id"))["rg_fd_id"]
         src._table_names.append("tt_fields")
         setattr(src, "tt_fields", Table(self.tt_fields.loc["rg_fd_id", rg_fd_ids]))
+
+        # Add filter
+        setattr(src, "tt_filters", Table(self.tt_filters))
 
         # Add light curve
         src._table_names.append("tt_source_lc")

@@ -576,7 +576,16 @@ base_field = {
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
     "tt_source_lc": {
-        "names": ["time_start", "time_delta", "flux", "flux_err", "ul", "sel"],
+        "names": [
+            "time_start",
+            "time_delta",
+            "flux",
+            "flux_err",
+            "ul",
+            "sel",
+            "obs_filter",
+            "obs_filter_id",
+        ],
         "meta": {"INFO": "Light curve flux table for one source"},
     },
 }
@@ -639,7 +648,7 @@ region = {
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
     },
     "tt_visits": {
-        "names": [*base_field["tt_visits"]["names"], "rg_fd_id"],
+        "names": [*base_field["tt_visits"]["names"]],
         "meta": {"INFO": "Visit information table"},
     },
     "tt_coverage_hp": {
