@@ -123,37 +123,6 @@ def get_field_id(obs_field_id, observaory, obs_filter):
     return dd_obs_id_add[str(observaory) + str(obs_filter)] + str(obs_field_id)
 
 
-# def get_field_file_name(field_id, observatory, obs_filter):
-#     """
-#     Helper function to create and load fields with uniform naming.
-
-#     Parameters
-#     ----------
-#     field_id : int
-#         Field ID.
-#     observatory : str
-#         Observatory of the field.
-#     obs_filter : str
-#         Observation filter of the field.
-
-#     Returns
-#     -------
-#     str
-#         Field default file name
-
-#     """
-
-#     return (
-#         "field_"
-#         + str(field_id)
-#         + "_"
-#         + str(observatory)
-#         + "_"
-#         + str(obs_filter)
-#         + ".fits"
-#     )
-
-
 def extr_value(inputlist, upper=False):
     """
     Computes the extremum value in a list of numeric lists.
@@ -217,22 +186,6 @@ def extr_value(inputlist, upper=False):
 
     # Returns minimum or maximum value
     return np.nanmax(padded_array) if upper else np.nanmin(padded_array)
-
-
-def get_hist_bins_old(data, bin_size, is_list=False):
-    """
-    Generates list of bin edges according to data (min/max) and bin_size.
-    """
-    # get minimum and maximum rounded to integer
-    if is_list:
-        vmin = np.floor(extr_value(data))
-        vmax = np.ceil(extr_value(data, upper=True))
-    else:
-        vmin = np.floor(np.min(data))
-        vmax = np.ceil(np.max(data))
-    # generate bin array
-    bins = np.arange(vmin, vmax + bin_size, bin_size)
-    return bins
 
 
 def get_hist_bins(data, bin_size):
