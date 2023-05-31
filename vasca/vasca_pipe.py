@@ -11,12 +11,17 @@ from multiprocessing import Pool
 
 
 import yaml
+from yamlinclude import YamlIncludeConstructor
 from loguru import logger
 from astropy.table import unique
 
 from vasca.region import Region
 from vasca.utils import get_field_id
 from vasca.tables_dict import dd_vasca_tables
+
+YamlIncludeConstructor.add_to_loader_class(
+    loader_class=yaml.FullLoader
+)  # , base_dir="."
 
 
 def set_config(cfg_file):
@@ -34,7 +39,8 @@ def set_config(cfg_file):
         VASCA pipeline configuration dictionary
     """
     with open(cfg_file) as file:
-        vasca_cfg = yaml.safe_load(file)  # yaml.
+        # vasca_cfg = yaml.safe_load(file)  # yaml.
+        vasca_cfg = yaml.load(file, Loader=yaml.FullLoader)
 
     # Set output directory
     if vasca_cfg["general"]["out_dir_base"] == "CWD":
