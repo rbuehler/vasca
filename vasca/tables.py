@@ -1030,14 +1030,42 @@ class TableCollection(object):
 
         tt_srcs["assoc_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
         tt_srcs["assoc_dist"][sel] = dist_cat[sel].to("arcsec")
-        tt_srcs["assoc_ffactor"][sel] = (
-            tt_srcs["flux"][sel] / tt_cat[idx_cat[sel]]["flux"]
-        )
-        flux_diff = tt_srcs["flux"][sel] - tt_cat[idx_cat[sel]]["flux"]
-        flux_diff_err = np.sqrt(
-            tt_srcs["flux_err"][sel] ** 2 + tt_cat[idx_cat[sel]]["flux_err"] ** 2
-        )
-        tt_srcs["assoc_fdiff_s2n"][sel] = flux_diff / flux_diff_err
+
+        # Create default arrays
+        nr_filters = len(np.array(tt_srcs["flux"][0]).flatten())
+        na_zero = np.array([np.zeros(nr_filters) for flt in range(len(tt_srcs))])
+        assoc_ffactor = na_zero + dd_vasca_columns["assoc_ffactor"]["default"]
+        assoc_fdiff_s2n = na_zero + dd_vasca_columns["assoc_fdiff_s2n"]["default"]
+
+        # Check if only one filter, then no vectorized entries
+        flt_iter = [None]
+        if nr_filters > 1:
+            flt_iter = range(nr_filters)
+
+        # Loop over all filters and calculate comparison variables
+        for flt_idx in flt_iter:
+
+            # Get variables
+            flux = tt_srcs["flux"][sel, flt_idx]
+            flux_cat = tt_cat["flux"][idx_cat[sel], flt_idx]
+            flux_err = tt_srcs["flux_err"][sel, flt_idx]
+            flux_err_cat = tt_cat["flux_err"][idx_cat[sel], flt_idx]
+
+            # Calculate ratio of coadd to visit average flux and significance of difference
+            ffactor = flux / flux_cat
+            fdiff_s2n = (flux - flux_cat) / np.sqrt(flux_err**2 + flux_err_cat**2)
+
+            if nr_filters > 1:
+                assoc_ffactor[sel, flt_idx] = ffactor
+                assoc_fdiff_s2n[sel, flt_idx] = fdiff_s2n
+            else:
+                assoc_ffactor = fdiff_s2n.flatten()
+                assoc_fdiff_s2n = assoc_fdiff_s2n.flatten()
+                assoc_ffactor[sel] = ffactor
+                assoc_fdiff_s2n[sel] = fdiff_s2n
+
+        self.add_column(table_name, "assoc_ffactor", assoc_ffactor)
+        self.add_column(table_name, "assoc_fdiff_s2n", assoc_fdiff_s2n)
 
         # Mark as selected, if selection column exists
         if "sel" in tt_cat.colnames:
