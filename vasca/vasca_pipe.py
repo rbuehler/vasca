@@ -14,6 +14,7 @@ import yaml
 from yamlinclude import YamlIncludeConstructor
 from loguru import logger
 from astropy.table import unique
+from astropy import units as uu
 
 from vasca.region import Region
 from vasca.utils import get_field_id
@@ -245,12 +246,12 @@ def run(vasca_cfg):
     rg.set_src_stats(src_id_name="coadd_src_id")
 
     # Match sources to coadd sources
-    # rg.cross_match(
-    #     tt_cat=rg.tt_coadd_sources,
-    #     table_name="tt_sources",
-    #     dist_max=vasca_cfg["assoc_src_coadd"]["dist_max"] * uu.arcsec,
-    #     dist_s2n_max=vasca_cfg["assoc_src_coadd"]["dist_s2n_max"],
-    # )
+    rg.cross_match(
+        tt_cat=rg.tt_coadd_sources,
+        table_name="tt_sources",
+        dist_max=vasca_cfg["assoc_src_coadd"]["dist_max"] * uu.arcsec,
+        dist_s2n_max=vasca_cfg["assoc_src_coadd"]["dist_s2n_max"],
+    )
 
     # Select variable sources
     rg.select_rows(vasca_cfg["selection"]["src_variability"], remove_unselected=False)
