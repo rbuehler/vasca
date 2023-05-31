@@ -123,62 +123,149 @@ def get_field_id(obs_field_id, observaory, obs_filter):
     return dd_obs_id_add[str(observaory) + str(obs_filter)] + str(obs_field_id)
 
 
-# def get_field_file_name(field_id, observatory, obs_filter):
-#     """
-#     Helper function to create and load fields with uniform naming.
-
-#     Parameters
-#     ----------
-#     field_id : int
-#         Field ID.
-#     observatory : str
-#         Observatory of the field.
-#     obs_filter : str
-#         Observation filter of the field.
-
-#     Returns
-#     -------
-#     str
-#         Field default file name
-
-#     """
-
-#     return (
-#         "field_"
-#         + str(field_id)
-#         + "_"
-#         + str(observatory)
-#         + "_"
-#         + str(obs_filter)
-#         + ".fits"
-#     )
-
-
 def extr_value(inputlist, upper=False):
     """
-    Computes the extremum value in a list of numeric lists
-    upper = False: minimum (default)
-    upper = True: maximum
+    Computes the extremum value in a list of numeric lists.
+
+    Parameters
+    ----------
+    inputlist : list
+        A list of numeric lists.
+    upper : bool, optional
+        Specifies whether to compute the maximum value. Defaults to False, which
+        computes the minimum value.
+
+    Returns
+    -------
+    float or None
+        The computed extremum value if the input list is not empty and contains valid
+        numeric values. Returns None if the input list is empty or contains only NaN
+        values.
+
+    Examples
+    --------
+    >>> extr_value([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    1
+
+    >>> extr_value([[1, 2, 3], [4, 5, 6], [7, 8, 9]], upper=True)
+    9
+
+    >>> extr_value([[1, 2, 3], [4, 5], [6, 7, 8, 9]])
+    1
+
+    >>> extr_value([[1, 2, 3], [4, 5], [6, 7, 8, 9]], upper=True)
+    9
+
+    >>> extr_value([])
+    None
+
+    >>> extr_value([[], []])
+    None
+
+    >>> extr_value([[np.nan, np.nan], [np.nan, np.nan]])
+    None
+
+    >>> extr_value([[-1, 0, 1], [2, -3, 4], [5, -6, 7]])
+    -6
+
+    >>> extr_value([[-1, 0, 1], [2, -3, 4], [5, -6, 7]], upper=True)
+    7
     """
+
+    # Checks if input list is empty
+    if len(inputlist) == 0:
+        return None
+
     # if nested lists have different length
     # pads with np.nan to bring to uniform length
     padded_array = np.array(list(zip_longest(*inputlist, fillvalue=np.nan))).T
+
+    # Checks if all elements are NaN
+    if np.all(np.isnan(padded_array)):
+        return None
+
+    # Returns minimum or maximum value
     return np.nanmax(padded_array) if upper else np.nanmin(padded_array)
 
 
-def get_hist_bins(data, bin_size, is_list=False):
+def get_hist_bins(data, bin_size):
     """
-    Generates list of bin edges according to data (min/max) and bin_size.
+    Generates an array of bin edges for creating a histogram with specified bin size.
+
+    Parameters
+    ----------
+    data : array-like, list
+       The input data for which to generate the histogram bin edges. It can be either a
+       1D numpy array or a list of lists. If it's a list of lists, each sub-list can
+       have a different number of elements, and the bin edges will be determined based
+       on the minimum and maximum values across all sub-lists (only one level of nesting
+       is allowed)
+    bin_size : float
+       The desired width of each histogram bin.
+
+    Returns
+    -------
+    numpy.ndarray
+       An array of bin edges that can be used for creating a histogram of the input data
+
+    Raises
+    ------
+    ValueError
+       If the input data structure is not supported.
+
+    Examples
+    --------
+    >>> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    >>> bin_size = 2
+    >>> get_hist_bins(data, bin_size)
+    array([ 1.,  3.,  5.,  7.,  9., 11.])
+
+    >>> data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    >>> bin_size = 1
+    >>> get_hist_bins(data, bin_size)
+    array([ 1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10.])
+
+    >>> data = [[1, 2], [3, 4, 5], [6, 7, 8, 9]]
+    >>> bin_size = 0.5
+    >>> get_hist_bins(data, bin_size)
+    array([1. , 1.5, 2. , 2.5, 3. , 3.5, 4. , 4.5, 5. , 5.5, 6. , 6.5, 7. , 7.5,
+          8. , 8.5, 9. , 9.5])
+
     """
-    # get minimum and maximum rounded to integer
-    if is_list:
-        vmin = np.floor(extr_value(data))
-        vmax = np.ceil(extr_value(data, upper=True))
+    # Order of magnitude of the bin size
+    om = np.floor(np.log10(bin_size))
+
+    # The binning only works for integer arrays. To allow for bin sizes smaller than 1
+    # the data needs to be scaled by the inverse of the bin size's order of magnitude
+    if om < 0:
+        bin_scale = np.power(10, abs(om))
     else:
-        vmin = np.floor(np.min(data))
-        vmax = np.ceil(np.max(data))
-    # generate bin array
-    bins = np.arange(vmin, vmax + bin_size, bin_size)
+        bin_scale = 1
+
+    # Determines if list-type data is compatible.
+    # Lists of lists with unequal number of elements are supported
+    # (only one level of nested lists is allowed)
+    is_list = False
+    if isinstance(data, list):
+        if all([isinstance(item, list) for item in data]):
+            is_list = True
+        elif all([np.isscalar(item) for item in data]):
+            is_list = False
+        else:
+            raise ValueError(f"Data structure not supported for input data: \n{data}")
+
+    # Gets minimum and maximum rounded to integer
+    if is_list:
+        vmin = np.floor(extr_value(data) * bin_scale)
+        vmax = np.ceil(extr_value(data, upper=True) * bin_scale)
+    else:
+        vmin = np.floor(np.min(data) * bin_scale)
+        vmax = np.ceil(np.max(data) * bin_scale)
+
+    # Generate bin array, reverses scaling
+    bins = (
+        np.arange(vmin, vmax + bin_size * bin_scale, bin_size * bin_scale) / bin_scale
+    )
     return bins
 
 
