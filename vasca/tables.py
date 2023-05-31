@@ -925,8 +925,8 @@ class TableCollection(object):
             # Loop over all filters
             for ii in range(len(idxfs) - 1):
                 rr_flux = get_var_stat(
-                    dd_det_var["flux"][idx1 + idxfs[ii] : idx2 + idxfs[ii + 1]],
-                    dd_det_var["flux_err"][idx1 + idxfs[ii] : idx2 + idxfs[ii + 1]],
+                    dd_det_var["flux"][idx1 + idxfs[ii] : idx1 + idxfs[ii + 1]],
+                    dd_det_var["flux_err"][idx1 + idxfs[ii] : idx1 + idxfs[ii + 1]],
                 )
                 filter_id = dd_det_var["obs_filter_id"][idx1 + idxfs[ii]]
                 filter_nr = np.where(filter_ids == filter_id)

@@ -754,6 +754,8 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
         Axes to draw on. The default is None.
     logx : bool, optional
         Histoogram of log10(var) instead of var. The default is False.
+    obs_filter_id: int, optional
+        Observation filter ID Nr., if None all filters are shown. THe default is None.
     **hist_kwargs : dict
         Key word arguments passed tu plt.hist
 
@@ -769,9 +771,6 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
     """
     logger.debug(f"Plotting histogram of variable '{var}'")
 
-    # Make copy of table
-    tt = Table(tt)
-
     if ax is None:
         ax = plt.gca()
 
@@ -785,16 +784,8 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
     if hist_kwargs is not None:
         plot_kwargs.update(hist_kwargs)
 
-    nr_flts = len(np.array(tt[0][var]).flatten())  # Check if var entries are arrays
     if obs_filter_id is not None:
-        # If obs_id is in the table, select on it
-        if nr_flts == 1:
-            tt = tt[tt["obs_filter_id"] == obs_filter_id]
-        else:
-            flt_idx = np.where(tt["obs_filter_id"][0] == obs_filter_id)
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", AstropyWarning)
-                tt[var] = tt[var][:, flt_idx].data.flatten()
+        tt = select_obs_filter(tt, obs_filter_id)
     sel = tt["sel"]
     col = tt[var]
 
@@ -824,6 +815,44 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
     return ax, vals, bins
 
 
+def select_obs_filter(tt_in, obs_filter_id):
+    """
+    Helper function to select rows or columns ob the passed obs_filter_id in a table
+
+    Parameters
+    ----------
+    tt_in : astropy.table.Table
+        Input table
+    obs_filter_id : TYPE
+        Observation filter ID Nr.
+
+    Returns
+    -------
+    tt : astropy.table.Table
+        Copy of the input table with only entries for the requested filter.
+
+    """
+    tt = Table(tt_in, copy=True)
+    nr_flts = len(
+        np.array(tt[0]["obs_filter_id"]).flatten()
+    )  # Check if var entries are arrays
+    if obs_filter_id is not None:
+        # If obs_id is in the table, select on it
+        if nr_flts == 1:
+            tt = tt[tt["obs_filter_id"] == obs_filter_id]
+        else:
+            flt_idx = np.where(tt["obs_filter_id"][0] == obs_filter_id)
+            for colname in tt.colnames:
+                nr_entries = len(np.array(tt[0][colname]).flatten())
+                if nr_entries == nr_flts:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore", AstropyWarning)
+                        tt.replace_column(
+                            colname, tt[colname][:, flt_idx].data.flatten()
+                        )
+    return tt
+
+
 def plot_table_scatter(
     tt,
     varx,
@@ -835,6 +864,7 @@ def plot_table_scatter(
     invert_yaxis=None,
     xscale="linear",
     yscale="linear",
+    obs_filter_id=None,
     **scatter_kwargs,
 ):
     """
@@ -858,6 +888,8 @@ def plot_table_scatter(
         Type of x-scale ("log", "linear"). Default is "linear".
     yscale : str, optional
         Type of y-scale ("log", "linear"). Default is "linear".
+    obs_filter_id: int, optional
+        Observation filter ID Nr., if None all filters are shown. THe default is None.
     **scatter_kwargs : dict
         Key word arguments passed tu plt.scatter
 
@@ -871,6 +903,9 @@ def plot_table_scatter(
 
     if ax is None:
         ax = plt.gca()
+
+    if obs_filter_id is not None:
+        tt = select_obs_filter(tt, obs_filter_id)
 
     # Set marker properties for sources
     plot_kwargs = {"s": 2.0, "alpha": 0.5}
@@ -897,6 +932,11 @@ def plot_table_scatter(
     ylabel = vary + " [" + str(tt[vary].unit) + "]"
     if str(tt[vary].unit) == "None" or str(tt[vary].unit) == "":
         ylabel = vary
+
+    if obs_filter_id is not None:
+        xlabel = xlabel + " - " + dd_id2filter[obs_filter_id]
+        ylabel = ylabel + " - " + dd_id2filter[obs_filter_id]
+
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
 
@@ -952,29 +992,47 @@ def plot_pipe_diagnostic(
     if plot_type == "hist":
         # Detections diagnostic
         if table_name == "tt_detections":
-            var_plt["s2n"] = {"logx": True, "obs_filter_id": obs_filter_id}
-            var_plt["flux"] = {"logx": True, "obs_filter_id": obs_filter_id}
-            var_plt["flux_err"] = {"logx": True, "obs_filter_id": obs_filter_id}
-            var_plt["r_fov"] = {"range": [0.0, 0.7], "obs_filter_id": obs_filter_id}
-            var_plt["class_star"] = {"obs_filter_id": obs_filter_id}
-            var_plt["artifacts"] = {"histtype": "step", "obs_filter_id": obs_filter_id}
-            var_plt["chkobj_type"] = {"obs_filter_id": obs_filter_id}
-            var_plt["pos_err"] = {"range": [0.0, 5], "obs_filter_id": obs_filter_id}
-            fig, axs = plt.subplots(4, 2, figsize=fig_size, squeeze=False)
+            var_plt["s2n"] = {"logx": True}
+            var_plt["flux"] = {"logx": True}
+            var_plt["flux_err"] = {"logx": True}
+            var_plt["r_fov"] = {"range": [0.0, 0.7]}
+            var_plt["class_star"] = {}
+            var_plt["artifacts"] = {"histtype": "step"}
+            var_plt["chkobj_type"] = {}
+            var_plt["pos_err"] = {"range": [0.0, 5]}
+            fig, axs = plt.subplots(
+                4,
+                2,
+                figsize=fig_size,
+                squeeze=False,
+                num="Detections Histograms " + dd_id2filter[obs_filter_id],
+            )
         elif table_name == "tt_sources":
-            var_plt["nr_det"] = {"obs_filter_id": obs_filter_id}
-            var_plt["flux_cpval"] = {"obs_filter_id": obs_filter_id}
-            var_plt["flux_nxv"] = {"logx": True, "obs_filter_id": obs_filter_id}
+            var_plt["nr_det"] = {}
+            var_plt["flux_cpval"] = {}
+            var_plt["flux_nxv"] = {"logx": True}
             var_plt["assoc_fdiff_s2n"] = {"range": [-10, 25]}
             var_plt["nr_fd_srcs"] = {}
             var_plt["pos_cpval"] = {}
-            fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
+            fig, axs = plt.subplots(
+                2,
+                3,
+                figsize=fig_size,
+                squeeze=False,
+                num="Sources Histograms " + dd_id2filter[obs_filter_id],
+            )
         elif table_name == "tt_coadd_sources":
-            var_plt["nr_det"] = {"obs_filter_id": obs_filter_id}
-            var_plt["flux_cpval"] = {"obs_filter_id": obs_filter_id}
+            var_plt["nr_det"] = {}
+            var_plt["flux_cpval"] = {}
             var_plt["pos_cpval"] = {}
-            var_plt["flux"] = {"logx": True, "obs_filter_id": obs_filter_id}
-            fig, axs = plt.subplots(1, 4, figsize=fig_size, squeeze=False)
+            var_plt["flux"] = {"logx": True}
+            fig, axs = plt.subplots(
+                1,
+                4,
+                figsize=fig_size,
+                squeeze=False,
+                num="Co-add Sources Histograms " + dd_id2filter[obs_filter_id],
+            )
         else:
             logger.warning("Diagnostic for table '{table_name}' not defined")
 
@@ -995,7 +1053,13 @@ def plot_pipe_diagnostic(
                 "xlim": [0.0, 50],
                 "yscale": "log",
             }
-            fig, axs = plt.subplots(3, 2, figsize=fig_size, squeeze=False)
+            fig, axs = plt.subplots(
+                3,
+                2,
+                figsize=fig_size,
+                squeeze=False,
+                num="Detections Scatter " + dd_id2filter[obs_filter_id],
+            )
         elif table_name == "tt_sources":
             var_plt[("flux_cpval", "flux")] = {
                 "xscale": "log",
@@ -1023,7 +1087,13 @@ def plot_pipe_diagnostic(
                 "xlim": [1e-23, 1.0],
             }
 
-            fig, axs = plt.subplots(2, 3, figsize=fig_size, squeeze=False)
+            fig, axs = plt.subplots(
+                2,
+                3,
+                figsize=fig_size,
+                squeeze=False,
+                num="Sources Scatter " + dd_id2filter[obs_filter_id],
+            )
         elif table_name == "tt_coadd_sources":
             var_plt[("flux_cpval", "flux")] = {
                 "xscale": "log",
@@ -1036,21 +1106,31 @@ def plot_pipe_diagnostic(
                 "yscale": "log",
             }
 
-            fig, axs = plt.subplots(1, 3, figsize=fig_size, squeeze=False)
+            fig, axs = plt.subplots(
+                1,
+                3,
+                figsize=fig_size,
+                squeeze=False,
+                num="Co-add Sources Scatter " + dd_id2filter[obs_filter_id],
+            )
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")
     else:
         logger.warning("Plot type '{plot_type}' unknown")
 
+    # Select filter
+    tt = tc.__dict__[table_name]
+    if obs_filter_id is not None:
+        tt = select_obs_filter(tt, obs_filter_id)
+
+    # Start plotting
     axs = axs.flatten()
     ax_ctr = 0
     for var, plot_arg in var_plt.items():
         if plot_type == "hist":
-            plot_table_hist(tc.__dict__[table_name], var, axs[ax_ctr], **plot_arg)
+            plot_table_hist(tt, var, axs[ax_ctr], **plot_arg)
         elif plot_type == "scatter":
-            plot_table_scatter(
-                tc.__dict__[table_name], var[0], var[1], axs[ax_ctr], **plot_arg
-            )
+            plot_table_scatter(tt, var[0], var[1], axs[ax_ctr], **plot_arg)
         ax_ctr += 1
 
     plt.tight_layout()
