@@ -255,7 +255,7 @@ def run(vasca_cfg):
 
     # Select variable sources
     rg.select_rows(vasca_cfg["selection"]["src_variability"], remove_unselected=False)
-    # rg.select_rows(vasca_cfg["selection"]["src_coadd_diff"], remove_unselected=False)
+    rg.select_rows(vasca_cfg["selection"]["src_coadd_diff"], remove_unselected=False)
 
     # Remove detections not associated to selected sources
     if "det_association" in vasca_cfg["selection"].keys():
