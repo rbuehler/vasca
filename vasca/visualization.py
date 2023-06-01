@@ -6,7 +6,6 @@ Visualization related methods for VASCA
 
 from collections import OrderedDict
 from itertools import cycle
-import warnings
 
 import astropy.units as uu
 import healpy as hpy
@@ -16,13 +15,11 @@ from astropy.coordinates import SkyCoord
 from astropy.nddata import Cutout2D
 from astropy.visualization.wcsaxes import SphericalCircle
 from astropy.time import Time
-from astropy.table import Table
-from astropy.utils.exceptions import AstropyWarning
 from loguru import logger
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import ScalarFormatter
 
-from vasca.utils import flux2mag, mag2flux, dd_id2filter
+from vasca.utils import flux2mag, mag2flux, dd_id2filter, select_obs_filter
 
 # %% sky plotting
 
@@ -813,44 +810,6 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
     ax.set_ylabel("Counts")
 
     return ax, vals, bins
-
-
-def select_obs_filter(tt_in, obs_filter_id):
-    """
-    Helper function to select rows or columns ob the passed obs_filter_id in a table
-
-    Parameters
-    ----------
-    tt_in : astropy.table.Table
-        Input table
-    obs_filter_id : TYPE
-        Observation filter ID Nr.
-
-    Returns
-    -------
-    tt : astropy.table.Table
-        Copy of the input table with only entries for the requested filter.
-
-    """
-    tt = Table(tt_in, copy=True)
-    nr_flts = len(
-        np.array(tt[0]["obs_filter_id"]).flatten()
-    )  # Check if var entries are arrays
-    if obs_filter_id is not None:
-        # If obs_id is in the table, select on it
-        if nr_flts == 1:
-            tt = tt[tt["obs_filter_id"] == obs_filter_id]
-        else:
-            flt_idx = np.where(tt["obs_filter_id"][0] == obs_filter_id)
-            for colname in tt.colnames:
-                nr_entries = len(np.array(tt[0][colname]).flatten())
-                if nr_entries == nr_flts:
-                    with warnings.catch_warnings():
-                        warnings.simplefilter("ignore", AstropyWarning)
-                        tt.replace_column(
-                            colname, tt[colname][:, flt_idx].data.flatten()
-                        )
-    return tt
 
 
 def plot_table_scatter(

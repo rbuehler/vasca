@@ -7,6 +7,7 @@ from datetime import timedelta
 from functools import wraps
 from itertools import cycle, islice, zip_longest
 from time import time
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,9 +16,14 @@ from astropy import units as uu
 from astropy.coordinates import SkyCoord, search_around_sky
 from astropy.nddata import Cutout2D
 from astropy.time import Time
+from astropy.table import Table, Column
+from astropy.utils.exceptions import AstropyWarning
+
 from matplotlib import colormaps as cm
 from matplotlib.colors import ListedColormap, hex2color
 from scipy.stats import binned_statistic
+
+from vasca.tables_dict import dd_vasca_columns
 
 # Dictionaries to define "VASCA consistent" filter ID Nr
 # Note that filter_idhe need to be powers of 2, to be able to be used as bitmask 1,2,4,8,..
@@ -30,6 +36,48 @@ dd_id2filter = dict(
 # The number of Id adon letter has to be three
 # See get_field_id funtion below.
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
+
+
+def select_obs_filter(tt_in, obs_filter_id):
+    """
+    Helper function to select rows or columns ob the passed obs_filter_id in a table
+
+    Parameters
+    ----------
+    tt_in : astropy.table.Table
+        Input table
+    obs_filter_id : TYPE
+        Observation filter ID Nr.
+
+    Returns
+    -------
+    tt : astropy.table.Table
+        Copy of the input table with only entries for the requested filter.
+
+    """
+    tt = Table(tt_in, copy=True)
+    nr_flts = len(
+        np.array(tt[0]["obs_filter_id"]).flatten()
+    )  # Check if var entries are arrays
+    if obs_filter_id is not None:
+        # If obs_id is in the table, select on it
+        if nr_flts == 1:
+            tt = tt[tt["obs_filter_id"] == obs_filter_id]
+        else:
+            flt_idx = np.where(tt["obs_filter_id"][0] == obs_filter_id)
+            for colname in tt.colnames:
+                nr_entries = len(np.array(tt[0][colname]).flatten())
+                if nr_entries == nr_flts:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore", AstropyWarning)
+                        col_template_copy = dd_vasca_columns[colname].copy()
+                        del col_template_copy["default"]
+                        col = Column(
+                            tt[colname][:, flt_idx].data.flatten(), **col_template_copy
+                        )
+
+                        tt.replace_column(colname, col)
+    return tt
 
 
 def flux2mag(flux, flux_err=None):
