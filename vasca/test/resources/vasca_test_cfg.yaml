@@ -49,6 +49,7 @@ selection:
         table       : "tt_sources"
         presel_type : "and"
         sel_type    : "and"
+        obs_filter  : "NUV" 
         range:
             nr_det         : [2,.inf]
             pos_cpval      : [0.0000001,.inf]            
@@ -59,6 +60,7 @@ selection:
         table       : "tt_sources"
         presel_type : "or"
         sel_type    : "and"
+        obs_filter  : "NUV" 
         range:
             nr_det          : [1,.inf]   
             assoc_ffactor   : [2.0,.inf]
@@ -109,4 +111,49 @@ observations:
             var       : "fd_src_id"
     obs_field_ids :
         - 6388191295067652096 # NGC4993-GW170817 2 visits
-        - 6381787756527353856 # AIS_309_1_28 2 visits (Crab pulsar)
+#        - 6381787756527353856 # AIS_309_1_28 2 visits (Crab pulsar)
+  - observatory   : "GALEX"
+    obs_filter    : "FUV"
+    
+    cluster_det:
+        meanshift:
+            bandwidth     : 5                               # In arcsec, to estimate it automatically specify "null"
+            seeds         : null
+            bin_seeding   : false
+            min_bin_freq  : 1
+            cluster_all   : true
+            n_jobs        : null
+            max_iter      : 300
+            table_name    : "tt_detections"
+
+    selection:
+        det_quality:
+            table       : "tt_detections"
+            presel_type : "and"
+            sel_type    : "and"                                # These are all AND selections
+            range:
+                s2n            : [3.5,.inf]
+                r_fov          : [0.0,0.55]
+                class_star     : [0.5,1.0]
+                chkobj_type    : [-0.5,0.5]
+                mag            : [16,26]
+            bitmask:
+                artifacts : [2,4]
+            set_range:
+                pos_err : [0.5,5] # 1 arcsec = 0.0002777, 0.5 arcsec = 0.0001389
+        coadd_det_quality:
+            table       : "tt_coadd_detections"
+            presel_type : "and"
+            sel_type    : "and"  # These are all AND selections
+            range:
+                s2n            : [4.0,.inf]
+                r_fov          : [0.0,0.55]
+        det_association :
+            presel_type : "and"
+            table     : "tt_detections"
+            ref_table : "tt_sources"
+            sel_type  : "is_in"
+            var       : "fd_src_id"
+    obs_field_ids :
+        - 6388191295067652096 # NGC4993-GW170817 2 visits
+#        - 6381787756527353856 # AIS_309_1_28 2 visits (Crab pulsar)
