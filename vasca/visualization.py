@@ -947,6 +947,10 @@ def plot_pipe_diagnostic(
 
     """
 
+    flt_name = ""
+    if obs_filter_id is not None:
+        flt_name = dd_id2filter[obs_filter_id]
+
     var_plt = OrderedDict()
     if plot_type == "hist":
         # Detections diagnostic
@@ -964,7 +968,7 @@ def plot_pipe_diagnostic(
                 2,
                 figsize=fig_size,
                 squeeze=False,
-                num="Detections Histograms " + dd_id2filter[obs_filter_id],
+                num="Detections Histograms " + flt_name,
             )
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
@@ -978,7 +982,7 @@ def plot_pipe_diagnostic(
                 3,
                 figsize=fig_size,
                 squeeze=False,
-                num="Sources Histograms " + dd_id2filter[obs_filter_id],
+                num="Sources Histograms " + flt_name,
             )
         elif table_name == "tt_coadd_sources":
             var_plt["nr_det"] = {}
@@ -990,7 +994,7 @@ def plot_pipe_diagnostic(
                 4,
                 figsize=fig_size,
                 squeeze=False,
-                num="Co-add Sources Histograms " + dd_id2filter[obs_filter_id],
+                num="Co-add Sources Histograms " + flt_name,
             )
         else:
             logger.warning("Diagnostic for table '{table_name}' not defined")
@@ -1017,7 +1021,7 @@ def plot_pipe_diagnostic(
                 2,
                 figsize=fig_size,
                 squeeze=False,
-                num="Detections Scatter " + dd_id2filter[obs_filter_id],
+                num="Detections Scatter " + flt_name,
             )
         elif table_name == "tt_sources":
             var_plt[("flux_cpval", "flux")] = {
@@ -1051,7 +1055,7 @@ def plot_pipe_diagnostic(
                 3,
                 figsize=fig_size,
                 squeeze=False,
-                num="Sources Scatter " + dd_id2filter[obs_filter_id],
+                num="Sources Scatter " + flt_name,
             )
         elif table_name == "tt_coadd_sources":
             var_plt[("flux_cpval", "flux")] = {
@@ -1070,7 +1074,7 @@ def plot_pipe_diagnostic(
                 3,
                 figsize=fig_size,
                 squeeze=False,
-                num="Co-add Sources Scatter " + dd_id2filter[obs_filter_id],
+                num="Co-add Sources Scatter " + flt_name,
             )
         else:
             logger.warning("Diegnostic for table '{table_name}' not defined")

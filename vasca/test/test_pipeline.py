@@ -65,7 +65,7 @@ def test_pipeline_vis(test_paths):
     vvis.plot_sky_sources(rg.tt_sources, tt_det=rg.tt_detections)
 
     # Plot light curve
-    sel = rg.tt_sources["nr_det"] > 1
+    sel = rg.tt_sources["nr_det"][:, 0] > 1
     fig_lc, ax_lc = vvis.plot_light_curve(
         rg, rg_src_ids=rg.tt_sources[sel]["rg_src_id"][0]
     )
@@ -76,10 +76,14 @@ def test_pipeline_vis(test_paths):
     vvis.plot_region_sky_gnomeview(rg, rg.tt_fields[0]["ra"], rg.tt_fields[0]["dec"])
 
     # Plot pipeline diagnostics
-    vvis.plot_pipe_diagnostic(rg, "tt_sources", "scatter")
-    vvis.plot_pipe_diagnostic(rg, "tt_sources", "hist")
-    vvis.plot_pipe_diagnostic(fd, "tt_detections", "hist", fig_size=(8, 10))
-    vvis.plot_pipe_diagnostic(fd, "tt_detections", "scatter", fig_size=(8, 10))
+    vvis.plot_pipe_diagnostic(rg, "tt_sources", "scatter", obs_filter_id=1)
+    vvis.plot_pipe_diagnostic(rg, "tt_sources", "hist", obs_filter_id=1)
+    vvis.plot_pipe_diagnostic(
+        fd, "tt_detections", "hist", fig_size=(8, 10), obs_filter_id=1
+    )
+    vvis.plot_pipe_diagnostic(
+        fd, "tt_detections", "scatter", fig_size=(8, 10), obs_filter_id=1
+    )
 
     print(rg)
 
