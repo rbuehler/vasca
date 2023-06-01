@@ -457,6 +457,7 @@ class TableCollection(object):
 
                 for var, vals in selections["range"].items():
 
+                    print(var, vals)
                     # Check if variable is stored in vector for all filters
                     var_vals = tt[var]
                     if len(np.array(var_vals[0]).flatten()) > 1:
@@ -465,7 +466,11 @@ class TableCollection(object):
                         ][0]
                         var_vals = var_vals[:, obs_filter_idx]
 
-                    sel = sel * (var_vals >= vals[0]) * (var_vals <= vals[1])
+                    sel = (
+                        sel
+                        * np.array((var_vals >= vals[0]), dtype=bool).flatten()
+                        * np.array((var_vals <= vals[1]), dtype=bool).flatten()
+                    )
 
                     logger.info(
                         f"AND selecting '{var}' {vals}, "
@@ -1037,7 +1042,7 @@ class TableCollection(object):
         assoc_ffactor = na_zero + dd_vasca_columns["assoc_ffactor"]["default"]
         assoc_fdiff_s2n = na_zero + dd_vasca_columns["assoc_fdiff_s2n"]["default"]
 
-        # Check if only one filter, then no vectorized entries
+        # Check if only one filter
         flt_iter = [None]
         if nr_filters > 1:
             flt_iter = range(nr_filters)
@@ -1059,10 +1064,10 @@ class TableCollection(object):
                 assoc_ffactor[sel, flt_idx] = ffactor
                 assoc_fdiff_s2n[sel, flt_idx] = fdiff_s2n
             else:
-                assoc_ffactor = fdiff_s2n.flatten()
+                assoc_ffactor = assoc_ffactor.flatten()
                 assoc_fdiff_s2n = assoc_fdiff_s2n.flatten()
-                assoc_ffactor[sel] = ffactor
-                assoc_fdiff_s2n[sel] = fdiff_s2n
+                assoc_ffactor[sel] = ffactor.data.flatten()
+                assoc_fdiff_s2n[sel] = fdiff_s2n.data.flatten()
 
         self.add_column(table_name, "assoc_ffactor", assoc_ffactor)
         self.add_column(table_name, "assoc_fdiff_s2n", assoc_fdiff_s2n)
