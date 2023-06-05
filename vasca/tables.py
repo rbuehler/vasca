@@ -95,17 +95,24 @@ class TableCollection(object):
         template_copy = templates[class_key][table_key].copy()
 
         # Check if data misses columns and in case fill with default values
+        dd_data_sel = {}
         if dd_data is not None:
             len_data_cols = len(dd_data[list(dd_data.keys())[0]])
             for col in template_copy["names"]:
                 if col not in dd_data.keys():
                     idx = template_copy["names"].index(col)
-                    dd_data[col] = [template_copy["defaults"][idx]] * len_data_cols
+                    dd_data_sel[col] = [template_copy["defaults"][idx]] * len_data_cols
+                else:
+                    dd_data_sel[col] = dd_data[col]
+        else:
+            dd_data_sel = None
 
         # Create table, delete defaults entry first,
         # as astropy Table does not support this
         del template_copy["defaults"]
-        tt_out = Table(data=dd_data, **template_copy)
+
+        # dd_data_sel = dd_data[**template_copy["names"]]
+        tt_out = Table(data=dd_data_sel, **template_copy)
         # tt_out.meta["template"] = template_name
 
         # logging
