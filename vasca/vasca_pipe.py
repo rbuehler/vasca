@@ -101,7 +101,7 @@ def set_logger(vasca_cfg):
     logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
 
 
-def run_field(obs_nr, field, vasca_cfg):
+def run_field(obs_nr, field_id, rg, vasca_cfg):
     """
     Run analysis on a single field
 
@@ -120,7 +120,14 @@ def run_field(obs_nr, field, vasca_cfg):
         Modified field with results
 
     """
-    logger.info("Analysing field:" + str(field.field_id))
+    logger.info("Analysing field:" + str(field_id))
+
+    field = rg.get_field(
+        field_id=field_id,
+        load_method=vasca_cfg["ressources"]["load_method"],
+        mast_products=vasca_cfg["ressources"]["load_products"],
+        field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
+    )
 
     # Create directory structure for fields
     field_out_dir = (
@@ -192,10 +199,9 @@ def run(vasca_cfg):
     if not os.path.exists(rg.region_path):
         os.makedirs(rg.region_path)
 
-    # Prepare fields to run on fot parellization
-    fd_pars = list()
+    # Prepare fields to run on for parellization
+    fd_pars = list()  # List of obsevatrions and field_ids in the config file
     obs_nr = 0
-
     for obs in vasca_cfg["observations"]:
         for gfield_id in obs["obs_field_ids"]:
             field_id = get_field_id(
@@ -203,27 +209,13 @@ def run(vasca_cfg):
                 observaory=obs["observatory"],
                 obs_filter=obs["obs_filter"],
             )
-            fd_pars.append([obs_nr, field_id])
+            fd_pars.append([obs_nr, field_id, rg, vasca_cfg])
         obs_nr += 1
 
     # Run each field in a separate process in parallel
-    with Pool(vasca_cfg["general"]["nr_cpus"]) as pool:
-        pool_return = pool.starmap(
-            run_field,
-            [
-                (
-                    fd_par[0],
-                    rg.get_field(
-                        field_id=fd_par[1],
-                        load_method=vasca_cfg["ressources"]["load_method"],
-                        mast_products=vasca_cfg["ressources"]["load_products"],
-                        field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
-                    ),
-                    vasca_cfg,
-                )
-                for fd_par in fd_pars
-            ],
-        )
+    nr_cpus = vasca_cfg["general"]["nr_cpus"]
+    with Pool(processes=nr_cpus) as pool:  # , maxtasksperchild=1
+        pool_return = pool.starmap(run_field, fd_pars)
     pool.join()
 
     # update region fields
@@ -236,6 +228,8 @@ def run(vasca_cfg):
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)
     rg.add_table_from_fields("tt_coadd_detections")
+
+    del rg.fields  # Fields are no longer needed, all needed info transfered to table
 
     # Cluster field sources and codds
     rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])

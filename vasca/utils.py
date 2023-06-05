@@ -97,7 +97,7 @@ def flux2mag(flux, flux_err=None):
         AB magnitude array. If flux was zero or positive -1 is returned.
     dmag : [Astropy Quantitiy], optional
         AB magnitude error array. If flux was zero or positive -1 is returned.
-        If no flux errors are passed None is returned.
+        If no flux errors are passed nothing is returned returned.
 
     """
     # print("in", flux)
@@ -112,8 +112,10 @@ def flux2mag(flux, flux_err=None):
     # Select valid fluxes
     valid = flux > 0
 
-    mag = -np.ones(len(flux)) * uu.ABmag
+    mag = np.ones(len(flux)) * dd_vasca_columns["mag"]["default"] * uu.ABmag
     mag[valid] = flux[valid].to("ABflux") * uu.ABmag
+
+    print(mag.unit)
 
     mag_err = None
     if type(flux_err) is not type(None):
@@ -124,7 +126,10 @@ def flux2mag(flux, flux_err=None):
         mag_err[valid] = mag[valid] - (flux + flux_err)[valid].to("ABflux") * uu.ABmag
 
     # print("returning", mag, mag_err)
-    return mag, mag_err
+    if flux_err is not None:
+        return mag, mag_err
+    else:
+        return mag
 
 
 def mag2flux(mag):
