@@ -573,9 +573,9 @@ class GALEXField(BaseField):
         gf.load_from_fits(fits_path)
         # Sets convenience class attributes
         gf.set_field_attr()
-        field_id = get_field_id(
-            obs_field_id=obs_id, observaory="GALEX", obs_filter=obs_filter
-        )
+        # field_id = get_field_id(
+        #     obs_field_id=obs_id, observaory="GALEX", obs_filter=obs_filter
+        # )
 
         # # Check consistency
         # if not gf.field_id == field_id:
@@ -740,7 +740,9 @@ class GALEXField(BaseField):
         vasca.field.GALEXField
 
         """
-        logger.info(f"Loading data for field '{gfield_id}' with method '{method}'.")
+        logger.info(
+            f"Loading field '{gfield_id}' with method '{method}' and load_products '{load_products}'."
+        )
 
         # Checks method argument
         # String matching is case insensitive (converts to all to lower case).
