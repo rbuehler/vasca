@@ -788,7 +788,7 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
 
     str_nrsel = str(sel.sum())
     str_nrnotsel = str((~sel).sum())
-    data = [np.array(col[~sel]), np.array(col[sel])]
+    data = [np.array(col[~sel]).flatten(), np.array(col[sel]).flatten()]
     xlabel = var + " [" + str(col.unit) + "]"
     if str(col.unit) == "None" or str(col.unit) == "":
         xlabel = var

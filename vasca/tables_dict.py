@@ -515,7 +515,7 @@ base_field = {
         "meta": {"DATAPATH": "None", "INFO": "Field information table"},
     },
     "tt_visits": {
-        "names": ["vis_id", "time_bin_start", "time_bin_size", "sel"],
+        "names": ["vis_id", "time_bin_start", "time_bin_size", "sel", "obs_filter_id"],
         "meta": {"INFO": "Visit information table"},
     },
     "tt_detections": {
@@ -592,7 +592,6 @@ galex_field = {
     "tt_visits": {
         "names": [
             *base_field["tt_visits"]["names"],
-            "time_bin_size_alt_filt",
             "ra",
             "dec",
         ],

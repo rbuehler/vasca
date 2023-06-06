@@ -38,6 +38,59 @@ dd_id2filter = dict(
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
 
 
+def sel_sources(tt_srcs):
+    """
+    Helper function to redo cuts, should be revisited/obsolete once table selection is rewritten
+
+    Parameters
+    ----------
+    tt_srcs : astropy.table.Table
+        DESCRIPTION.
+
+    Returns
+    -------
+    sel_vasca : [bool]
+        Selected sources.
+
+    """
+
+    # Cluster quality cut
+    sel_pos_cpval = tt_srcs["pos_cpval"] > 1e-10
+
+    # Flux variabiity cut
+    sel_flux_nuv = (tt_srcs["flux"][:, 0] > 0.144543) * (tt_srcs["flux"][:, 0] < 575.43)
+    sel_flux_fuv = (tt_srcs["flux"][:, 1] > 0.144543) * (tt_srcs["flux"][:, 1] < 575.43)
+    sel_flux_cpval_nuv = (tt_srcs["flux_cpval"][:, 0] < 0.000000573303) * (
+        tt_srcs["flux_cpval"][:, 0] > -0.5
+    )
+    sel_flux_cpval_fuv = (tt_srcs["flux_cpval"][:, 1] < 0.000000573303) * (
+        tt_srcs["flux_cpval"][:, 1] > -0.5
+    )
+    sel_flux_nxv_nuv = tt_srcs["flux_nxv"][:, 0] > 0.0006
+    sel_flux_nxv_fuv = tt_srcs["flux_nxv"][:, 1] > 0.0006
+    sel_flux_nr_det_nuv = tt_srcs["nr_det"][:, 0] > 1
+    sel_flux_nr_det_fuv = tt_srcs["nr_det"][:, 1] > 1
+    sel_flux_var = (
+        sel_flux_cpval_nuv * sel_flux_nxv_nuv * sel_flux_nr_det_nuv * sel_flux_nuv
+        + sel_flux_cpval_fuv * sel_flux_nxv_fuv * sel_flux_nr_det_fuv * sel_flux_fuv
+    )
+
+    # Coadd flux difference cut
+    sel_assoc_ffactor_nuv = tt_srcs["assoc_ffactor"][:, 0] > 1.5
+    sel_assoc_fdiff_s2n_nuv = tt_srcs["assoc_fdiff_s2n"][:, 0] > 6
+    sel_assoc_nr_det_nuv = tt_srcs["nr_det"][:, 0] > 0
+    sel_assoc_ffactor_fuv = tt_srcs["assoc_ffactor"][:, 1] > 1.5
+    sel_assoc_fdiff_s2n_fuv = tt_srcs["assoc_fdiff_s2n"][:, 1] > 6
+    sel_assoc_nr_det_fuv = tt_srcs["nr_det"][:, 1] > 0
+    sel_assoc = (
+        sel_assoc_ffactor_nuv * sel_assoc_fdiff_s2n_nuv * sel_assoc_nr_det_nuv
+        + sel_assoc_ffactor_fuv * sel_assoc_fdiff_s2n_fuv * sel_assoc_nr_det_fuv
+    )
+
+    sel_vasca = (sel_flux_var + sel_assoc) * sel_pos_cpval
+    return sel_vasca
+
+
 def select_obs_filter(tt_in, obs_filter_id):
     """
     Helper function to select rows or columns ob the passed obs_filter_id in a table
@@ -62,7 +115,7 @@ def select_obs_filter(tt_in, obs_filter_id):
     if obs_filter_id is not None:
         # If obs_id is in the table, select on it
         if nr_flts == 1:
-            tt = tt[tt["obs_filter_id"] == obs_filter_id]
+            tt = tt[tt["obs_filter_id"].data.flatten() == obs_filter_id]
         else:
             flt_idx = np.where(tt["obs_filter_id"][0] == obs_filter_id)
             for colname in tt.colnames:
@@ -114,8 +167,6 @@ def flux2mag(flux, flux_err=None):
 
     mag = np.ones(len(flux)) * dd_vasca_columns["mag"]["default"] * uu.ABmag
     mag[valid] = flux[valid].to("ABflux") * uu.ABmag
-
-    print(mag.unit)
 
     mag_err = None
     if type(flux_err) is not type(None):

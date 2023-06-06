@@ -990,28 +990,42 @@ class GALEXField(BaseField):
             mast_col_names
         ]
 
+        # Remove zero exposure visits
+        exp_col_name = "nexptime" if obs_filter == "NUV" else "fexptime"
+        sel_visits = tt_visits_raw_select[exp_col_name] > 1e-10
+        tt_visits_raw_select = tt_visits_raw_select[sel_visits]
+
+        if len(tt_visits_raw_select) == 0:
+            logger.warning(f"No exposure for field {obs_id} and filter  {obs_filter}")
+
+        # Check which filters where observing
+        obs_filter_ids = np.zeros(len(tt_visits_raw_select))
+        obs_filter_ids += (tt_visits_raw_select["nexptime"] > 1e-10) * dd_filter2id[
+            "NUV"
+        ]
+        obs_filter_ids += (tt_visits_raw_select["fexptime"] > 1e-10) * dd_filter2id[
+            "FUV"
+        ]
+
         # Converts string time format to mjd
-        for key in ["minPhotoObsDate"]:
-            tt_visits_raw_select.update(
-                {
-                    key: Time(
-                        [
-                            datetime.strptime(
-                                date_str.decode("utf-8"), "%m/%d/%Y %I:%M:%S %p"
-                            )
-                            for date_str in tt_visits_raw_select[key].data
-                        ]
-                    ).mjd
-                }
-            )
+        ll_times = [
+            datetime.strptime(date_str.decode("utf-8"), "%m/%d/%Y %I:%M:%S %p")
+            for date_str in tt_visits_raw_select["minPhotoObsDate"].data
+        ]
+        tt_visits_raw_select.update({"minPhotoObsDate": Time(ll_times).mjd})
 
         # Convert into dictionary with correct VASCA column names
         dd_visits_raw_select = {}
         for col in mast_col_names:
             dd_visits_raw_select[col_names[col]] = tt_visits_raw_select[col].data
+        dd_visits_raw_select["obs_filter_id"] = obs_filter_ids
 
         # Sets table as class attribute
         self.add_table(dd_visits_raw_select, "galex_field:tt_visits")
+
+        # Add filter_id
+        # flt_ids = dd_filter2id[obs_filter] * np.ones(len(self.tt_visits))
+        # self.add_column("tt_visits", "obs_filter_id", flt_ids)
 
     def _load_galex_archive_products(
         self,
