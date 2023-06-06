@@ -6,7 +6,6 @@ astropy.Table collection class for VASCA
 
 import os
 
-import h5py
 import numpy as np
 from astropy import units as uu
 from astropy.io import fits
@@ -325,75 +324,6 @@ class TableCollection(object):
                     self.add_table(ta_data, "region:" + ta_name)
                 else:
                     self.add_table(ta_data, "base_field:" + ta_name)
-
-    def write_to_hdf5(self, file_name="tables.hdf5"):
-        """
-        Write tables of a field to a hdf5 file.
-
-        Parameters
-        ----------
-        file_name : str, optional
-            File name. The default is "field_default.fits".
-        overwrite : bool, optional
-            Overwrite existing file. The default is True.
-
-        Returns
-        -------
-        None.
-
-        """
-
-        logger.info(f"Writing file with name '{file_name}'")
-
-        ii = 0
-        for key in self._table_names:
-            # TODO: Make hdf5 work with numpy.dtype.object objects
-            if key.startswith("ta_"):
-                logger.warning(f"Not writing vector table '{key}'")
-            elif key in self.__dict__:
-                logger.debug(f"Writing table '{key}'")
-                ii += 1
-                if ii == 1:
-                    self.__dict__[key].write(
-                        file_name,
-                        path="TABDATA/" + key,
-                        overwrite=True,
-                        serialize_meta=True,
-                    )
-                else:
-                    self.__dict__[key].write(
-                        file_name,
-                        path="TABDATA/" + key,
-                        append=True,
-                        serialize_meta=True,
-                    )
-
-    def load_from_hdf5(self, file_name="tables.hdf5"):
-        """
-        Loads field from a hdf5 file
-
-        Parameters
-        ----------
-        file_name : str, optional
-            File name. The default is "field_default.hdf5".
-
-        Returns
-        -------
-        None.
-
-        """
-
-        logger.info(f"Loading file with name '{file_name}'")
-        in_file = h5py.File(file_name, "r")
-
-        for table in in_file["TABDATA"].keys():
-            if "meta" in str(table):
-                continue
-            logger.debug(f"Loading table '{table}'")
-            self._table_names.append(str(table))
-            setattr(
-                self, str(table), Table.read(file_name, path="TABDATA/" + str(table))
-            )
 
     def info(self):
         """

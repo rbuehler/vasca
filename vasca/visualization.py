@@ -79,7 +79,7 @@ def plot_sky_sources(
     tt_src = tt_src[sel]
 
     # select sources within the region
-    sel_reg = np.ones(len(tt_src), dtype=np.bool)
+    sel_reg = np.ones(len(tt_src), dtype=bool)
     if type(sky_region_wcs) is not type(None):
         src_coords = SkyCoord(tt_src["ra"], tt_src["dec"], frame="icrs")
         sel_reg = sky_region_wcs[0].contains(src_coords, sky_region_wcs[1])
