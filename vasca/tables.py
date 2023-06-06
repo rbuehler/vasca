@@ -464,7 +464,6 @@ class TableCollection(object):
 
                 for var, vals in selections["range"].items():
 
-                    print(var, vals)
                     # Check if variable is stored in vector for all filters
                     var_vals = tt[var]
                     if len(np.array(var_vals[0]).flatten()) > 1:

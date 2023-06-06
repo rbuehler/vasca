@@ -153,7 +153,6 @@ def flux2mag(flux, flux_err=None):
         If no flux errors are passed nothing is returned returned.
 
     """
-    # print("in", flux)
 
     if type(flux) is not uu.quantity.Quantity:
         flux = np.array(flux) * 1e-6 * uu.Jy
@@ -176,7 +175,6 @@ def flux2mag(flux, flux_err=None):
 
         mag_err[valid] = mag[valid] - (flux + flux_err)[valid].to("ABflux") * uu.ABmag
 
-    # print("returning", mag, mag_err)
     if flux_err is not None:
         return mag, mag_err
     else:
@@ -198,8 +196,6 @@ def mag2flux(mag):
         Flux in micro Jy
 
     """
-    # print("drin", mag)
-    # print("giving", (np.array(mag) * uu.ABmag).to("Jy"))
     return (np.array(mag) * uu.ABmag).to("1e-6Jy")
 
 
@@ -518,9 +514,6 @@ def get_cutout_bounds(cutout, out_frame="icrs"):
     # Convert to world coordinates
     ll = cutout.wcs.pixel_to_world(x_ll, y_ll)
     ur = cutout.wcs.pixel_to_world(x_ur, y_ur)
-
-    # Separation
-    # print(ll.separation(ur).arcsec)
 
     return SkyCoord([ll.ra, ur.ra], [ll.dec, ur.dec], frame=ll.frame).transform_to(
         out_frame
