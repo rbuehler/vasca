@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Test configuration file"
 
 general:
-    name          : "CrabGW"
+    name          : "AIS_5_1_40"
     out_dir_base  : "./vasca/test/out_pipe"                  # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                                # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                              # Will be written into "out_dir", if ""default" a default name will be created 
@@ -54,7 +54,7 @@ selection:
             nr_det         : [2,.inf]
             pos_cpval      : [0.0000001,.inf]            
             flux_cpval     : [-0.5,0.000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
-            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%  
+            flux_nxv       : [0.006,.inf]          # Excess variance above ~sqrt(cut)*100%  
             flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
     src_coadd_diff:
         table       : "tt_sources"
@@ -63,9 +63,8 @@ selection:
         obs_filter  : "NUV" 
         range:
             nr_det          : [1,.inf]   
-            assoc_ffactor   : [2.0,.inf]
-            assoc_fdiff_s2n : [3,.inf]
-                    
+            assoc_ffactor   : [1.0,.inf]
+            assoc_fdiff_s2n : [1,.inf]                  
 observations:
   - observatory   : "GALEX"
     obs_filter    : "NUV"
@@ -109,8 +108,8 @@ observations:
             sel_type  : "is_in"
             var       : "fd_src_id"
     obs_field_ids :
-        - 6388191295067652096 # NGC4993-GW170817 2 visits
-#        - 6381787756527353856 # AIS_309_1_28 2 visits (Crab pulsar)
+         - 6371091720297250816
+
   - observatory   : "GALEX"
     obs_filter    : "FUV"
     
@@ -131,7 +130,7 @@ observations:
             presel_type : "and"
             sel_type    : "and"                                # These are all AND selections
             range:
-                s2n            : [3.5,.inf]
+                s2n            : [1.5,.inf]
                 r_fov          : [0.0,0.55]
                 class_star     : [0.5,1.0]
                 chkobj_type    : [-0.5,0.5]
@@ -153,5 +152,4 @@ observations:
             sel_type  : "is_in"
             var       : "fd_src_id"
     obs_field_ids :
-        - 6388191295067652096 # NGC4993-GW170817 2 visits
-#        - 6381787756527353856 # AIS_309_1_28 2 visits (Crab pulsar)
+         - 6371091720297250816

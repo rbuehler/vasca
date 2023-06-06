@@ -11,8 +11,8 @@ general:
     save_ref_srcs   : true                               # Store referenze sources into region file
     
 ressources:                      
-    load_method      : "VASCA"                     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
-    load_products    :  "TABLE"                           # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
+    load_method      : "MAST_LOCAL"                     # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_products    :  "TABLES"                           # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     field_kwargs:
         data_path        : null
         visits_data_path : null 

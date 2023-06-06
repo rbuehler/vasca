@@ -9,7 +9,6 @@ import os
 import sys
 from multiprocessing import Pool
 
-
 import yaml
 from yamlinclude import YamlIncludeConstructor
 from loguru import logger
@@ -223,7 +222,8 @@ def run(vasca_cfg):
         rg.fields[field.field_id] = field
 
     # Add field tables to region
-    rg.add_table_from_fields("tt_visits")
+    # For visits merge obs_filter_id and remove doubles
+    rg.add_table_from_fields("tt_visits", sum_obs_filter=True)
     rg.tt_visits = unique(rg.tt_visits, keys="vis_id")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)

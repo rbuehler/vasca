@@ -114,10 +114,12 @@ class Region(TableCollection):
 
         return rg
 
-    def add_table_from_fields(self, table_name, only_selected=False):
+    def add_table_from_fields(
+        self, table_name, only_selected=False, sum_obs_filter=False
+    ):
         """
         Add tables from the fields to the region by stacking them,
-        adding the field_id column.
+        adding the rg_fd_id column.
 
 
         Parameters
@@ -164,12 +166,24 @@ class Region(TableCollection):
         for tt in ll_tt:
             for colname in colnames:
                 dd_data[colname].extend(tt[colname].tolist())
-
         # For vector columns convert to numpy arrays of type object_
         # This is needed for correct writing to fits in Astropy v5.0.4
-        for colname in colnames:
-            if len(np.array(dd_data[colname], dtype=object).shape) > 1:
-                dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
+        # for colname in colnames:
+        #    if len(np.array(dd_data[colname], dtype=object).shape) > 1:
+        #        dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
+        # tt_tmp = self.table_from_template(dd_data, "region:" + table_name)
+        # print("l", len(tt_tmp))
+        # if sum_obs_filter:
+        #     tt_tmp.add_index("vis_id")
+        #     vis_ids = np.unique(tt_tmp["vis_id"])
+        #     for vis_id in vis_ids:
+        #         idxs = tt_tmp.loc_indices["vis_id", vis_id]
+
+        #         flt_id = np.unique(tt_tmp["obs_filter_id"][idxs].data).sum()
+        #         # flt_id_vec = flt_id.sum() * np.ones(len(flt_id))
+
+        #         tt_tmp[idxs]["vis_id"] = flt_id
+        #     tt_tmp = unique(tt_tmp, keys="vis_id")
 
         self.add_table(dd_data, "region:" + table_name)
 

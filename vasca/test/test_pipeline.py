@@ -54,7 +54,7 @@ def test_pipeline_vis(test_paths):
 
     # Test visualizations
     # Load region
-    region_name = "CrabGW"
+    region_name = "AIS_5_1_40"
     region_fname = pipeline_out + "/" + region_name + "/region_" + region_name + ".fits"
     rg = Region()
     rg.load_from_fits(region_fname)
@@ -89,6 +89,6 @@ def test_pipeline_vis(test_paths):
     # this forces to download the data from mast,
     # i.e., tests also the fallback from load method "MAST_LOCAL" to "MAST_REMOTE"
     # -> Todo: write dedicated test for the various load methods
-    field_data_path = f"{test_paths['resource_root']}/6381787756527353856"
+    field_data_path = f"{test_paths['resource_root']}/6371091720297250816"
     if os.path.isdir(field_data_path):
         shutil.rmtree(field_data_path)
