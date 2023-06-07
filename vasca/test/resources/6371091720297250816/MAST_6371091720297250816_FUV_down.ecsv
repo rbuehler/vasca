@@ -1,0 +1,11 @@
+# %ECSV 1.0
+# ---
+# datatype:
+# - {name: Local Path, datatype: string}
+# - {name: Status, datatype: string}
+# schema: astropy-2.0
+"Local Path" Status
+/mastDownload/GALEX/6371091582858297344/AIS_5_0001_sg40-xd-mcat.fits.gz COMPLETE
+/mastDownload/GALEX/6371091582891851776/AIS_5_0002_sg40-xd-mcat.fits.gz COMPLETE
+/mastDownload/GALEX/6371091720297250816/AIS_5_sg40-xd-mcat.fits.gz COMPLETE
+/mastDownload/GALEX/6371091720297250816/AIS_5_sg40-fd-int.fits.gz COMPLETE
