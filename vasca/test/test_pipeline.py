@@ -89,6 +89,6 @@ def test_pipeline_vis(test_paths):
     # this forces to download the data from mast,
     # i.e., tests also the fallback from load method "MAST_LOCAL" to "MAST_REMOTE"
     # -> Todo: write dedicated test for the various load methods
-    field_data_path = f"{test_paths['resource_root']}/6371091720297250816"
-    if os.path.isdir(field_data_path):
-        shutil.rmtree(field_data_path)
+    # field_data_path = f"{test_paths['resource_root']}/6371091720297250816"
+    # if os.path.isdir(field_data_path):
+    #     shutil.rmtree(field_data_path)
