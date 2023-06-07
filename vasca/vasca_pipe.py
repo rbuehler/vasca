@@ -123,7 +123,7 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
 
     field = rg.get_field(
         field_id=field_id,
-        load_method=vasca_cfg["ressources"]["load_method"],
+        load_method="VASCA",
         mast_products=vasca_cfg["ressources"]["load_products"],
         field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
     )
