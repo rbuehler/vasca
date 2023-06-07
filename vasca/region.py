@@ -73,15 +73,17 @@ class Region(TableCollection):
 
         # Loop over all observations
         rg_fd_id = 0
+        
         for obs in vasca_cfg["observations"]:
             if obs["observatory"] == "GALEX":
                 # Loop over fields and store info
                 for gfield_id in obs["obs_field_ids"]:
+                    
                     gf = GALEXField.load(
                         gfield_id,
                         obs_filter=obs["obs_filter"],
                         method=vasca_cfg["ressources"]["load_method"],
-                        load_products="NONE",
+                        load_products=vasca_cfg["ressources"]["load_products"],         #Data needs to be preloaded serialy, to avoid many parallel requests to the MAST server later which results in erros
                         **vasca_cfg["ressources"]["field_kwargs"],
                     )
 
