@@ -51,3 +51,5 @@ vasca/examples/vasca_pipeline*
 /vasca/test/resources/6388191295067652096/MAST_6388191295067652096_FUV_down.ecsv
 /vasca/test/resources/6388191295067652096/VASCA_GALEX_6388191295067652096_FUV_field_data.fits
 /vasca/test/resources/6388191295067652096/mastDownload/GALEX/6388191295067652096/AIS_491_sg12-fd-int.fits.gz
+/vasca/test/resources/6371091720297250816/VASCA_GALEX_6371091720297250816_FUV_field_data.fits
+/vasca/test/resources/6371091720297250816/VASCA_GALEX_6371091720297250816_NUV_field_data.fits
