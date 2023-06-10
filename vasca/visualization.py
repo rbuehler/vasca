@@ -1246,9 +1246,9 @@ def plot_light_curve(
         loc="upper left",
         fontsize="small",
         handletextpad=0.05,
-        # bbox_to_anchor=(1.01, 1),
+        bbox_to_anchor=(1.01, 1),
     )
-    # plt.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+    plt.legend( loc="lower left")  #bbox_to_anchor=(1.04, 1),
     ax.set_xlabel("MJD")
     ax.set_ylabel(r"Flux [$\mu$Jy]")
 
@@ -1262,22 +1262,23 @@ def plot_light_curve(
     secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
     secax.set_xlabel("Year")
 
+    # TODO: THis did not work anymore after matplotlib update, check why and fix
     # Add a second flux axis in magnitudes
-    def flux2mag_np(flux):
-        return_mag = np.reshape(np.array(flux2mag(flux.flatten())), (-1, 1))
-        return return_mag
+    # def flux2mag_np(flux):
+    #     return_mag = np.reshape(np.array(flux2mag(flux.flatten())), (-1, 1))
+    #     return return_mag
 
-    def mag2flux_np(mag):
-        return_flux = np.reshape(np.array(mag2flux(mag.flatten())), (-1, 1))
-        return return_flux
+    # def mag2flux_np(mag):
+    #     return_flux = np.reshape(np.array(mag2flux(mag.flatten())), (-1, 1))
+    #     return return_flux
 
-    secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
+    # secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
-    # Avoid scientific notation for magnitudes
-    formatter = ScalarFormatter()
-    formatter.set_scientific(False)
-    secay.yaxis.set_minor_formatter(formatter)
+    # # Avoid scientific notation for magnitudes
+    # formatter = ScalarFormatter()
+    # formatter.set_scientific(False)
+    # secay.yaxis.set_minor_formatter(formatter)
 
-    secay.set_ylabel("AB magnitude")
+    # secay.set_ylabel("AB magnitude")
 
     return fig, ax
