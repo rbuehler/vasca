@@ -133,6 +133,7 @@ def select_obs_filter(tt_in, obs_filter_id):
     return tt
 
 
+# TODO: Add check if flux <=0
 def flux2mag(flux, flux_err=None):
     """
     Converts flux in Jy into AB magnitudes
@@ -161,19 +162,19 @@ def flux2mag(flux, flux_err=None):
     ):
         flux_err = np.array(flux_err) * 1e-6 * uu.Jy
 
-    # Select valid fluxes
-    valid = flux > 0
+    # Convert flux
+    if np.sum(np.array(flux) < 1e-20) > 0:
+        print("Warning, some input fluxes <0, returning np.nan for them")
+        flux[np.array(flux) < 1e-20] = np.nan
+    mag = flux.to("ABflux") * uu.ABmag
 
-    mag = np.ones(len(flux)) * dd_vasca_columns["mag"]["default"] * uu.ABmag
-    mag[valid] = flux[valid].to("ABflux") * uu.ABmag
-
+    # Convert flux error
     mag_err = None
     if type(flux_err) is not type(None):
-        mag_err = -np.ones(len(flux)) * uu.mag
-        if type(flux_err) is not type(None):
-            valid = valid * flux_err > 0
-
-        mag_err[valid] = mag[valid] - (flux + flux_err)[valid].to("ABflux") * uu.ABmag
+        if np.sum(np.array(flux_err) < 1e-20) > 0:
+            print("Warning, some input fluxe errors <0, returning np.nan for them")
+            flux_err[np.array(flux_err) < 1e-20] = np.nan
+        mag_err = mag - (flux + flux_err).to("ABflux") * uu.ABmag
 
     if flux_err is not None:
         return mag, mag_err
@@ -196,7 +197,8 @@ def mag2flux(mag):
         Flux in micro Jy
 
     """
-    return (np.array(mag) * uu.ABmag).to("1e-6Jy")
+    flux = (np.array(mag) * uu.ABmag).to("1e-6Jy")
+    return flux
 
 
 def get_field_id(obs_field_id, observaory, obs_filter):

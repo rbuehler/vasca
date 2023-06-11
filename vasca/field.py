@@ -200,7 +200,6 @@ class BaseField(TableCollection):
         # Loop over sources and add them to dictionary
         tt_det_grp = self.tt_detections[sel].group_by(["fd_src_id"])
         for tt_det in tt_det_grp.groups:
-
             # Add src id
             fd_src_id = tt_det["fd_src_id"][0]
             tdata["fd_src_id"].append(fd_src_id.tolist())
@@ -265,7 +264,6 @@ class BaseField(TableCollection):
 
         for tt_det in tt_det_grp.groups:
             if len(tt_det) > 1:
-
                 # Get source coordinate
                 fd_src_id = tt_det["fd_src_id"].data[0]
                 fd_src_idx = self.tt_sources.loc_indices["fd_src_id", fd_src_id]
@@ -1259,8 +1257,8 @@ class GALEXField(BaseField):
             mast_col_names = [
                 "visit_id",
                 "ggoid_dec",
-                "alpha_j2000",  # take band-merged quantities?
-                "delta_j2000",  # take band-merged quantities?
+                f"{obs_filter}_ALPHA_J2000",  # take band-merged quantities?
+                f"{obs_filter}_DELTA_J2000",  # take band-merged quantities?
                 f"{obs_filter_l}_poserr",
                 f"{obs_filter_l}_flux",
                 f"{obs_filter_l}_fluxerr",
