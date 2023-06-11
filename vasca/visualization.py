@@ -119,7 +119,6 @@ def plot_sky_sources(
     colors = cycle("rbgcmrbgcmrbgcmrbgcm")
     lss = [":", "-", "--", "_."]
     for src, col in zip(tt_src[sel_reg], colors):
-
         # Set colors in tandem for srcs, det and label, unless specific color passed
         if src_kwargs is not None and "color" in src_kwargs.keys():
             col = plt_src_kwargs["color"]
@@ -130,7 +129,6 @@ def plot_sky_sources(
         if type(tt_det) is not type(None) and src[src_id] in tt_det[src_id]:
             det_idxs = np.array(tt_det.loc_indices[src_id, src[src_id]]).flatten()
             for det_idx in det_idxs:
-
                 coord_det = SkyCoord(
                     tt_det[det_idx]["ra"] * uu.deg,
                     tt_det[det_idx]["dec"] * uu.deg,
@@ -1248,7 +1246,7 @@ def plot_light_curve(
         handletextpad=0.05,
         bbox_to_anchor=(1.01, 1),
     )
-    plt.legend( loc="lower left")  #bbox_to_anchor=(1.04, 1),
+    plt.legend(loc="lower left")  # bbox_to_anchor=(1.04, 1),
     ax.set_xlabel("MJD")
     ax.set_ylabel(r"Flux [$\mu$Jy]")
 
@@ -1264,21 +1262,19 @@ def plot_light_curve(
 
     # TODO: THis did not work anymore after matplotlib update, check why and fix
     # Add a second flux axis in magnitudes
-    # def flux2mag_np(flux):
-    #     return_mag = np.reshape(np.array(flux2mag(flux.flatten())), (-1, 1))
-    #     return return_mag
+    def flux2mag_np(flux):
+        return flux2mag(flux).data
 
-    # def mag2flux_np(mag):
-    #     return_flux = np.reshape(np.array(mag2flux(mag.flatten())), (-1, 1))
-    #     return return_flux
+    def mag2flux_np(mag):
+        return mag2flux(mag).data
 
-    # secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
+    secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
-    # # Avoid scientific notation for magnitudes
-    # formatter = ScalarFormatter()
-    # formatter.set_scientific(False)
-    # secay.yaxis.set_minor_formatter(formatter)
+    # Avoid scientific notation for magnitudes
+    formatter = ScalarFormatter()
+    formatter.set_scientific(False)
+    secay.yaxis.set_minor_formatter(formatter)
 
-    # secay.set_ylabel("AB magnitude")
+    secay.set_ylabel("AB magnitude")
 
     return fig, ax
