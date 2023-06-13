@@ -567,10 +567,11 @@ class GALEXField(BaseField):
                 "Wrong file or file path to VASCA data "
                 f"for GALEX field '{obs_id}' with obs_filter '{obs_filter}'."
             )
-        # Reads the VASCA-generated field data
-        gf.load_from_fits(fits_path)
-        # Sets convenience class attributes
-        gf.set_field_attr()
+        else:
+            # Reads the VASCA-generated field data
+            gf.load_from_fits(fits_path)
+            # Sets convenience class attributes
+            gf.set_field_attr()
         # field_id = get_field_id(
         #     obs_field_id=obs_id, observaory="GALEX", obs_filter=obs_filter
         # )
@@ -638,7 +639,7 @@ class GALEXField(BaseField):
         Returns
         -------
         vasca.field.GALEXField
-
+            Returns None if no entry is found
         """
         # Checks
         if not isinstance(refresh, bool):
@@ -649,6 +650,11 @@ class GALEXField(BaseField):
 
         # Sets ``gf.tt_fields``
         gf._load_galex_field_info(obs_id, obs_filter, refresh=refresh)
+
+        # If no field entries returned return None
+        if len(gf.tt_fields) == 0:
+            logger.warning(f"No field found for ID {obs_id} and filter {obs_filter}")
+            return None
         # Sets ``gf.tt_visits``
         gf._load_galex_visits_info(obs_id, obs_filter)
 

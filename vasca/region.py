@@ -73,19 +73,24 @@ class Region(TableCollection):
 
         # Loop over all observations
         rg_fd_id = 0
-        
+
         for obs in vasca_cfg["observations"]:
             if obs["observatory"] == "GALEX":
                 # Loop over fields and store info
                 for gfield_id in obs["obs_field_ids"]:
-                    
                     gf = GALEXField.load(
                         gfield_id,
                         obs_filter=obs["obs_filter"],
                         method=vasca_cfg["ressources"]["load_method"],
-                        load_products=vasca_cfg["ressources"]["load_products"],         #Data needs to be preloaded serialy, to avoid many parallel requests to the MAST server later which results in erros
+                        load_products=vasca_cfg["ressources"][
+                            "load_products"
+                        ],  # Data needs to be preloaded serialy, to avoid many parallel requests to the MAST server later which results in erros
                         **vasca_cfg["ressources"]["field_kwargs"],
                     )
+
+                    rg_fd_id += 1
+                    if type(gf) == type(None):
+                        continue
 
                     field_info = dict(gf.tt_fields[0])
                     field_info["fov_diam"] = gf.fov_diam
@@ -95,8 +100,6 @@ class Region(TableCollection):
                     field_info["time_stop"] = gf.time_stop.mjd
                     field_info["rg_fd_id"] = rg_fd_id
                     rg.tt_fields.add_row(field_info)
-
-                    rg_fd_id += 1
             else:
                 logger.waring(
                     "Selected observatory `" + obs["observatory"] + "` not supported"
