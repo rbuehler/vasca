@@ -108,8 +108,7 @@ observations:
             sel_type  : "is_in"
             var       : "fd_src_id"
     obs_field_ids :
-         - 3244740315130626048
-#         - 6371091720297250816
+         - 6371091720297250816
 
   - observatory   : "GALEX"
     obs_filter    : "FUV"
@@ -153,5 +152,4 @@ observations:
             sel_type  : "is_in"
             var       : "fd_src_id"
     obs_field_ids :
-         - 3244740315130626048
-#         - 6371091720297250816
+         - 6371091720297250816
