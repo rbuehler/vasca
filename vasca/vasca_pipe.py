@@ -202,13 +202,8 @@ def run(vasca_cfg):
     fd_pars = list()  # List of obsevatrions and field_ids in the config file
     obs_nr = 0
     for obs in vasca_cfg["observations"]:
-        for gfield_id in obs["obs_field_ids"]:
-            field_id = get_field_id(
-                obs_field_id=gfield_id,
-                observaory=obs["observatory"],
-                obs_filter=obs["obs_filter"],
-            )
-            fd_pars.append([obs_nr, field_id, rg, vasca_cfg])
+        for field in rg.tt_fields:
+            fd_pars.append([obs_nr, field["field_id"], rg, vasca_cfg])
         obs_nr += 1
 
     # Run each field in a separate process in parallel
@@ -229,7 +224,7 @@ def run(vasca_cfg):
     rg.add_table_from_fields("tt_detections", only_selected=False)
     rg.add_table_from_fields("tt_coadd_detections")
 
-    del rg.fields  # Fields are no longer needed, all needed info transfered to table
+    del rg.fields  # All that needed has been transfered to region tables
 
     # Cluster field sources and codds
     rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
