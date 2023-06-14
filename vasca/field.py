@@ -1317,11 +1317,13 @@ class GALEXField(BaseField):
         # Convert into dictionary with correct VASCA column names
         # *** Detections
         dd_detections_raw = {}
+        # Keep only entries with detections
+        sel_s2n = tt_detections_raw[f"{obs_filter_l}_s2n"] > 0
         for col in mast_col_names:
-            dd_detections_raw[col_names[col]] = tt_detections_raw[col].data
+            dd_detections_raw[col_names[col]] = tt_detections_raw[col][sel_s2n].data
         # Add filter_id
         dd_detections_raw["obs_filter_id"] = np.array(
-            dd_filter2id[obs_filter.upper()] + np.zeros(len(tt_detections_raw))
+            dd_filter2id[obs_filter.upper()] + np.zeros(np.sum(sel_s2n))
         )
         self.add_table(dd_detections_raw, "galex_field:tt_detections")
         logger.debug("Constructed 'tt_detections'.")
