@@ -147,6 +147,23 @@ class TableCollection(object):
 
         setattr(self, table_key, tt)
 
+    def remove_unselected(self, table_name):
+        """
+        Remove unselected rows from given table
+
+        Parameters
+        ----------
+        table_name : str
+            Table to delete the unselected rows from. HAs to contain the "sel" column.
+
+        Returns
+        -------
+        None.
+
+        """
+        sel = self.__dict__[table_name]["sel"]
+        self.__dict__[table_name] = self.__dict__[table_name][sel]
+
     def write_to_fits(
         self, file_name="tables.fits", overwrite=True, fits_verify="warn"
     ):
@@ -391,9 +408,7 @@ class TableCollection(object):
 
             # Apply min/max cuts
             if "range" in selections.keys():
-
                 for var, vals in selections["range"].items():
-
                     # Check if variable is stored in vector for all filters
                     var_vals = tt[var]
                     if len(np.array(var_vals[0]).flatten()) > 1:
@@ -434,7 +449,6 @@ class TableCollection(object):
 
             if "range" in selections.keys():
                 for var, vals in selections["range"].items():
-
                     # Check if variable is stored in verctor for all filters
                     var_vals = tt[var]
                     if len(np.array(var_vals[0]).flatten()) > 1:
@@ -664,7 +678,6 @@ class TableCollection(object):
             logger.debug(f"Merged sources: {nr_merged} ({perc_merged}%)")
 
         elif table_name == "tt_detections":
-
             # Assume all detections have the same filter_id
             # TODO: This might have to be extendet to the general case in the future.
             filter_id = self.tt_detections["obs_filter_id"][0]
@@ -985,7 +998,6 @@ class TableCollection(object):
 
         # Loop over all filters and calculate comparison variables
         for flt_idx in flt_iter:
-
             # Get variables
             flux = tt_srcs["flux"][sel, flt_idx]
             flux_cat = tt_cat["flux"][idx_cat[sel], flt_idx]

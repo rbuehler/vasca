@@ -145,7 +145,9 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
 
     # Apply detections selections
     field.select_rows(obs_cfg["selection"]["det_quality"], remove_unselected=False)
-    field.select_rows(obs_cfg["selection"]["coadd_det_quality"], remove_unselected=True)
+    field.select_rows(
+        obs_cfg["selection"]["coadd_det_quality"], remove_unselected=False
+    )
 
     # Run clustering
     field.cluster_meanshift(
@@ -161,6 +163,7 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     # Remove some items which are not further needed to free memory
     # Remove detections which did not pass the selection and where not used in clustering
     field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
+    field.remove_unselected("tt_coadd_detections")
     field.ref_img = None
     field.ref_wcs = None
     field.vis_img = None
