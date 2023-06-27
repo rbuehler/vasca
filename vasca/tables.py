@@ -161,6 +161,7 @@ class TableCollection(object):
         None.
 
         """
+        logger.debug(f"Removing unselected rows in table '{table_name}'")
         sel = self.__dict__[table_name]["sel"]
         self.__dict__[table_name] = self.__dict__[table_name][sel]
 
