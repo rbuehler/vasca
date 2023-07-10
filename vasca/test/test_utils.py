@@ -113,3 +113,34 @@ def test_utils_get_hist_bins():
     bin_size = 2
     bins = vutils.get_hist_bins(data, bin_size)
     assert np.array_equal(bins, np.array([1.0, 3.0, 5.0, 7.0, 9.0, 11.0, 13.0]))
+
+
+def test_utils_name2id():
+    # Tests generic functionality (64-bit)
+    name = "foo"
+    id_int = vutils.name2id(name, bits=64)
+
+    assert 64 >= id_int.bit_length()
+
+    # Tests generic functionality (64-bit)
+    name = "bar"
+    id_int = vutils.name2id(name, bits=32)
+
+    assert 32 >= id_int.bit_length()
+
+    # Tests consistency (64-bit)
+    name = "123"
+    id_int = 11326344294570419622
+    assert id_int == vutils.name2id(name, bits=64)
+
+    # Tests consistency (32-bit)
+    name = "123"
+    id_int = 1503946150
+    assert id_int == vutils.name2id(name, bits=32)
+
+    # Tests error handling
+
+    try:
+        vutils.name2id("foo", bits=123)
+    except ValueError as e:
+        assert isinstance(e, ValueError)

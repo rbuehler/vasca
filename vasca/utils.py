@@ -3,11 +3,12 @@
 """
 Utilities for VASCA
 """
+import hashlib
+import warnings
 from datetime import timedelta
 from functools import wraps
 from itertools import cycle, islice, zip_longest
 from time import time
-import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,10 +16,9 @@ import pandas as pd
 from astropy import units as uu
 from astropy.coordinates import SkyCoord, search_around_sky
 from astropy.nddata import Cutout2D
+from astropy.table import Column, Table
 from astropy.time import Time
-from astropy.table import Table, Column
 from astropy.utils.exceptions import AstropyWarning
-
 from matplotlib import colormaps as cm
 from matplotlib.colors import ListedColormap, hex2color
 from scipy.stats import binned_statistic
@@ -26,7 +26,8 @@ from scipy.stats import binned_statistic
 from vasca.tables_dict import dd_vasca_columns
 
 # Dictionaries to define "VASCA consistent" filter ID Nr
-# Note that filter_idhe need to be powers of 2, to be able to be used as bitmask 1,2,4,8,..
+# Note that filter_id need to be powers of 2, to be able to be used as bitmask
+# 1,2,4,8,..
 dd_filter2id = {"NUV": 1, "FUV": 2}
 dd_id2filter = dict(
     (v, k) for (k, v) in dd_filter2id.items()
@@ -40,7 +41,8 @@ dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
 
 def sel_sources(tt_srcs):
     """
-    Helper function to redo cuts, should be revisited/obsolete once table selection is rewritten
+    Helper function to redo cuts, should be revisited/obsolete once table selection is
+    rewritten
 
     Parameters
     ----------
@@ -1004,3 +1006,38 @@ def color_palette(name, n, show_in_notebook=False):
         display(ListedColormap(colors, name))
 
     return colors
+
+
+def name2id(name, bits=32):
+    """
+    Generates a 32-bit or 64-bit integer from a string input.
+
+    Parameters
+    ----------
+    name : str,
+        String input from which to generate the number
+    bits : int, optional
+        Bit-size of the output integer
+
+    Returns
+    -------
+    int
+
+    Raises
+    ------
+    ValueError
+        If bits is neither 32 or 64
+    """
+
+    if bits == 32:
+        hash_int = int.from_bytes(
+            hashlib.sha256(name.encode("utf-8")).digest()[:4], "little"
+        )  # 32-bit int
+    elif bits == 64:
+        hash_int = int.from_bytes(
+            hashlib.sha256(name.encode("utf-8")).digest()[:8], "little"
+        )  # 64-bit int
+    else:
+        raise ValueError(f"Expected 32 or 64 (type int) for parameter bits, got {bits}")
+
+    return hash_int
