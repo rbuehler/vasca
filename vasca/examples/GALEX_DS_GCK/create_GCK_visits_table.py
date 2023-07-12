@@ -78,8 +78,19 @@ def get_hdr_info(hdr):
     # Settings
 
     # Input/output directories
-    root_data_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_fields"
-    out_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_visits_list"
+
+    # Debugging
+    # root_data_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_fields"
+    # out_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_visits_list"
+
+    # On WGS
+    root_data_dir = (
+        "/lustre/fs24/group/ultrasat/vasca_data/uc_science/uvvarcat/GALEX_DS_GCK_fields"
+    )
+    out_dir = (
+        "/lustre/fs24/group/ultrasat/vasca_data/uc_science/uvvarcat"
+        "/GALEX_DS_GCK_visits_table"
+    )
 
     # Dry-run, don't export final list
     dry_run = False
