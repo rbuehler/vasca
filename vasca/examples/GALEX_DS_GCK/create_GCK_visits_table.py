@@ -75,84 +75,85 @@ def get_hdr_info(hdr):
 
     return hdr_info
 
-    # Settings
 
-    # Input/output directories
+# Settings
 
-    # Debugging
-    # root_data_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_fields"
-    # out_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_visits_list"
+# Input/output directories
 
-    # On WGS
-    root_data_dir = (
-        "/lustre/fs24/group/ultrasat/vasca_data/uc_science/uvvarcat/GALEX_DS_GCK_fields"
-    )
-    out_dir = (
-        "/lustre/fs24/group/ultrasat/vasca_data/uc_science/uvvarcat"
-        "/GALEX_DS_GCK_visits_table"
-    )
+# Debugging
+# root_data_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_fields"
+# out_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_visits_list"
 
-    # Dry-run, don't export final list
-    dry_run = False
+# On WGS
+root_data_dir = (
+    "/lustre/fs24/group/ultrasat/vasca_data/uc_science/uvvarcat/GALEX_DS_GCK_fields"
+)
+out_dir = (
+    "/lustre/fs24/group/ultrasat/vasca_data/uc_science/uvvarcat"
+    "/GALEX_DS_GCK_visits_table"
+)
 
-    # Loops over mcat files and saves info
-    info = list()
-    for path, subdirs, files in os.walk(root_data_dir):
-        for name in files:
-            if name.endswith("-xd-mcat.fits"):
-                # Load mcat file and get relevant info
-                mcat_path = os.path.join(path, name)
-                with fits.open(mcat_path) as hdul:
-                    hdr_info = get_hdr_info(hdul[0].header)
+# Dry-run, don't export final list
+dry_run = False
 
-                # Cross-checks
-                # File name matches 'OBJECT' key
-                if (
-                    mcat_path.split(os.sep)[-1].rstrip("-xd-mcat.fits")
-                    != hdr_info["OBJECT"]
-                ):
-                    print(
-                        "Warning: OBJECT key inconsistent "
-                        f'(OBJECT: {hdr_info["OBJECT"]}, '
-                        f'mcat: {mcat_path.split(os.sep)[-1].rstrip("-xd-mcat.fits")})'
-                    )
-                # Visit directory name matches 'vis_name' key
-                if mcat_path.split(os.sep)[-2] != hdr_info["vis_name"]:
-                    print(
-                        "Warning: vis_name key inconsistent: "
-                        f'(vis_name: {hdr_info["vis_name"]}, '
-                        f"mcat directory: {mcat_path.split(os.sep)[-2]})"
-                    )
+# Loops over mcat files and saves info
+info = list()
+for path, subdirs, files in os.walk(root_data_dir):
+    for name in files:
+        if name.endswith("-xd-mcat.fits"):
+            # Load mcat file and get relevant info
+            mcat_path = os.path.join(path, name)
+            with fits.open(mcat_path) as hdul:
+                hdr_info = get_hdr_info(hdul[0].header)
 
-                info.append(hdr_info)
+            # Cross-checks
+            # File name matches 'OBJECT' key
+            if (
+                mcat_path.split(os.sep)[-1].rstrip("-xd-mcat.fits")
+                != hdr_info["OBJECT"]
+            ):
+                print(
+                    "Warning: OBJECT key inconsistent "
+                    f'(OBJECT: {hdr_info["OBJECT"]}, '
+                    f'mcat: {mcat_path.split(os.sep)[-1].rstrip("-xd-mcat.fits")})'
+                )
+            # Visit directory name matches 'vis_name' key
+            if mcat_path.split(os.sep)[-2] != hdr_info["vis_name"]:
+                print(
+                    "Warning: vis_name key inconsistent: "
+                    f'(vis_name: {hdr_info["vis_name"]}, '
+                    f"mcat directory: {mcat_path.split(os.sep)[-2]})"
+                )
 
-    # Combines to astropy table via DataFrame
-    # because of problematic dtype handling of IDs
-    # tt_info = Table(info)  # this fails second cross-check
-    df_info = pd.DataFrame(info)
-    tt_info = Table.from_pandas(df_info)
+            info.append(hdr_info)
 
-    # Cross-checks
-    # All visit IDs are unique
-    vis_ids = np.unique(tt_info["vis_id"])
-    if not len(vis_ids) == len(tt_info):
-        raise ValueError("Non-unique visit IDs")
-    # All visit IDs have been consistently created from visit name
-    if not all(
-        [
-            int(vis_id) == vutils.name2id(vis_name, bits=64)
-            for vis_id, vis_name in zip(tt_info["vis_id"], tt_info["vis_name"])
-        ]
-    ):
-        raise ValueError("Inconsistent mapping vis_name to vis_id.")
+# Combines to astropy table via DataFrame
+# because of problematic dtype handling of IDs
+# tt_info = Table(info)  # this fails second cross-check
+df_info = pd.DataFrame(info)
+tt_info = Table.from_pandas(df_info)
 
-    if not dry_run:
-        # Export
-        if not os.path.isdir(out_dir):
-            os.mkdir(out_dir)
-        # FITS
-        tt_info.write(f"{out_dir}/GALEX_DS_GCK_visits_list.fits", overwrite=True)
-        # CSV
-        df_info.to_csv(f"{out_dir}/GALEX_DS_GCK_visits_list.csv")
-        # HTML
-        df_info.to_html(f"{out_dir}/GALEX_DS_GCK_visits_list.html")
+# Cross-checks
+# All visit IDs are unique
+vis_ids = np.unique(tt_info["vis_id"])
+if not len(vis_ids) == len(tt_info):
+    raise ValueError("Non-unique visit IDs")
+# All visit IDs have been consistently created from visit name
+if not all(
+    [
+        int(vis_id) == vutils.name2id(vis_name, bits=64)
+        for vis_id, vis_name in zip(tt_info["vis_id"], tt_info["vis_name"])
+    ]
+):
+    raise ValueError("Inconsistent mapping vis_name to vis_id.")
+
+if not dry_run:
+    # Export
+    if not os.path.isdir(out_dir):
+        os.mkdir(out_dir)
+    # FITS
+    tt_info.write(f"{out_dir}/GALEX_DS_GCK_visits_list.fits", overwrite=True)
+    # CSV
+    df_info.to_csv(f"{out_dir}/GALEX_DS_GCK_visits_list.csv")
+    # HTML
+    df_info.to_html(f"{out_dir}/GALEX_DS_GCK_visits_list.html")
