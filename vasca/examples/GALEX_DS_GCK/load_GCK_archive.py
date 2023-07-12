@@ -119,6 +119,12 @@ root_data_dir = (
 # Refresh download (possibly overwrites existing files)
 refresh = False
 
+# Supress progress bar
+hide_progress = False
+
+# Dry-run, no download
+dry_run = True
+
 # Group by scan and visit
 df_grpd = df_manifest.groupby(["L8", "L11"])
 
@@ -127,11 +133,13 @@ n_files = 0
 n_vis = 0
 
 # Loops over drift scans and visits
-for i, (id_scan, id_visit) in tqdm(enumerate(df_grpd.groups.keys())):
+for i, (id_scan, id_visit) in tqdm(
+    enumerate(df_grpd.groups.keys()), disable=hide_progress
+):
     # Debugging
     # if i > 100: break
-    if id_scan != "29200-KEPLER_SCAN_001":
-        break
+    # if id_scan != "29200-KEPLER_SCAN_001":
+    #     break
     # if id_visit != "0012_img":
     #     continue
 
@@ -140,23 +148,39 @@ for i, (id_scan, id_visit) in tqdm(enumerate(df_grpd.groups.keys())):
         enumerate([f"sv{num+1:02}" for num in range(get_n_fields(id_scan))]),
         total=get_n_fields(id_scan),
         desc=f"Fields ({id_scan}, {id_visit})",
+        disable=hide_progress,
     ):
         # Debugging
-        if id_sv != "sv01":
-            break
+        # if id_sv != "sv01":
+        #     break
+
+        # List of file name endings
+        files_select = [
+            "nd-cnt.fits",
+            "nd-rrhr.fits",
+            "nd-int.fits",
+            "nd-flags.fits",
+            "xd-mcat.fits",
+        ]
+        n_files_select = len(files_select)
 
         # Selects files corresponding to field ID
-        df_select = df_grpd.get_group((id_scan, id_visit)).query(
-            "L13.str.contains("
-            "'nd-count.fits|nd-rrhr.fits|nd-int.fits|nd-flags.fits|xd-mcat.fits') and "
-            "L13.str.contains(@id_sv)"
+        files_select_str = "|".join(files_select)
+        query_str = (
+            f"L13.str.contains('{files_select_str}') and "
+            f"L13.str.contains('{id_sv}')"
         )
+        df_select = df_grpd.get_group((id_scan, id_visit)).query(query_str)
         df_select.sort_values("L13", inplace=True)
 
         # Download data
         if len(df_select) > 0:
-            if len(df_select) != 4:
-                print(f"Warning: unexpected number of files {len(df_select)}")
+            if len(df_select) != n_files_select:
+                print(
+                    f"Warning: unexpected number of files ({n_files_select}), "
+                    f"got {len(df_select)} "
+                    f"({id_scan}, {id_sv}, {id_visit})"
+                )
 
             # Create output directory path
             # Data is sorted by scan and visit (swap field and visit directories
@@ -181,16 +205,17 @@ for i, (id_scan, id_visit) in tqdm(enumerate(df_grpd.groups.keys())):
                 out_file_path = os.path.join(out_dir, file_name)
 
                 # Download the file if it doesn't already exist or download is forced
-                if not os.path.isfile(out_file_path) or refresh:
-                    response = requests.get(file_url)
-                    if response.status_code == 200:
-                        with open(out_file_path, "wb") as f:
-                            f.write(response.content)
-                        print(f"Downloaded: {file_url}")
+                if not dry_run:
+                    if not os.path.isfile(out_file_path) or refresh:
+                        response = requests.get(file_url)
+                        if response.status_code == 200:
+                            with open(out_file_path, "wb") as f:
+                                f.write(response.content)
+                            print(f"Downloaded: {file_url}")
+                        else:
+                            print(f"Failed to download: {file_url}")
                     else:
-                        print(f"Failed to download: {file_url}")
-                else:
-                    print(f"File exists: {file_url}")
+                        print(f"File exists: {file_url}")
 
             # counts number of files
             n_files += len(df_select)
@@ -198,4 +223,7 @@ for i, (id_scan, id_visit) in tqdm(enumerate(df_grpd.groups.keys())):
     # Counts number of visits
     n_vis += 1
 
-print(f"Downloaded {n_files/4:1.1f} exposures ({n_files} files) for {n_vis} visits.")
+print(
+    f"Downloaded {n_files/n_files_select:1.1f} exposures "
+    f"({n_files} files) for {n_vis} visits."
+)
