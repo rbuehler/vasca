@@ -28,11 +28,17 @@ sas_cloud:
         path: /GALEX_fields
 lustre:
     0:
-        name: foo
-        description: bar
+        name: gal_ds_visits_list
+        description: 'Complete list of all GALEX drift-scan visits.'
         type: file
         project: vascarcat
-        path: /path/of/no/return
+        path: /GALEX_DS_GCK_visits_list/GALEX_DS_GCK_visits_list.fits
+    1:
+        name: gal_ds_fields
+        description: 'Collection of GALEX drift scan dataproducts'
+        type: directory
+        project: vascarcat
+        path: /GALEX_DS_GCK_fields
 vasca:
     0:
         name: test_resources

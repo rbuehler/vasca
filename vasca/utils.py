@@ -25,18 +25,18 @@ from scipy.stats import binned_statistic
 
 from vasca.tables_dict import dd_vasca_columns
 
-# Dictionaries to define "VASCA consistent" filter ID Nr
-# Note that filter_id need to be powers of 2, to be able to be used as bitmask
-# 1,2,4,8,..
+#: Dictionaries to define "VASCA consistent" filter ID Nr
+#: Note that filter_id need to be powers of 2, to be able to be used as bitmask
+#: 1,2,4,8,..
 dd_filter2id = {"NUV": 1, "FUV": 2}
 dd_id2filter = dict(
     (v, k) for (k, v) in dd_filter2id.items()
 )  # Inverted key&value dictionary
 
-# Global variable liking observator+obsfilter to a field ID addon
-# The number of Id adon letter has to be three
-# See get_field_id funtion below.
-dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU"}
+#: Global variable linking observatory + obsfilter to a field ID add-on
+#: The number of Id add-on letter has to be three
+#: See ``get_field_id`` function below.
+dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 
 
 def sel_sources(tt_srcs):
@@ -89,6 +89,48 @@ def sel_sources(tt_srcs):
         + sel_assoc_ffactor_fuv * sel_assoc_fdiff_s2n_fuv * sel_assoc_nr_det_fuv
     )
 
+    sel_vasca = (sel_flux_var + sel_assoc) * sel_pos_cpval
+    return sel_vasca
+
+
+def sel_sources_nuv_only(tt_srcs):
+    """
+    Helper function to redo cuts, should be revisited/obsolete once table selection is
+    rewritten
+
+    Parameters
+    ----------
+    tt_srcs : astropy.table.Table
+        DESCRIPTION.
+
+    Returns
+    -------
+    sel_vasca : [bool]
+        Selected sources.
+
+    """
+
+    # Cluster quality cut
+    sel_pos_cpval = tt_srcs["pos_cpval"] > 1e-10
+
+    # Flux variabiity cut
+    sel_flux_nuv = (tt_srcs["flux"] > 0.144543) * (tt_srcs["flux"] < 575.43)
+    sel_flux_cpval_nuv = (tt_srcs["flux_cpval"] < 0.000000573303) * (
+        tt_srcs["flux_cpval"] > -0.5
+    )
+    sel_flux_nxv_nuv = tt_srcs["flux_nxv"] > 0.0006
+    sel_flux_nr_det_nuv = tt_srcs["nr_det"] > 1
+    sel_flux_var = (
+        sel_flux_cpval_nuv * sel_flux_nxv_nuv * sel_flux_nr_det_nuv * sel_flux_nuv
+    ).flatten()
+
+    # Coadd flux difference cut
+    sel_assoc_ffactor_nuv = tt_srcs["assoc_ffactor"] > 1.5
+    sel_assoc_fdiff_s2n_nuv = tt_srcs["assoc_fdiff_s2n"] > 6
+    sel_assoc_nr_det_nuv = tt_srcs["nr_det"] > 0
+    sel_assoc = (
+        sel_assoc_ffactor_nuv * sel_assoc_fdiff_s2n_nuv * sel_assoc_nr_det_nuv.flatten()
+    )
     sel_vasca = (sel_flux_var + sel_assoc) * sel_pos_cpval
     return sel_vasca
 
@@ -206,7 +248,7 @@ def mag2flux(mag):
 def get_field_id(obs_field_id, observaory, obs_filter):
     """
     Return VASCA field id, which also includes observatory and filter identifier.
-    The first 3 characters characterize the observatory and filer. Afterards the
+    The first 3 characters characterize the observatory and filter. Afterwards the
     observatory field ID is attached.
 
     Parameters

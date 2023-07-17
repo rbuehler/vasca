@@ -35,7 +35,7 @@ dd_vasca_columns = {
     # %%% field_id
     "field_id": {
         "name": "field_id",
-        "dtype": "S22",
+        "dtype": "S32",
         "unit": "1",
         "default": -1,
         "description": "Field source ID nr",
@@ -43,7 +43,7 @@ dd_vasca_columns = {
     # %%% name
     "field_name": {
         "name": "field_name",
-        "dtype": "S22",
+        "dtype": "S32",
         "unit": "",
         "default": "none",
         "description": "Field name",
@@ -107,7 +107,7 @@ dd_vasca_columns = {
     # %%% vis_id
     "vis_id": {
         "name": "vis_id",
-        "dtype": "int64",
+        "dtype": "uint64",
         "unit": "1",
         "default": -1,
         "description": "Visit ID nr",
@@ -459,7 +459,7 @@ dd_vasca_columns = {
     # %%% rg_fd_id
     "rg_fd_id": {
         "name": "rg_fd_id",
-        "dtype": "int32",
+        "dtype": "int64",
         "unit": "1",
         "default": -1,
         "description": "Region field ID nr",
@@ -491,7 +491,7 @@ dd_vasca_columns = {
     # %%% coadd_src_id
     "coadd_src_id": {
         "name": "coadd_src_id",
-        "dtype": "int32",
+        "dtype": "int64",
         "unit": "1",
         "default": -1,
         "description": "Region coadd source ID nr",

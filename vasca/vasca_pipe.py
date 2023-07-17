@@ -10,14 +10,14 @@ import sys
 from multiprocessing import Pool
 
 import yaml
-from yamlinclude import YamlIncludeConstructor
-from loguru import logger
-from astropy.table import unique
 from astropy import units as uu
+from astropy.table import unique
+from loguru import logger
+from yamlinclude import YamlIncludeConstructor
 
 from vasca.region import Region
-from vasca.utils import get_field_id
 from vasca.tables_dict import dd_vasca_tables
+from vasca.utils import get_field_id
 
 YamlIncludeConstructor.add_to_loader_class(
     loader_class=yaml.FullLoader
