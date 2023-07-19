@@ -1732,10 +1732,10 @@ class GALEXDSField(BaseField):
         ]
         vis_name_tmax = self.name_id_map(int(vis_id_tmax))
         coadd_mcat_file_name = glob(
-            f"{self.data_path}{os.sep}" f"{vis_name_tmax}{os.sep}*-xd-mcat.fits"
+            f"{self.data_path}{os.sep}{vis_name_tmax}{os.sep}*-xd-mcat.fits"
         )[0]
         coadd_int_file_name = glob(
-            f"{self.data_path}{os.sep}" f"{vis_name_tmax}/*-nd-int.fits.gz"
+            f"{self.data_path}{os.sep}*-nd-int-coadd.fits.gz"
         )[0]
 
         # Opens the reference detections catalog and selects VASCA columns
