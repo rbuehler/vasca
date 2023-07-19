@@ -1,17 +1,11 @@
 import os
 from glob import glob
 
-import ipywidgets as widgets
-import matplotlib.pyplot as plt
-import numpy as np
+import pandas as pd
 from astropy.io import fits
 from astropy.wcs import wcs
-from IPython.display import Image, clear_output, display
-from matplotlib.colors import LogNorm
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm import tqdm
 
-import vasca.utils as vutils
 from vasca.resource_manager import ResourceManager
 
 # Settings
@@ -19,8 +13,16 @@ from vasca.resource_manager import ResourceManager
 # Input/output directories
 with ResourceManager() as rm:
     root_data_dir = rm.get_path("gal_ds_fields", "lustre")
+    visits_list_dir = (os.sep).join(
+        rm.get_path("gal_ds_visits_list", "lustre").split(os.sep)[:-1]
+    )
 
-# root_data_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_fields"
+# Load visual image quality table
+df_img_quality = pd.read_csv(
+    f"{visits_list_dir}/GALEX_DS_GCK_visits_img_quality.csv", index_col=0
+)
+# List of visits with bad image quality
+visit_is_bad = df_img_quality.query("quality in ['bad']").vis_name.tolist()
 
 # Dry-run, don't export final list
 dry_run = False
@@ -28,9 +30,14 @@ dry_run = False
 # Debugging switch
 is_debug = False
 
+# Don't show the progress bar
 hide_progress = False
 
-refresh = False
+# Recreate the coadd image
+refresh = True
+
+# Delete an existing coadd
+delete_existing = True
 
 coadd_cnt_paths = list()
 coadd_rrhr_paths = list()
@@ -38,7 +45,10 @@ coadd_rrhr_paths = list()
 # Loops over drift scan directories
 scan_names = [path.split(os.sep)[-1] for path in glob(f"{root_data_dir}/*")]
 for idx_scan, scan_name in tqdm(
-    enumerate(scan_names), total=len(scan_names), desc="Scans", disable=hide_progress
+    enumerate(sorted(scan_names)),
+    total=len(scan_names),
+    desc="Scans",
+    disable=hide_progress,
 ):
     # Debugging
     if idx_scan > 0 and is_debug:
@@ -49,9 +59,9 @@ for idx_scan, scan_name in tqdm(
         path.split(os.sep)[-1] for path in glob(f"{root_data_dir}/{scan_name}/*")
     ]
     for idx_field, field_name in tqdm(
-        enumerate(field_names),
+        enumerate(sorted(field_names)),
         total=len(field_names),
-        desc="Fields",
+        desc=f"Fields ({scan_name})",
         disable=hide_progress,
     ):
         # Debugging
@@ -60,7 +70,7 @@ for idx_scan, scan_name in tqdm(
 
         # Collects file paths across all visit directories
         # Counts maps
-        img_int_paths = glob(
+        img_cnt_paths = glob(
             f"{root_data_dir}/{scan_name}/{field_name}/*/*-nd-cnt.fits.gz"
         )
         # Effective exposure time map
@@ -71,25 +81,77 @@ for idx_scan, scan_name in tqdm(
         # Stack image maps
         # Loops over image types
         for path_list, path_out_file_suffix, coadd_path_list in zip(
-            [img_int_paths, img_rrhr_paths],
-            ["-nd-cnt-coadd.fits", "-nd-rrhr-coadd.fits"],
+            [img_cnt_paths, img_rrhr_paths],
+            ["-nd-cnt-coadd.fits.gz", "-nd-rrhr-coadd.fits.gz"],
             [coadd_cnt_paths, coadd_rrhr_paths],
         ):
-            path_out_file = f"{root_data_dir}/{scan_name}/{field_name}/{field_name}{path_out_file_suffix}"
-            if not refresh and not os.path.isfile(path_out_file):
-                # Loops over individual files
-                for idx_img, path in enumerate(path_list):
+            # Path to the coadd file
+            path_out_file = (
+                f"{root_data_dir}/{scan_name}/{field_name}/"
+                f"{field_name}{path_out_file_suffix}"
+            )
 
-                    # Initialize stack image from first file
-                    with fits.open(path) as hdul:
-                        if idx_img == 0:
-                            img = hdul[0].data
-                            img_wcs = wcs.WCS(hdul[0].header)
-                        else:
-                            img += hdul[0].data
+            # Delete existing coadd file
+            if delete_existing and os.path.isfile(path_out_file):
+                os.remove(path_out_file)
+                alt_path = path_out_file.rstrip(".gz")
+                if os.path.isfile(alt_path):
+                    os.remove(alt_path)
+
+            if refresh or not os.path.isfile(path_out_file):
+                # Loops over individual files
+                img_counter = 0
+                for idx_img, path in enumerate(sorted(path_list)):
+                    # Gets visit name
+                    vis_name = path.split(os.sep)[-2]
+                    # Load image only if not bad quality
+                    if vis_name not in visit_is_bad:
+                        # Initialize stack image from first file
+                        with fits.open(path) as hdul:
+                            if img_counter == 0:
+                                img = hdul[0].data
+                                img_wcs = wcs.WCS(hdul[0].header)
+                            else:
+                                img += hdul[0].data
+                        img_counter += 1
 
                 # Export
-                hdu = fits.CompImageHDU(img, header=img_wcs.to_header())
-                hdu.writeto(path_out_file, overwrite=True)
+                if img_counter > 0:
+                    hdu = fits.PrimaryHDU(img, header=img_wcs.to_header())
+                    hdu.writeto(path_out_file, overwrite=True)
 
-            coadd_path_list.append(path_out_file)
+            if img_counter > 0:
+                coadd_path_list.append(path_out_file)
+
+        # Create intensity coadd
+        coadd_cnt_path = (
+            f"{root_data_dir}/{scan_name}/{field_name}/"
+            f"{field_name}-nd-cnt-coadd.fits.gz"
+        )
+        coadd_rrhr_path = (
+            f"{root_data_dir}/{scan_name}/{field_name}/"
+            f"{field_name}-nd-rrhr-coadd.fits.gz"
+        )
+        with fits.open(coadd_cnt_path) as hdul:
+            img_coadd_cnt = hdul[0].data
+            img_coadd_wcs = wcs.WCS(hdul[0].header)
+        with fits.open(coadd_rrhr_path) as hdul:
+            img_coadd_rrhr = hdul[0].data
+
+        coadd_int_path = (
+            f"{root_data_dir}/{scan_name}/{field_name}/"
+            f"{field_name}-nd-int-coadd.fits.gz"
+        )
+
+        # Delete existing coadd file
+        if delete_existing and os.path.isfile(coadd_int_path):
+            os.remove(coadd_int_path)
+            alt_path = coadd_int_path.rstrip(".gz")
+            if os.path.isfile(alt_path):
+                os.remove(alt_path)
+
+        hdu = fits.PrimaryHDU(
+            img_coadd_cnt / np.where(img_coadd_rrhr == 0, np.nan, img_coadd_rrhr),
+            header=img_coadd_wcs.to_header(),
+        )
+        hdu.writeto(coadd_int_path, overwrite=True)

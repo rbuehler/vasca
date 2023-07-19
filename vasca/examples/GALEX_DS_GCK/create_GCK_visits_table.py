@@ -16,6 +16,7 @@ from astropy.table import Table
 from astropy.time import Time
 
 import vasca.utils as vutils
+import vasca.resource_manager as vascarm
 
 
 def get_hdr_info(hdr):
@@ -79,19 +80,23 @@ def get_hdr_info(hdr):
 # Settings
 
 # Input/output directories
+with vascarm.ResourceManager() as rm:
+    root_data_dir = rm.get_path("gal_ds_fields", "lustre")
+    out_dir = (os.sep).join(
+        rm.get_path("gal_ds_visits_list", "lustre").split(os.sep)[:-1]
+    )
 
-# Debugging
-# root_data_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_fields"
-# out_dir = "/Users/julianschliwinski/GALEX_DS/GALEX_DS_GCK_visits_list"
+# Load visual image quality table
+df_img_quality = pd.read_csv(
+    f"{out_dir}/GALEX_DS_GCK_visits_img_quality.csv", index_col=0
+)
 
-# On WGS
-root_data_dir = (
-    "/lustre/fs24/group/ultrasat/vasca_data/uc_science/uvvarcat/GALEX_DS_GCK_fields"
+# Load visual image quality table
+df_img_quality = pd.read_csv(
+    f"{out_dir}/GALEX_DS_GCK_visits_img_quality.csv", index_col=0
 )
-out_dir = (
-    "/lustre/fs24/group/ultrasat/vasca_data/uc_science/uvvarcat"
-    "/GALEX_DS_GCK_visits_table"
-)
+# List of visits with bad image quality
+visit_is_bad = df_img_quality.query("quality in ['bad']").vis_name.tolist()
 
 # Dry-run, don't export final list
 dry_run = False
@@ -100,7 +105,13 @@ dry_run = False
 info = list()
 for path, subdirs, files in os.walk(root_data_dir):
     for name in files:
+        # Gets visit name
         if name.endswith("-xd-mcat.fits"):
+            vis_name = os.path.join(path, name).split(os.sep)[-2]
+        else:
+            vis_name = None
+        # Select mcat file for visits if not bad image quality
+        if name.endswith("-xd-mcat.fits") and vis_name not in visit_is_bad:
             # Load mcat file and get relevant info
             mcat_path = os.path.join(path, name)
             with fits.open(mcat_path) as hdul:
