@@ -1,6 +1,7 @@
 import os
 from glob import glob
 
+import numpy as np
 import pandas as pd
 from astropy.io import fits
 from astropy.wcs import wcs
