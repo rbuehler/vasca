@@ -1,5 +1,6 @@
 import os
 from glob import glob
+from pprint import pprint
 
 import numpy as np
 import pandas as pd
@@ -40,14 +41,16 @@ refresh = True
 # Delete an existing coadd
 delete_existing = True
 
+# Store paths of created files
 coadd_cnt_paths = list()
 coadd_rrhr_paths = list()
 
 # Loops over drift scan directories
-scan_names = [path.split(os.sep)[-1] for path in glob(f"{root_data_dir}/*")]
+scan_names = sorted([path.split(os.sep)[-1] for path in glob(f"{root_data_dir}/*")])
+n_scans = len(scan_names)
 for idx_scan, scan_name in tqdm(
-    enumerate(sorted(scan_names)),
-    total=len(scan_names),
+    enumerate(scan_names),
+    total=n_scans,
     desc="Scans",
     disable=hide_progress,
 ):
@@ -56,12 +59,13 @@ for idx_scan, scan_name in tqdm(
         break
 
     # Loops over fields
-    field_names = [
-        path.split(os.sep)[-1] for path in glob(f"{root_data_dir}/{scan_name}/*")
-    ]
+    field_names = sorted(
+        [path.split(os.sep)[-1] for path in glob(f"{root_data_dir}/{scan_name}/*")]
+    )
+    n_fields = len(field_names)
     for idx_field, field_name in tqdm(
-        enumerate(sorted(field_names)),
-        total=len(field_names),
+        enumerate(field_names),
+        total=n_fields,
         desc=f"Fields ({scan_name})",
         disable=hide_progress,
     ):
@@ -69,90 +73,106 @@ for idx_scan, scan_name in tqdm(
         if idx_field > 0 and is_debug:
             break
 
-        # Collects file paths across all visit directories
-        # Counts maps
-        img_cnt_paths = glob(
-            f"{root_data_dir}/{scan_name}/{field_name}/*/*-nd-cnt.fits.gz"
-        )
-        # Effective exposure time map
-        img_rrhr_paths = glob(
-            f"{root_data_dir}/{scan_name}/{field_name}/*/*-nd-rrhr.fits.gz"
-        )
+        # Selects visit names
+        visit_names = [
+            path.split(os.sep)[-1]
+            for path in sorted(glob(f"{root_data_dir}/{scan_name}/{field_name}/*-img"))
+        ]
+        visit_names = [name for name in visit_names if name not in visit_is_bad]
+        n_visits = len(visit_names)
 
-        # Stack image maps
-        # Loops over image types
-        for path_list, path_out_file_suffix, coadd_path_list in zip(
-            [img_cnt_paths, img_rrhr_paths],
-            ["-nd-cnt-coadd.fits.gz", "-nd-rrhr-coadd.fits.gz"],
-            [coadd_cnt_paths, coadd_rrhr_paths],
-        ):
-            # Path to the coadd file
-            path_out_file = (
-                f"{root_data_dir}/{scan_name}/{field_name}/"
-                f"{field_name}{path_out_file_suffix}"
-            )
+        # Don't continue if all visits are bad
+        if n_visits > 0:
 
-            # Delete existing coadd file
-            if delete_existing and os.path.isfile(path_out_file):
-                os.remove(path_out_file)
-                alt_path = path_out_file.rstrip(".gz")
-                if os.path.isfile(alt_path):
-                    os.remove(alt_path)
+            img_cnt_paths = list()
+            img_rrhr_paths = list()
+            for visit_name in visit_names:
+                img_cnt_path = glob(
+                    f"{root_data_dir}/{scan_name}/{field_name}/{visit_name}/"
+                    f"*-nd-cnt.fits.gz"
+                )[0]
+                img_rrhr_path = glob(
+                    f"{root_data_dir}/{scan_name}/{field_name}/{visit_name}/"
+                    f"*-nd-rrhr.fits.gz"
+                )[0]
+                img_cnt_paths.append(img_cnt_path)
+                img_rrhr_paths.append(img_rrhr_path)
 
-            if refresh or not os.path.isfile(path_out_file):
-                # Loops over individual files
-                img_counter = 0
-                for idx_img, path in enumerate(sorted(path_list)):
-                    # Gets visit name
-                    vis_name = path.split(os.sep)[-2]
-                    # Load image only if not bad quality
-                    if vis_name not in visit_is_bad:
+            if len(img_cnt_paths) != len(img_rrhr_paths):
+                raise ValueError("Expected same number of counts and exposure maps.")
+
+            # Stack image maps
+            # Loops over image types
+            for path_list, path_out_file_suffix, coadd_path_list in zip(
+                [img_cnt_paths, img_rrhr_paths],
+                ["-nd-cnt-coadd.fits.gz", "-nd-rrhr-coadd.fits.gz"],
+                [coadd_cnt_paths, coadd_rrhr_paths],
+            ):
+                # Path to the output coadd file
+                path_out_file = (
+                    f"{root_data_dir}/{scan_name}/{field_name}/"
+                    f"{field_name}{path_out_file_suffix}"
+                )
+
+                # Delete existing coadd file
+                if delete_existing and os.path.isfile(path_out_file):
+                    os.remove(path_out_file)
+                    alt_path = path_out_file.rstrip(".gz")
+                    if os.path.isfile(alt_path):
+                        os.remove(alt_path)
+
+                # Do stacking if coadd file does not exist or refresh is specified
+                if refresh or not os.path.isfile(path_out_file):
+                    # Loops over individual visits/files
+                    for idx_img, path in enumerate(sorted(path_list)):
                         # Initialize stack image from first file
                         with fits.open(path) as hdul:
-                            if img_counter == 0:
+                            if idx_img == 0:
                                 img = hdul[0].data
                                 img_wcs = wcs.WCS(hdul[0].header)
                             else:
                                 img += hdul[0].data
-                        img_counter += 1
 
-                # Export
-                if img_counter > 0:
+                    # Export FITS file
                     hdu = fits.PrimaryHDU(img, header=img_wcs.to_header())
                     hdu.writeto(path_out_file, overwrite=True)
 
-            if img_counter > 0:
+                # Save path of created file
                 coadd_path_list.append(path_out_file)
 
-        # Create intensity coadd
-        coadd_cnt_path = (
-            f"{root_data_dir}/{scan_name}/{field_name}/"
-            f"{field_name}-nd-cnt-coadd.fits.gz"
-        )
-        coadd_rrhr_path = (
-            f"{root_data_dir}/{scan_name}/{field_name}/"
-            f"{field_name}-nd-rrhr-coadd.fits.gz"
-        )
-        with fits.open(coadd_cnt_path) as hdul:
-            img_coadd_cnt = hdul[0].data
-            img_coadd_wcs = wcs.WCS(hdul[0].header)
-        with fits.open(coadd_rrhr_path) as hdul:
-            img_coadd_rrhr = hdul[0].data
+            # Create intensity coadd
 
-        coadd_int_path = (
-            f"{root_data_dir}/{scan_name}/{field_name}/"
-            f"{field_name}-nd-int-coadd.fits.gz"
-        )
+            # Coadd file paths
+            coadd_cnt_path = (
+                f"{root_data_dir}/{scan_name}/{field_name}/"
+                f"{field_name}-nd-cnt-coadd.fits.gz"
+            )
+            coadd_rrhr_path = (
+                f"{root_data_dir}/{scan_name}/{field_name}/"
+                f"{field_name}-nd-rrhr-coadd.fits.gz"
+            )
+            coadd_int_path = (
+                f"{root_data_dir}/{scan_name}/{field_name}/"
+                f"{field_name}-nd-int-coadd.fits.gz"
+            )
 
-        # Delete existing coadd file
-        if delete_existing and os.path.isfile(coadd_int_path):
-            os.remove(coadd_int_path)
-            alt_path = coadd_int_path.rstrip(".gz")
-            if os.path.isfile(alt_path):
-                os.remove(alt_path)
+            # Delete existing coadd file
+            if delete_existing and os.path.isfile(coadd_int_path):
+                os.remove(coadd_int_path)
+                alt_path = coadd_int_path.rstrip(".gz")
+                if os.path.isfile(alt_path):
+                    os.remove(alt_path)
 
-        hdu = fits.PrimaryHDU(
-            img_coadd_cnt / np.where(img_coadd_rrhr == 0, np.nan, img_coadd_rrhr),
-            header=img_coadd_wcs.to_header(),
-        )
-        hdu.writeto(coadd_int_path, overwrite=True)
+            # Compute ratio: Counts over effective exposure = intensity
+            with fits.open(coadd_cnt_path) as hdul:
+                img_coadd_cnt = hdul[0].data
+                img_coadd_wcs = wcs.WCS(hdul[0].header)
+            with fits.open(coadd_rrhr_path) as hdul:
+                img_coadd_rrhr = hdul[0].data
+
+            # Export FITS file
+            hdu = fits.PrimaryHDU(
+                img_coadd_cnt / np.where(img_coadd_rrhr == 0, np.nan, img_coadd_rrhr),
+                header=img_coadd_wcs.to_header(),
+            )
+            hdu.writeto(coadd_int_path, overwrite=True)
