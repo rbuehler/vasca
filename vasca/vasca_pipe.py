@@ -150,6 +150,7 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     )
 
     # Run clustering
+    logger.info("Clustering field detections")
     field.cluster_meanshift(
         **obs_cfg["cluster_det"]["meanshift"],
     )
