@@ -418,7 +418,7 @@ class BaseField(TableCollection):
         region : regions.SkyRegion
             Region on the sky of the field.
         """
-        if self.observatory.casefold() == "GALEX".casefold():
+        if self.observatory.casefold() in ["GALEX".casefold(), "GALEX_DS".casefold()]:
             return CircleSkyRegion(center=self.center, radius=self.fov_diam / 2.0)
         else:
             logger.warning(f"No region known for observatory {self.observatory}")
@@ -1576,7 +1576,7 @@ class GALEXDSField(BaseField):
             dd_fields[col_names_map[col]] = tt_fields[col].data
 
         # Add FoV size info
-        dd_fields["fov_diam"] = [-1.0]  # Not defined for drift scan fields
+        dd_fields["fov_diam"] = [3.0]  # Not defined for drift scan fields
 
         # Add table as class attribute
         self.add_table(dd_fields, "base_field:tt_fields")
@@ -1689,9 +1689,17 @@ class GALEXDSField(BaseField):
         logger.debug(f"Loading visit-detection catalogs for field '{self.field_name}'.")
 
         # Gets paths to all mcat (visit-detection catalogs) files
-        mcat_vis_paths = glob(
-            f"{self.data_path}{os.sep}{self.field_name}_*-img{os.sep}*xd-mcat.fits"
-        )
+        # via the global visits table. This ensures to exclude bad quality visits
+
+        # Central visits info table
+        tt_visits_full = Table.read(self.visits_data_path)
+        tt_visits_select = tt_visits_full[
+            tt_visits_full["field_name"] == self.field_name
+        ]
+        mcat_vis_paths = [
+            glob(f"{self.data_path}{os.sep}{vis_name}/*xd-mcat.fits")[0]
+            for vis_name in tt_visits_select["vis_name"]
+        ]
         # Loops over visits
         for i, (mcat_path, vis_id) in enumerate(
             zip(mcat_vis_paths, self.tt_visits["vis_id"])
@@ -1769,10 +1777,10 @@ class GALEXDSField(BaseField):
         # Loads visit intensity maps if requested
         logger.debug("Loading all visit-level sky maps.")
         if not ref_maps_only:
-            visit_int_file_names = glob(
-                f"{self.data_path}{os.sep}{self.field_name}"
-                f"_*-img{os.sep}*nd-int.fits.gz"
-            )
+            visit_int_file_names = [
+                glob(f"{self.data_path}{os.sep}{vis_name}/*nd-int.fits.gz")[0]
+                for vis_name in tt_visits_select["vis_name"]
+            ]
             for path in visit_int_file_names:
                 self.load_sky_map(path, "vis_img")
 
