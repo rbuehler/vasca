@@ -7,12 +7,12 @@ general:
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
-    nr_cpus         : 1                                  # Number of CPUs to use. If "null" all available are used.
+    nr_cpus         : 3                                  # Number of CPUs to use. If "null" all available are used.
     save_ref_srcs   : true                               # Store referenze sources into region file
     
 ressources:                      
     load_method      : "MAST_LOCAL"                    # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
-    load_products    :  "ALL"                           # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
+    load_products    :  "TABLES"                           # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     field_kwargs:
         data_path        : null
         visits_data_path : null 
@@ -88,16 +88,16 @@ observations:
               # See variable description http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1
               range:
                   s2n            : [3.5,.inf]
-                  r_fov          : [0.0,0.55]
-                  class_star     : [0.6,1.0]        # Extension classifier (extended=0, point like=1)
+                  r_fov          : [0.0,1.5]
+                  class_star     : [0.9,1.0]        # Extension classifier (extended=0, point like=1)
                   chkobj_type    : [-0.5,0.5]       # Matched to a bright star (0=no, 1=yes)
-                  psf_a          : [0.0,0.002777777777777778]  # Semi-major axis < 10"
-                  psf_b          : [0.0,0.016666666666666666]  # Semi-minor axis < 60"
-                  psf_ecc        : [0.0,0.95]  # PSF eccentricity < 0.95
+                  psf_a          : [0.0,0.008333333333333333]  # Semi-major axis < 30"
+                  psf_b          : [0.0,0.008333333333333333]  # Semi-minor axis < 30"
+                  psf_ecc        : [0.0,0.20]  # PSF eccentricity < 0.20
               bitmask:
                   # Specify the artifacts to remove
                   # For GALEX a description is at the end of this document
-                  artifacts : [1,2,4,8,16,32,64,128,256] #[1,2,4,8,128]
+                  artifacts : [2,4,8,64,128,256,512] #[1,2,4,8,16,32,64,128,256,512] #[1,2,4,8,128]
               #If below/above this value will set it to min/max
               set_range:
                   pos_err : [0.5,5] # In arcsec
