@@ -128,10 +128,10 @@ for idx_scan, scan_name in tqdm(
                         # Initialize stack image from first file
                         with fits.open(path) as hdul:
                             if idx_img == 0:
-                                img = hdul[0].data
+                                img = hdul[0].data.clip(min=0)
                                 img_wcs = wcs.WCS(hdul[0].header)
                             else:
-                                img += hdul[0].data
+                                img += hdul[0].data.clip(min=0)
 
                     # Export FITS file
                     hdu = fits.PrimaryHDU(img, header=img_wcs.to_header())
