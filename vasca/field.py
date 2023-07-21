@@ -1271,6 +1271,9 @@ class GALEXField(BaseField):
                 f"{obs_filter_l}_artifact",
                 f"{obs_filter}_CLASS_STAR",
                 "chkobj_type",
+                f"{obs_filter}_A_WORLD",
+                f"{obs_filter}_B_WORLD",
+                f"{obs_filter}_ELLIPTICITY",
                 f"{obs_filter}_FLUX_APER_4",
                 f"{obs_filter}_FLUXERR_APER_4",
                 f"{obs_filter}_FLUX_APER_3",
@@ -1293,6 +1296,9 @@ class GALEXField(BaseField):
                 "artifacts",
                 "class_star",
                 "chkobj_type",
+                "psf_a",
+                "psf_b",
+                "psf_ecc",
                 "flux_f60",
                 "flux_f60_err",
                 "flux_f38",
@@ -1663,6 +1669,9 @@ class GALEXDSField(BaseField):
             "nuv_artifact": "artifacts",
             "NUV_CLASS_STAR": "class_star",
             "chkobj_type": "chkobj_type",
+            "NUV_A_WORLD": "psf_a",
+            "NUV_B_WORLD": "psf_b",
+            "NUV_ELLIPTICITY": "psf_ecc",
             "NUV_FLUX_APER_4": "flux_f60",
             "NUV_FLUXERR_APER_4": "flux_f60_err",
             "NUV_FLUX_APER_3": "flux_f38",
@@ -1734,9 +1743,7 @@ class GALEXDSField(BaseField):
         coadd_mcat_file_name = glob(
             f"{self.data_path}{os.sep}{vis_name_tmax}{os.sep}*-xd-mcat.fits"
         )[0]
-        coadd_int_file_name = glob(
-            f"{self.data_path}{os.sep}*-nd-int-coadd.fits.gz"
-        )[0]
+        coadd_int_file_name = glob(f"{self.data_path}{os.sep}*-nd-int-coadd.fits.gz")[0]
 
         # Opens the reference detections catalog and selects VASCA columns
         with warnings.catch_warnings():
