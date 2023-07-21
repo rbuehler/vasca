@@ -15,8 +15,8 @@ from astropy.io import fits
 from astropy.table import Table
 from astropy.time import Time
 
-import vasca.utils as vutils
 import vasca.resource_manager as vascarm
+import vasca.utils as vutils
 
 
 def get_hdr_info(hdr):
@@ -168,3 +168,19 @@ if not dry_run:
     df_info.to_csv(f"{out_dir}/GALEX_DS_GCK_visits_list.csv")
     # HTML
     df_info.to_html(f"{out_dir}/GALEX_DS_GCK_visits_list.html")
+
+# Loads image quality table
+visits_list_dir = (os.sep).join(
+    rm.get_path("gal_ds_visits_list", "lustre").split(os.sep)[:-1]
+)
+df_img_quality = pd.read_csv(
+    f"{visits_list_dir}/GALEX_DS_GCK_visits_img_quality.csv", index_col=0
+)
+
+# Passes if not a single bad visit is included in verify table
+assert all(
+    [
+        name not in tt_info["vis_name"]
+        for name in df_img_quality.query("quality == 'bad'").vis_name
+    ]
+)
