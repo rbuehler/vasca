@@ -519,7 +519,7 @@ class Region(TableCollection):
                 if fd_row["observatory"] == "GALEX_DS"
                 else GALEXField.load
             )
-            print(str(fd_row["field_name"][0]))
+
             gf = gfield_load_func(
                 str(fd_row["field_name"][0])
                 if fd_row["observatory"] == "GALEX_DS"
