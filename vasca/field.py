@@ -1429,6 +1429,13 @@ class GALEXDSField(BaseField):
                 else:
                     self.visits_data_path = visits_data_path
 
+        # Checks if field name exists
+        if not field_name in Table.read(self.visits_data_path)["field_name"]:
+            raise ValueError(
+                f"Unkown field name '{field_name}'. "
+                f"No matching entry in visits table ('{self.visits_data_path}') "
+            )
+
         # Create and check existence of directory
         # that holds field data and VASCA outputs
         if not os.path.isdir(self.data_path):
