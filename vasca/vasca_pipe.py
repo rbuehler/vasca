@@ -202,8 +202,8 @@ def run(vasca_cfg):
     if not os.path.exists(rg.region_path):
         os.makedirs(rg.region_path)
 
-    # Prepare fields to run on for parellization
-    fd_pars = list()  # List of obsevatrions and field_ids in the config file
+    # Prepare fields to run in parallel
+    fd_pars = list()  # List of observations and field_ids in the config file
     obs_nr = 0
     for obs in vasca_cfg["observations"]:
         for field in rg.tt_fields:
@@ -212,7 +212,9 @@ def run(vasca_cfg):
 
     # Run each field in a separate process in parallel
     nr_cpus = vasca_cfg["general"]["nr_cpus"]
-    with Pool(processes=nr_cpus) as pool:  # , maxtasksperchild=1
+    nr_fields = len(fd_pars)
+    logger.info(f"Analyzing {nr_fields} fields on {nr_cpus} parallel threads.")
+    with Pool(processes=nr_cpus) as pool:
         pool_return = pool.starmap(run_field, fd_pars)
     pool.join()
 
@@ -228,9 +230,9 @@ def run(vasca_cfg):
     rg.add_table_from_fields("tt_detections", only_selected=False)
     rg.add_table_from_fields("tt_coadd_detections")
 
-    del rg.fields  # All that needed has been transfered to region tables
+    del rg.fields  # All that needed has been transferred to region tables
 
-    # Cluster field sources and codds
+    # Cluster field sources and coadds
     rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
     rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
 
