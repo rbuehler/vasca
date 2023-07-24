@@ -121,12 +121,19 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     """
     logger.info("Analysing field:" + str(field_id))
 
-    field = rg.get_field(
-        field_id=field_id,
-        load_method="VASCA",
-        mast_products=vasca_cfg["ressources"]["load_products"],
-        field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
-    )
+    try:
+        field = rg.get_field(
+            field_id=field_id,
+            load_method="VASCA",
+            mast_products=vasca_cfg["ressources"]["load_products"],
+            field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
+        )
+    except Exception as e:
+        logger.exception(
+            f"Faild to run pipeline for field '{field_id}'. "
+            f"Returning None. Exception:\n {e}"
+        )
+        return None
 
     # Create directory structure for fields
     field_out_dir = (
@@ -217,6 +224,7 @@ def run(vasca_cfg):
     with Pool(processes=nr_cpus) as pool:
         pool_return = pool.starmap(run_field, fd_pars)
     pool.join()
+    logger.info("Done analyzing individual fields.")
 
     # update region fields
     for field in pool_return:
