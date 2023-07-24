@@ -83,28 +83,35 @@ class Region(TableCollection):
                 )
                 # Loop over fields and store info
                 for gfield_id in obs["obs_field_ids"]:
-                    # Data needs to be preloaded serially, to avoid many parallel
-                    # requests to the MAST server later which results in errors
-                    gf = gfield_load_func(
-                        gfield_id,
-                        obs_filter=obs["obs_filter"],
-                        method=vasca_cfg["ressources"]["load_method"],
-                        load_products=vasca_cfg["ressources"]["load_products"],
-                        **vasca_cfg["ressources"]["field_kwargs"],
-                    )
+                    try:
+                        # Data needs to be preloaded serially, to avoid many parallel
+                        # requests to the MAST server later which results in errors
+                        gf = gfield_load_func(
+                            gfield_id,
+                            obs_filter=obs["obs_filter"],
+                            method=vasca_cfg["ressources"]["load_method"],
+                            load_products=vasca_cfg["ressources"]["load_products"],
+                            **vasca_cfg["ressources"]["field_kwargs"],
+                        )
 
-                    rg_fd_id += 1
-                    if type(gf) == type(None):
+                        rg_fd_id += 1
+                        if type(gf) == type(None):
+                            continue
+
+                        field_info = dict(gf.tt_fields[0])
+                        field_info["fov_diam"] = gf.fov_diam
+                        field_info["nr_vis"] = gf.nr_vis
+                        field_info["time_bin_size_sum"] = gf.time_bin_size_sum
+                        field_info["time_start"] = gf.time_start.mjd
+                        field_info["time_stop"] = gf.time_stop.mjd
+                        field_info["rg_fd_id"] = rg_fd_id
+                        rg.tt_fields.add_row(field_info)
+                    except Exception as e:
+                        logger.exception(
+                            f"Faild to load field '{gfield_id}'. "
+                            f"Moving on to next field. Exception:\n {e}"
+                        )
                         continue
-
-                    field_info = dict(gf.tt_fields[0])
-                    field_info["fov_diam"] = gf.fov_diam
-                    field_info["nr_vis"] = gf.nr_vis
-                    field_info["time_bin_size_sum"] = gf.time_bin_size_sum
-                    field_info["time_start"] = gf.time_start.mjd
-                    field_info["time_stop"] = gf.time_stop.mjd
-                    field_info["rg_fd_id"] = rg_fd_id
-                    rg.tt_fields.add_row(field_info)
             else:
                 logger.warning(
                     "Selected observatory `" + obs["observatory"] + "` not supported"
