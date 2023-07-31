@@ -64,8 +64,7 @@ def set_logger(vasca_cfg):
     log_dir = (
         vasca_cfg["general"]["out_dir_base"] + "/" + vasca_cfg["general"]["name"] + "/"
     )
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+    os.makedirs(log_dir, exist_ok=True)
 
     # create log file name
     log_file_name = "log_" + vasca_cfg["general"]["name"] + ".txt"
@@ -144,8 +143,7 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     )
 
     # Create folder
-    if not os.path.exists(field_out_dir):
-        os.makedirs(field_out_dir)
+    os.makedirs(field_out_dir, exist_ok=True)
 
     # Get configuration for this field
     obs_cfg = vasca_cfg["observations"][obs_nr]
@@ -212,8 +210,7 @@ def run(vasca_cfg):
     rg = Region.load_from_config(vasca_cfg)
 
     # Setup output directory
-    if not os.path.exists(rg.region_path):
-        os.makedirs(rg.region_path)
+    os.makedirs(rg.region_path, exist_ok=True)
 
     # Prepare fields to run in parallel
     fd_pars = list()  # List of observations and field_ids in the config file
