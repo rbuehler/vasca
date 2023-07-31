@@ -164,18 +164,20 @@ for idx_scan, scan_name in tqdm(
                     os.remove(alt_path)
 
             # Compute ratio: Counts over effective exposure = intensity
-            
+
             # Load images
             with fits.open(coadd_cnt_path) as hdul:
                 img_coadd_cnt = hdul[0].data
                 img_coadd_wcs = wcs.WCS(hdul[0].header)
             with fits.open(coadd_rrhr_path) as hdul:
                 img_coadd_rrhr = hdul[0].data
-            
+
             # Compute ratio, avoid divide-by-zero problems by setting zeros to NaN
             # for the computation and setting the same elements back to zeros again.
             # Saving NaN to FITS and using CompImageHDUs in VASCA led to corrupt images
-            img_coadd_int = img_coadd_cnt / np.where(img_coadd_rrhr == 0.0, np.nan, img_coadd_rrhr)
+            img_coadd_int = img_coadd_cnt / np.where(
+                img_coadd_rrhr == 0.0, np.nan, img_coadd_rrhr
+            )
             np.nan_to_num(img_coadd_int, copy=False)
 
             # Export FITS file

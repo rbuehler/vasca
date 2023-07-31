@@ -1744,7 +1744,9 @@ class GALEXDSField(BaseField):
         self.add_table(dd_detections_raw, "galex_field:tt_detections")
 
         # Coadd/reference image
-        logger.debug("Creating reference/coadd sky-map for field " f"'{self.field_name}'")
+        logger.debug(
+            "Creating reference/coadd sky-map for field " f"'{self.field_name}'"
+        )
         # Gets paths to intensity map FITS file
         coadd_int_file_name = glob(f"{self.data_path}{os.sep}*-nd-int-coadd.fits.gz")[0]
 
