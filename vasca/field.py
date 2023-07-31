@@ -418,7 +418,7 @@ class BaseField(TableCollection):
         region : regions.SkyRegion
             Region on the sky of the field.
         """
-        if self.observatory.casefold() == "GALEX".casefold():
+        if self.observatory.casefold() in ["GALEX".casefold(), "GALEX_DS".casefold()]:
             return CircleSkyRegion(center=self.center, radius=self.fov_diam / 2.0)
         else:
             logger.warning(f"No region known for observatory {self.observatory}")
@@ -758,8 +758,8 @@ class GALEXField(BaseField):
         method_spec = ["mast_remote", "mast_local", "vasca", "auto"]
         if method not in method_spec:
             raise ValueError(
-                "Expected load method specification from {method_spec}, "
-                "got '{method}'."
+                f"Expected load method specification from {method_spec}, "
+                f"got '{method}'."
             )
 
         # Sets refresh option for MAST methods
@@ -1271,6 +1271,9 @@ class GALEXField(BaseField):
                 f"{obs_filter_l}_artifact",
                 f"{obs_filter}_CLASS_STAR",
                 "chkobj_type",
+                f"{obs_filter}_A_WORLD",
+                f"{obs_filter}_B_WORLD",
+                f"{obs_filter}_ELLIPTICITY",
                 f"{obs_filter}_FLUX_APER_4",
                 f"{obs_filter}_FLUXERR_APER_4",
                 f"{obs_filter}_FLUX_APER_3",
@@ -1293,6 +1296,9 @@ class GALEXField(BaseField):
                 "artifacts",
                 "class_star",
                 "chkobj_type",
+                "psf_a",
+                "psf_b",
+                "psf_ecc",
                 "flux_f60",
                 "flux_f60_err",
                 "flux_f38",
@@ -1422,6 +1428,13 @@ class GALEXDSField(BaseField):
                     self.visits_data_path = rm.get_path("gal_ds_visits_list", "lustre")
                 else:
                     self.visits_data_path = visits_data_path
+
+        # Checks if field name exists
+        if not field_name in Table.read(self.visits_data_path)["field_name"]:
+            raise ValueError(
+                f"Unkown field name '{field_name}'. "
+                f"No matching entry in visits table ('{self.visits_data_path}') "
+            )
 
         # Create and check existence of directory
         # that holds field data and VASCA outputs
@@ -1570,7 +1583,7 @@ class GALEXDSField(BaseField):
             dd_fields[col_names_map[col]] = tt_fields[col].data
 
         # Add FoV size info
-        dd_fields["fov_diam"] = [-1.0]  # Not defined for drift scan fields
+        dd_fields["fov_diam"] = [3.0]  # Not defined for drift scan fields
 
         # Add table as class attribute
         self.add_table(dd_fields, "base_field:tt_fields")
@@ -1663,6 +1676,9 @@ class GALEXDSField(BaseField):
             "nuv_artifact": "artifacts",
             "NUV_CLASS_STAR": "class_star",
             "chkobj_type": "chkobj_type",
+            "NUV_A_WORLD": "psf_a",
+            "NUV_B_WORLD": "psf_b",
+            "NUV_ELLIPTICITY": "psf_ecc",
             "NUV_FLUX_APER_4": "flux_f60",
             "NUV_FLUXERR_APER_4": "flux_f60_err",
             "NUV_FLUX_APER_3": "flux_f38",
@@ -1680,9 +1696,17 @@ class GALEXDSField(BaseField):
         logger.debug(f"Loading visit-detection catalogs for field '{self.field_name}'.")
 
         # Gets paths to all mcat (visit-detection catalogs) files
-        mcat_vis_paths = glob(
-            f"{self.data_path}{os.sep}{self.field_name}_*-img{os.sep}*xd-mcat.fits"
-        )
+        # via the global visits table. This ensures to exclude bad quality visits
+
+        # Central visits info table
+        tt_visits_full = Table.read(self.visits_data_path)
+        tt_visits_select = tt_visits_full[
+            tt_visits_full["field_name"] == self.field_name
+        ]
+        mcat_vis_paths = [
+            glob(f"{self.data_path}{os.sep}{vis_name}/*xd-mcat.fits")[0]
+            for vis_name in tt_visits_select["vis_name"]
+        ]
         # Loops over visits
         for i, (mcat_path, vis_id) in enumerate(
             zip(mcat_vis_paths, self.tt_visits["vis_id"])
@@ -1719,53 +1743,50 @@ class GALEXDSField(BaseField):
         )
         self.add_table(dd_detections_raw, "galex_field:tt_detections")
 
-        # Coadd/reference detections
+        # Coadd/reference image
         logger.debug(
-            "Creating reference/coadd detections table and image for field "
-            f"'{self.field_name}'"
+            "Creating reference/coadd sky-map for field " f"'{self.field_name}'"
         )
-
-        # Gets paths to the mcat file and intensity map
-        # For now just take the visit with longest exposure since no coadd is available
-        vis_id_tmax = self.tt_visits[np.argmax(self.tt_visits["time_bin_size"])][
-            "vis_id"
-        ]
-        vis_name_tmax = self.name_id_map(int(vis_id_tmax))
-        coadd_mcat_file_name = glob(
-            f"{self.data_path}{os.sep}{vis_name_tmax}{os.sep}*-xd-mcat.fits"
-        )[0]
-        coadd_int_file_name = glob(
-            f"{self.data_path}{os.sep}*-nd-int-coadd.fits.gz"
-        )[0]
-
-        # Opens the reference detections catalog and selects VASCA columns
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", AstropyWarning)
-            tt_coadd_detections_raw = Table.read(coadd_mcat_file_name)
-
-        # Converts into dictionary with correct VASCA column names
-        dd_coadd_detections_raw = {}
-        # Loops over same columns as used for the visit detections, but skips "vis_id"
-        for col in col_names[1:]:
-            dd_coadd_detections_raw[col_names_map[col]] = tt_coadd_detections_raw[
-                col
-            ].data
-        # Add filter_id
-        dd_coadd_detections_raw["obs_filter_id"] = np.array(
-            dd_filter2id["NUV"] + np.zeros(len(tt_coadd_detections_raw))
-        )
-        self.add_table(dd_coadd_detections_raw, "galex_field:tt_coadd_detections")
+        # Gets paths to intensity map FITS file
+        coadd_int_file_name = glob(f"{self.data_path}{os.sep}*-nd-int-coadd.fits.gz")[0]
 
         # Loads the reference intensity map
         self.load_sky_map(coadd_int_file_name)
 
+        #         # For now just take the visit with longest exposure since no coadd is available
+        #         vis_id_tmax = self.tt_visits[np.argmax(self.tt_visits["time_bin_size"])][
+        #             "vis_id"
+        #         ]
+        #         vis_name_tmax = self.name_id_map(int(vis_id_tmax))
+        #         coadd_mcat_file_name = glob(
+        #             f"{self.data_path}{os.sep}{vis_name_tmax}{os.sep}*-xd-mcat.fits"
+        #         )[0]
+        #
+        #         # Opens the reference detections catalog and selects VASCA columns
+        #         with warnings.catch_warnings():
+        #             warnings.simplefilter("ignore", AstropyWarning)
+        #             tt_coadd_detections_raw = Table.read(coadd_mcat_file_name)
+        #
+        #         # Converts into dictionary with correct VASCA column names
+        #         dd_coadd_detections_raw = {}
+        #         # Loops over same columns as used for the visit detections, but skips "vis_id"
+        #         for col in col_names[1:]:
+        #             dd_coadd_detections_raw[col_names_map[col]] = tt_coadd_detections_raw[
+        #                 col
+        #             ].data
+        #         # Add filter_id
+        #         dd_coadd_detections_raw["obs_filter_id"] = np.array(
+        #             dd_filter2id["NUV"] + np.zeros(len(tt_coadd_detections_raw))
+        #         )
+        #         self.add_table(dd_coadd_detections_raw, "galex_field:tt_coadd_detections")
+
         # Loads visit intensity maps if requested
         logger.debug("Loading all visit-level sky maps.")
         if not ref_maps_only:
-            visit_int_file_names = glob(
-                f"{self.data_path}{os.sep}{self.field_name}"
-                f"_*-img{os.sep}*nd-int.fits.gz"
-            )
+            visit_int_file_names = [
+                glob(f"{self.data_path}{os.sep}{vis_name}/*nd-int.fits.gz")[0]
+                for vis_name in tt_visits_select["vis_name"]
+            ]
             for path in visit_int_file_names:
                 self.load_sky_map(path, "vis_img")
 
@@ -1944,8 +1965,8 @@ class GALEXDSField(BaseField):
         method_spec = ["mast_remote", "mast_local", "vasca", "auto"]
         if method not in method_spec:
             raise ValueError(
-                "Expected load method specification from {method_spec}, "
-                "got '{method}'."
+                f"Expected load method specification from {method_spec}, "
+                f"got '{method}'."
             )
 
         # Removes parameters undefined by GALEXDSField
@@ -1978,12 +1999,11 @@ class GALEXDSField(BaseField):
                     load_products=load_products,
                     **field_kwargs,
                 )
+        elif method == "MAST-REMOTE":
+            raise NotImplementedError(
+                f"Method '{method}' not available for GALEX drift scan data."
+            )
         elif method == "auto":
-            raise NotImplementedError(f"method '{method}' not operational.")
-            # TODO: Lookahead via rm to check data availability.
-            # Then "VASCA" is preferred for performance reasons.
-            # Fallback to "MAST" & refresh=True if "VASCA" fails for some reason
-            # (e.g. not complete set of tables stored in the fits file).
-            # Update (2023-01-11): Reevaluate if this option is still needed
+            raise NotImplementedError(f"Method '{method}' not operational.")
 
         return gf

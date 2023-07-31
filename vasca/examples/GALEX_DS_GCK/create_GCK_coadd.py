@@ -128,10 +128,10 @@ for idx_scan, scan_name in tqdm(
                         # Initialize stack image from first file
                         with fits.open(path) as hdul:
                             if idx_img == 0:
-                                img = hdul[0].data
+                                img = hdul[0].data.clip(min=0)
                                 img_wcs = wcs.WCS(hdul[0].header)
                             else:
-                                img += hdul[0].data
+                                img += hdul[0].data.clip(min=0)
 
                     # Export FITS file
                     hdu = fits.PrimaryHDU(img, header=img_wcs.to_header())
@@ -164,15 +164,25 @@ for idx_scan, scan_name in tqdm(
                     os.remove(alt_path)
 
             # Compute ratio: Counts over effective exposure = intensity
+
+            # Load images
             with fits.open(coadd_cnt_path) as hdul:
                 img_coadd_cnt = hdul[0].data
                 img_coadd_wcs = wcs.WCS(hdul[0].header)
             with fits.open(coadd_rrhr_path) as hdul:
                 img_coadd_rrhr = hdul[0].data
 
+            # Compute ratio, avoid divide-by-zero problems by setting zeros to NaN
+            # for the computation and setting the same elements back to zeros again.
+            # Saving NaN to FITS and using CompImageHDUs in VASCA led to corrupt images
+            img_coadd_int = img_coadd_cnt / np.where(
+                img_coadd_rrhr == 0.0, np.nan, img_coadd_rrhr
+            )
+            np.nan_to_num(img_coadd_int, copy=False)
+
             # Export FITS file
             hdu = fits.PrimaryHDU(
-                img_coadd_cnt / np.where(img_coadd_rrhr == 0, np.nan, img_coadd_rrhr),
+                img_coadd_int,
                 header=img_coadd_wcs.to_header(),
             )
             hdu.writeto(coadd_int_path, overwrite=True)

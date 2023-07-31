@@ -1,0 +1,159 @@
+J/ApJ/813/100   Deep GALEX NUV survey of the Kepler field. I.    (Olmedo+, 2015)
+================================================================================
+Deep GALEX UV survey of the Kepler field.
+I. Point source catalog.
+    Olmedo M., Lloyd J., Mamajek E.E., Chavez M., Bertone E., Martin D.C.,
+    Neill J.D.
+   <Astrophys. J., 813, 100 (2015)>
+   =2015ApJ...813..100O    (SIMBAD/NED BibCode)
+================================================================================
+ADC_Keywords: Photometry, ultraviolet ; Cross identifications ;
+              Photometry, SDSS ; Photometry, infrared
+Keywords: catalogs; stars: activity; stars: chromospheres;
+          techniques: photometric; ultraviolet: stars
+
+Abstract:
+    We report observations of a deep near-ultraviolet (NUV) survey of the
+    Kepler field made in 2012 with the Galaxy Evolution Explorer (GALEX)
+    Complete All-Sky UV Survey Extension (CAUSE). The GALEX-CAUSE Kepler
+    survey (GCK) covers 104 square degrees of the Kepler field and reaches
+    a limiting magnitude of NUV~=22.6 at 3{sigma}. Analysis of the GCK
+    survey has yielded a catalog of 660928 NUV sources, of which 475164
+    are cross-matched with stars in the Kepler Input Catalog.
+    Approximately 327 of 451 confirmed exoplanet host stars and 2614 of
+    4696 candidate exoplanet host stars identified by Kepler have NUV
+    photometry in the GCK survey. The GCK catalog should enable the
+    identification and characterization of UV-excess stars in the Kepler
+    field (young solar-type and low-mass stars, chromospherically active
+    binaries, white dwarfs, horizontal branch stars, etc.), and
+    elucidation of various astrophysics problems related to the stars and
+    planetary systems in the Kepler field.
+
+Description:
+    As part of the Galaxy Evolution Explorer (GALEX) Complete All-Sky UV
+    Survey Extension (CAUSE) survey, Cornell University funded 300 orbits
+    to complete the spatial coverage of the Kepler field through 2012
+    August-September (PI J. Lloyd).
+
+    The GALEX-CAUSE Kepler Catalog (GCK) has 660928 NUV sources which are
+    contained in Table 4. A subsample of this catalog is contained in
+    Table 5, composed of 327 GCK objects with counter-parts in the Kepler
+    Input Catalog hosting confirmed exoplanets.
+
+File Summary:
+--------------------------------------------------------------------------------
+ FileName      Lrecl  Records   Explanations
+--------------------------------------------------------------------------------
+ReadMe            80        .   This file
+table4.dat       157   660928   GALEX CAUSE Kepler (GCK) catalog
+table5.dat       156      327   NUV magnitudes and ancillary data for Kepler
+                                 targets with confirmed exoplanets
+--------------------------------------------------------------------------------
+
+See also:
+ II/319 : UKIDSS-DR9 LAS, GCS and DXS Surveys (Lawrence+ 2012)
+ II/312 : GALEX-DR5 (GR5) sources from AIS and MIS (Bianchi+ 2011)
+ V/133  : Kepler Input Catalog (Kepler Mission Team, 2009)
+ J/A+A/572/A34  : Pulsating solar-like stars in Kepler (Garcia+, 2014)
+ J/ApJS/211/24  : Rotation periods of Kepler MS stars (McQuillan+, 2014)
+ J/ApJS/211/2   : Revised properties of Q1-16 Kepler targets (Huber+, 2014)
+ J/AJ/147/119   : Sources in the Kepler field of view (Coughlin+, 2014)
+ J/MNRAS/436/1883 : Properties of KOI host stars (Walkowicz+, 2013)
+ J/A+A/560/A4   : Rotation periods of active Kepler stars (Reinhold+, 2013)
+ J/AJ/144/24    : The Kepler-INT survey (Greiss+, 2012)
+ J/AJ/142/112   : KIC photometric calibration (Brown+, 2011)
+ J/ApJ/687/1264 : Age estimation for solar-type dwarfs (Mamajek+, 2008)
+ http://kepler.nasa.gov/     : Kepler home page
+ http://galex.stsci.edu/GR6/ : GALEX GR6/7 Data Release home page
+
+Byte-by-byte Description of file: table4.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units         Label     Explanations
+--------------------------------------------------------------------------------
+   1-  3  A3    ---           ---       [GCK]
+   5- 21  A17   ---           GCK       GALEX CAUSE Kepler (GCK) Identifier
+                                         (JHHMMSSss+DDMMSSs)
+  23- 31 F9.5   deg           RAdeg     [279.5/302] Right Ascension (J2000)
+  33- 40 F8.5   deg           DEdeg     [36.6/52.5] Declination (J2000)
+  42- 47 F6.3   mag           NUVmag    [12.2/25.7] Calibrated NUV AB magnitude
+  49- 53 F5.3   mag         e_NUVmag    Uncertainty in NUVmag
+  55- 62 F8.3   mag           NUVmagc   ?=-999.99 Corrected calibrated NUV
+                                         AB magnitude (1)
+  64- 71 F8.3   mag         e_NUVmagc   ?=-999.99 Uncertainty in NUVmagc
+  73- 80 F8.3   ct/s          FNUV      [0.006/1369] NUV flux
+  82- 86 F5.3   ct/s        e_FNUV      Uncertainty in FNUV
+  88- 94 F7.2   ---           NUVsn     [0.2/1669] Signal-to-noise ratio
+                                         of NUV flux
+  96-101 F6.3   mag           NUVmagbg  [24.8/32.2]?=-9.99 Background surface
+                                         brightness at source position,
+                                         AB magnitude
+ 103-107 F5.3   ct/s/arcsec2  FNUVbg    [0/0.02] Background NUV flux at source
+                                         position
+ 109-114 F6.1   s             NUVexp    [123/3410] Effective exposure time at
+                                         source position
+ 116-120 F5.3   deg           dRad      [0.001/1.4] Distance of source from
+                                         center of tile
+ 122-124 I3     ---           Flag      [0/571] Logical OR of artifact flags (2)
+ 126-133 I8     ---           key       ? Sequential number in CasJobs Kepler
+                                         Colors Table of match (ktswckey)
+ 135-142 I8     ---           KIC       [891901/12984375]? Kepler Input Catalog
+                                         identifier of match
+ 144-149 A6     ---           scan      GCK scan number
+ 151-157 A7     ---           img       GCK image number
+--------------------------------------------------------------------------------
+Note (1): Corrected with Camarota & Holberg (2014MNRAS.438.3111C) calibration
+Note (2): The logical "OR" (sum) of the artifact flags (from Table 2):
+       1  = 'edge', Detector bevel edge reflection
+       2  = 'window', Detector window reflection
+       4  = 'dichroic', Dichroic reflection
+       8  = 'varpix', Variable pixel based on time slices
+      16  = 'brtedge', Bright star near field edge
+      32  = 'detector rim', Proximity, >0.6 degrees from field center
+      64  = 'dimask', Dichroic reflection artifact mask flag
+     128  = 'varmask', Masked pixel determined by varpix
+     256  = 'hot mask', Detector hot spots
+     512  = 'yaghost', Possible ghost image from YA slope
+          Artifacts 64, 128 and 256 do not apply to the GCK catalog.
+--------------------------------------------------------------------------------
+
+Byte-by-byte Description of file: table5.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units   Label   Explanations
+--------------------------------------------------------------------------------
+   1-  3  A3    ---     ---     [GCK]
+   5- 21  A17   ---     GCK     GALEX CAUSE Kepler (GCK) Identifier
+                                 (JHHMMSSss+DDMMSSs)
+  23- 31  F9.5  deg     RAdeg   Right Ascension in Decimal Degrees (J2000)
+  33- 40  F8.5  deg     DEdeg   Declination in Decimal Degrees (J2000)
+  42- 47  F6.3  mag     NUVmag  [13/24.1] Calibrated NUV (AB) magnitude
+  49- 53  F5.3  mag   e_NUVmag  Uncertainty in NUV
+  55- 62  F8.3  mag     NUVmagc ?=-999.99 Corrected calibrated NUV
+                                 AB magnitude (1)
+  64- 71  F8.3  mag   e_NUVmagc ?=-999.99 Uncertainty in cNUV
+  73- 78  F6.2  ---     NUVsn   [0.8/834] Signal-to-noise ratio of NUV flux
+  80- 87  I8    ---     KIC     [1871056/12735740] Kepler Input Catalog
+                                 identifier of match
+  89- 95  A7    ---     ---     [Kepler-]
+  96- 98  I3    ---     Kepler  ? Kepler host star number
+     100  A1    ---   m_Kepler  [A] Kepler component
+ 102-107  F6.3  mag     Kpmag   [8.7/16] Kepler-band AB magnitude (2)
+ 109-114  F6.3  mag     gmag    [9/16.6] SDSS g-band AB magnitude (2)
+ 116-121  F6.3  mag     rmag    [8.7/16] SDSS r-band AB magnitude (2)
+ 123-128  F6.3  mag     imag    [8.6/16.4]? SDSS i-band AB magnitude (2)
+ 130-135  F6.3  mag     zmag    [8.6/16.7]? SDSS z-band AB magnitude (2)
+ 137-142  F6.3  mag     Jmag    [7.7/16.4] 2MASS J Vega magnitude
+ 144-149  F6.3  mag     Hmag    [7.5/15.8] 2MASS H Vega magnitude
+ 151-156  F6.3  mag     Kmag    [7.4/16.7] 2MASS K Vega magnitude
+--------------------------------------------------------------------------------
+Note (1): Corrected with Camarota & Holberg (2014MNRAS.438.3111C) calibration.
+Note (2): From the Kepler Input Catalog (V/133)
+--------------------------------------------------------------------------------
+
+Acknowledgements:
+    Manuel Olmedo [INAOE] <cosmocaos at hotmail . com>
+
+History:
+    From electronic version of the journal
+
+================================================================================
+(End)                 Prepared by [AAS], Emmanuelle Perret [CDS]    16-Feb-2016
