@@ -6,10 +6,10 @@ import shutil
 
 import pytest
 
+import vasca.visualization as vvis
 from vasca import vasca_pipe
 from vasca.region import Region
 from vasca.resource_manager import ResourceManager
-import vasca.visualization as vvis
 
 
 @pytest.fixture

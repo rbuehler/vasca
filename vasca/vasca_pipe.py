@@ -121,12 +121,19 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     """
     logger.info("Analysing field:" + str(field_id))
 
-    field = rg.get_field(
-        field_id=field_id,
-        load_method="VASCA",
-        mast_products=vasca_cfg["ressources"]["load_products"],
-        field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
-    )
+    try:
+        field = rg.get_field(
+            field_id=field_id,
+            load_method="VASCA",
+            mast_products=vasca_cfg["ressources"]["load_products"],
+            field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
+        )
+    except Exception as e:
+        logger.exception(
+            f"Faild to run pipeline for field '{field_id}'. "
+            f"Returning None. Exception:\n {e}"
+        )
+        return None
 
     # Create directory structure for fields
     field_out_dir = (
@@ -144,26 +151,33 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     obs_cfg = vasca_cfg["observations"][obs_nr]
 
     # Apply detections selections
+    # Visit detections
     field.select_rows(obs_cfg["selection"]["det_quality"], remove_unselected=False)
-    field.select_rows(
-        obs_cfg["selection"]["coadd_det_quality"], remove_unselected=False
-    )
+    # Coadd detections
+    if hasattr(field, "tt_coadd_detections"):
+        field.select_rows(
+            obs_cfg["selection"]["coadd_det_quality"], remove_unselected=False
+        )
 
     # Run clustering
+    logger.info("Clustering field detections")
     field.cluster_meanshift(
         **obs_cfg["cluster_det"]["meanshift"],
     )
 
-    # # Calculate source variables from light curve
-    # field.set_src_stats(src_id_name = "fd_src_id")
+    # Calculate source variables from light curve
+    field.set_src_stats(src_id_name="fd_src_id")
 
     # Write out field
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
 
     # Remove some items which are not further needed to free memory
-    # Remove detections which did not pass the selection and where not used in clustering
+
+    # Remove detections which did not pass selections and where not used in clustering
     field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
-    field.remove_unselected("tt_coadd_detections")
+    if hasattr(field, "tt_coadd_detections"):
+        field.remove_unselected("tt_coadd_detections")
+    # Remove image data
     field.ref_img = None
     field.ref_wcs = None
     field.vis_img = None
@@ -201,8 +215,8 @@ def run(vasca_cfg):
     if not os.path.exists(rg.region_path):
         os.makedirs(rg.region_path)
 
-    # Prepare fields to run on for parellization
-    fd_pars = list()  # List of obsevatrions and field_ids in the config file
+    # Prepare fields to run in parallel
+    fd_pars = list()  # List of observations and field_ids in the config file
     obs_nr = 0
     for obs in vasca_cfg["observations"]:
         for field in rg.tt_fields:
@@ -211,9 +225,12 @@ def run(vasca_cfg):
 
     # Run each field in a separate process in parallel
     nr_cpus = vasca_cfg["general"]["nr_cpus"]
-    with Pool(processes=nr_cpus) as pool:  # , maxtasksperchild=1
+    nr_fields = len(fd_pars)
+    logger.info(f"Analyzing {nr_fields} fields on {nr_cpus} parallel threads.")
+    with Pool(processes=nr_cpus) as pool:
         pool_return = pool.starmap(run_field, fd_pars)
     pool.join()
+    logger.info("Done analyzing individual fields.")
 
     # update region fields
     for field in pool_return:
@@ -225,29 +242,36 @@ def run(vasca_cfg):
     rg.tt_visits = unique(rg.tt_visits, keys="vis_id")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)
-    rg.add_table_from_fields("tt_coadd_detections")
+    if vasca_cfg["ressources"]["coadd_exists"]:
+        rg.add_table_from_fields("tt_coadd_detections")
 
-    del rg.fields  # All that needed has been transfered to region tables
+    del rg.fields  # All that needed has been transferred to region tables
 
-    # Cluster field sources and codds
+    # Cluster field sources and co-adds
     rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
-    rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
+    if vasca_cfg["ressources"]["coadd_exists"]:
+        rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
 
     # Calculate source statistics
     rg.set_src_stats(src_id_name="rg_src_id")
-    rg.set_src_stats(src_id_name="coadd_src_id")
+    if vasca_cfg["ressources"]["coadd_exists"]:
+        rg.set_src_stats(src_id_name="coadd_src_id")
 
     # Match sources to coadd sources
-    rg.cross_match(
-        tt_cat=rg.tt_coadd_sources,
-        table_name="tt_sources",
-        dist_max=vasca_cfg["assoc_src_coadd"]["dist_max"] * uu.arcsec,
-        dist_s2n_max=vasca_cfg["assoc_src_coadd"]["dist_s2n_max"],
-    )
+    if vasca_cfg["ressources"]["coadd_exists"]:
+        rg.cross_match(
+            tt_cat=rg.tt_coadd_sources,
+            table_name="tt_sources",
+            dist_max=vasca_cfg["assoc_src_coadd"]["dist_max"] * uu.arcsec,
+            dist_s2n_max=vasca_cfg["assoc_src_coadd"]["dist_s2n_max"],
+        )
 
     # Select variable sources
     rg.select_rows(vasca_cfg["selection"]["src_variability"], remove_unselected=False)
-    rg.select_rows(vasca_cfg["selection"]["src_coadd_diff"], remove_unselected=False)
+    if vasca_cfg["ressources"]["coadd_exists"]:
+        rg.select_rows(
+            vasca_cfg["selection"]["src_coadd_diff"], remove_unselected=False
+        )
 
     # Remove detections not associated to selected sources
     if "det_association" in vasca_cfg["selection"].keys():

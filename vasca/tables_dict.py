@@ -360,6 +360,30 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Detection matched to a known star (bright_match=1, mcat file chkobj_type variable)",
     },
+    # %%% psf_a
+    "psf_a": {
+        "name": "psf_a",
+        "dtype": "float64",
+        "unit": "degree",
+        "default": -1,
+        "description": "Photometry aperture ellipse semi-major axis (mcat: Profile RMS along major axis (world units))",
+    },
+    # %%% psf_b
+    "psf_b": {
+        "name": "psf_b",
+        "dtype": "float64",
+        "unit": "degree",
+        "default": -1,
+        "description": "Photometry aperture ellipse semi-minor axis (mcat: Profile RMS along minor axis (world units))",
+    },
+    # %%% psf_ecc
+    "psf_ecc": {
+        "name": "psf_ecc",
+        "dtype": "float64",
+        "unit": "1",
+        "default": -1,
+        "description": "Photometry aperture ellipse eccentricity (mcat: 1 - psf_b / psf_a)",
+    },
     # %%% flux_f60
     "flux_f60": {
         "name": "flux_f60",
@@ -605,6 +629,9 @@ galex_field = {
             "artifacts",
             "class_star",
             "chkobj_type",
+            "psf_a",
+            "psf_b",
+            "psf_ecc",
         ],
         "meta": {"INFO": "Visit detections table", "PRECUTS": "List of pre-cuts"},
     },
@@ -615,6 +642,9 @@ galex_field = {
             "artifacts",
             "class_star",
             "chkobj_type",
+            "psf_a",
+            "psf_b",
+            "psf_ecc",
             "flux_f60",
             "flux_f60_err",
             "flux_f38",

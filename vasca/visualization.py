@@ -13,13 +13,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy.coordinates import SkyCoord
 from astropy.nddata import Cutout2D
-from astropy.visualization.wcsaxes import SphericalCircle
 from astropy.time import Time
+from astropy.visualization.wcsaxes import SphericalCircle
 from loguru import logger
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import ScalarFormatter
 
-from vasca.utils import flux2mag, mag2flux, dd_id2filter, select_obs_filter
+from vasca.utils import dd_id2filter, flux2mag, mag2flux, select_obs_filter
 
 # %% sky plotting
 
