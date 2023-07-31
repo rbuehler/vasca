@@ -154,16 +154,21 @@ class TableCollection(object):
         Parameters
         ----------
         table_name : str
-            Table to delete the unselected rows from. HAs to contain the "sel" column.
+            Table to delete the unselected rows from. Has to contain the "sel" column.
 
         Returns
         -------
-        None.
+        None
 
         """
         logger.debug(f"Removing unselected rows in table '{table_name}'")
-        sel = self.__dict__[table_name]["sel"]
-        self.__dict__[table_name] = self.__dict__[table_name][sel]
+        if hasattr(self, table_name):
+            sel = self.__dict__[table_name]["sel"]
+            self.__dict__[table_name] = self.__dict__[table_name][sel]
+        else:
+            raise ValueError(
+                f"Table '{table_name}' does not exist. Can't remove rows. "
+            )
 
     def write_to_fits(
         self, file_name="tables.fits", overwrite=True, fits_verify="warn"
@@ -743,7 +748,9 @@ class TableCollection(object):
         Parameters
         ----------
         src_id_name : str, optional
-            Name of the src_id to calculate statistics for (usually rg_src_id or fd_src_id)
+            Name of the src_id to calculate statistics for. 'rg_src_id' indicates
+            operations being performed on ``vasca.region`` objects whereas 'fd_src_id'
+            would indicate ``vasca.field`` objects.
 
 
         Returns
@@ -800,9 +807,10 @@ class TableCollection(object):
         nr_filters = len(filter_ids)
 
         # Include field index info to tt_fields
-        self.tt_filters.add_index("obs_filter_id")
-        flt_idx = self.tt_filters.loc_indices["obs_filter_id", filter_ids]
-        self.tt_filters["obs_filter_idx"][flt_idx] = np.array(range(0, nr_filters))
+        if src_id_name == "rg_src_id":
+            self.tt_filters.add_index("obs_filter_id")
+            flt_idx = self.tt_filters.loc_indices["obs_filter_id", filter_ids]
+            self.tt_filters["obs_filter_idx"][flt_idx] = np.array(range(0, nr_filters))
 
         # Buffer input data for speed and convert position errors to degrees
         dd_det_var = {"pos_err_deg": tt_det["pos_err"].data.astype(np.float64) / 3600.0}

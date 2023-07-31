@@ -354,15 +354,16 @@ class Region(TableCollection):
         setattr(src, "tt_source_lc", src.get_light_curve(rg_src_ids=rg_src_id))
 
         # Add coadd source
-        assoc_id = src.tt_sources["assoc_id"][0]
-        if assoc_id > -1:
-            self.tt_coadd_sources.add_index("coadd_src_id")
-            src._table_names.append("tt_coadd_sources")
-            setattr(
-                src,
-                "tt_coadd_sources",
-                Table(self.tt_coadd_sources.loc["coadd_src_id", [assoc_id]]),
-            )
+        if hasattr(self, "tt_coadd_sources"):
+            assoc_id = src.tt_sources["assoc_id"][0]
+            if assoc_id > -1:
+                self.tt_coadd_sources.add_index("coadd_src_id")
+                src._table_names.append("tt_coadd_sources")
+                setattr(
+                    src,
+                    "tt_coadd_sources",
+                    Table(self.tt_coadd_sources.loc["coadd_src_id", [assoc_id]]),
+                )
 
         # Add fd_src_ids to each field
         coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
