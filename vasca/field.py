@@ -522,8 +522,7 @@ class GALEXField(BaseField):
 
         # Create and check existence of directory
         # that holds field data and VASCA outputs
-        if not os.path.isdir(self.data_path):
-            os.makedirs(self.data_path)
+        os.makedirs(self.data_path, exist_ok=True)
 
         # File name prefix for VASCA/GALEXField outputs
         self.vasca_file_prefix = f"VASCA_GALEX_{obs_id}_{obs_filter}"
@@ -1438,8 +1437,7 @@ class GALEXDSField(BaseField):
 
         # Create and check existence of directory
         # that holds field data and VASCA outputs
-        if not os.path.isdir(self.data_path):
-            os.makedirs(self.data_path)
+        os.makedirs(self.data_path, exist_ok=True)
 
         # Checks if visits table is available
         if not os.path.isfile(self.visits_data_path):
