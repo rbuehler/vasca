@@ -10,7 +10,7 @@ general:
     nr_cpus         : 2                                      # Number of CPUs to use. If "null" all available are used.
     save_ref_srcs   : false
     
-ressources:                      
+resources:                      
     load_method      : "MAST_LOCAL"                         # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : "TABLES"                                   # Get data products from MAST, if false only meta data is loaded
     coadd_exists     : true                           # Coadd detection catalogs are available (co-added images may exist). If false, sections 'cluster_coadd_dets', 'selection/src_coadd_diff' and 'observations/<observatory>/coadd_det_quality' are unused

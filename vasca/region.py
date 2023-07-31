@@ -89,9 +89,9 @@ class Region(TableCollection):
                         gf = gfield_load_func(
                             gfield_id,
                             obs_filter=obs["obs_filter"],
-                            method=vasca_cfg["ressources"]["load_method"],
-                            load_products=vasca_cfg["ressources"]["load_products"],
-                            **vasca_cfg["ressources"]["field_kwargs"],
+                            method=vasca_cfg["resources"]["load_method"],
+                            load_products=vasca_cfg["resources"]["load_products"],
+                            **vasca_cfg["resources"]["field_kwargs"],
                         )
 
                         rg_fd_id += 1

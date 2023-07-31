@@ -125,8 +125,8 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
         field = rg.get_field(
             field_id=field_id,
             load_method="VASCA",
-            mast_products=vasca_cfg["ressources"]["load_products"],
-            field_kwargs=vasca_cfg["ressources"]["field_kwargs"],
+            mast_products=vasca_cfg["resources"]["load_products"],
+            field_kwargs=vasca_cfg["resources"]["field_kwargs"],
         )
     except Exception as e:
         logger.exception(
@@ -242,23 +242,23 @@ def run(vasca_cfg):
     rg.tt_visits = unique(rg.tt_visits, keys="vis_id")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)
-    if vasca_cfg["ressources"]["coadd_exists"]:
+    if vasca_cfg["resources"]["coadd_exists"]:
         rg.add_table_from_fields("tt_coadd_detections")
 
     del rg.fields  # All that needed has been transferred to region tables
 
     # Cluster field sources and co-adds
     rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
-    if vasca_cfg["ressources"]["coadd_exists"]:
+    if vasca_cfg["resources"]["coadd_exists"]:
         rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
 
     # Calculate source statistics
     rg.set_src_stats(src_id_name="rg_src_id")
-    if vasca_cfg["ressources"]["coadd_exists"]:
+    if vasca_cfg["resources"]["coadd_exists"]:
         rg.set_src_stats(src_id_name="coadd_src_id")
 
     # Match sources to coadd sources
-    if vasca_cfg["ressources"]["coadd_exists"]:
+    if vasca_cfg["resources"]["coadd_exists"]:
         rg.cross_match(
             tt_cat=rg.tt_coadd_sources,
             table_name="tt_sources",
@@ -268,7 +268,7 @@ def run(vasca_cfg):
 
     # Select variable sources
     rg.select_rows(vasca_cfg["selection"]["src_variability"], remove_unselected=False)
-    if vasca_cfg["ressources"]["coadd_exists"]:
+    if vasca_cfg["resources"]["coadd_exists"]:
         rg.select_rows(
             vasca_cfg["selection"]["src_coadd_diff"], remove_unselected=False
         )
