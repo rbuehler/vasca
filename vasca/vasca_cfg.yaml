@@ -57,9 +57,6 @@ selection:
             flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
             flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%  
             flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
-            psf_a          : [0.0,0.1]  # Semi-major axis < 360"
-            psf_b          : [0.0,0.1]  # Semi-minor axis < 360"
-            psf_ecc        : [0.0,0.99]  # PSF eccentricity < 0.99
     src_coadd_diff:
         table       : "tt_sources"
         presel_type : "or"
@@ -95,6 +92,9 @@ observations:
                   r_fov          : [0.0,0.55]
                   class_star     : [0.6,1.0]        # Extension classifier (extended=0, point like=1)
                   chkobj_type    : [-0.5,0.5]       # Matched to a bright star (0=no, 1=yes)
+                  psf_a          : [0.0,0.1]  # Semi-major axis < 360"
+                  psf_b          : [0.0,0.1]  # Semi-minor axis < 360"
+                  psf_ecc        : [0.0,0.99]  # PSF eccentricity < 0.99
               bitmask:
                   # Specify the artifacts to remove
                   # For GALEX a description is at the end of this document
