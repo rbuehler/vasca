@@ -8,16 +8,16 @@ import os
 
 import numpy as np
 from astropy import units as uu
+from astropy.coordinates import SkyCoord
 from astropy.io import fits
 from astropy.nddata import bitmask
-from astropy.table import Table, Column
+from astropy.table import Column, Table
 from astropy.wcs import wcs
 from loguru import logger
 from scipy.stats import chi2
 from sklearn.cluster import MeanShift, estimate_bandwidth
-from astropy.coordinates import SkyCoord
 
-from vasca.tables_dict import dd_vasca_tables, dd_vasca_columns
+from vasca.tables_dict import dd_vasca_columns, dd_vasca_tables
 from vasca.utils import add_rg_src_id, table_to_array
 
 # import warnings
