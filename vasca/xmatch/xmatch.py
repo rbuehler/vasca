@@ -10,7 +10,7 @@ from astropy.table import Table
 from loguru import logger
 from tqdm import tqdm
 
-import vasca.acms_api as acmsapi
+import vasca.xmatch.acms_api as acmsapi
 
 
 def xmatch(api, catalog, radius, coords, ids=None, dropna=True, hide_progress=True):
@@ -26,9 +26,9 @@ def xmatch(api, catalog, radius, coords, ids=None, dropna=True, hide_progress=Tr
     radius : float
         The search radius in arcseconds.
     coords : astropy.table.Table
-    Table containing the coordinates of the sources to cross-match.
-    It must have "ra" and "dec" columns specifying the right ascension
-    and declination in degrees, respectively.
+        Table containing the coordinates of the sources to cross-match.
+        It must have "ra" and "dec" columns specifying the right ascension
+        and declination in degrees, respectively.
     ids : list or None, optional
         List of identifiers for the sources. If provided, it must have the same length
         as `coords`. Default is None.
