@@ -1270,8 +1270,6 @@ class GALEXField(BaseField):
                 f"{obs_filter_l}_artifact",
                 f"{obs_filter}_CLASS_STAR",
                 "chkobj_type",
-                f"{obs_filter}_A_WORLD",
-                f"{obs_filter}_B_WORLD",
                 f"{obs_filter}_ELLIPTICITY",
                 f"{obs_filter}_FLUX_APER_4",
                 f"{obs_filter}_FLUXERR_APER_4",
@@ -1295,9 +1293,7 @@ class GALEXField(BaseField):
                 "artifacts",
                 "class_star",
                 "chkobj_type",
-                "psf_a",
-                "psf_b",
-                "psf_ecc",
+                "ellip_world",
                 "flux_f60",
                 "flux_f60_err",
                 "flux_f38",
@@ -1324,6 +1320,17 @@ class GALEXField(BaseField):
         sel_s2n = tt_detections_raw[f"{obs_filter_l}_s2n"] > 0
         for col in mast_col_names:
             dd_detections_raw[col_names[col]] = tt_detections_raw[col][sel_s2n].data
+
+        ## Add size_world in arcsec
+        dd_detections_raw["size_world"] = (
+            3600
+            * (
+                tt_detections_raw[f"{obs_filter}_A_WORLD"][sel_s2n].data
+                + tt_detections_raw[f"{obs_filter}_B_WORLD"][sel_s2n].data
+            )
+            / 2
+        )
+
         # Add filter_id
         dd_detections_raw["obs_filter_id"] = np.array(
             dd_filter2id[obs_filter.upper()] + np.zeros(np.sum(sel_s2n))
