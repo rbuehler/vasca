@@ -8,24 +8,24 @@ import os
 import time
 import warnings
 from datetime import datetime
+from glob import glob
 
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import Table, conf, vstack
+from astropy.table import Table, conf, unique, vstack
 from astropy.time import Time
 from astropy.utils.exceptions import AstropyWarning
 from astropy.wcs import wcs
 from astroquery.mast import Observations
-from regions import CircleSkyRegion
-
 from loguru import logger
+from regions import CircleSkyRegion
 from requests.exceptions import HTTPError
 
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
-from vasca.utils import get_field_id, dd_filter2id
+from vasca.utils import dd_filter2id, get_field_id, name2id
 
 # global paths
 # path to the dir. of this file
@@ -418,7 +418,7 @@ class BaseField(TableCollection):
         region : regions.SkyRegion
             Region on the sky of the field.
         """
-        if self.observatory.casefold() == "GALEX".casefold():
+        if self.observatory.casefold() in ["GALEX".casefold(), "GALEX_DS".casefold()]:
             return CircleSkyRegion(center=self.center, radius=self.fov_diam / 2.0)
         else:
             logger.warning(f"No region known for observatory {self.observatory}")
@@ -522,8 +522,7 @@ class GALEXField(BaseField):
 
         # Create and check existence of directory
         # that holds field data and VASCA outputs
-        if not os.path.isdir(self.data_path):
-            os.makedirs(self.data_path)
+        os.makedirs(self.data_path, exist_ok=True)
 
         # File name prefix for VASCA/GALEXField outputs
         self.vasca_file_prefix = f"VASCA_GALEX_{obs_id}_{obs_filter}"
@@ -673,13 +672,11 @@ class GALEXField(BaseField):
                 )
             else:
                 logger.warning(f"load_product option not valid: {load_products}")
-            meta_only = "."
             if write:
                 fits_name = f"{gf.data_path}/{gf.vasca_file_prefix}_field_data.fits"
                 gf.write_to_fits(fits_name)
-        else:
-            meta_only = ", metadata-only."
 
+        meta_only = ", metadata-only." if load_products == "NONE" else "."
         logger.info(
             f"Loaded new GALEX field '{obs_id}' with obs_filter '{obs_filter}'"
             f"from MAST data {meta_only}"
@@ -760,8 +757,8 @@ class GALEXField(BaseField):
         method_spec = ["mast_remote", "mast_local", "vasca", "auto"]
         if method not in method_spec:
             raise ValueError(
-                "Expected load method specification from {method_spec}, "
-                "got '{method}'."
+                f"Expected load method specification from {method_spec}, "
+                f"got '{method}'."
             )
 
         # Sets refresh option for MAST methods
@@ -1273,6 +1270,9 @@ class GALEXField(BaseField):
                 f"{obs_filter_l}_artifact",
                 f"{obs_filter}_CLASS_STAR",
                 "chkobj_type",
+                f"{obs_filter}_A_WORLD",
+                f"{obs_filter}_B_WORLD",
+                f"{obs_filter}_ELLIPTICITY",
                 f"{obs_filter}_FLUX_APER_4",
                 f"{obs_filter}_FLUXERR_APER_4",
                 f"{obs_filter}_FLUX_APER_3",
@@ -1295,6 +1295,9 @@ class GALEXField(BaseField):
                 "artifacts",
                 "class_star",
                 "chkobj_type",
+                "psf_a",
+                "psf_b",
+                "psf_ecc",
                 "flux_f60",
                 "flux_f60_err",
                 "flux_f38",
@@ -1364,3 +1367,641 @@ class GALEXField(BaseField):
             ]  # list
             for vis_img_name in path_int_map_visits:
                 self.load_sky_map(vis_img_name, "vis_img")
+
+
+class GALEXDSField(BaseField):
+    """
+    VASCA implementation of GALEX drift-scan mode observations
+
+    The archival data is expected to be downloaded separately.
+    """
+
+    def __init__(self, field_name, data_path=None, visits_data_path=None, **kwargs):
+        """
+        Initializes a new GALEXDSField instance with
+        skeleton VASCA data structure.
+
+        Parameters
+        ----------
+        field_name : str
+            GALEX drift-scan field name
+        data_path : str, optional
+            Path to root location of data associated with the GALEX field.
+            Defaults to a path given by the resource manager.
+        visits_data_path : str, optional
+            Path to a pre-downloaded table holding the complete list of GALEX DS visits.
+            Defaults to a path given by the resource manager.
+
+        Attributes
+        ----------
+        data_path : str
+            Path to root location of data associated with the GALEX field
+        visits_data_path : str
+            Path to a pre-downloaded table holding the complete list of GALEX DS visits
+        vasca_file_prefix : str
+            File name prefix following VASCA naming convention:
+            'VASCA_<observatory>_<filed_id>_<obs_filter>'
+        """
+
+        # Sets skeleton
+        super().__init__()
+
+        # Parse field name (e.g. "29208-KEPLER_SCAN_009_sv03")
+        scan_name = field_name.split("_sv")[0]
+        field_id = name2id(field_name, bits=64)
+
+        # Set root location of data associated with the field
+        if data_path is None or visits_data_path is None:
+            with ResourceManager() as rm:
+                # Path to read and write data relevant to the pipeline
+                if data_path is None:
+                    self.data_path = (
+                        f'{rm.get_path("gal_ds_fields", "lustre")}/'
+                        f"{scan_name}/{field_name}"
+                    )
+                else:
+                    self.data_path = data_path
+                # Path to a pre-downloaded table holding
+                # the complete list of GALEX visits
+                if visits_data_path is None:
+                    self.visits_data_path = rm.get_path("gal_ds_visits_list", "lustre")
+                else:
+                    self.visits_data_path = visits_data_path
+
+        # Checks if field name exists
+        if not field_name in Table.read(self.visits_data_path)["field_name"]:
+            raise ValueError(
+                f"Unkown field name '{field_name}'. "
+                f"No matching entry in visits table ('{self.visits_data_path}') "
+            )
+
+        # Create and check existence of directory
+        # that holds field data and VASCA outputs
+        os.makedirs(self.data_path, exist_ok=True)
+
+        # Checks if visits table is available
+        if not os.path.isfile(self.visits_data_path):
+            raise FileNotFoundError(
+                "GALEX drift scan visits table not found at "
+                f"'{self.visits_data_path}'."
+            )
+
+        # Create name-ID map for field and visits
+        logger.debug(f"Creating name-ID map for field '{field_name}'.")
+        tt_name_id = Table.read(self.visits_data_path)
+        tt_name_id = tt_name_id[tt_name_id["field_name"] == field_name][
+            "field_name", "field_id", "vis_name", "vis_id"
+        ]
+        self.tt_name_id = tt_name_id
+
+        # File name prefix for VASCA/GALEXField outputs
+        self.vasca_file_prefix = f"VASCA_GALEX-DS_{field_id}_NUV"
+
+        logger.debug(f"Field data path set to: '{self.data_path}'")
+        logger.debug(f"Visits data path set to: '{self.visits_data_path}'")
+
+    def name_id_map(self, a):
+        """
+        Return the field/visit ID if the name is supplied and vice versa.
+
+        Note its not necessary to specify if identifier corresponds to the
+        field or visit since names/IDs are unique.
+
+        Parameters
+        ----------
+        a : str, int
+            Input name (if string) or ID (if integer)
+
+        Returns
+        -------
+        str, int
+            Output name or ID
+        """
+
+        # Gets field ID and name
+        field_id = np.unique(self.tt_name_id["field_id"])[0]
+        field_name = np.unique(self.tt_name_id["field_name"])[0]
+
+        # Checks if input is name or ID
+        is_name = False
+        is_id = False
+        if isinstance(a, str):
+            is_name = True
+        elif isinstance(a, int):
+            is_id = True
+
+        out = None
+        # Name -> return ID
+        if is_name:
+            # Field
+            if a == field_name:
+                out = field_id
+            # Visit
+            else:
+                try:
+                    out = self.tt_name_id[self.tt_name_id["vis_name"] == a]["vis_id"][0]
+                except IndexError as e:
+                    logger.exception(
+                        f"No match for name '{a}'. Returning None. Exception:\n"
+                        f"{type(e).__name__}: {e}"
+                    )
+        # ID -> return name
+        elif is_id:
+            # Field
+            if a == field_id:
+                out = field_name
+            # Visit
+            else:
+                try:
+                    out = self.tt_name_id[self.tt_name_id["vis_id"] == a]["vis_name"][0]
+                except IndexError as e:
+                    logger.exception(
+                        f"No match for ID '{a}'. Returning None. Exception:\n"
+                        f"{type(e).__name__}: {e}"
+                    )
+        # Wrong input type
+        else:
+            logger.warning(
+                f"Expected string or integer type for input {a},"
+                f" got ({type(a).__name__}'). Returning None."
+            )
+
+        return out
+
+    def _load_info(self, field_name):
+        """
+        Load field and associated visits information.
+        """
+
+        # Central visits table
+        tt_visits_full = Table.read(self.visits_data_path)
+
+        # Constructs field info table
+        logger.debug("Constructing 'tt_fields'.")
+
+        # Create field information table
+        # Map table keys to VASCA-table column names
+        col_names_map = {
+            "field_id": "field_id",
+            "field_name": "field_name",
+            "RA_CENT": "ra",
+            "DEC_CENT": "dec",
+            "observatory": "observatory",
+            "obs_filter": "obs_filter",
+        }
+        col_names = list(col_names_map.keys())
+
+        # Selects columns and filters for field ID
+        tt_visits_select = tt_visits_full[tt_visits_full["field_name"] == field_name]
+        tt_visits_select = tt_visits_select[col_names]
+        tt_fields = unique(tt_visits_select)
+
+        # Checks if resulting table has only one row
+        if not len(tt_fields) == 1:
+            raise ValueError(
+                "Expected single-row table for tt_fields, "
+                f"got {len(tt_fields)}, indicating inconsistent gloabl visits info."
+            )
+
+        # Converts field_id into VASCA field_id
+        tt_fields.replace_column(
+            "field_id",
+            [
+                get_field_id(
+                    obs_field_id=tt_fields["field_id"][0],
+                    observaory="GALEX_DS",
+                    obs_filter="NUV",
+                )
+            ],
+        )
+
+        # Convert into dictionary with correct VASCA column names
+        dd_fields = {}
+        for col in col_names:
+            dd_fields[col_names_map[col]] = tt_fields[col].data
+
+        # Add FoV size info
+        dd_fields["fov_diam"] = [3.0]  # Not defined for drift scan fields
+
+        # Add table as class attribute
+        self.add_table(dd_fields, "base_field:tt_fields")
+
+        # Constructs field info table
+        logger.debug("Constructing 'tt_visits'.")
+
+        # Map table keys to VASCA-table column names
+        col_names_map = {
+            "vis_id": "vis_id",
+            "time_bin_start": "time_bin_start",
+            "NEXPTIME": "time_bin_size",
+            "RA_CENT": "ra",
+            "DEC_CENT": "dec",
+        }
+
+        col_names = list(col_names_map.keys())
+
+        # Selects columns and filters for field ID
+        tt_visits_select = tt_visits_full[tt_visits_full["field_name"] == field_name]
+        tt_visits_select = tt_visits_select[col_names]
+
+        # Convert into dictionary with correct VASCA column names
+        dd_visits_select = {}
+        for col in col_names:
+            dd_visits_select[col_names_map[col]] = tt_visits_select[col].data
+
+        # Add filter info
+        n_visits = len(tt_visits_select)
+        dd_visits_select["obs_filter_id"] = [dd_filter2id["NUV"]] * n_visits
+
+        # Sets table as class attribute
+        self.add_table(dd_visits_select, "galex_field:tt_visits")
+
+        # Sets convenience class attributes
+        self.set_field_attr()
+
+        # Cross-check IDs
+        # Field ID
+        if not int(self.field_id[3:]) == name2id(field_name, bits=64):
+            raise ValueError(
+                "Inconsistent field ID. "
+                f"Expected {name2id(field_name, bits=64)} for name '{field_name}', "
+                f"got {self.field_id[3:]}."
+            )
+        # Visit IDs
+        if not all(
+            [
+                vis_id0 == vis_id1
+                for vis_id0, vis_id1 in zip(
+                    self.tt_visits["vis_id"], tt_visits_select["vis_id"]
+                )
+            ]
+        ):
+            raise ValueError(
+                "Inconsistent visit IDs. Missmatch between GALEXDSField.tt_visit "
+                "and global DS visits table."
+            )
+
+    def _load_data_products(
+        self,
+        field_name,
+        ref_maps_only=False,
+    ):
+        """
+        Loads the relevant data products form storage.
+
+        Parameters
+        ----------
+        field_name : str
+            GALEX field name.
+        ref_maps_only : bool, optional
+            If True, only the reference/coadd maps are loaded (default).
+            If False, also the visit maps are included.
+        """
+
+        # Specifies required columns for VASCA
+
+        # Maps table columns to VASCA-table column names
+        col_names_map = {
+            "vis_id": "vis_id",
+            "ggoid_dec": "det_id",
+            "alpha_j2000": "ra",
+            "delta_j2000": "dec",
+            "nuv_poserr": "pos_err",
+            "nuv_flux": "flux",
+            "nuv_fluxerr": "flux_err",
+            "nuv_s2n": "s2n",
+            "fov_radius": "r_fov",
+            "nuv_artifact": "artifacts",
+            "NUV_CLASS_STAR": "class_star",
+            "chkobj_type": "chkobj_type",
+            "NUV_A_WORLD": "psf_a",
+            "NUV_B_WORLD": "psf_b",
+            "NUV_ELLIPTICITY": "psf_ecc",
+            "NUV_FLUX_APER_4": "flux_f60",
+            "NUV_FLUXERR_APER_4": "flux_f60_err",
+            "NUV_FLUX_APER_3": "flux_f38",
+            "NUV_FLUXERR_APER_3": "flux_f38_err",
+            "E_bv": "E_bv",
+            "nuv_mag": "mag",
+            "nuv_magerr": "mag_err",
+        }
+        col_names = list(col_names_map.keys())
+
+        # Visit detections
+
+        # Opens and stacks all visit-detection catalogs, adds column for visit IDs,
+        # and selects required columns for VASCA
+        logger.debug(f"Loading visit-detection catalogs for field '{self.field_name}'.")
+
+        # Gets paths to all mcat (visit-detection catalogs) files
+        # via the global visits table. This ensures to exclude bad quality visits
+
+        # Central visits info table
+        tt_visits_full = Table.read(self.visits_data_path)
+        tt_visits_select = tt_visits_full[
+            tt_visits_full["field_name"] == self.field_name
+        ]
+        mcat_vis_paths = [
+            glob(f"{self.data_path}{os.sep}{vis_name}/*xd-mcat.fits")[0]
+            for vis_name in tt_visits_select["vis_name"]
+        ]
+        # Loops over visits
+        for i, (mcat_path, vis_id) in enumerate(
+            zip(mcat_vis_paths, self.tt_visits["vis_id"])
+        ):
+            # Reads visit detections catalog
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", AstropyWarning)
+                tt_mcat = Table.read(mcat_path)
+
+            # Initializes table in first iteration
+            if i == 0:
+                tt_mcat.add_column(
+                    np.full(len(tt_mcat), vis_id), name="vis_id", index=0
+                )
+                tt_detections_raw = tt_mcat[col_names]
+            # Appends all catalogs that follow
+            else:
+                tt_mcat.add_column(
+                    np.full(len(tt_mcat), vis_id), name="vis_id", index=0
+                )
+                tt_detections_raw = vstack([tt_detections_raw, tt_mcat[col_names]])
+            # Clean-up
+            del tt_mcat
+
+        # Converts into dictionary with correct VASCA column names
+        dd_detections_raw = {}
+        # Keep only entries with detections
+        sel_s2n = tt_detections_raw["nuv_s2n"] > 0
+        for col in col_names:
+            dd_detections_raw[col_names_map[col]] = tt_detections_raw[col][sel_s2n].data
+        # Add filter_id
+        dd_detections_raw["obs_filter_id"] = np.array(
+            dd_filter2id["NUV"] + np.zeros(np.sum(sel_s2n))
+        )
+        self.add_table(dd_detections_raw, "galex_field:tt_detections")
+
+        # Coadd/reference image
+        logger.debug(
+            "Creating reference/coadd sky-map for field " f"'{self.field_name}'"
+        )
+        # Gets paths to intensity map FITS file
+        coadd_int_file_name = glob(f"{self.data_path}{os.sep}*-nd-int-coadd.fits.gz")[0]
+
+        # Loads the reference intensity map
+        self.load_sky_map(coadd_int_file_name)
+
+        #         # For now just take the visit with longest exposure since no coadd is available
+        #         vis_id_tmax = self.tt_visits[np.argmax(self.tt_visits["time_bin_size"])][
+        #             "vis_id"
+        #         ]
+        #         vis_name_tmax = self.name_id_map(int(vis_id_tmax))
+        #         coadd_mcat_file_name = glob(
+        #             f"{self.data_path}{os.sep}{vis_name_tmax}{os.sep}*-xd-mcat.fits"
+        #         )[0]
+        #
+        #         # Opens the reference detections catalog and selects VASCA columns
+        #         with warnings.catch_warnings():
+        #             warnings.simplefilter("ignore", AstropyWarning)
+        #             tt_coadd_detections_raw = Table.read(coadd_mcat_file_name)
+        #
+        #         # Converts into dictionary with correct VASCA column names
+        #         dd_coadd_detections_raw = {}
+        #         # Loops over same columns as used for the visit detections, but skips "vis_id"
+        #         for col in col_names[1:]:
+        #             dd_coadd_detections_raw[col_names_map[col]] = tt_coadd_detections_raw[
+        #                 col
+        #             ].data
+        #         # Add filter_id
+        #         dd_coadd_detections_raw["obs_filter_id"] = np.array(
+        #             dd_filter2id["NUV"] + np.zeros(len(tt_coadd_detections_raw))
+        #         )
+        #         self.add_table(dd_coadd_detections_raw, "galex_field:tt_coadd_detections")
+
+        # Loads visit intensity maps if requested
+        logger.debug("Loading all visit-level sky maps.")
+        if not ref_maps_only:
+            visit_int_file_names = [
+                glob(f"{self.data_path}{os.sep}{vis_name}/*nd-int.fits.gz")[0]
+                for vis_name in tt_visits_select["vis_name"]
+            ]
+            for path in visit_int_file_names:
+                self.load_sky_map(path, "vis_img")
+
+    @classmethod
+    def from_VASCA(cls, field_name, fits_path=None, **kwargs):
+        """
+        Constructor to initialize a GALEXField instance
+        from a VASCA-generated FITS file
+
+        Parameters
+        ----------
+        field_name : int
+            GALEX field ID
+        fits_path : str, optional
+            Path to the fits file. Defaults to a path handled by ResourceManager.
+        **kwargs
+            All additional keyword arguments are passed to `~GALEXField.__init__()`
+
+        Returns
+        -------
+        vasca.field.GALEXField
+        """
+        # Bootstrap the initialization procedure using the base class
+        fd = cls(field_name, **kwargs)  # new GALEXField instance
+
+        if fits_path is None:
+            # Construct the file name from field ID and filter
+            fits_path = f"{fd.data_path}/{fd.vasca_file_prefix}_field_data.fits"
+        # Check if file exists
+        if not os.path.isfile(fits_path):
+            raise FileNotFoundError(
+                "Wrong file or file path to VASCA data "
+                f"for GALEX drift scan field '{field_name}'."
+            )
+        else:
+            # Reads the VASCA-generated field data
+            fd.load_from_fits(fits_path)
+            # Sets convenience class attributes
+            fd.set_field_attr()
+
+        return fd
+
+    @classmethod
+    def from_MAST(
+        cls,
+        field_name,
+        load_products="TABLES",
+        write=True,
+        **kwargs,
+    ):
+        """
+        Constructor to initialize a GALEXDSField instance from pre-downloaded MAST
+        archival data.
+
+        The procedure uses vasca.resource_manager.ResourceManager
+        to handle file locations.
+
+        Parameters
+        ----------
+        field_name : str
+            GALEX drift scan field name
+        load_products : str, optional
+            Selects if data products shall be loaded: "NONE", "TABLES" for tables,
+            and reference image, "ALL" for tables and visit images.
+        write: bool, optional
+            If load_products is enabled, stores the data as VASCA tables in the cloud
+            for faster loading in the future. Default is True.
+        **kwargs
+            All additional keyword arguments are passed to `~GALEXField.__init__()`
+
+        Returns
+        -------
+        vasca.field.GALEXDSField
+            Returns None if no entry is found
+        """
+
+        # Initialize field instance
+        fd = cls(field_name, **kwargs)
+
+        # Gets basic information of field and associated visits
+        try:
+            fd._load_info(field_name)
+        except Exception as e:
+            logger.exception(
+                f"Could not load GALEX drift scan field: {field_name}. Exception:\n"
+                f"{type(e).__name__}: {e}"
+            )
+            return None
+
+        # Gets detections list and intensity maps
+        if load_products != "NONE":
+            if load_products == "ALL":
+                fd._load_data_products(field_name, ref_maps_only=False)
+            elif load_products == "TABLES":
+                fd._load_data_products(field_name, ref_maps_only=True)
+            else:
+                logger.warning(f"load_product option not valid: {load_products}")
+
+            if write:
+                fits_name = f"{fd.data_path}/{fd.vasca_file_prefix}_field_data.fits"
+                fd.write_to_fits(fits_name)
+
+        meta_only = " (metadata only)" if load_products == "NONE" else ""
+        logger.info(
+            f"Finished loading new GALEX drift scan field '{field_name}'{meta_only} "
+            f"from storage ({fd.data_path})."
+        )
+
+        return fd
+
+    @staticmethod
+    def load(
+        field_name,
+        method="MAST_LOCAL",
+        load_products="TABLES",
+        **field_kwargs,
+    ):
+        """
+        Loads GALEX field data according to a given method and
+        returns a GALEXField instance.
+
+        Parameters
+        ----------
+        field_name : int
+            GALEX drift scan field name
+        method : str, optional
+            Specification of the load method. Four methods are implemented:
+            MAST_REMOTE: Standard method to query data from MAST archives. This requires
+            an internet connection to the MAST servers. Local data will be overwritten
+            MAST_LOCAL: Dafault. Builds a new GALEXfield instance based on MAST
+            archival data cached on local disc. If no data is found,
+            the fallback is MAST_REMOTE.
+            VASCA: Builds a new GALEXField based on a VASCA-generated field data file.
+            AUTO: Attempts to load field data by using VASCA as method and
+            falls back to MAST_LOCAL if no VASCA file is found on disc.
+
+            The default directory where field data availability is checked is
+            defined by the "data_path" attribute of GALEXField and can be passed
+            explicitly via the "field_kwargs".
+        load_products : str, optional
+            Selects if data products shall be loaded: "NONE", "TABLES" for tables,
+            and reference image, "ALL" for tables and visit images.
+        field_kwargs
+            All additional keyword arguments are passed to the load methods
+            `~GALEXField.from_MAST()` and `~GALEXField.from_VASCA()`,
+            as well as to `~GALEXField.__init__()`.
+
+        Raises
+        ------
+        TypeError
+            If the specified load method is not a string.
+        ValueError
+            If the specified load method is not one of
+            '["mast_remote", "mast_local", "vasca", "auto"]'. String matching is
+            case insensitive.
+
+        Returns
+        -------
+        vasca.field.GALEXField
+
+        """
+        logger.info(
+            f"Loading field '{field_name}' with method '{method}' and "
+            f"load_products '{load_products}'."
+        )
+
+        # Checks method argument
+        # String matching is case insensitive (converts to all to lower case).
+        if not isinstance(method, str):
+            raise TypeError(
+                "Expected string type for load method specification, "
+                f"got '{type(method).__name__}'."
+            )
+
+        method = method.casefold()  # ensures all-lower-case string
+        method_spec = ["mast_remote", "mast_local", "vasca", "auto"]
+        if method not in method_spec:
+            raise ValueError(
+                f"Expected load method specification from {method_spec}, "
+                f"got '{method}'."
+            )
+
+        # Removes parameters undefined by GALEXDSField
+        for param in ["obs_filter", "refresh"]:
+            field_kwargs.pop(param, None)
+
+        # Loads field according to load method specification
+        if method in ["mast_remote", "mast_local"]:
+            gf = GALEXDSField.from_MAST(
+                field_name=field_name,
+                load_products=load_products,
+                **field_kwargs,
+            )
+        elif method == "vasca":
+            # removes unused options
+            field_kwargs.pop("write", None)
+
+            try:
+                gf = GALEXDSField.from_VASCA(
+                    field_name=field_name,
+                    **field_kwargs,
+                )
+            except FileNotFoundError as e:
+                logger.warning(
+                    f"Load method '{method}' failed due to FileNotFoundError ('{e}'). "
+                    "Falling back to method 'mast_remote'."
+                )
+                gf = GALEXField.from_MAST(
+                    field_name=field_name,
+                    load_products=load_products,
+                    **field_kwargs,
+                )
+        elif method == "MAST-REMOTE":
+            raise NotImplementedError(
+                f"Method '{method}' not available for GALEX drift scan data."
+            )
+        elif method == "auto":
+            raise NotImplementedError(f"Method '{method}' not operational.")
+
+        return gf

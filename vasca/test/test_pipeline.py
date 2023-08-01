@@ -6,10 +6,10 @@ import shutil
 
 import pytest
 
+import vasca.visualization as vvis
 from vasca import vasca_pipe
 from vasca.region import Region
 from vasca.resource_manager import ResourceManager
-import vasca.visualization as vvis
 
 
 @pytest.fixture
@@ -44,8 +44,8 @@ def test_pipeline_vis(test_paths):
 
     # edit paths
     vasca_cfg["general"]["out_dir_base"] = pipeline_out
-    vasca_cfg["ressources"]["field_kwargs"]["data_path"] = test_paths["resource_root"]
-    vasca_cfg["ressources"]["field_kwargs"]["visits_data_path"] = test_paths[
+    vasca_cfg["resources"]["field_kwargs"]["data_path"] = test_paths["resource_root"]
+    vasca_cfg["resources"]["field_kwargs"]["visits_data_path"] = test_paths[
         "galex_visits"
     ]
 

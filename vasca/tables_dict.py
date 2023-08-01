@@ -35,7 +35,7 @@ dd_vasca_columns = {
     # %%% field_id
     "field_id": {
         "name": "field_id",
-        "dtype": "S22",
+        "dtype": "S32",
         "unit": "1",
         "default": -1,
         "description": "Field source ID nr",
@@ -43,7 +43,7 @@ dd_vasca_columns = {
     # %%% name
     "field_name": {
         "name": "field_name",
-        "dtype": "S22",
+        "dtype": "S32",
         "unit": "",
         "default": "none",
         "description": "Field name",
@@ -107,7 +107,7 @@ dd_vasca_columns = {
     # %%% vis_id
     "vis_id": {
         "name": "vis_id",
-        "dtype": "int64",
+        "dtype": "uint64",
         "unit": "1",
         "default": -1,
         "description": "Visit ID nr",
@@ -360,6 +360,30 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Detection matched to a known star (bright_match=1, mcat file chkobj_type variable)",
     },
+    # %%% psf_a
+    "psf_a": {
+        "name": "psf_a",
+        "dtype": "float64",
+        "unit": "degree",
+        "default": -1,
+        "description": "Photometry aperture ellipse semi-major axis (mcat: Profile RMS along major axis (world units))",
+    },
+    # %%% psf_b
+    "psf_b": {
+        "name": "psf_b",
+        "dtype": "float64",
+        "unit": "degree",
+        "default": -1,
+        "description": "Photometry aperture ellipse semi-minor axis (mcat: Profile RMS along minor axis (world units))",
+    },
+    # %%% psf_ecc
+    "psf_ecc": {
+        "name": "psf_ecc",
+        "dtype": "float64",
+        "unit": "1",
+        "default": -1,
+        "description": "Photometry aperture ellipse eccentricity (mcat: 1 - psf_b / psf_a)",
+    },
     # %%% flux_f60
     "flux_f60": {
         "name": "flux_f60",
@@ -459,7 +483,7 @@ dd_vasca_columns = {
     # %%% rg_fd_id
     "rg_fd_id": {
         "name": "rg_fd_id",
-        "dtype": "int32",
+        "dtype": "int64",
         "unit": "1",
         "default": -1,
         "description": "Region field ID nr",
@@ -491,7 +515,7 @@ dd_vasca_columns = {
     # %%% coadd_src_id
     "coadd_src_id": {
         "name": "coadd_src_id",
-        "dtype": "int32",
+        "dtype": "int64",
         "unit": "1",
         "default": -1,
         "description": "Region coadd source ID nr",
@@ -605,6 +629,9 @@ galex_field = {
             "artifacts",
             "class_star",
             "chkobj_type",
+            "psf_a",
+            "psf_b",
+            "psf_ecc",
         ],
         "meta": {"INFO": "Visit detections table", "PRECUTS": "List of pre-cuts"},
     },
@@ -615,6 +642,9 @@ galex_field = {
             "artifacts",
             "class_star",
             "chkobj_type",
+            "psf_a",
+            "psf_b",
+            "psf_ecc",
             "flux_f60",
             "flux_f60_err",
             "flux_f38",
