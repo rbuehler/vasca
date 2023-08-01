@@ -1321,7 +1321,7 @@ class GALEXField(BaseField):
         for col in mast_col_names:
             dd_detections_raw[col_names[col]] = tt_detections_raw[col][sel_s2n].data
 
-        ## Add size_world in arcsec
+        # Add size_world in arcsec
         dd_detections_raw["size_world"] = (
             3600
             * (
@@ -1681,9 +1681,9 @@ class GALEXDSField(BaseField):
             "nuv_artifact": "artifacts",
             "NUV_CLASS_STAR": "class_star",
             "chkobj_type": "chkobj_type",
-            "NUV_A_WORLD": "psf_a",
-            "NUV_B_WORLD": "psf_b",
-            "NUV_ELLIPTICITY": "psf_ecc",
+            "NUV_A_WORLD": "size_world_a",  # Later combined & replaced with size_world
+            "NUV_B_WORLD": "size_world_b",  # Later combined & replaced with size_world
+            "NUV_ELLIPTICITY": "ellip_world",
             "NUV_FLUX_APER_4": "flux_f60",
             "NUV_FLUXERR_APER_4": "flux_f60_err",
             "NUV_FLUX_APER_3": "flux_f38",
@@ -1712,7 +1712,7 @@ class GALEXDSField(BaseField):
             glob(f"{self.data_path}{os.sep}{vis_name}/*xd-mcat.fits")[0]
             for vis_name in tt_visits_select["vis_name"]
         ]
-        # Loops over visits
+        # Loops over visits to read mcat files and store only the required columns
         for i, (mcat_path, vis_id) in enumerate(
             zip(mcat_vis_paths, self.tt_visits["vis_id"])
         ):
@@ -1722,6 +1722,7 @@ class GALEXDSField(BaseField):
                 tt_mcat = Table.read(mcat_path)
 
             # Initializes table in first iteration
+            # Column selection is applied
             if i == 0:
                 tt_mcat.add_column(
                     np.full(len(tt_mcat), vis_id), name="vis_id", index=0
@@ -1735,6 +1736,28 @@ class GALEXDSField(BaseField):
                 tt_detections_raw = vstack([tt_detections_raw, tt_mcat[col_names]])
             # Clean-up
             del tt_mcat
+
+        # Replace geometric sizes of flux profile by combined quantity in arcsec
+
+        # Computes average of A and B parameters
+        tt_detections_raw.add_column(
+            col=(
+                (
+                    tt_detections_raw["NUV_A_WORLD"].data
+                    + tt_detections_raw["NUV_B_WORLD"].data
+                )
+                / 2
+                * uu.deg
+            ).to("arcsec"),
+            name="NUV_SIZE_WORLD",
+        )
+        tt_detections_raw.remove_columns(["NUV_A_WORLD", "NUV_B_WORLD"])
+
+        # Apply changes to column names map
+        col_names_map.update({"NUV_SIZE_WORLD": "size_world"})
+        del col_names_map["NUV_A_WORLD"]
+        del col_names_map["NUV_B_WORLD"]
+        col_names = list(col_names_map.keys())
 
         # Converts into dictionary with correct VASCA column names
         dd_detections_raw = {}
