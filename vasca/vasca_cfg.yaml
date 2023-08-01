@@ -11,7 +11,7 @@ general:
     save_ref_srcs   : true                               # Store referenze sources into region file
     
 resources:                      
-    load_method      : "VASCA"                    # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_method      : "MAST_LOCAL"                    # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    :  "ALL"                           # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     coadd_exists     : true                           # Coadd detection catalogs are available (co-added images may exist). If false, sections 'cluster_coadd_dets', 'selection/src_coadd_diff' and 'observations/<observatory>/coadd_det_quality' are unused
     field_kwargs:
@@ -92,9 +92,8 @@ observations:
                   r_fov          : [0.0,0.55]
                   class_star     : [0.6,1.0]        # Extension classifier (extended=0, point like=1)
                   chkobj_type    : [-0.5,0.5]       # Matched to a bright star (0=no, 1=yes)
-                  psf_a          : [0.0,0.1]  # Semi-major axis < 360"
-                  psf_b          : [0.0,0.1]  # Semi-minor axis < 360"
-                  psf_ecc        : [0.0,0.99]  # PSF eccentricity < 0.99
+       #           size_world     : [0.0,0.1]  # Size < 360"
+       #           ellip_world    : [0.0,0.99]  # Eccentricity < 0.99
               bitmask:
                   # Specify the artifacts to remove
                   # For GALEX a description is at the end of this document
