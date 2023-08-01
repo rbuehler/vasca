@@ -10,7 +10,7 @@ from astropy.coordinates import SkyCoord
 from astropy.table import Table, unique
 from loguru import logger
 
-from vasca.field import BaseField, GALEXField
+from vasca.field import BaseField, GALEXDSField, GALEXField
 from vasca.source import Source
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
@@ -75,33 +75,45 @@ class Region(TableCollection):
         rg_fd_id = 0
 
         for obs in vasca_cfg["observations"]:
-            if obs["observatory"] == "GALEX":
+            if obs["observatory"] == "GALEX" or obs["observatory"] == "GALEX_DS":
+                gfield_load_func = (
+                    GALEXDSField.load
+                    if obs["observatory"] == "GALEX_DS"
+                    else GALEXField.load
+                )
                 # Loop over fields and store info
                 for gfield_id in obs["obs_field_ids"]:
-                    gf = GALEXField.load(
-                        gfield_id,
-                        obs_filter=obs["obs_filter"],
-                        method=vasca_cfg["ressources"]["load_method"],
-                        load_products=vasca_cfg["ressources"][
-                            "load_products"
-                        ],  # Data needs to be preloaded serialy, to avoid many parallel requests to the MAST server later which results in erros
-                        **vasca_cfg["ressources"]["field_kwargs"],
-                    )
+                    try:
+                        # Data needs to be preloaded serially, to avoid many parallel
+                        # requests to the MAST server later which results in errors
+                        gf = gfield_load_func(
+                            gfield_id,
+                            obs_filter=obs["obs_filter"],
+                            method=vasca_cfg["resources"]["load_method"],
+                            load_products=vasca_cfg["resources"]["load_products"],
+                            **vasca_cfg["resources"]["field_kwargs"],
+                        )
 
-                    rg_fd_id += 1
-                    if type(gf) == type(None):
+                        rg_fd_id += 1
+                        if type(gf) == type(None):
+                            continue
+
+                        field_info = dict(gf.tt_fields[0])
+                        field_info["fov_diam"] = gf.fov_diam
+                        field_info["nr_vis"] = gf.nr_vis
+                        field_info["time_bin_size_sum"] = gf.time_bin_size_sum
+                        field_info["time_start"] = gf.time_start.mjd
+                        field_info["time_stop"] = gf.time_stop.mjd
+                        field_info["rg_fd_id"] = rg_fd_id
+                        rg.tt_fields.add_row(field_info)
+                    except Exception as e:
+                        logger.exception(
+                            f"Faild to load field '{gfield_id}'. "
+                            f"Moving on to next field. Exception:\n {e}"
+                        )
                         continue
-
-                    field_info = dict(gf.tt_fields[0])
-                    field_info["fov_diam"] = gf.fov_diam
-                    field_info["nr_vis"] = gf.nr_vis
-                    field_info["time_bin_size_sum"] = gf.time_bin_size_sum
-                    field_info["time_start"] = gf.time_start.mjd
-                    field_info["time_stop"] = gf.time_stop.mjd
-                    field_info["rg_fd_id"] = rg_fd_id
-                    rg.tt_fields.add_row(field_info)
             else:
-                logger.waring(
+                logger.warning(
                     "Selected observatory `" + obs["observatory"] + "` not supported"
                 )
 
@@ -342,15 +354,16 @@ class Region(TableCollection):
         setattr(src, "tt_source_lc", src.get_light_curve(rg_src_ids=rg_src_id))
 
         # Add coadd source
-        assoc_id = src.tt_sources["assoc_id"][0]
-        if assoc_id > -1:
-            self.tt_coadd_sources.add_index("coadd_src_id")
-            src._table_names.append("tt_coadd_sources")
-            setattr(
-                src,
-                "tt_coadd_sources",
-                Table(self.tt_coadd_sources.loc["coadd_src_id", [assoc_id]]),
-            )
+        if hasattr(self, "tt_coadd_sources"):
+            assoc_id = src.tt_sources["assoc_id"][0]
+            if assoc_id > -1:
+                self.tt_coadd_sources.add_index("coadd_src_id")
+                src._table_names.append("tt_coadd_sources")
+                setattr(
+                    src,
+                    "tt_coadd_sources",
+                    Table(self.tt_coadd_sources.loc["coadd_src_id", [assoc_id]]),
+                )
 
         # Add fd_src_ids to each field
         coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
@@ -501,9 +514,17 @@ class Region(TableCollection):
             return fd
 
         # If it should be loaded from MAST or VASCA-MAST file database
-        elif fd_row["observatory"] == "GALEX":
-            gf = GALEXField.load(
-                gfield_id=int(str(fd_row["field_id"][0])[3:]),
+        elif fd_row["observatory"] == "GALEX" or fd_row["observatory"] == "GALEX_DS":
+            gfield_load_func = (
+                GALEXDSField.load
+                if fd_row["observatory"] == "GALEX_DS"
+                else GALEXField.load
+            )
+
+            gf = gfield_load_func(
+                str(fd_row["field_name"][0])
+                if fd_row["observatory"] == "GALEX_DS"
+                else int(str(fd_row["field_id"][0])[3:]),
                 obs_filter=str(fd_row["obs_filter"][0]),
                 method=load_method,
                 load_products=mast_products,

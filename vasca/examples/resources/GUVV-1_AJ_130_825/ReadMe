@@ -1,0 +1,90 @@
+J/AJ/130/825       GALEX ultraviolet variability catalog          (Welsh+, 2005)
+================================================================================
+The GALEX ultraviolet variability catalog.
+    Welsh B.Y., Wheatley J.M., Heafield K., Seibert M., Browne S.E., Salim S.,
+    Rich R.M., Barlow T.A., Bianchi L., Byun Y.-I., Donas J., Forster K.,
+    Friedman P.G., Heckman T.M., Jelinsky P.N., Lee Y.-W., Madore B.F.,
+    Malina R.F., Martin D.C., Milliard B., Morrissey P., Neff S.G.,
+    Schiminovich D., Siegmund O.H.W., Small T., Szalay A.S., Wyder T.K.
+   <Astron. J., 130, 825-831 (2005)>
+   =2005AJ....130..825W
+================================================================================
+ADC_Keywords: Stars, variable ; Ultraviolet ; Photometry
+Keywords: stars: flare - stars: variables: other - ultraviolet: stars
+
+Abstract:
+    We present version 1.0 of the NASA Galaxy Evolution Explorer (GALEX)
+    ultraviolet variability (GUVV) catalog, which contains information on
+    84 time-variable and transient sources gained with simultaneous
+    near-ultraviolet (NUV) and far-ultraviolet (FUV) photometric
+    observations. These time-variable sources were serendipitously
+    revealed in the various 1.2{deg} diameter star fields currently being
+    surveyed by the GALEX satellite in two ultraviolet bands (NUV
+    1750-2750{AA}, FUV 1350-1750{AA}) with limiting AB magnitudes of
+    23-25. The largest amplitude variable objects currently detected by
+    GALEX are M dwarf flare stars, which can brighten by 5-10mag in both
+    the NUV and FUV bands during short-duration (<500s) outbursts. Other
+    types of large-amplitude ultraviolet variable objects include ab-type
+    RR Lyrae stars, which can vary periodically by 2-5mag in the GALEX FUV
+    band. This first GUVV catalog lists galactic positions and possible
+    source identifications in order to provide the astronomical community
+    with a list of time-variable objects that can now be repeatedly
+    observed at other wavelengths.
+
+Description:
+    We have used the GALEX FUV- and NUV-band photometric imaging data
+    recorded during the period 2003 June to 2004 August, which reside in
+    the Multi-Mission Archive at the Space Telescope Science Institute
+    (MAST).
+
+File Summary:
+--------------------------------------------------------------------------------
+ FileName   Lrecl  Records   Explanations
+--------------------------------------------------------------------------------
+ReadMe         80        .   This file
+table2.dat    131       44   GALEX Ultraviolet Variability catalog, V1.0.
+--------------------------------------------------------------------------------
+
+See also:
+  I/284  : The USNO-B1.0 Catalog (Monet+ 2003)
+  II/259 : The SDSS Photometric Catalog, Release 3 (Abazajian+ 2005)
+
+Byte-by-byte Description of file: table2.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units   Label     Explanations
+--------------------------------------------------------------------------------
+   1- 18  A18   ---     GUVV      GALEX Ultraviolet Variability catalog ID
+                                   (JHHMMSS.s+DDMMSS.s)
+      20  A1    ---     Var       [VT] Variable or Transient variability type
+  22- 33  A12   ---     USNO      The USNO-B1.0 all-sky catalog (Cat. <I/284>)
+                                   designation
+  35- 58  A24   ---     OName     Possible identification
+  60- 77  A18   ---     Type      Most likely source type (2)
+  79- 81  A3    ---     Survey    GALEX survey mode of the sky field in which
+                                   the object was discovered (3)
+  83- 85  I3    ---     NUVobs    Number of NUV (175-275nm) observations
+  87- 88  I2    ---     NUVdet    Number of NUV (175-275nm) detections
+  90- 94  F5.2  mag     NUVmax    Maximum near-UV (175-275nm) magnitude
+  96- 99  F4.2  mag     NUVdm     ? The near-UV (175-275nm) amplitude
+ 101-103  I3    ---     FUVobs    Number of FUV (135-175nm) observations
+ 105-106  I2    ---     FUVdet    Number of FUV (135-175nm) detections
+ 108-112  F5.2  mag     FUVmax    ? Maximum far-UV (135-175nm) magnitude
+ 114-117  F4.2  mag     FUVdm     ? The far-UV (135-175nm) amplitude
+ 119-123  F5.2  mag     gmag      ? SDSS DR3 (Cat. <II/259>) g band magnitude
+     124  A1    ---   f_gmag      [*] Indicates an uncertain SDSS magnitude
+ 126-130  F5.2  mag     rmag      ? SDSS DR3 (Cat. <II/259>) r band magnitude
+     131  A1    ---   f_rmag      [*] Indicates an uncertain SDSS magnitude
+--------------------------------------------------------------------------------
+Note (2): PV indicates a periodic variable.
+Note (3): The GALEX survey modes are defined as follows:
+    AIS = All-sky Imaging Survey
+    MIS = Medium Imaging Survey
+    DIS = Deep Imaging Survey
+    NGS = Nearby Galaxy Survey
+--------------------------------------------------------------------------------
+
+History:
+    * 08-Feb-2006: From electronic version of the journal
+    * 01-Dec-2008: Unique entries in table2 (duplicated lines were removed)
+================================================================================
+(End)                   Greg Schwarz [AAS], Marianne Brouty [CDS]    26-Oct-2005

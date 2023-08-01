@@ -10,9 +10,10 @@ general:
     nr_cpus         : 2                                      # Number of CPUs to use. If "null" all available are used.
     save_ref_srcs   : false
     
-ressources:                      
+resources:                      
     load_method      : "MAST_LOCAL"                         # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : "TABLES"                                   # Get data products from MAST, if false only meta data is loaded
+    coadd_exists     : true                           # Coadd detection catalogs are available (co-added images may exist). If false, sections 'cluster_coadd_dets', 'selection/src_coadd_diff' and 'observations/<observatory>/coadd_det_quality' are unused
     field_kwargs:
         data_path        : null
         visits_data_path : null
@@ -90,6 +91,9 @@ observations:
                 r_fov          : [0.0,0.55]
                 class_star     : [0.5,1.0]
                 chkobj_type    : [-0.5,0.5]
+                psf_a          : [0.0,0.1]  # Semi-major axis < 360"
+                psf_b          : [0.0,0.1]  # Semi-minor axis < 360"
+                psf_ecc        : [0.0,0.99]  # PSF eccentricity < 0.99
             bitmask:
                 artifacts : [2,4]
             set_range:
