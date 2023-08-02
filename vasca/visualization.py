@@ -63,8 +63,8 @@ def plot_sky_sources(
     -------
     ax : axes
         Used Matplotlib axes.
-    src_ids: [int]
-        Source IDs plotted, either "rg_src_id" "fd_src_id"
+    src_ids: astropy.Table
+        Sources  plotted from tt_src
     """
 
     logger.debug("Plotting sky sources")
@@ -142,7 +142,7 @@ def plot_sky_sources(
                 )
                 ax.add_patch(s_det)
 
-        ax.plot(src["ra"], src["dec"], label=str(src[src_id]), **plt_src_kwargs)
+        ax.plot(src["ra"], src["dec"], **plt_src_kwargs)
 
         # Add labels if src_id was passed
         if type(src_id) is not type(None):
@@ -151,7 +151,8 @@ def plot_sky_sources(
                 (src["ra"], src["dec"]),
                 **plt_txt_kwargs,
             )
-    return ax, tt_src[sel_reg][src_id].data
+
+    return ax, tt_src[sel_reg]
 
 
 def plot_field_sky_map(
