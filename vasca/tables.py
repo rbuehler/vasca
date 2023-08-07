@@ -1017,6 +1017,11 @@ class TableCollection(object):
             ffactor = flux / flux_cat
             fdiff_s2n = (flux - flux_cat) / np.sqrt(flux_err**2 + flux_err_cat**2)
 
+            # Remove invalid (negativ) ffactors due to default values of flux
+            sel_inv = ffactor <= 0
+            ffactor[sel_inv] = dd_vasca_columns["assoc_ffactor"]["default"]
+            fdiff_s2n[sel_inv] = dd_vasca_columns["assoc_fdiff_s2n"]["default"]
+
             if nr_filters > 1:
                 assoc_ffactor[sel, flt_idx] = ffactor
                 assoc_fdiff_s2n[sel, flt_idx] = fdiff_s2n

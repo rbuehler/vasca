@@ -773,7 +773,8 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
     # Set marker properties for sources
     plot_kwargs = {
         "bins": "auto",
-        "histtype": "barstacked",
+        "histtype": "step",
+        "density": True,
         "log": True,
         "alpha": 0.5,
     }
@@ -956,12 +957,12 @@ def plot_pipe_diagnostic(
         if table_name == "tt_detections":
             var_plt["s2n"] = {"logx": True}
             var_plt["flux"] = {"logx": True}
-            var_plt["flux_err"] = {"logx": True}
             var_plt["r_fov"] = {"range": [0.0, 0.7]}
             var_plt["class_star"] = {}
             var_plt["artifacts"] = {"histtype": "step"}
             var_plt["chkobj_type"] = {}
-            var_plt["pos_err"] = {"range": [0.0, 5]}
+            var_plt["ellip_world"] = {}  # "range": [0.0, 5]
+            var_plt["size_world"] = {}  # "logx": True
             fig, axs = plt.subplots(
                 4,
                 2,
@@ -971,14 +972,16 @@ def plot_pipe_diagnostic(
             )
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
-            var_plt["flux_cpval"] = {}
+            var_plt["flux_cpval"] = {"range": [0, 1]}
             var_plt["flux_nxv"] = {"logx": True}
             var_plt["assoc_fdiff_s2n"] = {"range": [-10, 25]}
-            var_plt["nr_fd_srcs"] = {}
+            var_plt["assoc_ffactor"] = {"range": [-2, 5]}
             var_plt["pos_cpval"] = {}
+            var_plt["flux"] = {"logx": True}
+            var_plt["nr_fd_srcs"] = {}
             fig, axs = plt.subplots(
                 2,
-                3,
+                4,
                 figsize=fig_size,
                 squeeze=False,
                 num="Sources Histograms " + flt_name,
@@ -1009,12 +1012,9 @@ def plot_pipe_diagnostic(
                 "yscale": "log",
             }
             var_plt[("class_star", "flux")] = {"yscale": "log"}
-            var_plt[("pos_err", "flux")] = {"yscale": "log"}
-            var_plt[("r_fov", "artifacts")] = {}
-            var_plt[("flux_err", "flux")] = {
-                "xlim": [0.0, 50],
-                "yscale": "log",
-            }
+            var_plt[("size_world", "flux")] = {}  # {"yscale": "log"}
+            var_plt[("ellip_world", "flux")] = {"yscale": "log"}
+            var_plt[("ellip_world", "artifacts")] = {}
             fig, axs = plt.subplots(
                 3,
                 2,
