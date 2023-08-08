@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "TDS"
+    name            : "TDS"                      # _ELAISN1
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "INFO"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
@@ -11,7 +11,7 @@ general:
     save_ref_srcs   : true                               # Store referenze sources into region file
     
 resources:                      
-    load_method      : "MAST_LOCAL"                    # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_method      : "VASCA"                    # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    :  "TABLES"                           # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     coadd_exists     : true                           # Coadd detection catalogs are available (co-added images may exist). If false, sections 'cluster_coadd_dets', 'selection/src_coadd_diff' and 'observations/<observatory>/coadd_det_quality' are unused
     field_kwargs:
@@ -88,7 +88,7 @@ observations:
               sel_type    : "and"
               # See variable description http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1
               range:
-                  s2n            : [5, .inf]
+                  s2n            : [4, .inf]
                   r_fov          : [0.0, 0.5]
                   ellip_world    : [0.0, 0.35]
                   size_world     : [0.0, 7.0]
@@ -137,7 +137,7 @@ observations:
               sel_type    : "and"
               # See variable description http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1
               range:
-                  s2n            : [5, .inf]
+                  s2n            : [4, .inf]
                   r_fov          : [0.0, 0.5]
                   ellip_world    : [0.0, 0.35]
                   size_world     : [0.0, 7.0]
