@@ -157,14 +157,16 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
             obs_cfg["selection"]["coadd_det_quality"], remove_unselected=False
         )
 
-    # Run clustering
-    logger.info("Clustering field detections")
-    field.cluster_meanshift(
-        **obs_cfg["cluster_det"]["meanshift"],
-    )
+    # Cluster and do source stats
+    if len(field.tt_detections) > 0:
+        # Run clustering
+        logger.info("Clustering field detections")
+        field.cluster_meanshift(
+            **obs_cfg["cluster_det"]["meanshift"],
+        )
 
-    # Calculate source variables from light curve
-    field.set_src_stats(src_id_name="fd_src_id")
+        # Calculate source variables from light curve
+        field.set_src_stats(src_id_name="fd_src_id")
 
     # Write out field
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
