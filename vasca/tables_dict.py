@@ -200,13 +200,13 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Number of detections",
     },
-    # %%% pos_nxv
-    "pos_nxv": {
-        "name": "pos_nxv",
+    # %%% pos_xv
+    "pos_xv": {
+        "name": "pos_xv",
         "dtype": "float32",
-        "unit": "1",
+        "unit": "arcsec2",
         "default": -1.0,
-        "description": "Position normalized excess variance, entries for different filters",
+        "description": "Position excess variance, entries for different filters",
     },
     # %%% pos_var
     "pos_var": {
@@ -570,7 +570,7 @@ base_field = {
             "ra",
             "dec",
             "pos_err",
-            "pos_nxv",
+            "pos_xv",
             "pos_var",
             "pos_cpval",
             "pos_rchiq",
