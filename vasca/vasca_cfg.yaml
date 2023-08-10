@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "TDS_ELAISN1"                      # _ELAISN1
+    name            : "TDS"                             # _ELAISN1
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "INFO"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
@@ -53,7 +53,8 @@ selection:
         obs_filter  : "NUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
         range:
             nr_det         : [2,.inf]
-            pos_cpval      : [0.0001,.inf]            
+            pos_cpval      : [0.0001,.inf]
+            pos_xv         : [-.inf,2]             
             flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
             flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%  
             flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end

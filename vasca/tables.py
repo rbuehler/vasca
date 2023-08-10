@@ -822,7 +822,7 @@ class TableCollection(object):
             "ra",
             "dec",
             "pos_err",
-            "pos_nxv",
+            "pos_xv",
             "pos_var",
             "pos_cpval",
             "pos_rchiq",
@@ -860,7 +860,13 @@ class TableCollection(object):
             dd_src_var["pos_err"].append(
                 ((rr_ra["wght_mean_err"] + rr_dec["wght_mean_err"]) * 3600 / 2.0)
             )
-            dd_src_var["pos_nxv"].append((rr_ra["nxv"] + rr_dec["nxv"]) / 2.0)
+            dd_src_var["pos_xv"].append(
+                (
+                    rr_ra["nxv"] * rr_ra["wght_mean"] ** 2 * 3600**2
+                    + rr_dec["nxv"] * rr_dec["wght_mean"] ** 2 * 3600**2
+                )
+                / 2.0
+            )
             dd_src_var["pos_var"].append(
                 ((rr_ra["var"] + rr_dec["var"]) * (3600**2) / 2.0)
             )
