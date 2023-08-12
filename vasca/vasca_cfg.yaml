@@ -93,12 +93,12 @@ observations:
                   r_fov          : [0.0, 0.5]
                   ellip_world    : [0.0, 0.3]
                   size_world     : [0.0, 6.0]
-                  class_star     : [0.2, 1.0]        # Extension classifier (extended=0, point like=1)
+                  class_star     : [0.15, 1.0]        # Extension classifier (extended=0, point like=1)
                   chkobj_type    : [-0.5,0.5]       # Matched to a bright star (0=no, 1=yes)
               bitmask:
                   # Specify the artifacts to remove
                   # For GALEX a description is at the end of this document
-                  artifacts :  [1,2,4,8,16,32,64,128,256,512] #[2,4,8,128]
+                  artifacts :  [2,4,8,16,32,64,128,256,512] #[2,4,8,128]
               #If below/above this value will set it to min/max
               set_range:
                   pos_err : [0.5,5] # In arcsec
@@ -142,12 +142,12 @@ observations:
                   r_fov          : [0.0, 0.5]
                   ellip_world    : [0.0, 0.3]
                   size_world     : [0.0, 6.0]
-                  class_star     : [0.2, 1.0]        # Extension classifier (extended=0, point like=1)
+                  class_star     : [0.15, 1.0]        # Extension classifier (extended=0, point like=1)
                   chkobj_type    : [-0.5,0.5]       # Matched to a bright star (0=no, 1=yes)
               bitmask:
                   # Specify the artifacts to remove
                   # For GALEX a description is at the end of this document
-                  artifacts :  [1,2,4,8,16,32,64,128,256,512] #[2,4,8,128]
+                  artifacts :  [2,4,8,16,32,64,128,256,512] #[2,4,8,128]
               #If below/above this value will set it to min/max
               set_range:
                   pos_err : [0.5,5] # In arcsec
