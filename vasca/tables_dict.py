@@ -37,7 +37,7 @@ dd_vasca_columns = {
         "name": "field_id",
         "dtype": "S32",
         "unit": "1",
-        "default": -1,
+        "default": "none",
         "description": "Field source ID nr",
     },
     # %%% name
@@ -512,7 +512,24 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Region coadd source ID nr",
     },
+    # %%% otype
+    "otype": {
+        "name": "simbad_otype",
+        "dtype": "S32",
+        "unit": "1",
+        "default": "none",
+        "description": "Simbad source type",
+    },
+    # # %%% match_id
+    # "match_id": {
+    #     "name": "match_id",
+    #     "dtype": "int32",
+    #     "unit": "1",
+    #     "default": -1,
+    #     "description": "Matched source VASCA ID",
+    # },
 }
+
 
 # %% Table definitions
 # %%% base_field
@@ -710,6 +727,25 @@ region = {
         },
     },
 }
+# # %%% match
+# match = {
+#     "tt_sources_match": {
+#         "names": [
+#             "match_id",
+#             "rg_src_id",
+#             "ra",
+#             "dec",
+#             "obs_filter_id",
+#             "sel",
+#             "flux",
+#             "flux_err",
+#             "flux_nxv",
+#             "simbad_otype",
+#         ],
+#         "meta": {"INFO": "Source association table", "Source": "SIMBAD"},
+#     },
+# }
+
 
 # global, combined dictionary
 class_keys = ["base_field", "galex_field", "region"]

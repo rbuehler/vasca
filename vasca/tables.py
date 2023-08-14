@@ -133,17 +133,26 @@ class TableCollection(object):
             Identifier to select a table template. Templates are selected by
             setting the class key and a corresponding table key in one string
             separated by a colon, e.g. template_name=<class_key>:<table_key>.
+            If no ":" is in the templatename, assume that this is not a VASCA
+            table, but proceed adding it to the collection anyhow. template_name
+            will be used as a table name in that case.
 
         """
         logger.debug(f"Adding table '{template_name}'")
 
-        table_key = template_name.split(":")[1]
+        table_key = template_name
+        if ":" in template_name:
+            table_key = template_name.split(":")[1]
 
         if table_key in self._table_names:
             logger.warning(f"Table '{table_key}' already exists, overwriting")
         self._table_names.append(table_key)
 
-        tt = self.table_from_template(data, template_name)
+        if ":" in template_name:
+            tt = self.table_from_template(data, template_name)
+        else:
+            tt = Table(data)
+            tt.meta["Name"] = template_name
 
         setattr(self, table_key, tt)
 
@@ -925,7 +934,7 @@ class TableCollection(object):
         col_name: str
             Name of the column
         col_data  dict or array
-            Data to be inserted
+            Data to be inserted.
 
         Returns
         -------
