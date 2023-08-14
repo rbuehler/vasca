@@ -39,6 +39,27 @@ dd_id2filter = dict(
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 
 
+# Distionary organizing SIMBAD types into groups
+dd_ogrp = {
+    "AGN": {
+        "otypes": ["AGN", "SyG", "Sy1", "Sy2", "rG", "LIN", "Bla", "BLL", "QSO"],
+        "color": "red",
+        "ogrp_id": 1,
+    },
+    "GAL": {
+        "otypes": ["G", "LSB", "bCG", "SBG", "H2G", "EmG"],
+        "color": "blue",
+        "ogrp_id": 2,
+    },
+}
+
+# "CV":["CV*"],
+# "WD":["WD*"],
+# "STA":["*","HB*","LM*",,"RG*","RR*"],
+# "VS":["LP*","Pu*","","","",""],
+# "PMS":["PM*","","","","",""]
+
+
 def sel_sources(tt_srcs):
     """
     Helper function to redo cuts, should be revisited/obsolete once table selection is
