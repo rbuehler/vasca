@@ -521,12 +521,12 @@ dd_vasca_columns = {
         "description": "SIMBAD source type",
     },
     # %%% ogrp
-    "ogrp_id": {
-        "name": "ogrp_id",
-        "dtype": "int32",
+    "ogrp": {
+        "name": "ogrp",
+        "dtype": "S8",
         "unit": "1",
-        "default": -1,
-        "description": "SIMBAD source type group ID, defined in vasca.utils.dd_ogrp",
+        "default": "none",
+        "description": "SIMBAD source type group, defined in vasca.utils",
     },
     # # %%% match_id
     # "match_id": {
