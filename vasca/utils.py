@@ -29,9 +29,8 @@ from vasca.tables_dict import dd_vasca_columns
 #: Note that filter_id need to be powers of 2, to be able to be used as bitmask
 #: 1,2,4,8,..
 dd_filter2id = {"NUV": 1, "FUV": 2}
-dd_id2filter = dict(
-    (v, k) for (k, v) in dd_filter2id.items()
-)  # Inverted key&value dictionary
+dd_id2filter = dict((v, k) for (k, v) in dd_filter2id.items())
+# Inverted key&value dictionary
 
 #: Global variable linking observatory + obsfilter to a field ID add-on
 #: The number of Id add-on letter has to be three
@@ -39,25 +38,43 @@ dd_id2filter = dict(
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 
 
-# Distionary organizing SIMBAD types into groups
-dd_ogrp = {
-    "AGN": {
-        "otypes": ["AGN", "SyG", "Sy1", "Sy2", "rG", "LIN", "Bla", "BLL", "QSO"],
-        "color": "red",
-        "ogrp_id": 1,
-    },
-    "GAL": {
-        "otypes": ["G", "LSB", "bCG", "SBG", "H2G", "EmG"],
-        "color": "blue",
-        "ogrp_id": 2,
-    },
-}
+# Dictionary organizing SIMBAD types into groups
+# dd_ogrp2id = {
+#     "AGN": 1,
+#     "GAL": 2,
+#     "STA": 3,
+#     "CV": 4,
+#     "WD": 5,
+#     "VS": 6,
+#     "PMS": 7,
+# }
+# dd_id2ogrp = dict((v, k) for (k, v) in dd_ogrp2id.items())
 
-# "CV":["CV*"],
-# "WD":["WD*"],
-# "STA":["*","HB*","LM*",,"RG*","RR*"],
-# "VS":["LP*","Pu*","","","",""],
-# "PMS":["PM*","","","","",""]
+dd_ogrp2otypes = {
+    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu"],
+    "AGN": ["AGN", "SyG", "Sy1", "Sy2", "rG", "LIN", "Bla", "BLL", "QSO", "ClG"],
+    "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG"],
+    "STA": ["*", "HB*", "LM*", "RG*", "RR*", "dS*"],
+    "WD": ["WD*"],
+    "VS": ["LP*", "Pu*", "V*"],
+    "PMS": ["PM*"],
+    "CV": ["CV*"],
+    "BS": ["EB*", "SB*"],
+    "LeI": ["EB*"],
+    "SN": ["SN*"],
+}
+dd_otype2ogroup = dict()
+for key, val in dd_ogrp2otypes.items():
+    for ii in val:
+        dd_otype2ogroup[ii] = key
+
+
+def otype2ogroup(otype):
+    "Returns object group for a given object type"
+    if otype in dd_otype2ogroup.keys():
+        return dd_otype2ogroup[otype]
+    else:
+        return dd_vasca_columns["ogrp"]["default"]
 
 
 def sel_sources(tt_srcs):

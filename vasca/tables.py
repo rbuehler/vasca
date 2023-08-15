@@ -922,7 +922,7 @@ class TableCollection(object):
                 table_name=tt_src_name, col_name=svar, col_data=dd_src_var[svar]
             )
 
-    def add_column(self, table_name, col_name, col_data):
+    def add_column(self, table_name, col_name, col_data=None):
         """
         Adds column in a table, using the predefined VASCA columns.
         If column exists already replace it.
@@ -934,14 +934,16 @@ class TableCollection(object):
         col_name: str
             Name of the column
         col_data  dict or array
-            Data to be inserted.
+            Data to be inserted. If "None" use vasca.table_dict default value.
 
         Returns
         -------
         None.
 
         """
-
+        if type(col_data) == type(None):
+            table_size = len(self.__dict__[table_name])
+            col_data = np.array([dd_vasca_columns[col_name]["default"]] * table_size)
         col_template_copy = dd_vasca_columns[col_name].copy()
         del col_template_copy["default"]
         col = Column(col_data, **col_template_copy)

@@ -392,347 +392,6 @@ def plot_region_sky_mollview(region, var="nr_vis", mw_kwargs=None):
     return plt.gca()
 
 
-# def get_cutout_bounds(cutout, data_shape, out_frame="icrs", include_diag=False):
-#     """
-#     Computes the cutout boundaries as coordinates for upper right and lower left
-#     pixels in coordinate system of 'out_frame'.
-
-#     Parameters
-#     ----------
-#     cutout : astropy.nddata.Cutout2D
-#     data_shape : tuple
-#     out_frame : str, optional
-#     include_diag : bool
-
-#     Returns
-#     -------
-#     astropy.coordinates.SkyCoord or tuple(astropy.coordinates.SkyCoord, Angle)
-
-#     """
-#     # corner pixels
-#     # lower left
-#     x_ll = 0
-#     y_ll = 0
-#     # upper right
-#     x_ur = data_shape[1]
-#     y_ur = data_shape[0]
-#     # convert to world coordinates
-#     ll = cutout.wcs.pixel_to_world(x_ll, y_ll)
-#     ur = cutout.wcs.pixel_to_world(x_ur, y_ur)
-#     # separtion
-#     diag_sep = ll.separation(ur)
-#     # boundary coordinates
-#     bound_coords = SkyCoord(
-#         [ll.ra, ur.ra], [ll.dec, ur.dec], frame=ll.frame
-#     ).transform_to(out_frame)
-
-#     if include_diag:
-#         return (bound_coords, diag_sep)
-#     else:
-#         return bound_coords
-
-
-# def select_cutout(tt_cat, cutout_bounds, frame="icrs"):
-#     """
-#     Computes a bool array to select a dataset for given cutout bounds
-
-#     Parameters
-#     ----------
-#     tt_cat : astropy.table.Table
-#     cutout_bounds : astropy.coordinates.SkyCoords
-#     frame : str, optional
-
-#     Returns
-#     -------
-#     numpy.ndarray
-#     """
-#     x, y = None, None
-#     if frame == "icrs" or frame == "fk5":
-#         x = "ra"
-#         y = "dec"
-#         mask_cutout_ra = (tt_cat[x] <= cutout_bounds[0].ra) * (
-#             tt_cat[x] >= cutout_bounds[1].ra
-#         )
-#         mask_cutout_dec = (tt_cat[y] >= cutout_bounds[0].dec) * (
-#             tt_cat[y] <= cutout_bounds[1].dec
-#         )
-#     elif frame == "galctic":
-#         x = "lon"
-#         y = "lat"
-#         mask_cutout_ra = (tt_cat[x] <= cutout_bounds[0].l) * (
-#             tt_cat[x] >= cutout_bounds[1].l
-#         )
-#         mask_cutout_dec = (tt_cat[y] >= cutout_bounds[0].b) * (
-#             tt_cat[y] <= cutout_bounds[1].b
-#         )
-
-#     return mask_cutout_ra * mask_cutout_dec
-
-
-# def plot_source_tumbnail(
-#     coord_cat,
-#     rg,
-#     cutout_size=(30, 30),
-#     fig_title=None,
-#     marker_shows="field",
-#     color_shows="source",
-# ):
-#     """
-#     Create detailed plot for a source closest to the target coordinate ``coord_cat``
-
-#     Parameters
-#     ----------
-#     coord_cat : astropy.coordinates.SkyCoord
-#     rg : vasca.Region
-#     cutout_size : tuple, optional
-#     fig_title : str, optional
-#     marker_shows : str, optional
-#     color_shows : str, optional
-#     """
-#     # Get Source instance by matching coordinates
-#     src, dist = rg.get_src_from_sky_pos(coord_cat.ra, coord_cat.dec)
-
-#     # Source coordinates
-#     coord_src = SkyCoord(
-#         src.tt_sources[0]["ra"] * uu.deg, src.tt_sources[0]["dec"] * uu.deg, frame="icrs"
-#     )
-
-#     # -> Todo: This should go to the logger
-#     logger.debug(f"Matched source at distance {dist.to('arcsec'):1.2f}")
-
-#     # Load reference map from field with longest total exposure time
-#     # -> Todo: Allow user to specify field
-#     fd_idx_max_xposure = np.argmax(src.tt_fields["time_bin_size_sum"])
-#     fd = rg.fields[src.tt_fields[fd_idx_max_xposure]["field_id"]]
-#     fd_src_id = src.tt_fields["fd_src_id"][fd_idx_max_xposure]
-
-#     # Create rectangular cutout
-#     fd_cutout = Cutout2D(
-#         fd.ref_img,
-#         position=coord_src,
-#         size=uu.Quantity(cutout_size, uu.arcsec).to(uu.deg),
-#         wcs=fd.ref_wcs,
-#     )
-#     # Cutout boundary coordinates
-#     fd_cutout_bounds = get_cutout_bounds(fd_cutout, fd_cutout.data.shape)
-
-#     # IDs of fields and sources in cutout
-#     sel_cutout = select_cutout(rg.tt_detections, fd_cutout_bounds)
-#     field_ids = np.unique(rg.tt_detections[sel_cutout]["rg_fd_id"].data)
-#     source_ids = np.unique(rg.tt_detections[sel_cutout]["rg_src_id"].data)
-
-#     # Number of fields and sources in cutout
-#     n_fields = len(field_ids)
-#     n_sources = len(source_ids)
-
-#     # Detections plotting: Markers and colors according to field_id/src_id
-#     # (source colors/markers are fixed)
-#     markers = dict.fromkeys(["field", "source"])
-#     colors = dict.fromkeys(["field", "source"])
-#     for key, ids, n_ids in zip(
-#         ["field", "source"], [field_ids, source_ids], [n_fields, n_sources]
-#     ):
-#         markers[key] = {
-#             id: m for id, m in zip(ids, vutils.marker_set(n_ids, exclude=["*", "X"]))
-#         }
-#         colors[key] = {
-#             id: m for id, m in zip(ids, vutils.color_palette("turbo", n_ids))
-#         }
-
-#     def get_style(source_id, field_id):
-#         """Helper function returning a tuple with color and marker"""
-#         ids = {"field": field_id, "source": source_id}
-#         color = colors[color_shows][ids[color_shows]]
-#         marker = markers[marker_shows][ids[marker_shows]]
-#         return (color, marker)
-
-#     # Plot
-#     # -> Todo:  This is not optimal, method should accept axis as well
-#     plot_name = f"Source_{src.tt_sources['rg_src_id'][0]}"
-#     plt.close(plot_name)
-#     fig, ax = plt.subplots(
-#         num=plot_name,
-#         figsize=(6, 6),
-#         subplot_kw=dict(projection=fd_cutout.wcs),
-#         tight_layout=False,
-#     )
-#     if fig_title is not None:
-#         fig.suptitle(f"{fig_title}: {plot_name.replace('_', ' ')}")
-
-#     # Map
-#     ax.imshow(fd_cutout.data, cmap="gray", norm=LogNorm(), interpolation=None)
-#     ax.set_autoscale_on(False)
-
-#     # Style settings
-#     marker_size = 7**2
-#     marker_edge_lw = 1.5
-#     label_fontsize = 8
-
-#     # Source
-#     # Center
-#     ax.scatter(
-#         coord_src.ra,
-#         coord_src.dec,
-#         transform=ax.get_transform("world"),
-#         s=marker_size,
-#         edgecolor="red",
-#         facecolor="none",
-#         lw=marker_edge_lw,
-#         marker="*",
-#         label="Target source",
-#         zorder=5,
-#     )
-#     # Positional error
-#     s = SphericalCircle(
-#         coord_src,
-#         src.tt_sources["pos_err_mean"][0] * uu.deg,
-#         edgecolor=(1, 0, 0, 0.5),
-#         facecolor=(1, 0, 0, 0.2),
-#         lw=1.5,
-#         transform=ax.get_transform("world"),
-#         zorder=5,
-#     )
-#     ax.add_patch(s)
-
-#     # Source detections
-#     for det in src.tt_detections:
-#         coord_det = SkyCoord(det["ra"] * uu.deg, det["dec"] * uu.deg, frame="icrs")
-
-#         field_id_det = det["rg_fd_id"]
-#         source_id_det = det["rg_src_id"]
-#         _, marker = get_style(source_id_det, field_id_det)
-
-#         # Center
-#         ax.scatter(
-#             coord_det.ra,
-#             coord_det.dec,
-#             transform=ax.get_transform("world"),
-#             s=marker_size,
-#             edgecolor="blue",
-#             facecolor="none",
-#             lw=1.5,
-#             marker=marker,
-#             label=f"src det. {field_id_det}",
-#             zorder=4,
-#         )
-#         # Positional error
-#         s_det = SphericalCircle(
-#             coord_det,
-#             det["pos_err"] * uu.deg,
-#             edgecolor=(0, 0, 1, 0.5),
-#             facecolor=(0, 0, 1, 0.1),
-#             lw=0.5,
-#             transform=ax.get_transform("world"),
-#             zorder=4,
-#         )
-#         ax.add_patch(s_det)
-
-#     # Region sources
-#     sel_cutout = select_cutout(rg.tt_sources, fd_cutout_bounds)
-#     for rg_src in rg.tt_sources[sel_cutout]:
-#         # Skip targeted source
-#         rg_src_id = rg_src["rg_src_id"]
-#         if rg_src_id == src.tt_sources["rg_src_id"]:
-#             continue
-
-#         coord_rg_src = SkyCoord(
-#             rg_src["ra"] * uu.deg, rg_src["dec"] * uu.deg, frame="icrs"
-#         )
-#         # Fix source color
-#         color = vutils.color_palette("YlOrRd", 1)[0]
-#         # Center
-#         ax.scatter(
-#             coord_rg_src.ra,
-#             coord_rg_src.dec,
-#             transform=ax.get_transform("world"),
-#             s=marker_size,
-#             edgecolor=color,
-#             facecolor="none",
-#             lw=marker_edge_lw,
-#             marker="X",
-#             label=f"rg src {field_id_det}",
-#             zorder=5,
-#         )
-#         # Positional error
-#         s_det = SphericalCircle(
-#             coord_rg_src,
-#             rg_src["pos_err_mean"] * uu.deg,
-#             edgecolor=(*color[:3], 0.5),
-#             facecolor=(*color[:3], 0.2),
-#             lw=1.5,
-#             transform=ax.get_transform("world"),
-#             zorder=5,
-#         )
-#         ax.add_patch(s_det)
-
-#     # Region detections
-#     sel_cutout = select_cutout(rg.tt_detections, fd_cutout_bounds)
-#     for det in rg.tt_detections[sel_cutout]:
-#         coord_det = SkyCoord(det["ra"] * uu.deg, det["dec"] * uu.deg, frame="icrs")
-
-#         field_id_det = det["rg_fd_id"]
-#         source_id_det = det["rg_src_id"]
-#         color, marker = get_style(source_id_det, field_id_det)
-
-#         # Center
-#         ax.scatter(
-#             coord_det.ra,
-#             coord_det.dec,
-#             transform=ax.get_transform("world"),
-#             s=marker_size,
-#             edgecolor=color,
-#             facecolor="none",
-#             lw=marker_edge_lw,
-#             marker=marker,
-#             label=f"rg det. {field_id_det}",
-#             alpha=0.5,
-#             zorder=3,
-#         )
-#         # Positional error
-#         s_det = SphericalCircle(
-#             coord_det,
-#             det["pos_err"] * uu.deg,
-#             edgecolor=(*color[:3], 0.5),
-#             facecolor=(*color[:3], 0.1),
-#             lw=0.5,
-#             transform=ax.get_transform("world"),
-#             zorder=3,
-#         )
-#         ax.add_patch(s_det)
-
-#     # Modify grid
-#     ax.coords.grid(True, color="gray", ls="-", lw=0.75, alpha=0.3)
-
-#     # Set axis labels
-#     ra = ax.coords["ra"]
-#     dec = ax.coords["dec"]
-#     ra.set_major_formatter("d.ddd")
-#     dec.set_major_formatter("d.ddd")
-
-#     ax.set_xlabel("Ra", fontsize=label_fontsize)
-#     ax.set_ylabel("Dec", fontsize=label_fontsize)
-#     ax.xaxis.set_tick_params(labelsize=label_fontsize)
-#     ax.yaxis.set_tick_params(labelsize=label_fontsize)
-#     ax.tick_params(
-#         axis="x",
-#         labelsize=label_fontsize,
-#         bottom=True,
-#         top=True,
-#         direction="in",
-#         which="both",
-#         color="gray",
-#     )
-#     ax.tick_params(
-#         axis="y",
-#         labelsize=label_fontsize,
-#         left=True,
-#         right=True,
-#         direction="in",
-#         which="both",
-#         color="gray",
-#     )
-
-
 # %% table variable plotting
 
 
@@ -824,6 +483,7 @@ def plot_table_scatter(
     xscale="linear",
     yscale="linear",
     obs_filter_id=None,
+    grp_var="sel",
     **scatter_kwargs,
 ):
     """
@@ -848,9 +508,12 @@ def plot_table_scatter(
     yscale : str, optional
         Type of y-scale ("log", "linear"). Default is "linear".
     obs_filter_id: int, optional
-        Observation filter ID Nr., if None all filters are shown. THe default is None.
-    **scatter_kwargs : dict
-        Key word arguments passed tu plt.scatter
+        Observation filter ID Nr., if None all filters are shown. The default is None.
+    grp_var: str, optional
+        Group scatter plot by colors based on this table variable. The default is "sel".
+        If None is passed no groups will be done.
+    **plot_kwargs : dict
+        Key word arguments passed tu plt.plot
 
     Returns
     -------
@@ -867,22 +530,30 @@ def plot_table_scatter(
         tt = select_obs_filter(tt, obs_filter_id)
 
     # Set marker properties for sources
-    plot_kwargs = {"s": 2.0, "alpha": 0.5}
+    plot_kwargs = {
+        "markersize": 2.0,
+        "linewidth": 0,
+        "marker": "o",
+        "markeredgewidth": 0,
+    }
     if scatter_kwargs is not None:
         plot_kwargs.update(scatter_kwargs)
 
-    sel = tt["sel"].astype(bool)
-    str_nrsel = str(sel.sum())
-    str_nrnotsel = str((~sel).sum())
-    ax.scatter(
-        tt[varx][~sel],
-        tt[vary][~sel],
-        label="unselected_" + str_nrnotsel,
-        **plot_kwargs,
-    )
-    ax.scatter(
-        tt[varx][sel], tt[vary][sel], label="selected_" + str_nrsel, **plot_kwargs
-    )
+    if type(grp_var) == type(None):
+        ax.plot(
+            tt[varx],
+            tt[vary],
+            **plot_kwargs,
+        )
+    else:
+        tt_grp = tt.group_by(grp_var)
+        for grp_k, grp in zip(tt_grp.groups.keys, tt_grp.groups):
+            ax.plot(
+                grp[varx],
+                grp[vary],
+                label=grp_k[0],
+                **plot_kwargs,
+            )
 
     # Set labels
     xlabel = varx + " [" + str(tt[varx].unit) + "]"
@@ -937,6 +608,8 @@ def plot_pipe_diagnostic(
         Type of plot, either "hist" or "scatter"
     fig_size: (float,float)
         Matplotlib figure (x,y) size in inches.
+    obs_filter_id: int, optional
+        Observation filter ID. Default is None.
 
     Returns
     -------
