@@ -52,15 +52,28 @@ dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 
 dd_ogrp2otypes = {
     "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu"],
-    "AGN": ["AGN", "SyG", "Sy1", "Sy2", "rG", "LIN", "Bla", "BLL", "QSO", "ClG"],
+    "AGN": [
+        "AGN",
+        "SyG",
+        "Sy1",
+        "Sy2",
+        "rG",
+        "LIN",
+        "Bla",
+        "BLL",
+        "QSO",
+        "ClG",
+        "Q?",
+        "AG?",
+    ],
     "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG"],
     "STA": ["*", "HB*", "LM*", "RG*", "RR*", "dS*"],
-    "WD": ["WD*"],
-    "VS": ["LP*", "Pu*", "V*"],
+    "WD": ["WD*", "WD?"],
+    "VS": ["LP*", "Pu*", "V*", "LP?"],
     "PMS": ["PM*"],
     "CV": ["CV*"],
     "BS": ["EB*", "SB*"],
-    "LeI": ["EB*"],
+    "LEI": ["LeI", "LI?"],
     "SN": ["SN*"],
 }
 dd_otype2ogroup = dict()

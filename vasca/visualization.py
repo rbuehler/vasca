@@ -484,6 +484,7 @@ def plot_table_scatter(
     yscale="linear",
     obs_filter_id=None,
     grp_var="sel",
+    grp_vals=None,
     **scatter_kwargs,
 ):
     """
@@ -548,12 +549,13 @@ def plot_table_scatter(
     else:
         tt_grp = tt.group_by(grp_var)
         for grp_k, grp in zip(tt_grp.groups.keys, tt_grp.groups):
-            ax.plot(
-                grp[varx],
-                grp[vary],
-                label=grp_k[0],
-                **plot_kwargs,
-            )
+            if type(grp_vals) == type(None) or grp_k[0] in grp_vals:
+                ax.plot(
+                    grp[varx],
+                    grp[vary],
+                    label=grp_k[0],
+                    **plot_kwargs,
+                )
 
     # Set labels
     xlabel = varx + " [" + str(tt[varx].unit) + "]"

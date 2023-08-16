@@ -11,7 +11,7 @@ from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
 from astropy.nddata import bitmask
-from astropy.table import Column, Table
+from astropy.table import Column, Table, join
 from astropy.wcs import wcs
 from loguru import logger
 from scipy.stats import chi2
@@ -850,8 +850,9 @@ class TableCollection(object):
         for svar in ll_src_var:
             dd_src_var[svar] = list()  # np.zeros(len(src_ids))
 
-        # Do loop over all sources and calculate stats variables
+        # Source loop
         for isrc, srcid in enumerate(src_ids):
+            # Index range in prepared detection arrays for this source
             idx1 = src_indices[isrc]
             idx2 = idx1 + src_nr_det[isrc]
 
@@ -882,23 +883,29 @@ class TableCollection(object):
             dd_src_var["pos_cpval"].append(rr_ra["cpval"] * rr_dec["cpval"])
             dd_src_var["pos_rchiq"].append((rr_ra["rchiq"] + rr_dec["rchiq"]) / 2.0)
 
-            # Check at what index filter changes and analyse separatelly
+            # --- Start with filter dependent variables from here ----
+            # Check at when index filter changed and analyse separatelly in chunks
             idxfs = np.where(
                 np.diff(dd_det_var["obs_filter_id"][idx1:idx2], prepend=np.nan)
             )[0]
             idxfs = np.append(idxfs, idx2 - idx1)
 
-            # Create empty array
-            # TODO: bring defaults, etc automatically in synch with tables_dict.py info
-            aa_zero = np.zeros(nr_filters, dtype=np.float32)
-            dd_src_var["flux"].append(np.copy(aa_zero) - 1.0)
-            dd_src_var["flux_err"].append(np.copy(aa_zero) - 1.0)
-            dd_src_var["flux_nxv"].append(np.copy(aa_zero) - 100.0)
-            dd_src_var["flux_var"].append(np.copy(aa_zero) - 1.0)
-            dd_src_var["flux_cpval"].append(np.copy(aa_zero) - 1.0)
-            dd_src_var["flux_rchiq"].append(np.copy(aa_zero) - 1.0)
-            dd_src_var["nr_det"].append(np.zeros(nr_filters, dtype=np.int32) - 1)
-            dd_src_var["obs_filter_id"].append(np.zeros(nr_filters, dtype=np.int32) - 1)
+            # Prepare default arrays for filter dependent variables
+            flt_vars = [
+                "flux",
+                "flux_err",
+                "flux_nxv",
+                "flux_var",
+                "flux_cpval",
+                "flux_rchiq",
+                "nr_det",
+                "obs_filter_id",
+            ]
+            for var in flt_vars:
+                dd_src_var[var].append(
+                    np.zeros(nr_filters, dtype=dd_vasca_columns[var]["dtype"])
+                    + dd_vasca_columns[var]["default"]
+                )
 
             # Loop over all filters
             for ii in range(len(idxfs) - 1):
@@ -917,10 +924,58 @@ class TableCollection(object):
                 dd_src_var["nr_det"][-1][filter_nr] = idxfs[ii + 1] - idxfs[ii]
                 dd_src_var["obs_filter_id"][-1][filter_nr] = filter_id
 
+        # Add calculated stats to table
         for svar in ll_src_var:
             self.add_column(
                 table_name=tt_src_name, col_name=svar, col_data=dd_src_var[svar]
             )
+
+    def set_hardness_ratio(self, obs_filter_id1=1, obs_filter_id2=2):
+        """
+        Calculated hardness ratio from detections flux(filter_2)/ flux(filter_1).
+        Only simultanous detections are considered
+
+        Parameters
+        ----------
+        obs_filter_id1 : int, optional
+            Observation filter ID1. The default is 1.
+        obs_filter_id2 : TYPE, optional
+            Observation filter ID2. The default is 1. The default is 2.
+
+        Returns
+        -------
+        None.
+
+        """
+        sel = self.tt_detections["sel"]
+        tt_det = self.tt_detections[sel]
+        tt_flt1 = tt_det[tt_det["obs_filter_id"] == obs_filter_id1]
+        tt_flt2 = tt_det[tt_det["obs_filter_id"] == obs_filter_id2]
+
+        tt_join = join(tt_flt1, tt_flt2, keys=["rg_src_id", "vis_id"])
+
+        tt_grp = tt_join.group_by(["rg_src_id"])
+        self.add_column("tt_sources", "hr", col_data=None)
+        self.add_column("tt_sources", "hr_err", col_data=None)
+        self.tt_sources.add_index("rg_src_id")
+
+        for row, tt in zip(tt_grp.groups.keys, tt_grp.groups):
+            wght_1 = 1.0 / tt["flux_err_1"] ** 2
+            flux_1 = np.average(tt["flux_1"], weights=wght_1)
+            flux_err_1 = np.sqrt(1.0 / np.sum(wght_1))
+
+            wght_2 = 1.0 / tt["flux_err_2"] ** 2
+            flux_2 = np.average(tt["flux_2"], weights=wght_2)
+            flux_err_2 = np.sqrt(1.0 / np.sum(wght_2))
+
+            hr = flux_2 / flux_1
+            hr_err = hr * np.sqrt(
+                (flux_err_1 / flux_1) ** 2 + (flux_err_2 / flux_2) ** 2
+            )
+
+            src_idx = self.tt_sources.loc_indices["rg_src_id", row["rg_src_id"]]
+            self.tt_sources[src_idx]["hr"] = hr
+            self.tt_sources[src_idx]["hr_err"] = hr_err
 
     def add_column(self, table_name, col_name, col_data=None):
         """
