@@ -528,14 +528,22 @@ dd_vasca_columns = {
         "default": "none",
         "description": "SIMBAD source type group, defined in vasca.utils",
     },
-    # # %%% match_id
-    # "match_id": {
-    #     "name": "match_id",
-    #     "dtype": "int32",
-    #     "unit": "1",
-    #     "default": -1,
-    #     "description": "Matched source VASCA ID",
-    # },
+    # %%% hr
+    "hr": {
+        "name": "hr",
+        "dtype": "float32",
+        "unit": "1",
+        "default": -1,
+        "description": "Flux hardness ratio, only strictly simulateneous detections considered",
+    },
+    # %%% hr_err
+    "hr_err": {
+        "name": "hr_err",
+        "dtype": "float32",
+        "unit": "1",
+        "default": -1,
+        "description": "Flux hardness ratio error",
+    },
 }
 
 
