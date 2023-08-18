@@ -256,6 +256,9 @@ def run(vasca_cfg):
     if vasca_cfg["resources"]["coadd_exists"]:
         rg.set_src_stats(src_id_name="coadd_src_id")
 
+    # Add hardness ratio (default obs_filter_id 1 & 2 for GALEX)
+    rg.set_hardness_ratio()
+
     # Match sources to coadd sources
     if vasca_cfg["resources"]["coadd_exists"]:
         rg.cross_match(

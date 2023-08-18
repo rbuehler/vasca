@@ -304,13 +304,13 @@ dd_vasca_columns = {
         "default": -1.0,
         "description": "Visit exposure start date and time in MJD",
     },
-    # %%% time_delta
-    "time_delta": {
-        "name": "time_delta",
-        "dtype": "float32",
-        "unit": "s",
+    # %%% time
+    "time": {
+        "name": "time",
+        "dtype": "float64",
+        "unit": "d",
         "default": -1.0,
-        "description": "Visit exposure stop date and time in MJD",
+        "description": "Time in MJD",
     },
     # %%% ul
     "ul": {
@@ -544,6 +544,14 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Flux hardness ratio error",
     },
+    # %%% match_id
+    "match_id": {
+        "name": "match_id",
+        "dtype": "int32",
+        "unit": "1",
+        "default": -1,
+        "description": "VASCA internal source ID number for associated sources",
+    },
 }
 
 
@@ -624,8 +632,8 @@ base_field = {
     },
     "tt_source_lc": {
         "names": [
-            "time_start",
-            "time_delta",
+            "time",
+            "time_bin_size",
             "flux",
             "flux_err",
             "ul",
@@ -743,24 +751,6 @@ region = {
         },
     },
 }
-# # %%% match
-# match = {
-#     "tt_sources_match": {
-#         "names": [
-#             "match_id",
-#             "rg_src_id",
-#             "ra",
-#             "dec",
-#             "obs_filter_id",
-#             "sel",
-#             "flux",
-#             "flux_err",
-#             "flux_nxv",
-#             "simbad_otype",
-#         ],
-#         "meta": {"INFO": "Source association table", "Source": "SIMBAD"},
-#     },
-# }
 
 
 # global, combined dictionary
