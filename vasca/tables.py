@@ -13,6 +13,7 @@ from astropy.io import fits
 from astropy.nddata import bitmask
 from astropy.table import Column, Table, join
 from astropy.wcs import wcs
+from astropy.timeseries import TimeSeries
 from loguru import logger
 from scipy.stats import chi2
 from sklearn.cluster import MeanShift, estimate_bandwidth
@@ -584,9 +585,14 @@ class TableCollection(object):
             ]
             flt_names = self.tt_filters["obs_filter"][flt_names_idx]
 
+            time_bin_mean = (
+                tt_det_src["time_bin_start"].quantity
+                + tt_det_src["time_bin_size"].quantity / 2.0
+            )
+
             src_data = {
-                "time_start": np.array(tt_det_src["time_bin_start"]),
-                "time_delta": np.array(tt_det_src["time_bin_size"]),
+                "time": np.array(time_bin_mean.to(uu.d)),
+                "time_bin_size": np.array(tt_det_src["time_bin_size"]),
                 "flux": np.array(tt_det_src["flux"]),
                 "flux_err": np.array(tt_det_src["flux_err"]),
                 "obs_filter": flt_names,
@@ -947,18 +953,23 @@ class TableCollection(object):
         None.
 
         """
+
+        # Get selected detection tables for each filter
         sel = self.tt_detections["sel"]
         tt_det = self.tt_detections[sel]
         tt_flt1 = tt_det[tt_det["obs_filter_id"] == obs_filter_id1]
         tt_flt2 = tt_det[tt_det["obs_filter_id"] == obs_filter_id2]
 
+        # Get sub-table with common src_id and vis_id
         tt_join = join(tt_flt1, tt_flt2, keys=["rg_src_id", "vis_id"])
 
+        # Prepare source column to store information
         tt_grp = tt_join.group_by(["rg_src_id"])
         self.add_column("tt_sources", "hr", col_data=None)
         self.add_column("tt_sources", "hr_err", col_data=None)
         self.tt_sources.add_index("rg_src_id")
 
+        # Loop over all sources, calculate hr and store it.
         for row, tt in zip(tt_grp.groups.keys, tt_grp.groups):
             wght_1 = 1.0 / tt["flux_err_1"] ** 2
             flux_1 = np.average(tt["flux_1"], weights=wght_1)
@@ -976,6 +987,10 @@ class TableCollection(object):
             src_idx = self.tt_sources.loc_indices["rg_src_id", row["rg_src_id"]]
             self.tt_sources[src_idx]["hr"] = hr
             self.tt_sources[src_idx]["hr_err"] = hr_err
+
+        # Add filter info to table
+        self.tt_sources.meta["hr_flt_id1"] = obs_filter_id1
+        self.tt_sources.meta["hr_flt_id2"] = obs_filter_id2
 
     def add_column(self, table_name, col_name, col_data=None):
         """

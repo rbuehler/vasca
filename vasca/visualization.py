@@ -541,6 +541,7 @@ def plot_table_scatter(
         plot_kwargs.update(scatter_kwargs)
 
     if type(grp_var) == type(None):
+        print(tt[varx, vary])
         ax.plot(
             tt[varx],
             tt[vary],
@@ -892,7 +893,7 @@ def plot_light_curve(
             #                lolims=uplims[sel], # to plt.errorbar
 
             # Draw mean value
-            t_mean = [np.min(lc["time_start"][sel]), np.max(lc["time_start"][sel])]
+            t_mean = [np.min(lc["time"][sel]), np.max(lc["time"][sel])]
             flux_weight = 1.0 / lc["flux_err"][sel] ** 2
             flux_mean = np.average(lc["flux"][sel], weights=flux_weight)
             plt.plot(
@@ -905,7 +906,7 @@ def plot_light_curve(
 
             # Plot
             plt.errorbar(
-                lc["time_start"][sel],  # TODO: Move this to the bin center
+                lc["time"][sel],
                 fluxs[sel],
                 yerr=fluxs_err[sel],
                 color=col,
