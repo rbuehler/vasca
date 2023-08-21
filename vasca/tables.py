@@ -989,8 +989,8 @@ class TableCollection(object):
             self.tt_sources[src_idx]["hr_err"] = hr_err
 
         # Add filter info to table
-        self.tt_sources.meta["hr_flt_id1"] = obs_filter_id1
-        self.tt_sources.meta["hr_flt_id2"] = obs_filter_id2
+        self.tt_sources.meta["hr_flt1"] = obs_filter_id1
+        self.tt_sources.meta["hr_flt2"] = obs_filter_id2
 
     def add_column(self, table_name, col_name, col_data=None):
         """

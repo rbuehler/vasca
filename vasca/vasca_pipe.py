@@ -17,7 +17,6 @@ from yamlinclude import YamlIncludeConstructor
 
 from vasca.region import Region
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import get_field_id
 
 YamlIncludeConstructor.add_to_loader_class(
     loader_class=yaml.FullLoader
@@ -99,6 +98,23 @@ def set_logger(vasca_cfg):
     logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
 
 
+def keep_base_field(field):
+    "Remove field data that is not needed for further analysis to save memory"
+    # Remove detections which did not pass selections and where not used in clustering
+    field.remove_unselected("tt_detections")
+    if hasattr(field, "tt_coadd_detections"):
+        field.remove_unselected("tt_coadd_detections")
+    # Remove image data
+    field.ref_img = None
+    field.ref_wcs = None
+    field.vis_img = None
+
+    # Keep only base class columns
+    for tt_name in field._table_names:
+        cols = dd_vasca_tables["base_field"][tt_name]["names"]
+        field.__dict__[tt_name] = field.__dict__[tt_name][cols]
+
+
 def run_field(obs_nr, field_id, rg, vasca_cfg):
     """
     Run analysis on a single field
@@ -168,24 +184,14 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
         # Calculate source variables from light curve
         field.set_src_stats(src_id_name="fd_src_id")
 
+    # Select detections used in clustering
+    field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=False)
+
     # Write out field
     field.write_to_fits(field_out_dir + "field_" + field.field_id + ".fits")
 
-    # Remove some items which are not further needed to free memory
-
-    # Remove detections which did not pass selections and where not used in clustering
-    field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=True)
-    if hasattr(field, "tt_coadd_detections"):
-        field.remove_unselected("tt_coadd_detections")
-    # Remove image data
-    field.ref_img = None
-    field.ref_wcs = None
-    field.vis_img = None
-
-    # Keep only base class columns
-    for tt_name in field._table_names:
-        cols = dd_vasca_tables["base_field"][tt_name]["names"]
-        field.__dict__[tt_name] = field.__dict__[tt_name][cols]
+    # Keep only data needed for further analysis
+    keep_base_field(field)
 
     return field
 
@@ -214,26 +220,33 @@ def run(vasca_cfg):
     # Setup output directory
     os.makedirs(rg.region_path, exist_ok=True)
 
-    # Prepare fields to run in parallel
-    fd_pars = list()  # List of observations and field_ids in the config file
-    obs_nr = 0
-    for obs in vasca_cfg["observations"]:
-        for field in rg.tt_fields:
-            fd_pars.append([obs_nr, field["field_id"], rg, vasca_cfg])
-        obs_nr += 1
+    # Ifrunnign for the first time, or with new field settings, run fields
+    if vasca_cfg["general"]["run_fields"]:
+        # Prepare fields to run in parallel
+        fd_pars = list()  # List of observations and field_ids in the config file
+        obs_nr = 0
+        for obs in vasca_cfg["observations"]:
+            for field in rg.tt_fields:
+                fd_pars.append([obs_nr, field["field_id"], rg, vasca_cfg])
+            obs_nr += 1
 
-    # Run each field in a separate process in parallel
-    nr_cpus = vasca_cfg["general"]["nr_cpus"]
-    nr_fields = len(fd_pars)
-    logger.info(f"Analyzing {nr_fields} fields on {nr_cpus} parallel threads.")
-    with Pool(processes=nr_cpus) as pool:
-        pool_return = pool.starmap(run_field, fd_pars)
-    pool.join()
-    logger.info("Done analyzing individual fields.")
+        # Run each field in a separate process in parallel
 
-    # update region fields
-    for field in pool_return:
-        rg.fields[field.field_id] = field
+        nr_cpus = vasca_cfg["general"]["nr_cpus"]
+        logger.info(f"Analyzing {len(fd_pars)} fields on {nr_cpus} parallel threads.")
+        with Pool(processes=nr_cpus) as pool:
+            pool_return = pool.starmap(run_field, fd_pars)
+        pool.join()
+        logger.info("Done analyzing individual fields.")
+
+        # update region fields
+        for field in pool_return:
+            rg.fields[field.field_id] = field
+    else:
+        for rg_fd_id in rg.tt_fields["rg_fd_id"]:
+            field = rg.get_field(rg_fd_id=rg_fd_id, load_method="FITS", add_field=True)
+            # Keep only data needed for further analysis
+            keep_base_field(field)
 
     # Add field tables to region
     # For visits merge obs_filter_id and remove doubles
@@ -244,7 +257,7 @@ def run(vasca_cfg):
     if vasca_cfg["resources"]["coadd_exists"]:
         rg.add_table_from_fields("tt_coadd_detections")
 
-    del rg.fields  # All that needed has been transferred to region tables
+    del rg.fields  # All that was needed has been transferred to region tables
 
     # Cluster field sources and co-adds
     rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
