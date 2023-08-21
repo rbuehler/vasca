@@ -14,7 +14,7 @@ import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
-from astropy.table import Table, conf, unique, vstack
+from astropy.table import Table, unique, vstack
 from astropy.time import Time
 from astropy.utils.exceptions import AstropyWarning
 from astropy.wcs import wcs
@@ -742,7 +742,7 @@ class GALEXField(BaseField):
 
         """
         logger.info(
-            f"Loading field '{gfield_id}' with method '{method}' and load_products '{load_products}'."
+            f"Loading field '{gfield_id}' with method '{method}' for filter '{obs_filter}' and load_products '{load_products}'."
         )
 
         # Checks method argument
