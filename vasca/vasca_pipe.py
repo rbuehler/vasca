@@ -245,6 +245,7 @@ def run(vasca_cfg):
     else:
         for rg_fd_id in rg.tt_fields["rg_fd_id"]:
             field = rg.get_field(rg_fd_id=rg_fd_id, load_method="FITS", add_field=True)
+            logger.info(f"Added field: {field.field_id}.")
             # Keep only data needed for further analysis
             keep_base_field(field)
 
