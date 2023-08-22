@@ -163,7 +163,11 @@ class Region(TableCollection):
         ll_tt = []  # List of "table_name" tables for all fields
         for field_id, field in self.fields.items():
             rg_fd_id = self.tt_fields.loc["field_id", [field_id]]["rg_fd_id"]
-            tt = field.__dict__[table_name]
+            if table_name in field.__dict__.keys():
+                tt = field.__dict__[table_name]
+            else:
+                logger.warning(f"No table {table_name} found for field {field_id}")
+                continue
 
             # Apply row selection
             sel = np.ones(len(tt), dtype="bool")
@@ -391,7 +395,7 @@ class Region(TableCollection):
         None.
 
         """
-        logger.debug("Settign table tt_src_id_map.")
+        logger.debug("Setting table tt_src_id_map.")
 
         dd_ids = {"rg_src_id": [], "rg_fd_id": [], "fd_src_id": [], "sel": []}
         tt_ids = unique(

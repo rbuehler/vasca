@@ -414,6 +414,9 @@ class TableCollection(object):
         tt = self.__dict__[table_name]
         if "sel" not in tt.colnames:
             logger.error("Table does not have selection column")
+        if len(tt) == 0:
+            logger.warning("Cannot select, table is empty")
+            return
 
         # Get selected events
         presel = tt["sel"].data.astype("bool")
@@ -953,12 +956,20 @@ class TableCollection(object):
         None.
 
         """
+        logger.debug("Calculating hardness ratio")
 
         # Get selected detection tables for each filter
         sel = self.tt_detections["sel"]
         tt_det = self.tt_detections[sel]
         tt_flt1 = tt_det[tt_det["obs_filter_id"] == obs_filter_id1]
         tt_flt2 = tt_det[tt_det["obs_filter_id"] == obs_filter_id2]
+
+        # Check if one of the tables is empty
+        if len(tt_flt1) == 0 or len(tt_flt2) == 0:
+            logger.warning(
+                "No sources with multiple filters to calculate hardness ratio"
+            )
+            return
 
         # Get sub-table with common src_id and vis_id
         tt_join = join(tt_flt1, tt_flt2, keys=["rg_src_id", "vis_id"])

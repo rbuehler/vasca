@@ -1318,6 +1318,12 @@ class GALEXField(BaseField):
         dd_detections_raw = {}
         # Keep only entries with detections
         sel_s2n = tt_detections_raw[f"{obs_filter_l}_s2n"] > 0
+
+        if len(tt_detections_raw[sel_s2n]) == 0:
+            logger.warning(
+                f"No detection with s2n>0 in MAST for field {obs_id} filter {obs_filter}"
+            )
+
         for col in mast_col_names:
             dd_detections_raw[col_names[col]] = tt_detections_raw[col][sel_s2n].data
 

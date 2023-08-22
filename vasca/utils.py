@@ -51,7 +51,7 @@ dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 # dd_id2ogrp = dict((v, k) for (k, v) in dd_ogrp2id.items())
 
 dd_ogrp2otypes = {
-    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu"],
+    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu", "Er*", "EmO", "UV"],
     "AGN": [
         "AGN",
         "SyG",
@@ -66,19 +66,50 @@ dd_ogrp2otypes = {
         "Q?",
         "AG?",
     ],
-    "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG"],
-    "STA": ["*", "HB*", "LM*", "RG*", "RR*", "dS*", "LP*", "Pu*", "V*", "LP?"],
+    "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG"],
+    "*": [
+        "*",
+        "HB*",
+        "LM*",
+        "RG*",
+        "RR*",
+        "dS*",
+        "LP*",
+        "Pu*",
+        "V*",
+        "LP?",
+        "AB*",
+        "Cl*",
+        "GlC",
+        "sg*",
+    ],
     "WD": ["WD*", "WD?"],
-    "PMS": ["PM*"],
-    "CV": ["CV*"],
-    "BS": ["EB*", "SB*"],
-    "LEI": ["LeI", "LI?"],
+    "PM*": ["PM*"],
+    "CVN": ["CV*", "No*"],
+    "B*": ["EB*", "SB*", "**"],
+    "Grv": ["gLS", "LeI", "LI?", "LS?"],
     "SN": ["SN*"],
+    "S*": ["BS*", "C*", "Em*", "HS*", "Ir*", "Pe*", "Ro*"],
+    "Env": ["HII"],
 }
 dd_otype2ogroup = dict()
 for key, val in dd_ogrp2otypes.items():
     for ii in val:
         dd_otype2ogroup[ii] = key
+dd_ogrp2col = {
+    "UNK": "tab:blue",
+    "AGN": "tab:brown",
+    "GAL": "k",
+    "*": "tab:red",
+    "WD": "tab:green",
+    "PM*": "tab:orange",
+    "CVN": "tab:purple",
+    "B*": "tab:pink",
+    "Grv": "tab:olive",
+    "SN": "tab:cyan",
+    "S*": "tab:blue",
+    "Env": "lightgreen",
+}
 
 
 def otype2ogroup(otype):
