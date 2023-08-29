@@ -22,6 +22,7 @@ from astropy.utils.exceptions import AstropyWarning
 from matplotlib import colormaps as cm
 from matplotlib.colors import ListedColormap, hex2color
 from scipy.stats import binned_statistic
+from cycler import cycler
 
 from vasca.tables_dict import dd_vasca_columns
 
@@ -37,21 +38,10 @@ dd_id2filter = dict((v, k) for (k, v) in dd_filter2id.items())
 #: See ``get_field_id`` function below.
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 
-
-# Dictionary organizing SIMBAD types into groups
-# dd_ogrp2id = {
-#     "AGN": 1,
-#     "GAL": 2,
-#     "STA": 3,
-#     "CV": 4,
-#     "WD": 5,
-#     "VS": 6,
-#     "PMS": 7,
-# }
-# dd_id2ogrp = dict((v, k) for (k, v) in dd_ogrp2id.items())
-
+# -----------------------------------------
+# Define object groups and related funtions
 dd_ogrp2otypes = {
-    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu", "Er*", "EmO", "UV"],
+    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu", "EmO", "UV"],
     "AGN": [
         "AGN",
         "SyG",
@@ -65,9 +55,10 @@ dd_ogrp2otypes = {
         "ClG",
         "Q?",
         "AG?",
+        "Bz?",
     ],
     "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG"],
-    "*": [
+    "Star": [
         "*",
         "HB*",
         "LM*",
@@ -82,6 +73,8 @@ dd_ogrp2otypes = {
         "Cl*",
         "GlC",
         "sg*",
+        "RB?",
+        "RR?",
     ],
     "WD": ["WD*", "WD?"],
     "PM*": ["PM*"],
@@ -89,27 +82,13 @@ dd_ogrp2otypes = {
     "B*": ["EB*", "SB*", "**"],
     "Grv": ["gLS", "LeI", "LI?", "LS?"],
     "SN": ["SN*"],
-    "S*": ["BS*", "C*", "Em*", "HS*", "Ir*", "Pe*", "Ro*"],
+    "S*": ["BS*", "C*", "Em*", "HS*", "Ir*", "Pe*", "Ro*", "HS?", "Er*"],
     "Env": ["HII"],
 }
 dd_otype2ogroup = dict()
 for key, val in dd_ogrp2otypes.items():
     for ii in val:
         dd_otype2ogroup[ii] = key
-dd_ogrp2col = {
-    "UNK": "tab:blue",
-    "AGN": "tab:brown",
-    "GAL": "k",
-    "*": "tab:red",
-    "WD": "tab:green",
-    "PM*": "tab:orange",
-    "CVN": "tab:purple",
-    "B*": "tab:pink",
-    "Grv": "tab:olive",
-    "SN": "tab:cyan",
-    "S*": "tab:blue",
-    "Env": "lightgreen",
-}
 
 
 def otype2ogroup(otype):
@@ -118,6 +97,33 @@ def otype2ogroup(otype):
         return dd_otype2ogroup[otype]
     else:
         return dd_vasca_columns["ogrp"]["default"]
+
+
+# Define fixed colors for plots and each object group
+dd_ogrp2col = {
+    "UNK": "tab:blue",
+    "AGN": "tab:gray",
+    "GAL": "k",
+    "Star": "r",
+    "WD": "tab:green",
+    "PM*": "tab:orange",
+    "CVN": "darkgreen",
+    "B*": "tomato",
+    "Grv": "tab:olive",
+    "SN": "tab:cyan",
+    "S*": "maroon",
+    "Env": "lightgreen",
+    "none": "0.8",
+}
+#
+
+
+def get_col_cycler(ll_ogrp):
+    "Helper function to get matplotlib color cycler mathcing the colors defined above"
+    ll_col = list()
+    for ogrp in ll_ogrp:
+        ll_col.append(dd_ogrp2col[ogrp])
+    return cycler(color=ll_col)
 
 
 def sel_sources(tt_srcs):

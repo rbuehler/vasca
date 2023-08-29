@@ -541,7 +541,6 @@ def plot_table_scatter(
         plot_kwargs.update(scatter_kwargs)
 
     if type(grp_var) == type(None):
-        print(tt[varx, vary])
         ax.plot(
             tt[varx],
             tt[vary],
@@ -549,14 +548,17 @@ def plot_table_scatter(
         )
     else:
         tt_grp = tt.group_by(grp_var)
-        for grp_k, grp in zip(tt_grp.groups.keys, tt_grp.groups):
-            if type(grp_vals) == type(None) or grp_k[0] in grp_vals:
-                ax.plot(
-                    grp[varx],
-                    grp[vary],
-                    label=grp_k[0],
-                    **plot_kwargs,
-                )
+        if type(grp_vals) == type(None):
+            grp_vals = tt_grp.groups.keys
+        for grp in grp_vals:
+            mask = tt_grp.groups.keys[grp_var] == grp
+            t_grp = tt_grp.groups[mask]
+            ax.plot(
+                t_grp[varx],
+                t_grp[vary],
+                label=grp,
+                **plot_kwargs,
+            )
 
     # Set labels
     xlabel = varx + " [" + str(tt[varx].unit) + "]"
