@@ -121,6 +121,20 @@ class TableCollection(object):
         logger.debug(f"Created new table from template '{template_name}'.")
         return tt_out
 
+    def remove_table(self, table_name):
+        """Removes table from collection
+
+        Parameters
+        ----------
+        table_name : str
+            Name of the table
+        """
+        logger.debug(f"Removing table '{table_name}'")
+        if table_name in self.__dict__.keys():
+            del self.__dict__[table_name]
+        if table_name in self._table_names:
+            self._table_names.remove(table_name)
+
     def add_table(self, data, template_name):
         """
         Add a VASCA table to the field.
@@ -147,7 +161,8 @@ class TableCollection(object):
 
         if table_key in self._table_names:
             logger.warning(f"Table '{table_key}' already exists, overwriting")
-        self._table_names.append(table_key)
+        else:
+            self._table_names.append(table_key)
 
         if ":" in template_name:
             tt = self.table_from_template(data, template_name)

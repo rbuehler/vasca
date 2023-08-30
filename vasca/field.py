@@ -865,6 +865,7 @@ class GALEXField(BaseField):
                 "s_dec": "dec",
                 "instrument_name": "observatory",
                 "filters": "obs_filter",
+                "project": "project",
             }
 
         elif not isinstance(col_names, dict):

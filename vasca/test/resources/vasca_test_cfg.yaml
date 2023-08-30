@@ -12,7 +12,7 @@ general:
     run_fields      : true                               # If fields have already been clusered and saved and should be resused set to "false". Otherwise the default is true
     
 resources:                      
-    load_method      : "VASCA"                         # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_method      : "MAST_LOCAL"                         # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
     load_products    : "TABLES"                                   # Get data products from MAST, if false only meta data is loaded
     coadd_exists     : true                           # Coadd detection catalogs are available (co-added images may exist). If false, sections 'cluster_coadd_dets', 'selection/src_coadd_diff' and 'observations/<observatory>/coadd_det_quality' are unused
     field_kwargs:
