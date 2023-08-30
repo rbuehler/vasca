@@ -539,3 +539,37 @@ class Region(TableCollection):
             return gf
         else:
             logger.warning("Usupported loading method")
+
+    # def set_lomb_scargle(self):
+
+    # def set_simbad_match(self):
+
+    def synch_src_sel(self):
+        for tab_name in self._table_names:
+            if "rg_src_id" in self.__dict__[tab_name].colnames:
+                logger.debug(f"Synchronizing selection in table {tab_name}")
+                sel = np.in1d(
+                    self.__dict__[tab_name]["rg_src_id"],
+                    self.tt_sources["rg_src_id"][self.tt_sources["sel"]],
+                )
+                self.__dict__[tab_name]["sel"] = sel
+
+    def get_region_catalog(self):
+        # Create catalog region file
+        rg = Region()
+
+        # keep only selected sources and detections, etc
+        self.synch_src_sel()
+
+        # Copy the tables listed below fully into catalog region
+        for tab_name in self._table_names:
+            if "sel" in self.__dict__[tab_name].colnames:
+                rg.add_table(
+                    self.__dict__[tab_name][self.__dict__[tab_name]["sel"]],
+                    tab_name,
+                )
+            else:
+                rg.add_table(self.__dict__[tab_name], tab_name)
+        return rg
+
+        # Copy only selected columns for the columns below

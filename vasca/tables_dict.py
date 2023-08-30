@@ -40,13 +40,21 @@ dd_vasca_columns = {
         "default": "none",
         "description": "Field source ID nr",
     },
-    # %%% name
+    # %%% field_name
     "field_name": {
         "name": "field_name",
         "dtype": "S32",
         "unit": "",
         "default": "none",
         "description": "Field name",
+    },
+    # %%% project
+    "project": {
+        "name": "project",
+        "dtype": "S32",
+        "unit": "",
+        "default": "none",
+        "description": "Field project, typicaly survey name",
     },
     # %%% ra
     "ra": {
@@ -562,6 +570,7 @@ base_field = {
         "names": [
             "field_id",
             "field_name",
+            "project",
             "ra",
             "dec",
             "observatory",

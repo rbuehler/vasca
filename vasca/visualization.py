@@ -549,9 +549,11 @@ def plot_table_scatter(
     else:
         tt_grp = tt.group_by(grp_var)
         if type(grp_vals) == type(None):
-            grp_vals = tt_grp.groups.keys
+            grp_vals = tt_grp.groups.keys[grp_var]
         for grp in grp_vals:
-            mask = tt_grp.groups.keys[grp_var] == grp
+            mask = (
+                tt_grp.groups.keys[grp_var] == grp
+            )  # obs_by_name.groups.keys['name'] == 'M101'
             t_grp = tt_grp.groups[mask]
             ax.plot(
                 t_grp[varx],
