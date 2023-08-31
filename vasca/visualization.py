@@ -941,8 +941,6 @@ def plot_light_curve(
     secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
     secax.set_xlabel("Year")
 
-    # TODO: THis did not work anymore after matplotlib update, check why and fix
-    # Add a second flux axis in magnitudes
     def flux2mag_np(flux):
         return flux2mag(flux).data
 

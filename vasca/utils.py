@@ -33,6 +33,9 @@ dd_filter2id = {"NUV": 1, "FUV": 2}
 dd_id2filter = dict((v, k) for (k, v) in dd_filter2id.items())
 # Inverted key&value dictionary
 
+dd_filter2lambda = {"NUV": 2271 * uu.AA, "FUV": 1528 * uu.AA}
+
+
 #: Global variable linking observatory + obsfilter to a field ID add-on
 #: The number of Id add-on letter has to be three
 #: See ``get_field_id`` function below.
@@ -313,7 +316,7 @@ def flux2mag(flux, flux_err=None):
         return mag
 
 
-def mag2flux(mag):
+def mag2flux(mag, mag_err=None):  #
     """
     Converts AB magnitudes to flux in Jansky
 
@@ -329,7 +332,11 @@ def mag2flux(mag):
 
     """
     flux = (np.array(mag) * uu.ABmag).to("1e-6Jy")
-    return flux
+    if type(mag_err) == type(None):
+        return flux
+    else:
+        flux_up = ((np.array(mag) - np.array(mag_err)) * uu.ABmag).to("1e-6Jy")
+        return flux, flux_up - flux
 
 
 def get_field_id(obs_field_id, observaory, obs_filter):
