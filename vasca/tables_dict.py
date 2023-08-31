@@ -104,6 +104,14 @@ dd_vasca_columns = {
         "default": 0,
         "description": "Filter ID number",
     },
+    # %%% obs_filter_id
+    "obs_filter_lambda": {
+        "name": "obs_filter_lambda",
+        "dtype": "float32",
+        "unit": "AA",
+        "default": -1.0,
+        "description": "Effective wavelength of the observation filter",
+    },
     # %%% fov_diam
     "fov_diam": {
         "name": "fov_diam",
