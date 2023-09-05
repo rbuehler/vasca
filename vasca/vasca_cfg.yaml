@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "TDS_ELAISN1"                      # TDS_ELAISN1 # MDIS_10-800
+    name            : "WD"                      # TDS_ELAISN1 # MDIS_10-800
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
@@ -12,8 +12,8 @@ general:
     run_fields      : true                             # If fields have already been clusered and saved and should be resused set to "false". Otherwise the default is true
     
 resources:                      
-    load_method      : "MAST_LOCAL"                    # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
-    load_products    :  "TABLES"                           # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
+    load_method      : "VASCA"                    # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
+    load_products    :  "ALL"                           # Data products from MAST:  "NONE", "TABLES" for tables and reference image, "ALL" for tables and visit images
     coadd_exists     : true                           # Coadd detection catalogs are available (co-added images may exist). If false, sections 'cluster_coadd_dets', 'selection/src_coadd_diff' and 'observations/<observatory>/coadd_det_quality' are unused
     field_kwargs:
         data_path        : null
@@ -92,14 +92,14 @@ observations:
               range:
                   s2n            : [4, .inf]
                   r_fov          : [0.0, 0.5]
-                  ellip_world    : [0.0, 0.3]
+                  ellip_world    : [0.0, 0.35]
                   size_world     : [0.0, 6.0]
                   class_star     : [0.15, 1.0]        # Extension classifier (extended=0, point like=1)
                   chkobj_type    : [-0.5,0.5]       # Matched to a bright star (0=no, 1=yes)
               bitmask:
                   # Specify the artifacts to remove
                   # For GALEX a description is at the end of this document
-                  artifacts :  [2,4,8,16,32,64,128,256,512] #[2,4,8,128]
+                  artifacts :  [2,4] #[2,4,8,128] ,8,16,32,64,128,256,512
               #If below/above this value will set it to min/max
               set_range:
                   pos_err : [0.5,5] # In arcsec
@@ -118,7 +118,7 @@ observations:
                   r_fov          : [0.0,0.5]
               
       #obs_field_ids : !include field_ids.yaml
-      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids.yaml #_MISDIS_exp800_vis10_nuv_use.yaml
+      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_WD.yaml #_MISDIS_exp800_vis10_nuv_use.yaml
 
     - observatory   : "GALEX"
       obs_filter    : "FUV"
@@ -149,7 +149,7 @@ observations:
               bitmask:
                   # Specify the artifacts to remove
                   # For GALEX a description is at the end of this document
-                  artifacts :  [2,4,8,16,32,64,128,256,512] #[2,4,8,128]
+                  artifacts :  [2,4] #[2,4,8,128] ,8,16,32,64,128,256,512
               #If below/above this value will set it to min/max
               set_range:
                   pos_err : [0.5,5] # In arcsec
@@ -168,7 +168,7 @@ observations:
                   r_fov          : [0.0,0.5]
              
       #obs_field_ids : !include ./field_ids.yaml
-      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids.yaml #_MISDIS_exp800_vis10_fuv_use.yaml
+      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_WD.yaml #_MISDIS_exp800_vis10_fuv_use.yaml
 
 # GALEX artifact flags
 # ( 1): edge; Detector bevel edge reflection (NUV only).

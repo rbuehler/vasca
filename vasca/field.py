@@ -119,16 +119,17 @@ class BaseField(TableCollection):
         logger.debug(f"Loading skypmap from file: '{file_name}'")
         with fits.open(file_name) as ff:
             if img_attr == "ref_img":
-                self.ref_img = ff[0].data
+                self.ref_img = np.array(ff[0].data, dtype=np.float32)
                 self.ref_wcs = wcs.WCS(ff[0].header)
             if img_attr == "vis_img":
+                img_data = np.array(ff[0].data, dtype=np.float16)
                 if type(self.vis_img) == type(None):
-                    self.vis_img = ff[0].data
+                    self.vis_img = img_data
                 # If second or later image append
                 else:
                     if self.vis_img.ndim == 2:
                         self.vis_img = [self.vis_img]
-                    self.vis_img = np.append(self.vis_img, [ff[0].data], axis=0)
+                    self.vis_img = np.append(self.vis_img, [img_data], axis=0)
 
     def get_upper_limits(self):
         """

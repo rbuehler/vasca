@@ -224,24 +224,34 @@ class TableCollection(object):
         hdulist = [fits.PrimaryHDU()]
 
         # Check if image data is set and add to primary HDU
-        if hasattr(self, "ref_img"):
-            if self.ref_img is not None and self.ref_wcs is not None:
-                logger.debug(f"Storing image data of shape {self.ref_img.shape}")
-                hdulist.append(
-                    fits.CompImageHDU(
-                        self.ref_img,
-                        header=self.ref_wcs.to_header(),
-                        name="ref_img",
-                    )
+        if (
+            hasattr(self, "ref_img")
+            and type(self.ref_img) is not type(None)
+            and type(self.ref_wcs) is not type(None)
+        ):
+            logger.debug(f"Storing image data of shape {self.ref_img.shape}")
+            self.ref_img = self.ref_img.astype(np.float32)
+            hdulist.append(
+                fits.CompImageHDU(
+                    data=self.ref_img,
+                    header=self.ref_wcs.to_header(),
+                    name="ref_img",
                 )
-                if hasattr(self, "vis_img"):
-                    hdulist.append(
-                        fits.CompImageHDU(
-                            data=self.vis_img,
-                            header=self.ref_wcs.to_header(),
-                            name="vis_img",
-                        )
-                    )
+            )
+        if (
+            hasattr(self, "vis_img")
+            and hasattr(self, "ref_wcs")
+            and type(self.vis_img) is not type(None)
+        ):
+            logger.debug(f"Storing image data of shape {self.vis_img.shape}")
+            self.vis_img = self.vis_img.astype(np.float32)
+            hdulist.append(
+                fits.CompImageHDU(
+                    data=self.vis_img,
+                    header=self.ref_wcs.to_header(),
+                    name="vis_img",
+                )
+            )
 
         new_hdul = fits.HDUList(hdulist)
         new_hdul.writeto(file_name, overwrite=overwrite, output_verify=fits_verify)
@@ -341,9 +351,15 @@ class TableCollection(object):
             ]
             if hasattr(self, "ref_img"):
                 for img_name in img_names:
-                    setattr(self, img_name.lower(), ff[img_name].data)
                     if img_name.lower() == "ref_img":
+                        setattr(
+                            self, img_name.lower(), ff[img_name].data.astype(np.float32)
+                        )
                         setattr(self, "ref_wcs", wcs.WCS(ff[img_name].header))
+                    elif type(ff[img_name].data) is not type(None):
+                        setattr(
+                            self, img_name.lower(), ff[img_name].data.astype(np.float16)
+                        )
 
             # Load tables with vectors
             ta_names = [

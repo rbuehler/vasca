@@ -17,6 +17,7 @@ from yamlinclude import YamlIncludeConstructor
 
 from vasca.region import Region
 from vasca.tables_dict import dd_vasca_tables
+from vasca.utils import dd_obs_id_add
 
 YamlIncludeConstructor.add_to_loader_class(
     loader_class=yaml.FullLoader
@@ -192,6 +193,7 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
 
     # Keep only data needed for further analysis
     keep_base_field(field)
+    logger.info("Done with field:" + str(field_id))
 
     return field
 
@@ -224,11 +226,13 @@ def run(vasca_cfg):
     if vasca_cfg["general"]["run_fields"]:
         # Prepare fields to run in parallel
         fd_pars = list()  # List of observations and field_ids in the config file
-        obs_nr = 0
-        for obs in vasca_cfg["observations"]:
-            for field in rg.tt_fields:
-                fd_pars.append([obs_nr, field["field_id"], rg, vasca_cfg])
-            obs_nr += 1
+        vobs = vasca_cfg["observations"]
+        for obs_nr in range(len(vobs)):
+            for field_nr in vobs[obs_nr]["obs_field_ids"]:
+                field_id = dd_obs_id_add[
+                    vobs[obs_nr]["observatory"] + vobs[obs_nr]["obs_filter"]
+                ] + str(field_nr)
+                fd_pars.append([obs_nr, field_id, rg, vasca_cfg])
 
         # Run each field in a separate process in parallel
 
