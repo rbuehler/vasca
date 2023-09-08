@@ -1067,31 +1067,31 @@ class TableCollection(object):
 
     def cross_match(
         self,
-        tt_cat,
-        cat_id_name="coadd_src_id",
-        table_name="tt_sources",
         dist_max=1 * uu.arcsec,
         dist_s2n_max=3,
+        cat_table_name="tt_coadd_sources",
+        cat_id_name="coadd_src_id",
+        src_table_name="tt_sources",
     ):
         """
-        Cross match sources to a catalog.
+        Cross match sources to a catalogby position. Typically this is the coadd acatalog.
 
         Parameters
         ----------
-        tt_cat : astropy.Table
-            Catalog table. Has to contain "ra","dec" (in deg), "flux" (in microJy)
-            and "cat_id_name" columns.  Marks associated catalog sources
-            in the "sel" column of the catalog table, if it exists.
-        cat_id_name : str, optional
-            Catalog ID Br. variable name. The default is "coadd_src_id".
-        table_name : str, optional
-            Table to crossmatch to catalog. The default is "tt_sources".
         dist_max astropy.Quantity
             Maximum angular distance under which all associations are done, independent
             of dist_s2n. The default is "1 arcsec".
         dist_s2n_max float
             Maximum distance in units of position error. All sources below this cut are
             associated, independently of the dist_max selection.
+        cat_table_name : str, optional
+            Catalog table name. Has to contain "ra","dec" (in deg), "flux" (in microJy)
+            and "cat_id_name" columns.  Marks associated catalog sources
+            in the "sel" column of the catalog table, if it exists.
+        cat_id_name : str, optional
+            Catalog ID Br. variable name. The default is "coadd_src_id".
+        src_table_name : str, optional
+            Table to crossmatch to catalog. The default is "tt_sources".
 
         Returns
         -------
@@ -1099,10 +1099,12 @@ class TableCollection(object):
 
         """
 
-        logger.debug(f"Cross matching table {table_name}")
+        logger.debug(f"Cross matching table {src_table_name}")
+
+        tt_cat = self.__dict__[cat_table_name]
 
         # Get source positions
-        tt_srcs = self.__dict__[table_name]
+        tt_srcs = self.__dict__[src_table_name]
         pos_srcs = SkyCoord(
             ra=tt_srcs["ra"], dec=tt_srcs["dec"], unit="deg", frame="icrs"
         )
@@ -1120,14 +1122,15 @@ class TableCollection(object):
 
         sel = sel_dist + sel_dist_s2n
 
-        tt_srcs["assoc_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
-        tt_srcs["assoc_dist"][sel] = dist_cat[sel].to("arcsec")
+        # Add info in source table on associated coadd source id na distance
+        tt_srcs["coadd_src_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
+        tt_srcs["coadd_dist"][sel] = dist_cat[sel].to("arcsec")
 
         # Create default arrays
         nr_filters = len(np.array(tt_srcs["flux"][0]).flatten())
         na_zero = np.array([np.zeros(nr_filters) for flt in range(len(tt_srcs))])
-        assoc_ffactor = na_zero + dd_vasca_columns["assoc_ffactor"]["default"]
-        assoc_fdiff_s2n = na_zero + dd_vasca_columns["assoc_fdiff_s2n"]["default"]
+        coadd_ffactor = na_zero + dd_vasca_columns["coadd_ffactor"]["default"]
+        coadd_fdiff_s2n = na_zero + dd_vasca_columns["coadd_fdiff_s2n"]["default"]
 
         # Check if only one filter
         flt_iter = [None]
@@ -1148,20 +1151,25 @@ class TableCollection(object):
 
             # Remove invalid (negativ) ffactors due to default values of flux
             sel_inv = ffactor <= 0
-            ffactor[sel_inv] = dd_vasca_columns["assoc_ffactor"]["default"]
-            fdiff_s2n[sel_inv] = dd_vasca_columns["assoc_fdiff_s2n"]["default"]
+            ffactor[sel_inv] = dd_vasca_columns["coadd_ffactor"]["default"]
+            fdiff_s2n[sel_inv] = dd_vasca_columns["coadd_fdiff_s2n"]["default"]
 
             if nr_filters > 1:
-                assoc_ffactor[sel, flt_idx] = ffactor
-                assoc_fdiff_s2n[sel, flt_idx] = fdiff_s2n
+                coadd_ffactor[sel, flt_idx] = ffactor
+                coadd_fdiff_s2n[sel, flt_idx] = fdiff_s2n
             else:
-                assoc_ffactor = assoc_ffactor.flatten()
-                assoc_fdiff_s2n = assoc_fdiff_s2n.flatten()
-                assoc_ffactor[sel] = ffactor.data.flatten()
-                assoc_fdiff_s2n[sel] = fdiff_s2n.data.flatten()
+                coadd_ffactor = coadd_ffactor.flatten()
+                coadd_fdiff_s2n = coadd_fdiff_s2n.flatten()
+                coadd_ffactor[sel] = ffactor.data.flatten()
+                coadd_fdiff_s2n[sel] = fdiff_s2n.data.flatten()
 
-        self.add_column(table_name, "assoc_ffactor", assoc_ffactor)
-        self.add_column(table_name, "assoc_fdiff_s2n", assoc_fdiff_s2n)
+        # Store flux rations in source table
+        self.add_column(src_table_name, "coadd_ffactor", coadd_ffactor)
+        self.add_column(src_table_name, "coadd_fdiff_s2n", coadd_fdiff_s2n)
+
+        np_rg_src_id = np.zeros(len(tt_cat), dtype=np.int32) - 1.0
+        np_rg_src_id[idx_cat[sel]] = tt_srcs["rg_src_id"][sel]
+        self.add_column(cat_table_name, "rg_src_id", np_rg_src_id)
 
         # Mark as selected, if selection column exists
         if "sel" in tt_cat.colnames:

@@ -280,8 +280,6 @@ def run(vasca_cfg):
     # Match sources to coadd sources
     if vasca_cfg["resources"]["coadd_exists"]:
         rg.cross_match(
-            tt_cat=rg.tt_coadd_sources,
-            table_name="tt_sources",
             dist_max=vasca_cfg["assoc_src_coadd"]["dist_max"] * uu.arcsec,
             dist_s2n_max=vasca_cfg["assoc_src_coadd"]["dist_s2n_max"],
         )
@@ -302,10 +300,11 @@ def run(vasca_cfg):
     # Set source id table
     rg.set_src_id_info()
 
-    # Write out regions
-    rg.write_to_fits(
-        file_name=rg.region_path + "/region_" + vasca_cfg["general"]["name"] + ".fits"
-    )
+    # Write out region and reduced "catalog" region
+    fname_base = rg.region_path + "/region_" + vasca_cfg["general"]["name"]
+    rg.write_to_fits(file_name=fname_base + ".fits")
+    rc = rg.get_region_catalog()
+    rc.write_to_fits(fname_base + "_cat.fits")
 
     # Write used config file
     yaml_out_name = (

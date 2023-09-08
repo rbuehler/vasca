@@ -654,8 +654,8 @@ def plot_pipe_diagnostic(
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {"range": [0, 1]}
             var_plt["flux_nxv"] = {"logx": True}
-            var_plt["assoc_fdiff_s2n"] = {"range": [-10, 25]}
-            var_plt["assoc_ffactor"] = {"range": [-2, 5]}
+            var_plt["coadd_fdiff_s2n"] = {"range": [-10, 25]}
+            var_plt["coadd_ffactor"] = {"range": [-2, 5]}
             var_plt["pos_cpval"] = {}
             var_plt["flux"] = {"logx": True}
             var_plt["nr_fd_srcs"] = {}
@@ -711,7 +711,7 @@ def plot_pipe_diagnostic(
             var_plt[("pos_cpval", "flux")] = {
                 "yscale": "log",
             }
-            var_plt[("assoc_ffactor", "flux")] = {
+            var_plt[("coadd_ffactor", "flux")] = {
                 "yscale": "log",
                 "xlim": [0.1, 100],
                 "xscale": "log",
@@ -719,7 +719,7 @@ def plot_pipe_diagnostic(
             var_plt[("nr_det", "flux")] = {
                 "yscale": "log",
             }
-            var_plt[("assoc_fdiff_s2n", "assoc_ffactor")] = {
+            var_plt[("coadd_fdiff_s2n", "coadd_ffactor")] = {
                 "xlim": [-10, 25],
                 "yscale": "log",
                 "ylim": [0.1, 100],
