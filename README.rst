@@ -16,6 +16,15 @@ based on GALEX data.
 Installation
 ------------
 
+Typically, you want to create a new python 3.10 environment, e.g. with conda or mamba:
+
+.. code:: bash
+
+   mamba create -n vasca python=3.10
+   mamba activate vasca
+   
+The installation steps are:
+
 1. Clone this repository:
 
 .. code:: bash
@@ -30,6 +39,7 @@ Installation
   pip install -e .
 
 3. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
+
 
 **Prototyping and functional examples**
 
