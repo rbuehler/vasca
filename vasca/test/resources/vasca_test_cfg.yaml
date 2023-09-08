@@ -65,8 +65,8 @@ selection:
         obs_filter  : "NUV" 
         range:
             nr_det          : [1,.inf]   
-            assoc_ffactor   : [1.0,.inf]
-            assoc_fdiff_s2n : [1,.inf]                  
+            coadd_ffactor   : [1.0,.inf]
+            coadd_fdiff_s2n : [1,.inf]                  
 observations:
   - observatory   : "GALEX"
     obs_filter    : "NUV"

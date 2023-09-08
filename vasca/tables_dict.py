@@ -248,17 +248,17 @@ dd_vasca_columns = {
         "default": -1.0,
         "description": "Position reduced chisquared of the constant mean",
     },
-    # %%% assoc_id
-    "assoc_id": {
-        "name": "assoc_id",
+    # %%% coadd_id
+    "coadd_id": {
+        "name": "coadd_id",
         "dtype": "int64",
         "unit": "1",
         "default": -1,
         "description": "Associated source or detection ID",
     },
-    # %%% assoc_dist
-    "assoc_dist": {
-        "name": "assoc_dist",
+    # %%% coadd_dist
+    "coadd_dist": {
+        "name": "coadd_dist",
         "dtype": "float32",
         "unit": "arcsec",
         "default": -1.0,
@@ -304,9 +304,9 @@ dd_vasca_columns = {
         "default": -1.0,
         "description": "Flux reduced chisquared of the constant mean, entries for different filters",
     },
-    # %%% assoc_ffactor
-    "assoc_ffactor": {
-        "name": "assoc_ffactor",
+    # %%% coadd_ffactor
+    "coadd_ffactor": {
+        "name": "coadd_ffactor",
         "dtype": "float32",
         "unit": "1",
         "default": -100.0,
@@ -472,9 +472,9 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Total exposure",
     },
-    # %%% assoc_fdiff_s2n
-    "assoc_fdiff_s2n": {
-        "name": "assoc_fdiff_s2n",
+    # %%% coadd_fdiff_s2n
+    "coadd_fdiff_s2n": {
+        "name": "coadd_fdiff_s2n",
         "dtype": "float32",
         "unit": "1",
         "default": -10000.0,
@@ -632,8 +632,8 @@ base_field = {
             "pos_var",
             "pos_cpval",
             "pos_rchiq",
-            "assoc_id",
-            "assoc_dist",
+            "coadd_src_id",
+            "coadd_dist",
             "obs_filter_id",
             "sel",
             "flux",
@@ -642,8 +642,8 @@ base_field = {
             "flux_var",
             "flux_cpval",
             "flux_rchiq",
-            "assoc_ffactor",
-            "assoc_fdiff_s2n",
+            "coadd_ffactor",
+            "coadd_fdiff_s2n",
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},
     },
@@ -752,7 +752,6 @@ region = {
         "names": [
             *base_field["tt_sources"]["names"],
             "rg_fd_id",
-            "coadd_src_id",
             "nr_fd_dets",
         ],
         "meta": {"INFO": "Source infomation table", "CLUSTALG": "None"},

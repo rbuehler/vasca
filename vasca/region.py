@@ -359,14 +359,14 @@ class Region(TableCollection):
 
         # Add coadd source
         if hasattr(self, "tt_coadd_sources"):
-            assoc_id = src.tt_sources["assoc_id"][0]
-            if assoc_id > -1:
+            coadd_src_id = src.tt_sources["coadd_src_id"][0]
+            if coadd_src_id > -1:
                 self.tt_coadd_sources.add_index("coadd_src_id")
                 src._table_names.append("tt_coadd_sources")
                 setattr(
                     src,
                     "tt_coadd_sources",
-                    Table(self.tt_coadd_sources.loc["coadd_src_id", [assoc_id]]),
+                    Table(self.tt_coadd_sources.loc["coadd_src_id", [coadd_src_id]]),
                 )
 
         # Add fd_src_ids to each field
@@ -545,6 +545,15 @@ class Region(TableCollection):
     # def set_simbad_match(self):
 
     def synch_src_sel(self):
+        """
+        Synchronize selections among tables. All tables containing "rg_src_id" only keep rows
+        for selected sources in tt_sources
+
+        Returns
+        -------
+        None.
+
+        """
         for tab_name in self._table_names:
             if "rg_src_id" in self.__dict__[tab_name].colnames:
                 logger.debug(f"Synchronizing selection in table {tab_name}")
@@ -555,6 +564,16 @@ class Region(TableCollection):
                 self.__dict__[tab_name]["sel"] = sel
 
     def get_region_catalog(self):
+        """
+        Create a reduced region, which only contains info on selected sources
+
+        Returns
+        -------
+        rg : vasca.Region
+            Region with only the selected sources
+
+        """
+
         # Create catalog region file
         rg = Region()
 
@@ -571,5 +590,3 @@ class Region(TableCollection):
             else:
                 rg.add_table(self.__dict__[tab_name], tab_name)
         return rg
-
-        # Copy only selected columns for the columns below
