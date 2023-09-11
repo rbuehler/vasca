@@ -1389,14 +1389,30 @@ class GALEXField(BaseField):
         dd_ref_sources_raw = {}
         for col in mast_col_names[1:]:
             dd_ref_sources_raw[col_names[col]] = tt_coadd_detections_raw[col].data
+
         # Add filter_id
         dd_ref_sources_raw["obs_filter_id"] = np.array(
             dd_filter2id[obs_filter.upper()] + np.zeros(len(tt_coadd_detections_raw))
         )
+
+        # Add flux
+        idx_fauto = np.where(dd_ref_sources_raw["flux_auto_flt"] > 0)
+        cts2Jy = np.zeros(len(dd_ref_sources_raw["flux_auto_flt"]))
+        cts2Jy[idx_fauto] = (
+            dd_ref_sources_raw["flux_auto"][idx_fauto]
+            / dd_ref_sources_raw["flux_auto_flt"][idx_fauto]
+        )
+
+        # Use apperture flux instead of AUTO flux, as it is more reliable for variability studies
+        dd_ref_sources_raw["flux"] = dd_ref_sources_raw["flux_r60"] * cts2Jy * acorr60
+        dd_ref_sources_raw["flux_err"] = (
+            dd_ref_sources_raw["flux_r60_err"] * cts2Jy * acorr60
+        )
+
         self.add_table(dd_ref_sources_raw, "galex_field:tt_coadd_detections")
         logger.debug("Constructed 'tt_coadd_detections'.")
 
-        # Intensity maps
+        # *** Intensity maps
         aa_sel_int_map = np.char.endswith(
             tt_down["Local Path"].data.astype(str),
             "nd-int.fits.gz" if obs_filter == "NUV" else "fd-int.fits.gz",
