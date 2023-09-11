@@ -26,6 +26,7 @@ from requests.exceptions import HTTPError
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
 from vasca.utils import dd_filter2id, get_field_id, name2id
+from vasca.tables_dict import dd_vasca_columns
 
 # global paths
 # path to the dir. of this file
@@ -1277,6 +1278,7 @@ class GALEXField(BaseField):
                 f"{obs_filter}_FLUXERR_APER_4",
                 f"{obs_filter}_FLUX_APER_3",
                 f"{obs_filter}_FLUXERR_APER_3",
+                f"{obs_filter}_FLUX_AUTO",
                 "E_bv",
                 f"{obs_filter_l}_mag",
                 f"{obs_filter_l}_magerr",
@@ -1288,18 +1290,19 @@ class GALEXField(BaseField):
                 "ra",
                 "dec",
                 "pos_err",
-                "flux",
-                "flux_err",
+                "flux_auto",
+                "flux_auto_err",
                 "s2n",
                 "r_fov",
                 "artifacts",
                 "class_star",
                 "chkobj_type",
                 "ellip_world",
-                "flux_f60",
-                "flux_f60_err",
-                "flux_f38",
-                "flux_f38_err",
+                "flux_r60",
+                "flux_r60_err",
+                "flux_r38",
+                "flux_r38_err",
+                "flux_auto_flt",
                 "E_bv",
                 "mag",
                 "mag_err",
@@ -1343,6 +1346,42 @@ class GALEXField(BaseField):
         dd_detections_raw["obs_filter_id"] = np.array(
             dd_filter2id[obs_filter.upper()] + np.zeros(np.sum(sel_s2n))
         )
+
+        # Correct flux flux outside of apperture, as listed here:
+        # http://www.galex.caltech.edu/researcher/techdoc-ch5.html
+        acorr60 = 1.116863247 if obs_filter == "NUV" else 1.09647819
+        # acorr38 = 1.21338885 if obs_filter == "NUV" else 1.202264
+
+        # Add flux apperture ratio and covert counts to Jansky for r=3.8 arcsec apperture flux
+        # Check to avoid divisions by zero
+        idx_fauto = np.where(dd_detections_raw["flux_auto_flt"] > 0)
+        cts2Jy = np.zeros(len(dd_detections_raw["flux_auto_flt"]))
+        cts2Jy[idx_fauto] = (
+            dd_detections_raw["flux_auto"][idx_fauto]
+            / dd_detections_raw["flux_auto_flt"][idx_fauto]
+        )
+
+        # Use apperture flux instead of AUTO flux, as it is more reliable for variability studies
+        dd_detections_raw["flux"] = dd_detections_raw["flux_r60"] * cts2Jy * acorr60
+        dd_detections_raw["flux_err"] = (
+            dd_detections_raw["flux_r60_err"] * cts2Jy * acorr60
+        )
+
+        # Ratio between the flux-counts, correcting for difference in apperture
+        idx_fr60 = np.where(dd_detections_raw["flux_r60"] > 0)
+        dd_detections_raw["flux_app_ratio"] = (
+            np.zeros(
+                len(dd_detections_raw["flux_r60"]),
+                dtype=dd_vasca_columns["flux_app_ratio"]["dtype"],
+            )
+            + dd_vasca_columns["flux_app_ratio"]["default"]
+        )
+        dd_detections_raw["flux_app_ratio"][idx_fr60] = (
+            dd_detections_raw["flux_r38"][idx_fr60]
+            / dd_detections_raw["flux_r60"][idx_fr60]
+        )
+
+        # Store data dictionary in table
         self.add_table(dd_detections_raw, "galex_field:tt_detections")
         logger.debug("Constructed 'tt_detections'.")
 
@@ -1692,10 +1731,10 @@ class GALEXDSField(BaseField):
             "NUV_A_WORLD": "size_world_a",  # Later combined & replaced with size_world
             "NUV_B_WORLD": "size_world_b",  # Later combined & replaced with size_world
             "NUV_ELLIPTICITY": "ellip_world",
-            "NUV_FLUX_APER_4": "flux_f60",
-            "NUV_FLUXERR_APER_4": "flux_f60_err",
-            "NUV_FLUX_APER_3": "flux_f38",
-            "NUV_FLUXERR_APER_3": "flux_f38_err",
+            "NUV_FLUX_APER_4": "flux_r60",
+            "NUV_FLUXERR_APER_4": "flux_r60_err",
+            "NUV_FLUX_APER_3": "flux_r38",
+            "NUV_FLUXERR_APER_3": "flux_r38_err",
             "E_bv": "E_bv",
             "nuv_mag": "mag",
             "nuv_magerr": "mag_err",

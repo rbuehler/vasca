@@ -643,10 +643,11 @@ def plot_pipe_diagnostic(
             var_plt["chkobj_type"] = {}
             var_plt["ellip_world"] = {}  # "range": [0.0, 5]
             var_plt["size_world"] = {}  # "logx": True
+            var_plt["flux_app_ratio"] = {"range": [0.1, 5]}  # "logx": True
             fig, axs = plt.subplots(
-                4,
-                2,
-                figsize=fig_size,
+                3,
+                3,
+                figsize=(9, 9),
                 squeeze=False,
                 num="Detections Histograms " + flt_name,
             )
@@ -662,7 +663,7 @@ def plot_pipe_diagnostic(
             fig, axs = plt.subplots(
                 2,
                 4,
-                figsize=fig_size,
+                figsize=(12, 6),
                 squeeze=False,
                 num="Sources Histograms " + flt_name,
             )
@@ -674,7 +675,7 @@ def plot_pipe_diagnostic(
             fig, axs = plt.subplots(
                 1,
                 4,
-                figsize=fig_size,
+                figsize=(12, 3),
                 squeeze=False,
                 num="Co-add Sources Histograms " + flt_name,
             )
@@ -684,21 +685,21 @@ def plot_pipe_diagnostic(
     elif plot_type == "scatter":
         # Detections diagnostic
         if table_name == "tt_detections":
-            var_plt[("s2n", "flux")] = {
+            var_plt[("flux_app_ratio", "flux")] = {
                 "yscale": "log",
-                "xlim": [1, 100],
+                "xlim": [0, 5],
             }
             var_plt[("artifacts", "flux")] = {
                 "yscale": "log",
             }
             var_plt[("class_star", "flux")] = {"yscale": "log"}
-            var_plt[("size_world", "flux")] = {}  # {"yscale": "log"}
+            var_plt[("size_world", "flux")] = {"yscale": "log"}  # {"yscale": "log"}
             var_plt[("ellip_world", "flux")] = {"yscale": "log"}
-            var_plt[("ellip_world", "artifacts")] = {}
+            var_plt[("flux_auto", "flux")] = {"yscale": "log", "xscale": "log"}
             fig, axs = plt.subplots(
-                3,
                 2,
-                figsize=fig_size,
+                3,
+                figsize=(9, 6),
                 squeeze=False,
                 num="Detections Scatter " + flt_name,
             )
@@ -732,7 +733,7 @@ def plot_pipe_diagnostic(
             fig, axs = plt.subplots(
                 2,
                 3,
-                figsize=fig_size,
+                figsize=(9, 6),
                 squeeze=False,
                 num="Sources Scatter " + flt_name,
             )
@@ -751,7 +752,7 @@ def plot_pipe_diagnostic(
             fig, axs = plt.subplots(
                 1,
                 3,
-                figsize=fig_size,
+                figsize=(9, 3),
                 squeeze=False,
                 num="Co-add Sources Scatter " + flt_name,
             )
@@ -791,6 +792,7 @@ def plot_light_curve(
     ax=None,
     ylim=None,
     plot_upper_limits=True,
+    flux_var="flux",
     **errorbar_kwargs,
 ):
     """
@@ -812,6 +814,8 @@ def plot_light_curve(
         Limits of the y axis. Default is None
     plot_upper_limits : bool
         Plot upper limits to the lightcurve. The default is True.
+    flux_var: str, optional
+        Variable in table to be used to get flux Jy
     **errorbar_kwargs : TYPE
         Key word arguments for pyplot.errorbars plotting.
 
@@ -860,7 +864,7 @@ def plot_light_curve(
     ctr = 0
 
     # Get light curves dictionary
-    dd_lcs = tc.get_light_curve(fd_src_ids, rg_src_ids)
+    dd_lcs = tc.get_light_curve(fd_src_ids, rg_src_ids, flux_var=flux_var)
     src_ids = list(dd_lcs.keys())
 
     for src_id, col, mar in zip(src_ids, colors, markers):

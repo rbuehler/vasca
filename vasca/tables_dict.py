@@ -166,7 +166,15 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1e-6Jy",
         "default": -1.0,
-        "description": "Visit detection flux density",
+        "description": "Visit detection flux density (for GALEX from 6 arcsec apperture radius, with apperture correction).",
+    },
+    # %%% flux_app_ratio
+    "flux_app_ratio": {
+        "name": "flux_app_ratio",
+        "dtype": "float32",
+        "unit": "1",
+        "default": -1.0,
+        "description": "Flux ratio meassured at a different appertures (3.8 arcsec / 6 arcsec radius for GALEX)",
     },
     # %%% flux_err
     "flux_err": {
@@ -392,37 +400,21 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Ellipticity of the detection or source",
     },
-    # %%% flux_f60
-    "flux_f60": {
-        "name": "flux_f60",
+    # %%% flux_auto
+    "flux_auto": {
+        "name": "flux_auto",
         "dtype": "float32",
-        "unit": "1",
+        "unit": "Jy",
         "default": -1.0,
-        "description": "Flux in a fixed circular 6.0 arcsec radius aperture in cts/sec",
+        "description": "Flux from SExtractor auto option",
     },
-    # %%% flux_f60_err
-    "flux_f60_err": {
-        "name": "flux_f60_err",
+    # %%% flux_auto_err
+    "flux_auto_err": {
+        "name": "flux_auto_err",
         "dtype": "float32",
-        "unit": "1",
+        "unit": "Jy",
         "default": -1.0,
-        "description": "Flux error in a fixed circular 6.0 arcsec radius aperture in cts/sec",
-    },
-    # %%% flux_f38
-    "flux_f38": {
-        "name": "flux_f38",
-        "dtype": "float32",
-        "unit": "1",
-        "default": -1.0,
-        "description": "Flux in a fixed circular 3.8 arcsec radius aperture in cts/sec",
-    },
-    # %%% flux_f38_err
-    "flux_f38_err": {
-        "name": "flux_f38_err",
-        "dtype": "float32",
-        "unit": "1",
-        "default": -1.0,
-        "description": "Flux error in a fixed circular 3.8 arcsec radius aperture in cts/sec",
+        "description": "Flux error from a fixed circular apperture (3.8 arcsec radius for GALEX)",
     },
     # %%% E_bv
     "E_bv": {
@@ -601,6 +593,9 @@ base_field = {
             "pos_err",
             "flux",
             "flux_err",
+            "flux_auto",
+            "flux_auto_err",
+            "flux_app_ratio",
             "s2n",
             "obs_filter_id",
             "sel",
@@ -615,6 +610,9 @@ base_field = {
             "pos_err",
             "flux",
             "flux_err",
+            "flux_auto",
+            "flux_auto_err",
+            "flux_app_ratio",
             "s2n",
             "obs_filter_id",
             "sel",
@@ -681,6 +679,7 @@ galex_field = {
             "chkobj_type",
             "size_world",
             "ellip_world",
+            "E_bv",
         ],
         "meta": {"INFO": "Visit detections table", "PRECUTS": "List of pre-cuts"},
     },
@@ -693,10 +692,6 @@ galex_field = {
             "chkobj_type",
             "size_world",
             "ellip_world",
-            "flux_f60",
-            "flux_f60_err",
-            "flux_f38",
-            "flux_f38_err",
             "E_bv",
         ],
         "meta": {"INFO": "Reference detections table", "PRECUTS": "List of pre-cuts"},

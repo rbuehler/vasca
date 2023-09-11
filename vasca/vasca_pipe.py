@@ -183,7 +183,7 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
         )
 
         # Calculate source variables from light curve
-        field.set_src_stats(src_id_name="fd_src_id")
+        # field.set_src_stats(src_id_name="fd_src_id")
 
     # Select detections used in clustering
     field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=False)

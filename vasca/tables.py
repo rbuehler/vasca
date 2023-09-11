@@ -542,7 +542,7 @@ class TableCollection(object):
 
         self.__dict__[table_name] = tt
 
-    def get_light_curve(self, fd_src_ids=None, rg_src_ids=None):
+    def get_light_curve(self, fd_src_ids=None, rg_src_ids=None, flux_var="flux"):
         """
         Get a light curves for one or list of sources, for regions or fields.
 
@@ -552,6 +552,9 @@ class TableCollection(object):
             List or single field source IDs to plot. Default is None.
         rg_src_ids : list or int
             List or single region source IDs to plot. Default is None.
+        flux_var: str, optional
+            Variable in table to be used to get flux Jy. Flux error assumed to be named
+            flux_var+'_err'
 
         Returns
         -------
@@ -627,8 +630,8 @@ class TableCollection(object):
             src_data = {
                 "time": np.array(time_bin_mean.to(uu.d)),
                 "time_bin_size": np.array(tt_det_src["time_bin_size"]),
-                "flux": np.array(tt_det_src["flux"]),
-                "flux_err": np.array(tt_det_src["flux_err"]),
+                "flux": np.array(tt_det_src[flux_var]),
+                "flux_err": np.array(tt_det_src[flux_var + "_err"]),
                 "obs_filter": flt_names,
                 "obs_filter_id": tt_det_src["obs_filter_id"]
                 #                "ul": np.array(src_lc["ul"]),

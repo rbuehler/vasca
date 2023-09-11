@@ -816,7 +816,7 @@ def tgalex_to_astrotime(galex_timestamp, output_format=None, verbose=False):
 
     Parameters
     ----------
-    galex_timestamp : float
+    galex_timestamp : float or vector of floats
         The GALEX time epoch.
     output_format : {None, "iso", "tt"}, optional
         Specifies the time format/scale of the return value
@@ -837,9 +837,6 @@ def tgalex_to_astrotime(galex_timestamp, output_format=None, verbose=False):
     ValueError
         Only floats or ints are supported for conversion
     """
-    # parse input
-    if not isinstance(galex_timestamp, (float, int)):
-        raise ValueError("Time stamp must be float or integer.")
 
     # apply offset and convert
     galex_t_offset = 315964800
