@@ -612,7 +612,6 @@ base_field = {
             "flux_err",
             "flux_auto",
             "flux_auto_err",
-            "flux_app_ratio",
             "s2n",
             "obs_filter_id",
             "sel",
