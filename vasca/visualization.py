@@ -695,7 +695,7 @@ def plot_pipe_diagnostic(
             var_plt[("class_star", "flux")] = {"yscale": "log"}
             var_plt[("size_world", "flux")] = {"yscale": "log"}  # {"yscale": "log"}
             var_plt[("ellip_world", "flux")] = {"yscale": "log"}
-            var_plt[("flux_auto", "flux")] = {"yscale": "log", "xscale": "log"}
+            var_plt[("class_star", "flux_app_ratio")] = {"ylim": [0, 5]}
             fig, axs = plt.subplots(
                 2,
                 3,
