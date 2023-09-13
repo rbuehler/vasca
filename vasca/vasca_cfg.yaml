@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "MDIS_10-800"                    # TDS_ELAISN1 # "WD"   
+    name            : "TDS"                              # TDS_ELAISN1 # "WD"   "MDIS_10-800"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
@@ -119,7 +119,8 @@ observations:
                   r_fov          : [0.0,0.5]
               
       #obs_field_ids : !include field_ids.yaml
-      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_MISDIS_exp800_vis10_nuv_use.yaml #_ids_WD.yaml 
+      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS.yaml
+      #obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_MISDIS_exp800_vis10_nuv_use.yaml #_ids_WD.yaml 
 
     - observatory   : "GALEX"
       obs_filter    : "FUV"
@@ -170,7 +171,8 @@ observations:
                   r_fov          : [0.0,0.5]
              
       #obs_field_ids : !include ./field_ids.yaml
-      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_MISDIS_exp800_vis10_fuv_use.yaml # _ids_WD.yaml
+      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS.yaml
+      #obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_MISDIS_exp800_vis10_fuv_use.yaml # _ids_WD.yaml
 
 # GALEX artifact flags
 # ( 1): edge; Detector bevel edge reflection (NUV only).
