@@ -7,14 +7,18 @@ import healpy as hpy
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
-from astropy.table import Table, unique
+from astropy.table import Table, unique, join
 from loguru import logger
+from astroquery.simbad import Simbad
 
 from vasca.field import BaseField, GALEXDSField, GALEXField
 from vasca.source import Source
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
 from vasca.utils import dd_filter2id
+
+import warnings
+from astropy.utils.exceptions import AstropyWarning
 
 
 class Region(TableCollection):
@@ -42,9 +46,6 @@ class Region(TableCollection):
         # Sets skeleton
         super().__init__()
 
-        # Setup empty tables to fill
-        self.add_table(None, "region:tt_fields")
-
         # Path where region and fields are stored
         self.region_path = None
 
@@ -68,6 +69,7 @@ class Region(TableCollection):
         """
 
         rg = cls()
+        rg.add_table(None, "region:tt_fields")
 
         logger.debug("Loading fields from config file")
 
@@ -542,7 +544,163 @@ class Region(TableCollection):
 
     # def set_lomb_scargle(self):
 
-    # def set_simbad_match(self):
+    def cross_match_simbad(
+        self, query_radius=2 * uu.arcsec, match_radius=1 * uu.arcsec, query_timeout=180
+    ):
+        """
+        Match sources in region with SIMBAD database
+
+        Parameters
+        ----------
+        query_radius : astropy.quantity, optional
+            Query simbad up to this distance from VASCA sources. The default is 2 * uu.arcsec.
+        match_radius : astropy.quantity, optional
+            Match VASCA sources up to this distance from SIMBAD sources. The default is 1 * uu.arcsec.
+        query_timeout : astropy.quantity, optional
+            Modify the maximum query time of simbad, in seconds. The default is 180.
+
+        Returns
+        -------
+        None.
+
+        """
+        logger.debug("Query to SIMBAD")
+        # Run query
+        src_coord = SkyCoord(
+            self.tt_sources["ra"].quantity,
+            self.tt_sources["dec"].quantity,
+            frame="icrs",
+        )
+        customSimbad = Simbad()
+        customSimbad.TIMEOUT = 180
+        vo_entries = [
+            "otype(opt)",
+            "otypes",
+            "distance",
+            "distance_result",
+            "velocity",
+            "z_value",
+        ]  # ,"propermotions"
+        customSimbad.add_votable_fields(*vo_entries)
+        tt_simbad = customSimbad.query_region(src_coord, radius=query_radius)
+        logger.debug("Query finished")
+
+        # ---- Modify and add simbad table to region
+
+        # Change type to be handabel by astropy
+        vo_change_type = [
+            "MAIN_ID",
+            "COO_BIBCODE",
+            "OTYPE_opt",
+            "OTYPES",
+            "RVZ_BIBCODE",
+        ]  # "PM_BIBCODE"
+        for vo in vo_change_type:
+            tt_simbad[vo] = tt_simbad[vo].data.astype("S32")
+
+        # Write simbad and source info into matching tables
+        src_idx = tt_simbad["SCRIPT_NUMBER_ID"] - 1
+        tt_simbad["rg_src_id"] = self.tt_sources[src_idx]["rg_src_id"]
+        tt_simbad["match_id"] = np.array(range(0, len(tt_simbad)), dtype=np.int32)
+
+        # Lower case column names
+        for col in tt_simbad.colnames:
+            tt_simbad.rename_column(col, col.lower())
+
+        # Change unit to astropy format
+        skycoords = SkyCoord(
+            tt_simbad["ra"].data,
+            tt_simbad["dec"].data,
+            frame="icrs",
+            unit=(uu.hourangle, uu.deg),
+        )
+        tt_simbad["ra"] = skycoords.ra.degree
+        tt_simbad["dec"] = skycoords.dec.degree
+
+        tt_simbad.rename_column("otype_opt", "otype")
+
+        tt_simbad.sort(["rg_src_id", "distance_result"])
+        self.add_table(tt_simbad, "tt_simbad")
+
+        # ----  Add info to tt_source table
+        mt_sim_cols = [
+            "rg_src_id",
+            "otype",
+            "main_id",
+            "otypes",
+            "z_value",
+            "distance_distance",
+            "distance_unit",
+            "distance_result",
+        ]
+        tt_simbad_grp = self.tt_simbad.group_by("rg_src_id")
+        mult_match = 0
+        for key, tt_grp in zip(tt_simbad_grp.groups.keys, tt_simbad_grp.groups):
+            sel_dist = tt_grp["distance_result"] < match_radius
+            if sel_dist.sum() > 1:
+                mult_match += 1
+        logger.debug(
+            f"Nr of sources with several possible associations within matching radius: \
+                {mult_match} / {len(tt_simbad_grp.groups.keys)} / {len(self.tt_sources)}"
+        )
+        tu_simbad = unique(tt_simbad_grp, keys="rg_src_id")
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=AstropyWarning)
+            tt_match = join(
+                self.tt_sources,
+                tu_simbad[mt_sim_cols],
+                keys="rg_src_id",
+                join_type="outer",
+            )
+
+        # Select only sources with countrparts within a given radius
+        sel_query = ~tt_match["distance_result"].mask
+        tt_match["sel"] = sel_query
+        tt_match["sel"][tt_match["sel"]] = (
+            tt_match["distance_result"][tt_match["sel"]] < match_radius
+        )
+
+        # Add tables to table collection
+        self.add_table(tt_match, "tt_sources")
+
+        # ----  Add table explaing ogroups
+
+        sel_mt = self.tt_sources["sel"]
+
+        # Get all associated otypes
+        otypes_all, otype_cts_all = np.unique(
+            self.tt_sources[sel_mt]["otype"], return_counts=True
+        )
+
+        # Read files with otype description
+        # TODO make the ressource manager handle this
+        fpath = os.path.dirname(__file__)
+        tt_nodes = Table.read(
+            fpath + "/examples/resources/SIMBAD_otypes/otypes_nodes.csv"
+        )
+
+        # Get index for all associated otypes in deeescription table
+        ids, ids_idx, _ = np.intersect1d(
+            tt_nodes["Id"], np.array(otypes_all), return_indices=True
+        )
+
+        # Consider also unsuse otypes (marked by?)
+        candidate = np.asarray(
+            np.ma.masked_array(
+                data=tt_nodes["Candidate"], mask=False, fill_value="none"
+            )
+        )
+        can, can_idx, _ = np.intersect1d(
+            candidate, np.array(otypes_all), return_indices=True
+        )
+
+        # Merge index of sure and unsure otypes
+        all_idx = np.unique(np.append(ids_idx, can_idx))
+        tt_nodes.rename_column("Id", "otype")
+
+        # Add table and ogroup
+        self.add_table(tt_nodes[all_idx], "tt_otypes")
 
     def synch_src_sel(self):
         """
@@ -574,7 +732,7 @@ class Region(TableCollection):
 
         """
 
-        # Create catalog region file
+        # Create catalog region
         rg = Region()
 
         # keep only selected sources and detections, etc

@@ -303,8 +303,6 @@ def run(vasca_cfg):
     # Write out region and reduced "catalog" region
     fname_base = rg.region_path + "/region_" + vasca_cfg["general"]["name"]
     rg.write_to_fits(file_name=fname_base + ".fits")
-    rc = rg.get_region_catalog()
-    rc.write_to_fits(fname_base + "_cat.fits")
 
     # Write used config file
     yaml_out_name = (

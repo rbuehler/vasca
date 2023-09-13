@@ -12,6 +12,7 @@ from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.ma as ma
 import pandas as pd
 from astropy import units as uu
 from astropy.coordinates import SkyCoord, search_around_sky
@@ -119,6 +120,18 @@ dd_ogrp2col = {
     "none": "0.8",
 }
 #
+
+# Add object group ID
+def add_ogrp(tc, tt_name):
+    """Helper funtion to add ogrp_id column to tables"""
+    tt = tc.__dict__[tt_name]
+    tc.add_column(tt_name, "ogrp")
+    has_mask = ma.is_masked(tt["otype"].data)
+    for ii in range(len(tt)):
+        if has_mask and tt["otype"].mask[ii]:
+            tt["otype"][ii] = "none"
+            tt["otype"].mask[ii] = False
+        tt["ogrp"][ii] = otype2ogroup(tt["otype"][ii])
 
 
 def get_col_cycler(ll_ogrp):
