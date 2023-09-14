@@ -121,19 +121,20 @@ class TableCollection(object):
         logger.debug(f"Created new table from template '{template_name}'.")
         return tt_out
 
-    def remove_table(self, table_name):
+    def remove_tables(self, ll_table_names):
         """Removes table from collection
 
         Parameters
         ----------
-        table_name : str
-            Name of the table
+        ll_table_names : list(str)
+            List with name of tables
         """
-        logger.debug(f"Removing table '{table_name}'")
-        if table_name in self.__dict__.keys():
-            del self.__dict__[table_name]
-        if table_name in self._table_names:
-            self._table_names.remove(table_name)
+        logger.debug(f"Removing tables '{ll_table_names}'")
+        for table_name in ll_table_names:
+            if table_name in self.__dict__.keys():
+                del self.__dict__[table_name]
+            if table_name in self._table_names:
+                self._table_names.remove(table_name)
 
     def add_table(self, data, template_name):
         """

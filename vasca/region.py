@@ -545,7 +545,11 @@ class Region(TableCollection):
     # def set_lomb_scargle(self):
 
     def cross_match_simbad(
-        self, query_radius=2 * uu.arcsec, match_radius=1 * uu.arcsec, query_timeout=180
+        self,
+        query_radius=2 * uu.arcsec,
+        match_radius=1 * uu.arcsec,
+        query_timeout=180,
+        overwrite=False,
     ):
         """
         Match sources in region with SIMBAD database
@@ -558,6 +562,8 @@ class Region(TableCollection):
             Match VASCA sources up to this distance from SIMBAD sources. The default is 1 * uu.arcsec.
         query_timeout : astropy.quantity, optional
             Modify the maximum query time of simbad, in seconds. The default is 180.
+        overwrite: bool, optional
+            Overwrite preexisting SIMBAD information in the region. The default is False.
 
         Returns
         -------
@@ -565,6 +571,28 @@ class Region(TableCollection):
 
         """
         logger.debug("Query to SIMBAD")
+
+        # Columns to be added to tt_sources
+        mt_sim_cols = [
+            "rg_src_id",
+            "otype",
+            "main_id",
+            "otypes",
+            "z_value",
+            "distance_distance",
+            "distance_unit",
+            "distance_result",
+        ]
+
+        if "tt_simbad" in self._table_names:
+            logger.warning("Region already contained SIMBAD info")
+            if overwrite:
+                self.tt_sources.remove_columns(mt_sim_cols[1:])
+                self.remove_tables(["tt_simbad", "tt_otypes"])
+            else:
+                logger.warning(f"As overwrite is {overwrite}, query stopped")
+                return
+
         # Run query
         src_coord = SkyCoord(
             self.tt_sources["ra"].quantity,
@@ -582,7 +610,9 @@ class Region(TableCollection):
             "z_value",
         ]  # ,"propermotions"
         customSimbad.add_votable_fields(*vo_entries)
-        tt_simbad = customSimbad.query_region(src_coord, radius=query_radius)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UserWarning)
+            tt_simbad = customSimbad.query_region(src_coord, radius=query_radius)
         logger.debug("Query finished")
 
         # ---- Modify and add simbad table to region
@@ -623,16 +653,6 @@ class Region(TableCollection):
         self.add_table(tt_simbad, "tt_simbad")
 
         # ----  Add info to tt_source table
-        mt_sim_cols = [
-            "rg_src_id",
-            "otype",
-            "main_id",
-            "otypes",
-            "z_value",
-            "distance_distance",
-            "distance_unit",
-            "distance_result",
-        ]
         tt_simbad_grp = self.tt_simbad.group_by("rg_src_id")
         mult_match = 0
         for key, tt_grp in zip(tt_simbad_grp.groups.keys, tt_simbad_grp.groups):
