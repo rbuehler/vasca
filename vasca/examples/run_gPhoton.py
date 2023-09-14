@@ -10,9 +10,12 @@ from astropy import units as uu
 src_str = """label	ra	dec
 GALEX_J221409.8+005245 333.5413675869932 0.8794347888579439
 PB_5130 334.61900740472345 -0.0033813554025151345
+GALEX_J100236.8+023834 150.65361426058803 2.643111670533707
+GALEX_J161634.4+541011 244.14364033210146 54.16991388586225
 """
 
 tt_srcs = ascii.read(src_str)
+print(tt_srcs)
 outdir = "./resources/gPhoton_out/"
 
 ron = (6 * uu.arcsec).to(uu.deg).value  # Radius of signal annulus
