@@ -19,6 +19,8 @@ from vasca.region import Region
 from vasca.tables_dict import dd_vasca_tables
 from vasca.utils import dd_obs_id_add
 
+import numpy as np
+
 YamlIncludeConstructor.add_to_loader_class(
     loader_class=yaml.FullLoader
 )  # , base_dir="."
@@ -244,9 +246,18 @@ def run(vasca_cfg):
         pool.join()
         logger.info("Done analyzing individual fields.")
 
+        rg.tt_fields["sel"] = np.zeros(len(rg.tt_fields), dtype=bool)
+
         # update region fields
         for field in pool_return:
-            rg.fields[field.field_id] = field
+            # Check if field was filled or is empty for any reason
+            if hasattr(field, "tt_detections") and len(field.tt_detections) > 0:
+                rg.fields[field.field_id] = field
+                rg.tt_fields["sel"][rg.tt_fields["field_id"] == field.field_id][
+                    0
+                ] = True
+            else:
+                logger.waring("Ignoring field, as it was empty or had no detections")
     else:
         for rg_fd_id in rg.tt_fields["rg_fd_id"]:
             field = rg.get_field(rg_fd_id=rg_fd_id, load_method="FITS", add_field=True)
