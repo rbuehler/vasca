@@ -608,12 +608,15 @@ class Region(TableCollection):
             "distance_result",
             "velocity",
             "z_value",
+            "sptype",
+            "fluxdata(g)",
         ]  # ,"propermotions"
         customSimbad.add_votable_fields(*vo_entries)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UserWarning)
             tt_simbad = customSimbad.query_region(src_coord, radius=query_radius)
         logger.debug("Query finished")
+        # print(tt_simbad)
 
         # ---- Modify and add simbad table to region
 
@@ -624,6 +627,13 @@ class Region(TableCollection):
             "OTYPE_opt",
             "OTYPES",
             "RVZ_BIBCODE",
+            "SP_TYPE",
+            "SP_QUAL",
+            "SP_BIBCODE",
+            "FLUX_SYSTEM_g",
+            "FLUX_BIBCODE_g",
+            "FLUX_MULT_g",
+            "FILTER_NAME_g",
         ]  # "PM_BIBCODE"
         for vo in vo_change_type:
             tt_simbad[vo] = tt_simbad[vo].data.astype("S32")
