@@ -257,7 +257,7 @@ def run(vasca_cfg):
                     0
                 ] = True
             else:
-                logger.waring("Ignoring field, as it was empty or had no detections")
+                logger.warning("Ignoring field, as it was empty or had no detections")
     else:
         for rg_fd_id in rg.tt_fields["rg_fd_id"]:
             field = rg.get_field(rg_fd_id=rg_fd_id, load_method="FITS", add_field=True)
