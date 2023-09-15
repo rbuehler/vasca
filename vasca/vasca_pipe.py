@@ -67,7 +67,7 @@ def set_logger(vasca_cfg):
     os.makedirs(log_dir, exist_ok=True)
 
     # create log file name
-    log_file_name = "log_" + vasca_cfg["general"]["name"] + ".txt"
+    log_file_name = "log_" + vasca_cfg["general"]["name"] + ".log"
     if vasca_cfg["general"]["log_file"] != "default":
         log_file_name = vasca_cfg["general"]["log_file"]
 
@@ -83,20 +83,21 @@ def set_logger(vasca_cfg):
                 "backtrace": True,
                 "diagnose": True,
             },
-            {
-                "sink": log_dir + log_file_name,
-                "serialize": True,
-                "backtrace": True,
-                "diagnose": True,
-            },
+            # {
+            #     "sink": log_dir + log_file_name,
+            #     "serialize": True,
+            #     "backtrace": True,
+            #     "diagnose": True,
+            # },
         ],
     }
     logger.configure(**log_cfg)
+    logger.add(log_dir + log_file_name)
     logger.enable("vasca")
 
     logger.info("Runing '" + __file__ + "'")
     logger.debug("Config. file: '" + vasca_cfg["cfg_file"] + "'")
-    logger.debug("Output log. file: '" + log_cfg["handlers"][1]["sink"] + "'")
+    logger.debug("Output log. file: '" + log_dir + log_file_name + "'")
 
 
 def keep_base_field(field):
