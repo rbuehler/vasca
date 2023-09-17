@@ -247,15 +247,16 @@ def run(vasca_cfg):
         logger.info("Done analyzing individual fields.")
 
         rg.tt_fields["sel"] = np.zeros(len(rg.tt_fields), dtype=bool)
+        rg.tt_fields.add_index("field_id")
 
         # update region fields
         for field in pool_return:
             # Check if field was filled or is empty for any reason
             if hasattr(field, "tt_detections") and len(field.tt_detections) > 0:
                 rg.fields[field.field_id] = field
-                rg.tt_fields["sel"][rg.tt_fields["field_id"] == field.field_id][
-                    0
-                ] = True
+                fd_idx = rg.tt_fields.loc_indices["field_id", field.field_id]
+                rg.tt_fields["sel"][fd_idx] = True
+                logger.debug(f"Added field {field.field_id} to region")
             else:
                 logger.warning("Ignoring field, as it was empty or had no detections")
     else:
