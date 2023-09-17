@@ -8,13 +8,21 @@ from astropy import units as uu
 from vasca.region import Region
 from astropy.table import Table
 
-region_name = "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
+region_name = "CAINGSGII_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
 srcs_ids = [
     1891,
     3403,
     16149,
     45461,
 ]
+srcs_ids = [
+    4546,
+    12718,
+    69253,
+    228174,
+    229551,
+]
+
 outdir = "./resources/gPhoton_out/"
 region_fname = (
     "./vasca_pipeline/" + region_name + "/region_" + region_name + "_cat.fits"
