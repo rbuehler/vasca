@@ -225,6 +225,10 @@ def run(vasca_cfg):
     # Setup output directory
     os.makedirs(rg.region_path, exist_ok=True)
 
+    # Set field selection to False and only back to Trua below if it contains detections
+    rg.tt_fields["sel"] = np.zeros(len(rg.tt_fields), dtype=bool)
+    rg.tt_fields.add_index("field_id")
+
     # Ifrunnign for the first time, or with new field settings, run fields
     if vasca_cfg["general"]["run_fields"]:
         # Prepare fields to run in parallel
@@ -246,9 +250,6 @@ def run(vasca_cfg):
         pool.join()
         logger.info("Done analyzing individual fields.")
 
-        rg.tt_fields["sel"] = np.zeros(len(rg.tt_fields), dtype=bool)
-        rg.tt_fields.add_index("field_id")
-
         # update region fields
         for field in pool_return:
             # Check if field was filled or is empty for any reason
@@ -256,15 +257,25 @@ def run(vasca_cfg):
                 rg.fields[field.field_id] = field
                 fd_idx = rg.tt_fields.loc_indices["field_id", field.field_id]
                 rg.tt_fields["sel"][fd_idx] = True
-                logger.debug(f"Added field {field.field_id} to region")
+                logger.info(f"Added field {field.field_id} from pool to region")
             else:
-                logger.warning("Ignoring field, as it was empty or had no detections")
+                logger.warning(
+                    "Ignoring field, as it was empty or had no detections from the pool"
+                )
     else:
         for rg_fd_id in rg.tt_fields["rg_fd_id"]:
-            field = rg.get_field(rg_fd_id=rg_fd_id, load_method="FITS", add_field=True)
-            logger.info(f"Added field: {field.field_id}.")
-            # Keep only data needed for further analysis
-            keep_base_field(field)
+            field = rg.get_field(rg_fd_id=rg_fd_id, load_method="FITS", add_field=False)
+            if hasattr(field, "tt_detections") and len(field.tt_detections) > 0:
+                # Keep only data needed for further analysis
+                keep_base_field(field)
+                rg.fields[field.field_id] = field
+                fd_idx = rg.tt_fields.loc_indices["field_id", field.field_id]
+                rg.tt_fields["sel"][fd_idx] = True
+                logger.info(f"Added field: {field.field_id} from file")
+            else:
+                logger.warning(
+                    "Ignoring field, as it was empty or had no detections from the file"
+                )
 
     # Add field tables to region
     # For visits merge obs_filter_id and remove doubles

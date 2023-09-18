@@ -38,7 +38,7 @@ cluster_coadd_dets:
         min_bin_freq  : 1
         cluster_all   : true
         n_jobs        : 20
-        max_iter      : 100
+        max_iter      : 300
         table_name    : "tt_coadd_detections"
 
 assoc_src_coadd:
