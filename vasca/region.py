@@ -356,8 +356,9 @@ class Region(TableCollection):
         setattr(src, "tt_filters", Table(self.tt_filters))
 
         # Add light curve
-        src._table_names.append("tt_source_lc")
-        setattr(src, "tt_source_lc", src.get_light_curve(rg_src_ids=rg_src_id))
+        src.add_table(
+            src.get_light_curve(rg_src_ids=rg_src_id)[rg_src_id], "tt_source_lc"
+        )
 
         # Add coadd source
         if hasattr(self, "tt_coadd_sources"):
@@ -384,6 +385,14 @@ class Region(TableCollection):
             idx, d2d, d3d = coord_src.match_to_catalog_sky(coord_fd_srcs)
             fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
         src.tt_fields["fd_src_id"] = fd_src_ids
+
+        # Add association info, if available
+        if hasattr(self, "tt_simbad"):
+            self.tt_simbad.add_index("rg_src_id")
+            src.add_table(
+                Table(self.tt_simbad.loc["rg_src_id", [rg_src_id]]),
+                "tt_simbad",
+            )
 
         return src
 
