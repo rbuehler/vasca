@@ -31,7 +31,7 @@ region_fname = (
 ron = (6 * uu.arcsec).to(uu.deg).value  # Radius of signal annulus
 roff1 = (10 * uu.arcsec).to(uu.deg).value  # Inner radius of background ring
 roff2 = (15 * uu.arcsec).to(uu.deg).value  # Outer radius of background ring
-bands = ["FUV"]  # "NUV",
+bands = ["NUV"]  # "NUV",
 
 
 rg = Region()
