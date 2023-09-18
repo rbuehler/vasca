@@ -26,6 +26,13 @@ sas_cloud:
         type: directory
         project: vascarcat
         path: /GALEX_fields
+    2:
+        name: gal_gphoton
+        description: 'Collection of GALEX gphoton runs.'
+        type: directory
+        project: vascarcat
+        path: /GALEX_gPhoton
+    
 lustre:
     0:
         name: gal_ds_visits_list
@@ -39,6 +46,12 @@ lustre:
         type: directory
         project: vascarcat
         path: /GALEX_DS_GCK_fields
+    2:
+        name: gal_gphoton
+        description: 'Collection of GALEX gphoton runs.'
+        type: directory
+        project: vascarcat
+        path: /GALEX_gPhoton
 vasca:
     0:
         name: test_resources

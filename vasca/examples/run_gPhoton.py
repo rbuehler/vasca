@@ -7,14 +7,9 @@ import os
 from astropy import units as uu
 from vasca.region import Region
 from astropy.table import Table
+from vasca.resource_manager import ResourceManager
 
 region_name = "CAINGSGII_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
-srcs_ids = [
-    1891,
-    3403,
-    16149,
-    45461,
-]
 srcs_ids = [
     4546,
     12718,
@@ -23,7 +18,8 @@ srcs_ids = [
     229551,
 ]
 
-outdir = "./resources/gPhoton_out/"
+rm = ResourceManager()
+outdir = rm.get_path("gal_gphoton", "sas_cloud")
 region_fname = (
     "./vasca_pipeline/" + region_name + "/region_" + region_name + "_cat.fits"
 )
@@ -59,11 +55,12 @@ for band in bands:
             + "_dec"
             + str(round(tt_src["dec"][0], 5))
         )
-        outfile_fin = outdir + fname_base + "_" + band.lower() + "_fin.npy"
-        outfile_app = outdir + fname_base + "_" + band.lower() + "_app.npy"
+        outfile_fin = outdir + "/" + fname_base + "_" + band.lower() + "_fin.npy"
+        outfile_app = outdir + "/" + fname_base + "_" + band.lower() + "_app.npy"
 
         # Run or load gFind
         if os.path.isfile(outfile_fin):
+            print("Loading file", outfile_fin)
             dd_gfind = np.load(outfile_fin, allow_pickle="TRUE").item()
             t_bins = list(zip(dd_gfind[band]["t0"], dd_gfind[band]["t1"]))
             print("Number of time bins:", len(t_bins))
@@ -77,7 +74,7 @@ for band in bands:
 
         # Run or load gApperture
         if os.path.isfile(outfile_app):
-            print("gAperture file already found, not running")
+            print("gAperture file already found, not running", outfile_app)
         else:
             print("Running lightcurve with gAperture..")
             dd_gaperture = gPhoton.gAperture(
