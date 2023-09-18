@@ -618,7 +618,7 @@ class Region(TableCollection):
             "velocity",
             "z_value",
             "sptype",
-            "fluxdata(g)",
+            # "fluxdata(g)",
         ]  # ,"propermotions"
         customSimbad.add_votable_fields(*vo_entries)
         with warnings.catch_warnings():
@@ -639,10 +639,10 @@ class Region(TableCollection):
             "SP_TYPE",
             "SP_QUAL",
             "SP_BIBCODE",
-            "FLUX_SYSTEM_g",
-            "FLUX_BIBCODE_g",
-            "FLUX_MULT_g",
-            "FILTER_NAME_g",
+            # "FLUX_SYSTEM_g",
+            # "FLUX_BIBCODE_g",
+            # "FLUX_MULT_g",
+            # "FILTER_NAME_g",
         ]  # "PM_BIBCODE"
         for vo in vo_change_type:
             tt_simbad[vo] = tt_simbad[vo].data.astype("S32")
@@ -663,8 +663,8 @@ class Region(TableCollection):
             frame="icrs",
             unit=(uu.hourangle, uu.deg),
         )
-        tt_simbad["ra"] = skycoords.ra.degree
-        tt_simbad["dec"] = skycoords.dec.degree
+        tt_simbad["ra"] = skycoords.ra.degree * uu.deg
+        tt_simbad["dec"] = skycoords.dec.degree * uu.deg
 
         tt_simbad.rename_column("otype_opt", "otype")
 
