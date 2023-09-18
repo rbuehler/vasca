@@ -333,27 +333,22 @@ class Region(TableCollection):
         # Adding source and detection table
         for tt_name in ["tt_sources", "tt_detections"]:
             self.__dict__[tt_name].add_index("rg_src_id")
-            src._table_names.append(tt_name)
-            setattr(
-                src,
-                tt_name,
-                Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]),
+            src.add_table(
+                Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]), tt_name
             )
 
         # Add visits
         self.tt_visits.add_index("vis_id")
         vis_ids = (unique(src.tt_detections, keys="vis_id"))["vis_id"]
-        src._table_names.append("tt_visits")
-        setattr(src, "tt_visits", Table(self.tt_visits.loc["vis_id", vis_ids]))
+        src.add_table(Table(self.tt_visits.loc["vis_id", vis_ids]), "tt_visits")
 
         # Add fields
         self.tt_fields.add_index("rg_fd_id")
         rg_fd_ids = (unique(src.tt_detections, keys="rg_fd_id"))["rg_fd_id"]
-        src._table_names.append("tt_fields")
-        setattr(src, "tt_fields", Table(self.tt_fields.loc["rg_fd_id", rg_fd_ids]))
+        src.add_table(Table(self.tt_fields.loc["rg_fd_id", rg_fd_ids]), "tt_fields")
 
         # Add filter
-        setattr(src, "tt_filters", Table(self.tt_filters))
+        src.add_table(Table(self.tt_filters), "tt_filters")
 
         # Add light curve
         src.add_table(
@@ -373,18 +368,18 @@ class Region(TableCollection):
                 )
 
         # Add fd_src_ids to each field
-        coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
-        fd_src_ids = list()
-        for field_id in src.tt_fields["field_id"]:
-            fd = self.get_field(
-                field_id=field_id, load_method="FITS", add_field=False
-            )  # self.fields[field_id]
-            coord_fd_srcs = SkyCoord(
-                fd.tt_sources["ra"], fd.tt_sources["dec"], frame="icrs"
-            )
-            idx, d2d, d3d = coord_src.match_to_catalog_sky(coord_fd_srcs)
-            fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
-        src.tt_fields["fd_src_id"] = fd_src_ids
+        # coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
+        # fd_src_ids = list()
+        # for field_id in src.tt_fields["field_id"]:
+        #     fd = self.get_field(
+        #         field_id=field_id, load_method="FITS", add_field=False
+        #     )  # self.fields[field_id]
+        #     coord_fd_srcs = SkyCoord(
+        #         fd.tt_sources["ra"], fd.tt_sources["dec"], frame="icrs"
+        #     )
+        #     idx, d2d, d3d = coord_src.match_to_catalog_sky(coord_fd_srcs)
+        #     fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
+        # src.tt_fields["fd_src_id"] = fd_src_ids
 
         # Add association info, if available
         if hasattr(self, "tt_simbad"):
