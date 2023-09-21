@@ -691,6 +691,7 @@ class TableCollection(object):
 
         # Fill in data into source tables
         src_ids, clu_cts = np.unique(ms.labels_, return_counts=True)
+        logger.debug(f"Done with clustering, found {len(src_ids)}")
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
 
