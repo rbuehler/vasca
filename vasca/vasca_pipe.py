@@ -94,12 +94,12 @@ def set_logger(vasca_cfg):
         ],
     }
     logger.configure(**log_cfg)
-    # logger.add(log_dir + log_file_name)
+    logger.add(log_dir + log_file_name)
     logger.enable("vasca")
 
     logger.info("Runing '" + __file__ + "'")
     logger.debug("Config. file: '" + vasca_cfg["cfg_file"] + "'")
-    # logger.debug("Output log. file: '" + log_dir + log_file_name + "'")
+    logger.debug("Output log. file: '" + log_dir + log_file_name + "'")
 
 
 def keep_base_field(field):
