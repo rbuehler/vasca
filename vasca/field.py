@@ -1318,98 +1318,79 @@ class GALEXField(BaseField):
 
         # set data as class attributes
 
-        # Convert into dictionary with correct VASCA column names
-        # *** Detections
-        dd_detections_raw = {}
-        # Keep only entries with detections
-        sel_s2n = tt_detections_raw[f"{obs_filter_l}_s2n"] > 0
-
-        if len(tt_detections_raw[sel_s2n]) == 0:
-            logger.warning(
-                f"No detection with s2n>0 in MAST for field {obs_id} filter {obs_filter}"
-            )
-
-        for col in mast_col_names:
-            dd_detections_raw[col_names[col]] = tt_detections_raw[col][sel_s2n].data
-
-        # Add size_world in arcsec
-        dd_detections_raw["size_world"] = (
-            3600
-            * (
-                tt_detections_raw[f"{obs_filter}_A_WORLD"][sel_s2n].data
-                + tt_detections_raw[f"{obs_filter}_B_WORLD"][sel_s2n].data
-            )
-            / 2
-        )
-
-        # Add filter_id
-        dd_detections_raw["obs_filter_id"] = np.array(
-            dd_filter2id[obs_filter.upper()] + np.zeros(np.sum(sel_s2n))
-        )
-
         # Correct flux flux outside of apperture, as listed here:
         # http://www.galex.caltech.edu/researcher/techdoc-ch5.html
         acorr60 = 1.116863247 if obs_filter == "NUV" else 1.09647819
         # acorr38 = 1.21338885 if obs_filter == "NUV" else 1.202264
+        def get_det_dict(tt_det):
+            """Retieve dictionaly with detection/coadd_detections data,
+            including some variables derived from other MAST variables"""
 
-        # Add flux apperture ratio and covert counts to Jansky for r=3.8 arcsec apperture flux
-        # Check to avoid divisions by zero
-        idx_fauto = np.where(dd_detections_raw["flux_auto_flt"] > 0)
-        cts2Jy = np.zeros(len(dd_detections_raw["flux_auto_flt"]))
-        cts2Jy[idx_fauto] = (
-            dd_detections_raw["flux_auto"][idx_fauto]
-            / dd_detections_raw["flux_auto_flt"][idx_fauto]
-        )
+            # Convert into dictionary with correct VASCA column names
+            # *** Detections
+            dd_det = {}
+            # Keep only entries with detections
+            sel_s2n = tt_det[f"{obs_filter_l}_s2n"] > 0
 
-        # Use apperture flux instead of AUTO flux, as it is more reliable for variability studies
-        dd_detections_raw["flux"] = dd_detections_raw["flux_r60"] * cts2Jy * acorr60
-        dd_detections_raw["flux_err"] = (
-            dd_detections_raw["flux_r60_err"] * cts2Jy * acorr60
-        )
+            if len(tt_det[sel_s2n]) == 0:
+                logger.warning(
+                    f"No detection with s2n>0 in MAST for field {obs_id} filter {obs_filter}"
+                )
 
-        # Ratio between the flux-counts, correcting for difference in apperture
-        idx_fr60 = np.where(dd_detections_raw["flux_r60"] > 0)
-        dd_detections_raw["flux_app_ratio"] = (
-            np.zeros(
-                len(dd_detections_raw["flux_r60"]),
-                dtype=dd_vasca_columns["flux_app_ratio"]["dtype"],
+            for col in mast_col_names:
+                if col not in tt_det.colnames:
+                    continue
+                dd_det[col_names[col]] = tt_det[col][sel_s2n].data
+
+            # Add size_world in arcsec
+            dd_det["size_world"] = (
+                3600
+                * (
+                    tt_det[f"{obs_filter}_A_WORLD"][sel_s2n].data
+                    + tt_det[f"{obs_filter}_B_WORLD"][sel_s2n].data
+                )
+                / 2
             )
-            + dd_vasca_columns["flux_app_ratio"]["default"]
-        )
-        dd_detections_raw["flux_app_ratio"][idx_fr60] = (
-            dd_detections_raw["flux_r38"][idx_fr60]
-            / dd_detections_raw["flux_r60"][idx_fr60]
-        )
 
-        # Store data dictionary in table
+            # Add flux apperture ratio and covert counts to Jansky for r=3.8 arcsec apperture flux
+            # Check to avoid divisions by zero
+            idx_fauto = np.where(dd_det["flux_auto_flt"] > 0)
+            cts2Jy = np.zeros(len(dd_det["flux_auto_flt"]))
+            cts2Jy[idx_fauto] = (
+                dd_det["flux_auto"][idx_fauto] / dd_det["flux_auto_flt"][idx_fauto]
+            )
+
+            # Use apperture flux instead of AUTO flux, as it is more reliable for variability studies
+            dd_det["flux"] = dd_det["flux_r60"] * cts2Jy * acorr60
+            dd_det["flux_err"] = dd_det["flux_r60_err"] * cts2Jy * acorr60
+
+            # Add filter_id
+            dd_det["obs_filter_id"] = np.array(
+                dd_filter2id[obs_filter.upper()] + np.zeros(np.sum(sel_s2n))
+            )
+
+            # Ratio between the flux-counts, correcting for difference in apperture
+            idx_fr60 = np.where(dd_det["flux_r60"] > 0)
+            dd_det["flux_app_ratio"] = (
+                np.zeros(
+                    len(dd_det["flux_r60"]),
+                    dtype=dd_vasca_columns["flux_app_ratio"]["dtype"],
+                )
+                + dd_vasca_columns["flux_app_ratio"]["default"]
+            )
+            dd_det["flux_app_ratio"][idx_fr60] = (
+                dd_det["flux_r38"][idx_fr60] / dd_det["flux_r60"][idx_fr60]
+            )
+            return dd_det
+
+        # *** detections
+        dd_detections_raw = get_det_dict(tt_detections_raw)
         self.add_table(dd_detections_raw, "galex_field:tt_detections")
         logger.debug("Constructed 'tt_detections'.")
 
         # *** Coadds
-        dd_ref_sources_raw = {}
-        for col in mast_col_names[1:]:
-            dd_ref_sources_raw[col_names[col]] = tt_coadd_detections_raw[col].data
-
-        # Add filter_id
-        dd_ref_sources_raw["obs_filter_id"] = np.array(
-            dd_filter2id[obs_filter.upper()] + np.zeros(len(tt_coadd_detections_raw))
-        )
-
-        # Add flux
-        idx_fauto = np.where(dd_ref_sources_raw["flux_auto_flt"] > 0)
-        cts2Jy = np.zeros(len(dd_ref_sources_raw["flux_auto_flt"]))
-        cts2Jy[idx_fauto] = (
-            dd_ref_sources_raw["flux_auto"][idx_fauto]
-            / dd_ref_sources_raw["flux_auto_flt"][idx_fauto]
-        )
-
-        # Use apperture flux instead of AUTO flux, as it is more reliable for variability studies
-        dd_ref_sources_raw["flux"] = dd_ref_sources_raw["flux_r60"] * cts2Jy * acorr60
-        dd_ref_sources_raw["flux_err"] = (
-            dd_ref_sources_raw["flux_r60_err"] * cts2Jy * acorr60
-        )
-
-        self.add_table(dd_ref_sources_raw, "galex_field:tt_coadd_detections")
+        dd_coadd_detections_raw = get_det_dict(tt_coadd_detections_raw)
+        self.add_table(dd_coadd_detections_raw, "galex_field:tt_coadd_detections")
         logger.debug("Constructed 'tt_coadd_detections'.")
 
         # *** Intensity maps
