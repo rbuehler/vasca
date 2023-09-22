@@ -9,6 +9,8 @@ from datetime import timedelta
 from functools import wraps
 from itertools import cycle, islice, zip_longest
 from time import time
+from io import BytesIO
+from http.client import HTTPConnection
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -140,6 +142,41 @@ def get_col_cycler(ll_ogrp):
     for ogrp in ll_ogrp:
         ll_col.append(dd_ogrp2col[ogrp])
     return cycler(color=ll_col)
+
+
+def query_vizier_sed(ra, dec, radius=1.0):
+    """Query VizieR Photometry tool around a given position.
+
+    The VizieR photometry tool is here
+    .. url:: http://vizier.u-strasbg.fr/vizier/sed/doc/
+
+    Parameters
+    ----------
+    ra: float
+        Position RA in degrees in ICRS.
+    dec: float
+        Position RA in degrees in ICRS.
+    radius: float
+        Position matching  radius in arseconds.
+
+    Returns
+    -------
+    table: astropy.Table
+        VO table returned.
+
+    """
+    target = "{0:f},{1:f}".format(ra, dec)
+
+    host = "vizier.u-strasbg.fr"
+    port = 80
+    url = "/viz-bin/sed?-c={target:s}&-c.rs={radius:f}".format(
+        target=target, radius=radius
+    )
+    connection = HTTPConnection(host, port)
+    connection.request("GET", url)
+    response = connection.getresponse()
+
+    return Table.read(BytesIO(response.read()), format="votable")
 
 
 def sel_sources(tt_srcs):
