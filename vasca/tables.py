@@ -684,6 +684,7 @@ class TableCollection(object):
         else:
             dd_ms["bandwidth"] = (ms_kw["bandwidth"] * uu.arcsec).to(uu.deg).value
 
+        logger.debug(f"Clustering {sel.sum()} detections/sources")
         logger.debug(f"MeanShift with parameters (bandwith in degrees): '{dd_ms}' ")
         ms = MeanShift(**dd_ms)
 
@@ -691,7 +692,7 @@ class TableCollection(object):
 
         # Fill in data into source tables
         src_ids, clu_cts = np.unique(ms.labels_, return_counts=True)
-        logger.debug(f"Done with clustering, found {len(src_ids)}")
+        logger.debug(f"Done with clustering, found {len(src_ids)} clusters")
         cluster_centers = ms.cluster_centers_
         nr_srcs = len(cluster_centers)
 

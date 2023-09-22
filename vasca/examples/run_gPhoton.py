@@ -9,13 +9,20 @@ from vasca.region import Region
 from astropy.table import Table
 from vasca.resource_manager import ResourceManager
 
-region_name = "CAINGSGII_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
+region_name = "ALL_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
 srcs_ids = [
-    4546,
-    12718,
-    69253,
-    228174,
-    229551,
+    55034,
+    61491,
+    64360,
+    73354,
+    76243,
+    92867,
+    104078,
+    106745,
+    226975,
+    267514,
+    588567,
+    599887,
 ]
 
 rm = ResourceManager()
@@ -27,8 +34,7 @@ region_fname = (
 ron = (6 * uu.arcsec).to(uu.deg).value  # Radius of signal annulus
 roff1 = (10 * uu.arcsec).to(uu.deg).value  # Inner radius of background ring
 roff2 = (15 * uu.arcsec).to(uu.deg).value  # Outer radius of background ring
-bands = ["NUV"]  # "NUV",
-
+bands = ["NUV", "FUV"]  # "NUV",
 
 rg = Region()
 rg.load_from_fits(region_fname)
