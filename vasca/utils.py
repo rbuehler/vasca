@@ -47,7 +47,7 @@ dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 # -----------------------------------------
 # Define object groups and related funtions
 dd_ogrp2otypes = {
-    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu", "EmO", "UV"],
+    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu", "EmO", "UV", "Opt"],
     "AGN": [
         "AGN",
         "SyG",
@@ -81,15 +81,43 @@ dd_ogrp2otypes = {
         "sg*",
         "RB?",
         "RR?",
+        "Ce*",
+        "S*",
+        "WR*",
+        "WV*",
+        "cC*",
+        "s*b",
     ],
     "WD": ["WD*", "WD?"],
     "PM*": ["PM*"],
-    "CVN": ["CV*", "No*"],
-    "B*": ["EB*", "SB*", "**"],
+    "CVN": ["CV*", "No*", "CV?"],
+    "B*": [
+        "EB*",
+        "SB*",
+        "**",
+        "EB?",
+    ],
     "Grv": ["gLS", "LeI", "LI?", "LS?"],
     "SN": ["SN*"],
-    "S*": ["BS*", "C*", "Em*", "HS*", "Ir*", "Pe*", "Ro*", "HS?", "Er*"],
+    "S*": [
+        "RS*",
+        "BS*",
+        "C*",
+        "Em*",
+        "HS*",
+        "Ir*",
+        "Pe*",
+        "Ro*",
+        "HS?",
+        "Er*",
+        "BY*",
+        "El*",
+        "TT*",
+        "Y*?",
+        "Y*O",
+    ],
     "Env": ["HII"],
+    "Misc": ["ULX", "UX?"],
 }
 dd_otype2ogroup = dict()
 for key, val in dd_ogrp2otypes.items():
@@ -120,6 +148,7 @@ dd_ogrp2col = {
     "S*": "maroon",
     "Env": "lightgreen",
     "none": "0.8",
+    "Misc": "y",
 }
 #
 
