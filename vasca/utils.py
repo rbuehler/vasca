@@ -36,7 +36,7 @@ dd_filter2id = {"NUV": 1, "FUV": 2}
 dd_id2filter = dict((v, k) for (k, v) in dd_filter2id.items())
 # Inverted key&value dictionary
 
-dd_filter2lambda = {"NUV": 2271 * uu.AA, "FUV": 1528 * uu.AA}
+dd_filter2wavelength = {"NUV": 2271 * uu.AA, "FUV": 1528 * uu.AA}
 
 
 #: Global variable linking observatory + obsfilter to a field ID add-on
