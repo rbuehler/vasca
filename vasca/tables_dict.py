@@ -769,7 +769,7 @@ region = {
             "INFO": "Filters, their IDs and index, the last is specific for this region."
         },
     },
-    "tt_vizier_sed": {
+    "tt_sed": {
         "names": [
             "flux",
             "flux_err",
