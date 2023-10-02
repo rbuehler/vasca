@@ -6,6 +6,7 @@ import os
 import healpy as hpy
 import numpy as np
 from astropy import units as uu
+from astropy import constants as cc
 from astropy.coordinates import SkyCoord
 from astropy.table import Table, unique, join
 from loguru import logger
@@ -15,7 +16,7 @@ from vasca.field import BaseField, GALEXDSField, GALEXField
 from vasca.source import Source
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import dd_filter2id
+from vasca.utils import dd_filter2id, query_vizier_sed
 
 import warnings
 from astropy.utils.exceptions import AstropyWarning
@@ -390,6 +391,31 @@ class Region(TableCollection):
             )
 
         return src
+
+    def add_spectral_energy_distribution(tc_src, vizier_radius=1 * uu.arcsec):
+
+        # Search for
+        ra, dec = tc_src.tt_sources["ra"][0], tc_src.tt_sources["dec"][0]
+        if "tt_simbad" in tc_src._table_names:
+            ra, dec = tc_src.tt_simbad["ra"][0], tc_src.tt_simbad["dec"][0]
+        tt_vizier = query_vizier_sed(ra, dec, radius=vizier_radius.to(uu.arcsec).value)
+
+        tt_sed = Table()
+        tt_sed["wavelength"] = (cc.c / tt_vizier["sed_freq"]).to(uu.AA)
+        tt_sed["flux"] = tt_vizier["sed_flux"].quantity.to(uu.Unit("1e-6 Jy"))
+        tt_sed["flux_err"] = tt_vizier["sed_eflux"].quantity.to(uu.Unit("1e-6 Jy"))
+        tt_sed["obs_filter"] = tt_vizier["sed_eflux"]
+        tt_sed["origin"] = tt_vizier["sed_eflux"]
+
+        for ii in range(len(flts)):
+            if tc_src.tt_sources["flux"].quantity[:, ii][0] > 0:
+                tt_vasca.add_row(
+                    [
+                        tc_src.tt_sources["flux"].quantity[:, ii][0],
+                        tc_src.tt_sources["flux_err"].quantity[:, ii][0],
+                        dd_filter2wavelength[flts[ii]],
+                    ]
+                )
 
     def set_src_id_info(self):
         """
