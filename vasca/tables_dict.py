@@ -104,9 +104,9 @@ dd_vasca_columns = {
         "default": 0,
         "description": "Filter ID number",
     },
-    # %%% obs_filter_id
-    "obs_filter_lambda": {
-        "name": "obs_filter_lambda",
+    # %%% wavelength
+    "wavelength": {
+        "name": "wavelength",
         "dtype": "float32",
         "unit": "AA",
         "default": -1.0,
@@ -560,6 +560,14 @@ dd_vasca_columns = {
         "default": -1,
         "description": "VASCA internal source ID number for associated sources",
     },
+    # %%% origin
+    "origin": {
+        "name": "origin",
+        "dtype": "S22",
+        "unit": "",
+        "default": "none",
+        "description": "Origin of the data",
+    },
 }
 
 
@@ -760,6 +768,17 @@ region = {
         "meta": {
             "INFO": "Filters, their IDs and index, the last is specific for this region."
         },
+    },
+    "tt_vizier_sed": {
+        "names": [
+            "flux",
+            "flux_err",
+            "observatory",
+            "obs_filter",
+            "origin",
+            "wavelength",
+        ],
+        "meta": {"INFO": "Spectral Energy Distribution from VizieR database"},
     },
 }
 

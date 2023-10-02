@@ -2,24 +2,22 @@
 # -*- coding: utf-8 -*-
 
 import os
+import warnings
 
 import healpy as hpy
 import numpy as np
 from astropy import units as uu
-from astropy import constants as cc
 from astropy.coordinates import SkyCoord
 from astropy.table import Table, unique, join
-from loguru import logger
+from astropy.utils.exceptions import AstropyWarning
 from astroquery.simbad import Simbad
+from loguru import logger
 
 from vasca.field import BaseField, GALEXDSField, GALEXField
 from vasca.source import Source
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import dd_filter2id, query_vizier_sed
-
-import warnings
-from astropy.utils.exceptions import AstropyWarning
+from vasca.utils import dd_filter2id
 
 
 class Region(TableCollection):
@@ -252,7 +250,7 @@ class Region(TableCollection):
                 )
 
             rdisc = field["fov_diam"] / 2.0
-            # TODO: Here a more general querry_polygon will have to be done for ULTRASAT
+            # TODO: Here a more general query_polygon will have to be done for ULTRASAT
             ipix_disc = hpy.query_disc(
                 nside=nside, vec=pos_vec, radius=np.radians(rdisc)
             )
@@ -310,9 +308,11 @@ class Region(TableCollection):
                     field_id=ff["field_id"], load_method="FITS", add_field=True
                 )
 
-    def get_src_from_id(self, rg_src_id):
+    def get_src_from_id(
+        self, rg_src_id, load_from_file=True, write_to_file=True, add_sed=True
+    ):
         """
-        Get Source object containng all region table entries
+        Get Source object containing all region table entries
         relevant for the passed rg_src_id
 
         Parameters
@@ -331,91 +331,82 @@ class Region(TableCollection):
 
         src = Source()
 
-        # Adding source and detection table
-        for tt_name in ["tt_sources", "tt_detections"]:
-            self.__dict__[tt_name].add_index("rg_src_id")
-            src.add_table(
-                Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]), tt_name
-            )
-
-        # Add visits
-        self.tt_visits.add_index("vis_id")
-        vis_ids = (unique(src.tt_detections, keys="vis_id"))["vis_id"]
-        src.add_table(Table(self.tt_visits.loc["vis_id", vis_ids]), "tt_visits")
-
-        # Add fields
-        self.tt_fields.add_index("rg_fd_id")
-        rg_fd_ids = (unique(src.tt_detections, keys="rg_fd_id"))["rg_fd_id"]
-        src.add_table(Table(self.tt_fields.loc["rg_fd_id", rg_fd_ids]), "tt_fields")
-
-        # Add filter
-        src.add_table(Table(self.tt_filters), "tt_filters")
-
-        # Add light curve
-        src.add_table(
-            src.get_light_curve(rg_src_ids=rg_src_id)[rg_src_id], "tt_source_lc"
-        )
-
-        # Add coadd source
-        if hasattr(self, "tt_coadd_sources"):
-            coadd_src_id = src.tt_sources["coadd_src_id"][0]
-            if coadd_src_id > -1:
-                self.tt_coadd_sources.add_index("coadd_src_id")
-                src._table_names.append("tt_coadd_sources")
-                setattr(
-                    src,
-                    "tt_coadd_sources",
-                    Table(self.tt_coadd_sources.loc["coadd_src_id", [coadd_src_id]]),
+        # Check if source shall be loaded for file and file exists
+        fname_src = self.region_path + "/sources/src_" + str(rg_src_id) + ".fits"
+        if os.path.exists(fname_src) and load_from_file:
+            logger.debug(f"Loading source from file {fname_src}")
+            src.load_from_fits(fname_src)
+            return src
+        # Otherwise derive from region
+        else:
+            # Adding source and detection table
+            for tt_name in ["tt_sources", "tt_detections"]:
+                self.__dict__[tt_name].add_index("rg_src_id")
+                src.add_table(
+                    Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]), tt_name
                 )
 
-        # Add fd_src_ids to each field
-        # coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
-        # fd_src_ids = list()
-        # for field_id in src.tt_fields["field_id"]:
-        #     fd = self.get_field(
-        #         field_id=field_id, load_method="FITS", add_field=False
-        #     )  # self.fields[field_id]
-        #     coord_fd_srcs = SkyCoord(
-        #         fd.tt_sources["ra"], fd.tt_sources["dec"], frame="icrs"
-        #     )
-        #     idx, d2d, d3d = coord_src.match_to_catalog_sky(coord_fd_srcs)
-        #     fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
-        # src.tt_fields["fd_src_id"] = fd_src_ids
+            # Add visits
+            self.tt_visits.add_index("vis_id")
+            vis_ids = (unique(src.tt_detections, keys="vis_id"))["vis_id"]
+            src.add_table(Table(self.tt_visits.loc["vis_id", vis_ids]), "tt_visits")
 
-        # Add association info, if available
-        if hasattr(self, "tt_simbad"):
-            self.tt_simbad.add_index("rg_src_id")
+            # Add fields
+            self.tt_fields.add_index("rg_fd_id")
+            rg_fd_ids = (unique(src.tt_detections, keys="rg_fd_id"))["rg_fd_id"]
+            src.add_table(Table(self.tt_fields.loc["rg_fd_id", rg_fd_ids]), "tt_fields")
+
+            # Add filter
+            src.add_table(Table(self.tt_filters), "tt_filters")
+
+            # Add light curve
             src.add_table(
-                Table(self.tt_simbad.loc["rg_src_id", [rg_src_id]]),
-                "tt_simbad",
+                src.get_light_curve(rg_src_ids=rg_src_id)[rg_src_id], "tt_source_lc"
             )
 
-        return src
+            # Add coadd source
+            if hasattr(self, "tt_coadd_sources"):
+                coadd_src_id = src.tt_sources["coadd_src_id"][0]
+                if coadd_src_id > -1:
+                    self.tt_coadd_sources.add_index("coadd_src_id")
+                    src._table_names.append("tt_coadd_sources")
+                    setattr(
+                        src,
+                        "tt_coadd_sources",
+                        Table(
+                            self.tt_coadd_sources.loc["coadd_src_id", [coadd_src_id]]
+                        ),
+                    )
 
-    def add_spectral_energy_distribution(tc_src, vizier_radius=1 * uu.arcsec):
+            # Add fd_src_ids to each field
+            # coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
+            # fd_src_ids = list()
+            # for field_id in src.tt_fields["field_id"]:
+            #     fd = self.get_field(
+            #         field_id=field_id, load_method="FITS", add_field=False
+            #     )  # self.fields[field_id]
+            #     coord_fd_srcs = SkyCoord(
+            #         fd.tt_sources["ra"], fd.tt_sources["dec"], frame="icrs"
+            #     )
+            #     idx, d2d, d3d = coord_src.match_to_catalog_sky(coord_fd_srcs)
+            #     fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
+            # src.tt_fields["fd_src_id"] = fd_src_ids
 
-        # Search for
-        ra, dec = tc_src.tt_sources["ra"][0], tc_src.tt_sources["dec"][0]
-        if "tt_simbad" in tc_src._table_names:
-            ra, dec = tc_src.tt_simbad["ra"][0], tc_src.tt_simbad["dec"][0]
-        tt_vizier = query_vizier_sed(ra, dec, radius=vizier_radius.to(uu.arcsec).value)
-
-        tt_sed = Table()
-        tt_sed["wavelength"] = (cc.c / tt_vizier["sed_freq"]).to(uu.AA)
-        tt_sed["flux"] = tt_vizier["sed_flux"].quantity.to(uu.Unit("1e-6 Jy"))
-        tt_sed["flux_err"] = tt_vizier["sed_eflux"].quantity.to(uu.Unit("1e-6 Jy"))
-        tt_sed["obs_filter"] = tt_vizier["sed_eflux"]
-        tt_sed["origin"] = tt_vizier["sed_eflux"]
-
-        for ii in range(len(flts)):
-            if tc_src.tt_sources["flux"].quantity[:, ii][0] > 0:
-                tt_vasca.add_row(
-                    [
-                        tc_src.tt_sources["flux"].quantity[:, ii][0],
-                        tc_src.tt_sources["flux_err"].quantity[:, ii][0],
-                        dd_filter2wavelength[flts[ii]],
-                    ]
+            # Add association info, if available
+            if hasattr(self, "tt_simbad"):
+                self.tt_simbad.add_index("rg_src_id")
+                src.add_table(
+                    Table(self.tt_simbad.loc["rg_src_id", [rg_src_id]]),
+                    "tt_simbad",
                 )
+            if add_sed:
+                src.add_vizier_SED()
+            if write_to_file:
+                # create source directory if it does not exist
+                os.makedirs(self.region_path + "/sources", exist_ok=True)
+                src.write_to_fits(fname_src)
+
+            return src
 
     def set_src_id_info(self):
         """
