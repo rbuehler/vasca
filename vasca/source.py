@@ -11,7 +11,7 @@ from astropy import units as uu
 from loguru import logger
 
 from vasca.tables import TableCollection
-from vasca.utils import query_vizier_sed
+from vasca.utils import query_vizier_sed, dd_id2filter,dd_filter2wavelength
 
 
 class Source(TableCollection):
@@ -40,7 +40,7 @@ class Source(TableCollection):
 
     def add_vizier_SED(self, vizier_radius=1 * uu.arcsec):
         """
-        Add spectral energy distribution table (tt_vizier_sed) with all
+        Add spectral energy distribution table (tt_sed) with all
         spectral points from VizieR within given radius
 
         Parameters
@@ -68,7 +68,8 @@ class Source(TableCollection):
         tt_vizier["flux"] = tt_vizier["sed_flux"].quantity.to(uu.Unit("1e-6 Jy"))
         tt_vizier["flux_err"] = tt_vizier["sed_eflux"].quantity.to(uu.Unit("1e-6 Jy"))
 
-        self.add_table(None, "region:tt_vizier_sed")
+        # Add Vizier info to SED table
+        self.add_table(None, "region:tt_sed")
         for row in tt_vizier:
             if np.isnan(row["flux"]) or np.isnan(row["flux_err"]):
                 logger.warning("Skipping row as flux contains nan")
@@ -83,14 +84,23 @@ class Source(TableCollection):
                     "origin": row["_tabname"],
                 }
 
-                self.tt_vizier_sed.add_row(dd_vdat)
+                self.tt_sed.add_row(dd_vdat)
 
-        # for ii in range(len(flts)):
-        #     if self.tt_sources["flux"].quantity[:, ii][0] > 0:
-        #         tt_vasca.add_row(
-        #             [
-        #                 self.tt_sources["flux"].quantity[:, ii][0],
-        #                 self.tt_sources["flux_err"].quantity[:, ii][0],
-        #                 dd_filter2wavelength[flts[ii]],
-        #             ]
-        #         )
+        # Add mean VASCA flux for all filters
+        flt_ids = np.array(self.tt_sources["obs_filter_id"]).flatten()
+        for flt_idx in range(len(flt_ids)):
+            flt_id = self.tt_sources["obs_filter_id"][:, flt_idx][0]
+            if self.tt_sources["flux"].quantity[:, flt_idx][0] > 0:
+                obs_flt = dd_id2filter[flt_id]
+                dd_vdat = {
+                    "flux": self.tt_sources["flux"][:, flt_idx][0],
+                    "flux_err": self.tt_sources["flux_err"][:, flt_idx][0],
+                    "wavelength": dd_filter2wavelength[obs_flt],
+                    "observatory": "GALEX", #TODO: make this general
+                    "obs_filter": obs_flt,
+                    "origin": "VASCA",
+                }
+                self.tt_sed.add_row(dd_vdat)
+
+        # Sort by wavelength
+        self.tt_sed.sort("wavelength")
