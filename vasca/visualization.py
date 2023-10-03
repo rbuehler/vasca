@@ -832,10 +832,10 @@ def plot_light_curve(
     logger.debug("Plotting lightcurves ")
 
     # Check if figure was passed
-    if type(fig) is type(None):
+    if type(fig) is type(None) and type(ax) is type(None):
         fig = plt.figure(figsize=(6, 6))  # , constrained_layout=True
     else:
-        plt.gcf()
+        fig = plt.gcf()
 
     # Check if axis was passed
     if ax is None:
@@ -905,7 +905,7 @@ def plot_light_curve(
             t_mean = [np.min(lc["time"][sel]), np.max(lc["time"][sel])]
             flux_weight = 1.0 / lc["flux_err"][sel] ** 2
             flux_mean = np.average(lc["flux"][sel], weights=flux_weight)
-            plt.plot(
+            ax.plot(
                 t_mean,
                 [flux_mean, flux_mean],
                 ls=ls[flt_plot],
@@ -914,7 +914,7 @@ def plot_light_curve(
             )
 
             # Plot
-            plt.errorbar(
+            ax.errorbar(
                 lc["time"][sel],
                 fluxs[sel],
                 yerr=fluxs_err[sel],
@@ -926,13 +926,7 @@ def plot_light_curve(
                 **plt_errorbar_kwargs,
             )
 
-    ax.legend(
-        loc="upper left",
-        fontsize="small",
-        handletextpad=0.05,
-        bbox_to_anchor=(1.01, 1),
-    )
-    plt.legend(loc="lower left")  # bbox_to_anchor=(1.04, 1),
+    ax.legend(fontsize="small")  # bbox_to_anchor=(1.04, 1),
     ax.set_xlabel("MJD")
     ax.set_ylabel(r"Flux [$\mu$Jy]")
 
@@ -965,12 +959,19 @@ def plot_light_curve(
 
 # %% SED plotting
 
-def plot_sed(tt_sed,fig=None,ax=None,**errorbar_kwargs):
+def plot_sed(tc_src,fig=None,ax=None,**errorbar_kwargs):
 
     logger.debug("Plotting spectral energy distribution ")
 
+    #Check if SED table exists
+    if "tt_sed" not in tc_src._table_names:
+        logger.warning("No SED table found")
+        return
+    else:
+        tt_sed = tc_src.tt_sed
+
     # Check if figure was passed
-    if type(fig) is type(None):
+    if type(fig) is type(None) and type(ax) is type(None):
         fig = plt.figure(figsize=(6, 6))  # , constrained_layout=True
     else:
         plt.gcf()
@@ -1013,7 +1014,7 @@ def plot_sed(tt_sed,fig=None,ax=None,**errorbar_kwargs):
     #Plot all none VASCA points
     for tt, grp, col, mar in zip(tt_grp.groups, tt_grp.groups.keys, colors, markers):
         # Plot
-        plt.errorbar(
+        ax.errorbar(
             tt["wavelength"],
             tt["flux"],
             yerr=tt["flux_err"],
@@ -1027,7 +1028,7 @@ def plot_sed(tt_sed,fig=None,ax=None,**errorbar_kwargs):
         )
 
     #Plot VASCA points
-    plt.errorbar(
+    ax.errorbar(
         tt_sed[sel]["wavelength"],
         tt_sed[sel]["flux"],
         yerr=tt_sed[sel]["flux_err"],
@@ -1055,7 +1056,7 @@ def plot_sed(tt_sed,fig=None,ax=None,**errorbar_kwargs):
     ax.set_ylabel("Flux [Jy]")
     ax.set_xlabel("Wavelength [Angstom]")
 
-    plt.legend()
+    ax.legend()
 
 
 
