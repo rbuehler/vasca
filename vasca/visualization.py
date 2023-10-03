@@ -8,6 +8,7 @@ from collections import OrderedDict
 from itertools import cycle
 
 import astropy.units as uu
+from astropy import constants as cc
 import healpy as hpy
 import matplotlib.pyplot as plt
 import numpy as np
@@ -961,3 +962,100 @@ def plot_light_curve(
     secay.set_ylabel("AB magnitude")
 
     return fig, ax
+
+# %% SED plotting
+
+def plot_sed(tt_sed,fig=None,ax=None,**errorbar_kwargs):
+
+    logger.debug("Plotting spectral energy distribution ")
+
+    # Check if figure was passed
+    if type(fig) is type(None):
+        fig = plt.figure(figsize=(6, 6))  # , constrained_layout=True
+    else:
+        plt.gcf()
+
+    # Check if axis was passed
+    if ax is None:
+        ax = plt.gca()
+
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+
+    # Setup plotting parameters
+    plt_errorbar_kwargs = {
+        "capsize": 0,
+        "lw": 0.1,
+        "linestyle": "dotted",
+        "elinewidth": 0.7,
+    }
+    if errorbar_kwargs is not None:
+        plt_errorbar_kwargs.update(errorbar_kwargs)
+
+    # Loop over selected sources and plot
+    colors = cycle("bgcmykbgcmykbgcmykbgcmyk")
+    markers = cycle("sDd<>^v")
+
+    #Helper functions to define second axis
+    def flux2mag_np(flux):
+        return flux2mag(flux).data
+    def mag2flux_np(mag):
+        return mag2flux(mag).data
+    def AA2ev_np(wave):
+        return (cc.h * cc.c / (wave * uu.AA)).to(uu.eV).value
+    def ev2AA_np(ener):
+        return (cc.h * cc.c / (ener * uu.eV)).to(uu.AA).value
+
+    #Prepare tables, to plot vasca point separatelly
+    sel = tt_sed["origin"] == "VASCA"
+    tt_grp =tt_sed[~sel].group_by("observatory")
+
+    #Plot all none VASCA points
+    for tt, grp, col, mar in zip(tt_grp.groups, tt_grp.groups.keys, colors, markers):
+        # Plot
+        plt.errorbar(
+            tt["wavelength"],
+            tt["flux"],
+            yerr=tt["flux_err"],
+            color=col,
+            markeredgecolor=col,
+            marker=mar,
+            label=str(grp[0]),
+            markersize=4,
+            alpha=0.4,
+            **plt_errorbar_kwargs,
+        )
+
+    #Plot VASCA points
+    plt.errorbar(
+        tt_sed[sel]["wavelength"],
+        tt_sed[sel]["flux"],
+        yerr=tt_sed[sel]["flux_err"],
+        color="r",
+        markeredgecolor="r",
+        marker="o",
+        markersize=6,
+        alpha=1.0,
+        label="VASCA",
+        **plt_errorbar_kwargs,
+    )
+
+    #Axis and labels
+    secax = ax.secondary_xaxis("top", functions=(AA2ev_np, ev2AA_np))
+    secax.set_xlabel("eV")
+
+    secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
+
+    # Avoid scientific notation for magnitudes
+    formatter = ScalarFormatter()
+    formatter.set_scientific(False)
+    secay.yaxis.set_minor_formatter(formatter)
+    secay.set_ylabel("AB magnitude")
+
+    ax.set_ylabel("Flux [Jy]")
+    ax.set_xlabel("Wavelength [Angstom]")
+
+    plt.legend()
+
+
+
