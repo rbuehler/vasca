@@ -368,6 +368,14 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Logical OR of artifact flags",
     },
+    # %%% flags
+    "flags": {
+        "name": "flags",
+        "dtype": "int64",
+        "unit": "1",
+        "default": -1,
+        "description": "Logical OR of artifact flags from gphoton",
+    },
     # %%% class_star
     "class_star": {
         "name": "class_star",
@@ -779,6 +787,12 @@ region = {
             "wavelength",
         ],
         "meta": {"INFO": "Spectral Energy Distribution from VizieR database"},
+    },
+    "tt_gphoton_lc": {
+        "names": [
+            *base_field["tt_source_lc"]["names"], "flags", "s2n"
+        ],
+        "meta": {"INFO": "Light curve from gPhoton.gApperture"},
     },
 }
 
