@@ -817,7 +817,7 @@ def plot_light_curve(
         Plot upper limits to the lightcurve. The default is True.
     flux_var: str, optional
         Variable in table to be used to get flux Jy
-    **errorbar_kwargs : TYPE
+    **errorbar_kwargs : dict
         Key word arguments for pyplot.errorbars plotting.
 
     Returns
@@ -960,6 +960,26 @@ def plot_light_curve(
 # %% SED plotting
 
 def plot_sed(tc_src,fig=None,ax=None,**errorbar_kwargs):
+    """
+    Plots spectral energy distribution
+    Parameters
+    ----------
+    tc_src: vasca.TableCollection
+        Table collection containing tt_sed table.
+    fig: figure, optional
+        Matplotlib figure to draw on, if None a new figure is created. The default is None.
+    ax : axes, optional
+        Matplotlib axes to plot on. The default is None.
+    **errorbar_kwargs : dict
+        Key word arguments for pyplot.errorbars plotting.
+
+    Returns
+    -------
+    fig: figure
+        Matplotlib figure used to draw
+    ax : axes
+        Used Matplotlib axes.
+    """
 
     logger.debug("Plotting spectral energy distribution ")
 
