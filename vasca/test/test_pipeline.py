@@ -66,7 +66,9 @@ def test_pipeline_vis(test_paths):
 
     # Plot light curve
     sel = rg.tt_sources["nr_det"][:, 0] > 1
-    fig_lc, _ = vvis.plot_light_curve(rg, rg_src_ids=rg.tt_sources[sel]["rg_src_id"][0])
+    fig_lc, _ = vvis.plot_light_curves(
+        rg, rg_src_ids=rg.tt_sources[sel]["rg_src_id"][0]
+    )
 
     # Plot all fields
     rg.add_coverage_hp(nside=4096, coord_sys="icrs")
