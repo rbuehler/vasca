@@ -715,7 +715,7 @@ class Region(TableCollection):
                 join_type="outer",
             )
 
-        # Select only sources with countrparts within a given radius
+        # Select only sources with counterparts within a given radius
         sel_query = ~tt_match["distance_result"].mask
         tt_match["sel"] = sel_query
         tt_match["sel"][tt_match["sel"]] = (
