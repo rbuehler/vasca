@@ -16,6 +16,7 @@ from astropy.coordinates import SkyCoord
 from astropy.nddata import Cutout2D
 from astropy.time import Time
 from astropy.visualization.wcsaxes import SphericalCircle
+from astropy.modeling.models import BlackBody
 from loguru import logger
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import ScalarFormatter
@@ -785,7 +786,7 @@ def plot_pipe_diagnostic(
 # %% light curve plotting
 
 
-def plot_light_curve(
+def plot_light_curves(
     tc,
     fd_src_ids=None,
     rg_src_ids=None,
@@ -889,18 +890,6 @@ def plot_light_curve(
             sel = (lc["flux"] > 0) * (lc["obs_filter_id"] == flt_id)
             src_lab = str(src_id) + " " + str(lc[sel]["obs_filter"][0])
 
-            # *Upper limits plotting, leave for possible inclusion later*
-            # uplims = np.zeros(len(lc))
-            # uplims = np.zeros(len(lc))
-            # ul = lc["ul"]
-            # Modify arrays if upper limits are plotted
-            # if plot_upper_limits:
-            #    uplims = lc["flux"] < 0
-            #    sel = np.ones(len(lc), dtype=bool)
-            #    fluxs = fluxs * ~uplims + ul * uplims
-            #    fluxs_err = fluxs_err * ~uplims + 0.1 * uplims
-            #                lolims=uplims[sel], # to plt.errorbar
-
             # Draw mean value
             t_mean = [np.min(lc["time"][sel]), np.max(lc["time"][sel])]
             flux_weight = 1.0 / lc["flux_err"][sel] ** 2
@@ -957,9 +946,139 @@ def plot_light_curve(
 
     return fig, ax
 
+
+def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kwargs):
+    """
+    Plots light curve
+    Parameters
+    ----------
+    tc_src: vasca.TableCollection
+        Table collection containing tt_sed table.
+    fig: figure, optional
+        Matplotlib figure to draw on, if None a new figure is created. The default is None.
+    ax : axes, optional
+        Matplotlib axes to plot on. The default is None.
+    show_gphoton: bool, optional
+        Show gphoton light curve too, if present in table collection?. The default is True.
+    **errorbar_kwargs : dict
+        Key word arguments for pyplot.errorbars plotting.
+
+    Returns
+    -------
+    fig: figure
+        Matplotlib figure used to draw
+    ax : axes
+        Used Matplotlib axes.
+    """
+
+    logger.debug("Plotting spectral energy distribution ")
+
+    # Check if lightcurve table exists
+    if "tt_source_lc" not in tc_src._table_names:
+        logger.warning("No light curve table found")
+        return
+    # Consider only selected points
+    else:
+        tt_lc = tc_src.tt_source_lc[tc_src.tt_source_lc["sel"]]
+
+    # Get also gPhoton light curve if it excists
+    if "tt_gphoton_lc" in tc_src._table_names:
+        tt_gp_lc = tc_src.tt_gphoton_lc
+
+    # Check if figure was passed
+    if type(fig) is type(None) and type(ax) is type(None):
+        fig = plt.figure(figsize=(12, 6))  # , constrained_layout=True
+    else:
+        plt.gcf()
+
+    # Check if axis was passed
+    if ax is None:
+        ax = plt.gca()
+
+    ax.set_yscale("log")
+
+    # Setup plotting parameters
+    plt_errorbar_kwargs = {
+        "markersize": 4,
+        "alpha": 0.6,
+        "capsize": 0,
+        "lw": 0.2,
+        "linestyle": "dotted",
+        "elinewidth": 0.7,
+    }
+    if errorbar_kwargs is not None:
+        plt_errorbar_kwargs.update(errorbar_kwargs)
+
+    filter_ids = np.sort(np.unique(tt_lc["obs_filter_id"].data))
+
+    #    colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
+    markers = cycle("osDd<>^v")
+
+    for flt_id, mar in zip(filter_ids, markers):
+        # Plot gPhoton light curve first, if present
+        if show_gphoton and "tt_gphoton_lc" in tc_src._table_names:
+            sel_gp = tt_gp_lc["obs_filter_id"] == flt_id
+            if sel_gp.sum() > 0:
+                ax.errorbar(
+                    tt_gp_lc["time"][sel_gp],
+                    tt_gp_lc["flux"][sel_gp],
+                    yerr=tt_gp_lc["flux_err"][sel_gp],
+                    marker=mar,
+                    color="0.5",
+                    **plt_errorbar_kwargs,
+                )
+
+        #  Select filter to show
+        sel = tt_lc["obs_filter_id"] == flt_id
+        src_lab = str(tt_lc[sel]["obs_filter"][0])
+
+        # Plot
+        if sel.sum() > 0:
+            ax.errorbar(
+                tt_lc["time"][sel],
+                tt_lc["flux"][sel],
+                yerr=tt_lc["flux_err"][sel],
+                marker=mar,
+                label=src_lab,
+                **plt_errorbar_kwargs,
+            )
+
+    ax.legend(fontsize="small")  # bbox_to_anchor=(1.04, 1),
+    ax.set_xlabel("MJD")
+    ax.set_ylabel(r"Flux [$\mu$Jy]")
+
+    # Add a second time axis on top showing years
+    def mjd2yr(mjd):
+        return Time(mjd, format="mjd").jyear
+
+    def yr2mjd(jyr):
+        return Time(jyr, format="jyear").mjd
+
+    secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
+    secax.set_xlabel("Year")
+
+    def flux2mag_np(flux):
+        return flux2mag(flux).data
+
+    def mag2flux_np(mag):
+        return mag2flux(mag).data
+
+    secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
+
+    # Avoid scientific notation for magnitudes
+    formatter = ScalarFormatter()
+    formatter.set_scientific(False)
+    secay.yaxis.set_minor_formatter(formatter)
+
+    secay.set_ylabel("AB magnitude")
+
+    return fig, ax
+
+
 # %% SED plotting
 
-def plot_sed(tc_src,fig=None,ax=None,**errorbar_kwargs):
+
+def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     """
     Plots spectral energy distribution
     Parameters
@@ -983,7 +1102,7 @@ def plot_sed(tc_src,fig=None,ax=None,**errorbar_kwargs):
 
     logger.debug("Plotting spectral energy distribution ")
 
-    #Check if SED table exists
+    # Check if SED table exists
     if "tt_sed" not in tc_src._table_names:
         logger.warning("No SED table found")
         return
@@ -1017,21 +1136,46 @@ def plot_sed(tc_src,fig=None,ax=None,**errorbar_kwargs):
     colors = cycle("bgcmykbgcmykbgcmykbgcmyk")
     markers = cycle("sDd<>^v")
 
-    #Helper functions to define second axis
-    def flux2mag_np(flux):
-        return flux2mag(flux).data
-    def mag2flux_np(mag):
-        return mag2flux(mag).data
-    def AA2ev_np(wave):
-        return (cc.h * cc.c / (wave * uu.AA)).to(uu.eV).value
-    def ev2AA_np(ener):
-        return (cc.h * cc.c / (ener * uu.eV)).to(uu.AA).value
-
-    #Prepare tables, to plot vasca point separatelly
+    # Prepare tables, to plot vasca point separatelly
     sel = tt_sed["origin"] == "VASCA"
-    tt_grp =tt_sed[~sel].group_by("observatory")
+    tt_grp = tt_sed[~sel].group_by("observatory")
 
-    #Plot all none VASCA points
+    # Plot black Body spectra for reference
+    for temp in [8000, 16000, 32000]:
+        lab = None
+        if temp == 8000:
+            lab = "Black Bodies of 8/16/32 kK"
+        bb = BlackBody(temperature=temp * uu.K)  # , scale=2.7e-25
+
+        # Normalize to NUV VASCA point
+        sel_nuv = tt_sed[sel]["obs_filter"] == "NUV"
+        vasca_flux = tt_sed[sel]["flux"].quantity[sel_nuv].to(uu.Jy)
+        vasca_wave = tt_sed[sel]["wavelength"].quantity[sel_nuv].to(uu.AA)
+        bb_flux = bb(vasca_wave).to(uu.Jy / uu.sr) * 1 * uu.sr
+        bb_scale = vasca_flux / bb_flux
+
+        bb_lambda = np.power(10, np.arange(3, 4.2, 0.01)) * uu.AA
+        bb_flux = bb(bb_lambda).to(uu.Jy / uu.sr) * 1 * uu.sr
+        ax.plot(
+            bb_lambda,
+            bb_scale * bb_flux.to(uu.Unit("1e-6 Jy")),
+            color="0.8",
+            ls=":",
+            label=lab,
+        )
+
+    # Plot spectrum, if present
+    if "tt_spectrum" in tc_src._table_names:
+        sel_spec = tc_src.tt_spectrum["sel"]
+        if sel_spec.sum() > 0:
+            ax.plot(
+                tc_src.tt_spectrum["wavelength"][sel_spec],
+                tc_src.tt_spectrum["flux"][sel_spec],
+                label="SDSS spectrum",
+                color="0.8",
+            )
+
+    # Plot all none-VASCA points
     for tt, grp, col, mar in zip(tt_grp.groups, tt_grp.groups.keys, colors, markers):
         # Plot
         ax.errorbar(
@@ -1047,7 +1191,7 @@ def plot_sed(tc_src,fig=None,ax=None,**errorbar_kwargs):
             **plt_errorbar_kwargs,
         )
 
-    #Plot VASCA points
+    # Plot VASCA points
     ax.errorbar(
         tt_sed[sel]["wavelength"],
         tt_sed[sel]["flux"],
@@ -1061,9 +1205,35 @@ def plot_sed(tc_src,fig=None,ax=None,**errorbar_kwargs):
         **plt_errorbar_kwargs,
     )
 
-    #Axis and labels
-    secax = ax.secondary_xaxis("top", functions=(AA2ev_np, ev2AA_np))
-    secax.set_xlabel("eV")
+    # Helper functions to define second axis
+    def flux2mag_np(flux):
+        return flux2mag(flux).data
+
+    def mag2flux_np(mag):
+        return mag2flux(mag).data
+
+    def AA2ev_np(wave):
+        return (cc.h * cc.c / (wave * uu.AA)).to(uu.eV).value
+
+    def ev2AA_np(ener):
+        return (cc.h * cc.c / (ener * uu.eV)).to(uu.AA).value
+
+    # In units of Jy the Wien-displacement constant is given by the factor below
+    # https://de.wikipedia.org/wiki/Wiensches_Verschiebungsgesetz
+    w_kb_ev = cc.k_B.to(uu.eV / uu.K).value * 2.82
+
+    def AA2K_np(wave):
+        return AA2ev_np(wave) / w_kb_ev
+
+    def K2AA_np(temp):
+        return ev2AA_np(temp * w_kb_ev)
+
+    # Axis and labels
+    # secax = ax.secondary_xaxis("top", functions=(AA2ev_np, ev2AA_np))
+    # secax.set_xlabel("eV")
+
+    secax = ax.secondary_xaxis("top", functions=(AA2K_np, K2AA_np))
+    secax.set_xlabel("K")
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
@@ -1077,6 +1247,3 @@ def plot_sed(tc_src,fig=None,ax=None,**errorbar_kwargs):
     ax.set_xlabel("Wavelength [Angstom]")
 
     ax.legend()
-
-
-
