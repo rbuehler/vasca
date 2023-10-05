@@ -309,7 +309,13 @@ class Region(TableCollection):
                 )
 
     def get_src_from_id(
-        self, rg_src_id, load_from_file=True, write_to_file=True, add_sed=True
+        self,
+        rg_src_id,
+        load_from_file=True,
+        write_to_file=True,
+        add_sed=True,
+        add_gphoton=True,
+        add_spectrum=True,
     ):
         """
         Get Source object containing all region table entries
@@ -401,6 +407,10 @@ class Region(TableCollection):
                 )
             if add_sed:
                 src.add_vizier_SED()
+            if add_gphoton:
+                src.add_gphoton_lc()
+            if add_spectrum:
+                src.add_spectrum()
             if write_to_file:
                 # create source directory if it does not exist
                 os.makedirs(self.region_path + "/sources", exist_ok=True)

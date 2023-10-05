@@ -794,6 +794,15 @@ region = {
         ],
         "meta": {"INFO": "Light curve from gPhoton.gApperture"},
     },
+    "tt_spectrum": {
+        "names": [
+            "flux",
+            "wavelength",
+            "s2n",
+            "sel"
+        ],
+        "meta": {"INFO": "Spectrum"},
+    },
 }
 
 
