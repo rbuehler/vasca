@@ -11,6 +11,7 @@ from astropy.coordinates import SkyCoord
 from astropy.table import Table, unique, join
 from astropy.utils.exceptions import AstropyWarning
 from astroquery.simbad import Simbad
+from astroquery.vizier import Vizier
 from loguru import logger
 
 from vasca.field import BaseField, GALEXDSField, GALEXField
@@ -575,6 +576,193 @@ class Region(TableCollection):
 
     # def set_lomb_scargle(self):
 
+    def cross_match(
+        self,
+        query_radius=1 * uu.arcsec,
+        query_table="I/355/gaiadr3",
+        overwrite=False,
+    ):
+        """
+        Match sources in region with SIMBAD-catalogs or Vizier database catalog. Runs only over selected sources.
+
+        Parameters
+        ----------
+        query_radius : astropy.quantity, optional
+            Query up to this distance from VASCA sources. The default is 1 * uu.arcsec.
+        query_table : str, optional
+            Vizier table to query, if "simbad" query SIMBAD instead. The default is the main GAIA-DR3 table.
+        overwrite: bool, optional
+            Overwrite preexisting association for this source. The default is False.
+
+        Returns
+        -------
+        None.
+
+        """
+        logger.debug(f"Query {query_table} table")
+
+        # Define variables for later, depending on catalog source
+        if query_table.lower() == "simbad":
+            cat_name = "simbad"
+        else:
+            cat_name = query_table.split("/")[-1]
+        tab_name = "tt_" + cat_name
+
+        if tab_name in self._table_names:
+            logger.warning(f"Region already contained {tab_name} info")
+            if overwrite:
+                self.remove_tables([tab_name])
+            else:
+                logger.warning(f"As overwrite is {overwrite}, query stopped")
+                return
+
+        # Get selected sources
+        tt_src = self.tt_sources[self.tt_sources["sel"]]
+
+        # Get coordinates for query
+        coords = SkyCoord(tt_src["ra"].quantity, tt_src["dec"].quantity, frame="icrs")
+
+        # ---- Run SIMBAD query and modify query results
+        if query_table.lower() == "simbad":
+            customSimbad = Simbad()
+            customSimbad.TIMEOUT = 180
+
+            # Get only this subset of SIMBAD variables
+            vo_entries = [
+                "otype(opt)",
+                "otypes",
+                "distance",
+                "distance_result",
+                "velocity",
+                "z_value",
+                "sptype",
+            ]
+            customSimbad.add_votable_fields(*vo_entries)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", UserWarning)
+                tt_qr = customSimbad.query_region(coords[0:10], radius=query_radius)
+
+            # Add rg_src_id
+            tt_qr["rg_src_id"] = tt_src["rg_src_id"][tt_qr["SCRIPT_NUMBER_ID"] - 1]
+
+            # Change type for astropy
+            vo_change_type = [
+                "MAIN_ID",
+                "COO_BIBCODE",
+                "OTYPE_opt",
+                "OTYPES",
+                "RVZ_BIBCODE",
+                "SP_TYPE",
+                "SP_QUAL",
+                "SP_BIBCODE",
+            ]
+            for vo in vo_change_type:
+                tt_qr[vo] = tt_qr[vo].data.astype("S32")
+
+            # Lower case column names
+            for col in tt_qr.colnames:
+                tt_qr.rename_column(col, col.lower())
+
+            # Change unit to astropy format and change some names
+            skycoords = SkyCoord(
+                tt_qr["ra"].data,
+                tt_qr["dec"].data,
+                frame="icrs",
+                unit=(uu.hourangle, uu.deg),
+            )
+            tt_qr["ra"] = skycoords.ra.degree * uu.deg
+            tt_qr["dec"] = skycoords.dec.degree * uu.deg
+            tt_qr.rename_column("otype_opt", "otype")
+            tt_qr.rename_column("distance_result", "match_distance")
+
+            # Add table explaining the different otypes
+            self.add_simbad_otype_info()
+
+        # ---- Run Vizier query and modify query results
+        else:
+            tt_qr = (
+                Vizier.query_region(
+                    coords[0:10], radius=query_radius, catalog=query_table
+                )
+            )[0]
+
+            # Add rg_src_id
+            tt_qr["rg_src_id"] = tt_src["rg_src_id"][tt_qr["_q"] - 1]
+
+            # Rename columns
+            tt_qr.rename_column("RAJ2000", "ra")
+            tt_qr.rename_column("DEJ2000", "dec")
+
+            # Add distance between Vizier and VASCA source
+            match_coords = SkyCoord(
+                tt_qr["ra"].quantity, tt_qr["dec"].quantity, frame="icrs"
+            )
+            idx_cat, dist_cat, _ = match_coords.match_to_catalog_sky(coords)
+            tt_qr["match_distance"] = dist_cat.to(uu.arcsec)
+
+        # Add vasca internal coutnerpart ID
+        tt_qr[cat_name + "_match_id"] = np.array(range(0, len(tt_qr)), dtype=np.int32)
+
+        # # Sort table
+        tt_qr.sort(["rg_src_id", "match_distance"])
+        #
+        # Add match_id to tt_sources
+        tu_qr = unique(tt_qr, keys="rg_src_id")
+        self.tt_sources.add_index("rg_src_id")
+        idx = self.tt_sources.loc_indices["rg_src_id", tu_qr["rg_src_id"]]
+        self.tt_sources[cat_name + "_match_id"] = -1 * np.ones(
+            len(self.tt_sources), dtype=np.int32
+        )
+        self.tt_sources[cat_name + "_match_id"][idx] = tu_qr[cat_name + "_match_id"]
+
+        # Add table
+        self.add_table(tt_qr, tab_name)
+
+    def add_simbad_otype_info(self):
+        """
+        Add table explaing SIMBAD ogroups
+
+        Returns
+        -------
+
+        """
+
+        sel_mt = self.tt_sources["sel"]
+
+        # Get all associated otypes
+        otypes_all, otype_cts_all = np.unique(
+            self.tt_sources[sel_mt]["otype"], return_counts=True
+        )
+
+        # Read files with otype description
+        # TODO make the ressource manager handle this
+        fpath = os.path.dirname(__file__)
+        tt_nodes = Table.read(
+            fpath + "/examples/resources/SIMBAD_otypes/otypes_nodes.csv"
+        )
+
+        # Get index for all associated otypes in deeescription table
+        ids, ids_idx, _ = np.intersect1d(
+            tt_nodes["Id"], np.array(otypes_all), return_indices=True
+        )
+
+        # Consider also unsuse otypes (marked by?)
+        candidate = np.asarray(
+            np.ma.masked_array(
+                data=tt_nodes["Candidate"], mask=False, fill_value="none"
+            )
+        )
+        can, can_idx, _ = np.intersect1d(
+            candidate, np.array(otypes_all), return_indices=True
+        )
+
+        # Merge index of sure and unsure otypes
+        all_idx = np.unique(np.append(ids_idx, can_idx))
+        tt_nodes.rename_column("Id", "otype")
+
+        # Add table and ogroup
+        self.add_table(tt_nodes[all_idx], "tt_otypes")
+
     def cross_match_simbad(
         self,
         query_radius=2 * uu.arcsec,
@@ -591,7 +779,7 @@ class Region(TableCollection):
             Query simbad up to this distance from VASCA sources. The default is 2 * uu.arcsec.
         match_radius : astropy.quantity, optional
             Match VASCA sources up to this distance from SIMBAD sources. The default is 1 * uu.arcsec.
-        query_timeout : astropy.quantity, optional
+        query_timeout : float, optional
             Modify the maximum query time of simbad, in seconds. The default is 180.
         overwrite: bool, optional
             Overwrite preexisting SIMBAD information in the region. The default is False.
@@ -631,7 +819,7 @@ class Region(TableCollection):
             frame="icrs",
         )
         customSimbad = Simbad()
-        customSimbad.TIMEOUT = 180
+        customSimbad.TIMEOUT = query_timeout
         vo_entries = [
             "otype(opt)",
             "otypes",
