@@ -620,7 +620,9 @@ class Region(TableCollection):
         tt_src = self.tt_sources[self.tt_sources["sel"]]
 
         # Get coordinates for query
-        coords = SkyCoord(tt_src["ra"].quantity, tt_src["dec"].quantity, frame="icrs")
+        coords = SkyCoord(
+            tt_src["ra"].quantity, tt_src["dec"].quantity, frame="icrs"
+        )  # [0:100]
 
         # ---- Run SIMBAD query and modify query results
         if query_table.lower() == "simbad":
@@ -680,8 +682,11 @@ class Region(TableCollection):
         # ---- Run Vizier query and modify query results
         else:
             logger.debug(f"Starting Vizier query for {len(coords)} sources..")
+            customVizier = Vizier(timeout=180)
             tt_qr = (
-                Vizier.query_region(coords, radius=query_radius, catalog=query_table)
+                customVizier.query_region(
+                    coords, radius=query_radius, catalog=query_table
+                )
             )[0]
             logger.debug("..query done.")
 
