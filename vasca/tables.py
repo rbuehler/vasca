@@ -496,7 +496,7 @@ class TableCollection(object):
                         f"kept: {100*sel.sum()/nr_presel : .4f}%"
                     )
         elif selections["sel_type"] == "or":
-            sel = np.zeros(len(sel), dtype=bool)
+            sel = np.zeros(len(tt), dtype=bool)
 
             if "range" in selections.keys():
                 for var, vals in selections["range"].items():
