@@ -580,6 +580,7 @@ class Region(TableCollection):
         self,
         query_radius=1 * uu.arcsec,
         query_table="I/355/gaiadr3",
+        vizier_columns=["*", "PQSO", "PGal", "PSS"],
         overwrite=False,
     ):
         """
@@ -591,6 +592,10 @@ class Region(TableCollection):
             Query up to this distance from VASCA sources. The default is 1 * uu.arcsec.
         query_table : str, optional
             Vizier table to query, if "simbad" query SIMBAD instead. The default is the main GAIA-DR3 table.
+        vizier_columns: list(str)
+            Vizier catalog columns to get from the catalog. "*" is for default columns,
+             "**" for all columns. The default is for selected GAIA columns, see:
+            https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=I/355/gaiadr3
         overwrite: bool, optional
             Overwrite preexisting association for this source. The default is False.
 
@@ -621,8 +626,10 @@ class Region(TableCollection):
 
         # Get coordinates for query
         coords = SkyCoord(
-            tt_src["ra"].quantity, tt_src["dec"].quantity, frame="icrs"
-        )  # [0:100]
+            tt_src["ra"].quantity,
+            tt_src["dec"].quantity,
+            frame="icrs",
+        )  # [0:100 ]
 
         # ---- Run SIMBAD query and modify query results
         if query_table.lower() == "simbad":
@@ -682,12 +689,16 @@ class Region(TableCollection):
         # ---- Run Vizier query and modify query results
         else:
             logger.debug(f"Starting Vizier query for {len(coords)} sources..")
-            customVizier = Vizier(timeout=180)
-            tt_qr = (
-                customVizier.query_region(
-                    coords, radius=query_radius, catalog=query_table
-                )
-            )[0]
+
+            # Define columns from GAIA to get.
+            # https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=I/355/gaiadr3
+
+            customVizier = Vizier(
+                columns=vizier_columns,
+                catalog=query_table,
+                timeout=180,
+            )
+            tt_qr = (customVizier.query_region(coords, radius=query_radius))[0]
             logger.debug("..query done.")
 
             # Add rg_src_id
