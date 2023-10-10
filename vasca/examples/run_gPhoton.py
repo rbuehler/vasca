@@ -10,7 +10,23 @@ from astropy.table import Table
 from vasca.resource_manager import ResourceManager
 
 region_name = "ALL_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
+# srcs_ids = [
+#     55034,
+#     61491,
+#     64360,
+#     73354,
+#     76243,
+#     92867,
+#     104078,
+#     106745,
+#     226975,
+#     267514,
+#     588567,
+#     599887,
+# ]
 srcs_ids = [
+    2996,
+    11821,
     55034,
     61491,
     64360,
@@ -19,12 +35,17 @@ srcs_ids = [
     92867,
     104078,
     106745,
+    124860,
+    162490,
+    182622,
+    199884,
     226975,
     267514,
     588567,
     599887,
+    789511,
+    814134,
 ]
-
 rm = ResourceManager()
 outdir = rm.get_path("gal_gphoton", "sas_cloud")
 region_fname = (
@@ -51,7 +72,6 @@ else:
 for band in bands:
     print("--- Running for band", band)
     for rg_src_id in srcs_ids:
-
         tt_src = tt_srcs[tt_srcs["rg_src_id"] == rg_src_id]
 
         # Load file
