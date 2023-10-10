@@ -347,11 +347,22 @@ class Region(TableCollection):
         # Otherwise derive from region
         else:
             # Adding source and detection table
-            for tt_name in ["tt_sources", "tt_detections"]:
-                self.__dict__[tt_name].add_index("rg_src_id")
-                src.add_table(
-                    Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]), tt_name
-                )
+            # Tables to copy entries from, if they exist in region
+            ll_tables = [
+                "tt_sources",
+                "tt_detections",
+                "tt_coadd_sources",
+                "tt_simbad",
+                "tt_gaiadr3",
+            ]
+
+            for tt_name in ll_tables:
+                if hasattr(self, tt_name):
+                    self.__dict__[tt_name].add_index("rg_src_id")
+                    src.add_table(
+                        Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]),
+                        tt_name,
+                    )
 
             # Add visits
             self.tt_visits.add_index("vis_id")
@@ -371,19 +382,19 @@ class Region(TableCollection):
                 src.get_light_curve(rg_src_ids=rg_src_id)[rg_src_id], "tt_source_lc"
             )
 
-            # Add coadd source
-            if hasattr(self, "tt_coadd_sources"):
-                coadd_src_id = src.tt_sources["coadd_src_id"][0]
-                if coadd_src_id > -1:
-                    self.tt_coadd_sources.add_index("coadd_src_id")
-                    src._table_names.append("tt_coadd_sources")
-                    setattr(
-                        src,
-                        "tt_coadd_sources",
-                        Table(
-                            self.tt_coadd_sources.loc["coadd_src_id", [coadd_src_id]]
-                        ),
-                    )
+            # # Add coadd source
+            # if hasattr(self, "tt_coadd_sources"):
+            #     coadd_src_id = src.tt_sources["coadd_src_id"][0]
+            #     if coadd_src_id > -1:
+            #         self.tt_coadd_sources.add_index("coadd_src_id")
+            #         src._table_names.append("tt_coadd_sources")
+            #         setattr(
+            #             src,
+            #             "tt_coadd_sources",
+            #             Table(
+            #                 self.tt_coadd_sources.loc["coadd_src_id", [coadd_src_id]]
+            #             ),
+            #         )
 
             # Add fd_src_ids to each field
             # coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
@@ -399,13 +410,13 @@ class Region(TableCollection):
             #     fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
             # src.tt_fields["fd_src_id"] = fd_src_ids
 
-            # Add association info, if available
-            if hasattr(self, "tt_simbad"):
-                self.tt_simbad.add_index("rg_src_id")
-                src.add_table(
-                    Table(self.tt_simbad.loc["rg_src_id", [rg_src_id]]),
-                    "tt_simbad",
-                )
+            # # Add association info, if available
+            # if hasattr(self, "tt_simbad"):
+            #     self.tt_simbad.add_index("rg_src_id")
+            #     src.add_table(
+            #         Table(self.tt_simbad.loc["rg_src_id", [rg_src_id]]),
+            #         "tt_simbad",
+            #     )
             if add_sed:
                 src.add_vizier_SED()
             if add_gphoton:
@@ -580,7 +591,7 @@ class Region(TableCollection):
         self,
         query_radius=1 * uu.arcsec,
         query_table="I/355/gaiadr3",
-        vizier_columns=["*", "PQSO", "PGal", "PSS"],
+        vizier_columns=["*", "PQSO", "PGal", "PSS", "RPlx"],
         overwrite=False,
     ):
         """
@@ -629,7 +640,7 @@ class Region(TableCollection):
             tt_src["ra"].quantity,
             tt_src["dec"].quantity,
             frame="icrs",
-        )  # [0:100 ]
+        )
 
         # ---- Run SIMBAD query and modify query results
         if query_table.lower() == "simbad":
@@ -705,8 +716,8 @@ class Region(TableCollection):
             tt_qr["rg_src_id"] = tt_src["rg_src_id"][tt_qr["_q"] - 1]
 
             # Rename columns
-            tt_qr.rename_column("RAJ2000", "ra")
-            tt_qr.rename_column("DEJ2000", "dec")
+            tt_qr.rename_column("RA_ICRS", "ra")
+            tt_qr.rename_column("DE_ICRS", "dec")
 
             # Add distance between Vizier and VASCA source
             match_coords = SkyCoord(
