@@ -584,13 +584,6 @@ dd_vasca_columns = {
         "default": "none",
         "description": "Origin of the data",
     },
-    "origin": {
-        "name": "origin",
-        "dtype": "S22",
-        "unit": "",
-        "default": "none",
-        "description": "Origin of the data",
-    },
     "PQSO": {
         "name": "PQSO",
         "dtype": "float32",
@@ -611,6 +604,41 @@ dd_vasca_columns = {
         "unit": "",
         "default": -1,
         "description": "Probability to be a Single (non-WD) star from GAIA-DR3",
+    },
+    "RPlx": {
+        "name": "RPlx",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "Parallax divided by its standard error from GAIA-DR3",
+    },
+    "Plx": {
+        "name": "Plx",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "Parallax from GAIA-DR3",
+    },
+    "Gmag": {
+        "name": "Gmag",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "G-band mean magnitude from GAIA-DR3",
+    },
+    "Gmag_abs": {
+        "name": "Gmag_abs",
+        "dtype": "float32",
+        "unit": "",
+        "default": -100,
+        "description": "G-band mean absolute magnitude calculated from GAIA-DR3",
+    },
+    "BP-RP": {
+        "name": "BP-RP",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "BP-RP colour from GAIA-DR3",
     },
 }
 

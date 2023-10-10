@@ -64,7 +64,7 @@ dd_ogrp2otypes = {
         "Bz?",
     ],
     "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG"],
-    "Star": [
+    "Star*": [
         "*",
         "HB*",
         "LM*",
@@ -88,9 +88,9 @@ dd_ogrp2otypes = {
         "cC*",
         "s*b",
     ],
-    "WD": ["WD*", "WD?"],
+    "WD*": ["WD*", "WD?"],
     "PM*": ["PM*"],
-    "CVN": ["CV*", "No*", "CV?"],
+    "CVN*": ["CV*", "No*", "CV?"],
     "B*": [
         "EB*",
         "SB*",
@@ -98,7 +98,7 @@ dd_ogrp2otypes = {
         "EB?",
     ],
     "Grv": ["gLS", "LeI", "LI?", "LS?"],
-    "SN": ["SN*"],
+    "SN*": ["SN*"],
     "S*": [
         "RS*",
         "BS*",
@@ -138,31 +138,43 @@ dd_ogrp2col = {
     "UNK": "tab:blue",
     "AGN": "tab:gray",
     "GAL": "k",
-    "Star": "r",
-    "WD": "tab:green",
+    "Star*": "r",
+    "WD*": "tab:green",
     "PM*": "tab:orange",
-    "CVN": "darkgreen",
+    "CVN*": "darkgreen",
     "B*": "tomato",
     "Grv": "tab:olive",
-    "SN": "tab:cyan",
+    "SN*": "tab:cyan",
     "S*": "maroon",
     "Env": "lightgreen",
     "none": "0.8",
     "Misc": "y",
 }
-#
+
 
 # Add object group ID
-def add_ogrp(tc, tt_name):
+def add_ogrp(tc, tt_name, provenance="SIMBAD"):
     """Helper funtion to add ogrp_id column to tables"""
     tt = tc.__dict__[tt_name]
     tc.add_column(tt_name, "ogrp")
-    has_mask = ma.is_masked(tt["otype"].data)
-    for ii in range(len(tt)):
-        if has_mask and tt["otype"].mask[ii]:
-            tt["otype"][ii] = "none"
-            tt["otype"].mask[ii] = False
-        tt["ogrp"][ii] = otype2ogroup(tt["otype"][ii])
+    if provenance == "SIMBAD":
+        has_mask = ma.is_masked(tt["otype"].data)
+        for ii in range(len(tt)):
+            if has_mask and tt["otype"].mask[ii]:
+                tt["otype"][ii] = "none"
+                tt["otype"].mask[ii] = False
+            tt["ogrp"][ii] = otype2ogroup(tt["otype"][ii])
+    elif provenance == "GAIA":
+        # Cut on the probabilities given by the GAIA pipeline
+        tt["ogrp"][tt["PSS"] > 0.999] = "Star*"
+        tt["ogrp"][tt["PQSO"] > 0.999] = "AGN"
+        tt["ogrp"][tt["PGal"] > 0.999] = "GAL"
+
+        # Add class of white dwarf
+        sel_WD = tt["Gmag_abs"] > 6 + 5 * tt["BP-RP"]
+        tt["ogrp"][sel_WD] = "WD*"
+    else:
+        logger.warning("No valid provenance, cannot asign object group")
 
 
 def get_col_cycler(ll_ogrp):
