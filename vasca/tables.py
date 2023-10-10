@@ -1040,7 +1040,7 @@ class TableCollection(object):
         self.tt_sources.meta["hr_flt1"] = obs_filter_id1
         self.tt_sources.meta["hr_flt2"] = obs_filter_id2
 
-    def add_column(self, table_name, col_name, col_data=None):
+    def add_column(self, table_name, col_name, col_template=None, col_data=None):
         """
         Adds column in a table, using the predefined VASCA columns.
         If column exists already replace it.
@@ -1070,6 +1070,52 @@ class TableCollection(object):
             self.__dict__[table_name].replace_column(col_name, col)
         else:
             self.__dict__[table_name][col_name] = col
+
+    def copy_table_columns(
+        self,
+        tab_name_to,
+        tab_name_from,
+        copy_vars,
+        match_var="rg_src_id",
+        select_matched=True,
+    ):
+        """
+        Copy a column from one table to the other, for those columns that have a
+         matching variable value 'match_variable'
+        Parameters
+        ----------
+        tab_name_to str
+            Table name of tabla to copy into
+        tab_name_from str
+            Table name of tabla to copy into
+        copy_vars list
+            Variable names of column to copy
+        match_var
+            Variable name to match rows in tables
+        select_matched
+            Adjust the "sel" column in 'tab_name_to'
+
+        Returns
+        -------
+            None
+
+        """
+        logger.debug(
+            f"Copying columns {copy_vars} from table {tab_name_from} to {tab_name_to}"
+        )
+        tt_to = self.__dict__[tab_name_to]
+        tt_from = self.__dict__[tab_name_from]
+        tt_to.add_index(match_var)
+        src_idx = tt_to.loc_indices[tt_from[match_var]]
+
+        for var in copy_vars:
+            self.add_column(tab_name_to, var)
+            tt_to[var][src_idx] = tt_from[var]
+
+        # Select columns with matched values
+        if select_matched:
+            tt_to["sel"] = np.zeros(len(tt_to), dtype=bool)
+            tt_to["sel"][src_idx] = True
 
     def cross_match(
         self,

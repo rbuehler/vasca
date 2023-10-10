@@ -272,6 +272,14 @@ dd_vasca_columns = {
         "default": -1.0,
         "description": "Angular distance to associated source",
     },
+    # %%% match_distance
+    "match_distance": {
+        "name": "match_distance",
+        "dtype": "float32",
+        "unit": "arcsec",
+        "default": -1.0,
+        "description": "Angular distance to associated source",
+    },
     # %%% sel
     "sel": {
         "name": "sel",
@@ -576,6 +584,34 @@ dd_vasca_columns = {
         "default": "none",
         "description": "Origin of the data",
     },
+    "origin": {
+        "name": "origin",
+        "dtype": "S22",
+        "unit": "",
+        "default": "none",
+        "description": "Origin of the data",
+    },
+    "PQSO": {
+        "name": "PQSO",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "Probability to be a Quasar from GAIA-DR3",
+    },
+    "PGal": {
+        "name": "PGal",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "Probability to be a Galaxy from GAIA-DR3",
+    },
+    "PSS": {
+        "name": "PSS",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "Probability to be a Single (non-WD) star from GAIA-DR3",
+    },
 }
 
 
@@ -789,18 +825,11 @@ region = {
         "meta": {"INFO": "Spectral Energy Distribution from VizieR database"},
     },
     "tt_gphoton_lc": {
-        "names": [
-            *base_field["tt_source_lc"]["names"], "flags", "s2n"
-        ],
+        "names": [*base_field["tt_source_lc"]["names"], "flags", "s2n"],
         "meta": {"INFO": "Light curve from gPhoton.gApperture"},
     },
     "tt_spectrum": {
-        "names": [
-            "flux",
-            "wavelength",
-            "s2n",
-            "sel"
-        ],
+        "names": ["flux", "wavelength", "s2n", "sel"],
         "meta": {"INFO": "Spectrum"},
     },
 }
