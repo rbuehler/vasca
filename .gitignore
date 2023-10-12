@@ -10,6 +10,12 @@ vasca.egg-info
 .DS_Store
 **/.DS_Store
 
+# Pycharm
+**/.idea
+
+# Nova
+.nova
+
 # Jupyter
 .ipynb_checkpoints
 #*/.ipynb_checkpoints/*
