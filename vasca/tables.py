@@ -64,7 +64,7 @@ class TableCollection(object):
         """
 
         # Check dd_data type
-        if not (isinstance(dd_data, dict) or (dd_data is None)):
+        if not (isinstance(dd_data, dict) or isinstance(dd_data, Table) or (dd_data is None)):
             logger.error(f"Passed data format not supported: {type(dd_data)}")
 
         # Takes pre-defined template dictionary

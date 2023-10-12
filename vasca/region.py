@@ -358,11 +358,12 @@ class Region(TableCollection):
 
             for tt_name in ll_tables:
                 if hasattr(self, tt_name):
-                    self.__dict__[tt_name].add_index("rg_src_id")
-                    src.add_table(
-                        Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]),
-                        tt_name,
-                    )
+                    if rg_src_id in self.__dict__[tt_name]["rg_src_id"]:
+                        self.__dict__[tt_name].add_index("rg_src_id")
+                        src.add_table(
+                            Table(self.__dict__[tt_name].loc["rg_src_id", [rg_src_id]]),
+                            tt_name,
+                        )
 
             # Add visits
             self.tt_visits.add_index("vis_id")
@@ -382,47 +383,15 @@ class Region(TableCollection):
                 src.get_light_curve(rg_src_ids=rg_src_id)[rg_src_id], "tt_source_lc"
             )
 
-            # # Add coadd source
-            # if hasattr(self, "tt_coadd_sources"):
-            #     coadd_src_id = src.tt_sources["coadd_src_id"][0]
-            #     if coadd_src_id > -1:
-            #         self.tt_coadd_sources.add_index("coadd_src_id")
-            #         src._table_names.append("tt_coadd_sources")
-            #         setattr(
-            #             src,
-            #             "tt_coadd_sources",
-            #             Table(
-            #                 self.tt_coadd_sources.loc["coadd_src_id", [coadd_src_id]]
-            #             ),
-            #         )
-
-            # Add fd_src_ids to each field
-            # coord_src = SkyCoord(src.tt_sources["ra"], src.tt_sources["dec"], frame="icrs")
-            # fd_src_ids = list()
-            # for field_id in src.tt_fields["field_id"]:
-            #     fd = self.get_field(
-            #         field_id=field_id, load_method="FITS", add_field=False
-            #     )  # self.fields[field_id]
-            #     coord_fd_srcs = SkyCoord(
-            #         fd.tt_sources["ra"], fd.tt_sources["dec"], frame="icrs"
-            #     )
-            #     idx, d2d, d3d = coord_src.match_to_catalog_sky(coord_fd_srcs)
-            #     fd_src_ids.append(fd.tt_sources[idx]["fd_src_id"])
-            # src.tt_fields["fd_src_id"] = fd_src_ids
-
-            # # Add association info, if available
-            # if hasattr(self, "tt_simbad"):
-            #     self.tt_simbad.add_index("rg_src_id")
-            #     src.add_table(
-            #         Table(self.tt_simbad.loc["rg_src_id", [rg_src_id]]),
-            #         "tt_simbad",
-            #     )
+            #Add additional info if asked
             if add_sed:
                 src.add_vizier_SED()
             if add_gphoton:
                 src.add_gphoton_lc()
             if add_spectrum:
                 src.add_spectrum()
+
+            #Write if asked
             if write_to_file:
                 # create source directory if it does not exist
                 os.makedirs(self.region_path + "/sources", exist_ok=True)
@@ -640,7 +609,7 @@ class Region(TableCollection):
             tt_src["ra"].quantity,
             tt_src["dec"].quantity,
             frame="icrs",
-        )
+        )#[:100]
 
         # ---- Run SIMBAD query and modify query results
         if query_table.lower() == "simbad":
