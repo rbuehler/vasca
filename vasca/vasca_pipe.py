@@ -17,6 +17,7 @@ from yamlinclude import YamlIncludeConstructor
 
 from vasca.region import Region
 from vasca.tables_dict import dd_vasca_tables
+from vasca.tables import TableCollection
 from vasca.utils import dd_obs_id_add
 
 import numpy as np
@@ -201,6 +202,17 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     return field
 
 
+def run_cluster_fields(meanshift_cfg, tt_fd_src, tt_fd_det=None, cluster_coadd=False):
+    tc = TableCollection()
+    if cluster_coadd:
+        tc.add_table(tt_fd_src, "tt_coadd_detections")
+    else:
+        tc.add_table(tt_fd_src, "tt_sources")
+        tc.add_table(tt_fd_det, "tt_detections")
+    tc.cluster_meanshift(**meanshift_cfg)
+    return tc
+
+
 def run(vasca_cfg):
     """
     Runs the VASCA pipeline
@@ -288,10 +300,42 @@ def run(vasca_cfg):
 
     del rg.fields  # All that was needed has been transferred to region tables
 
-    # Cluster field sources and co-adds
-    rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
+    # ---Run second clustering step
+    # Cluster field sources and co-adds in parallel
     if vasca_cfg["resources"]["coadd_exists"]:
-        rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
+        ll_cluster = [
+            [
+                vasca_cfg["cluster_src"]["meanshift"],
+                rg.tt_sources,
+                rg.tt_detections,
+                False,
+            ],
+            [
+                vasca_cfg["cluster_coadd_dets"]["meanshift"],
+                rg.tt_coadd_detections,
+                False,
+                True,
+            ],
+        ]
+
+        with Pool(processes=2) as pool:
+            pool_return = pool.starmap(run_cluster_fields, ll_cluster)
+        pool.join()
+
+        # Copy parallelized results into original region
+        for pool_rg in pool_return:
+            if "tt_sources" in pool_rg._table_names:
+                rg.tt_sources = pool_rg.tt_sources
+                rg.tt_detections = pool_rg.tt_detections
+            else:
+                rg.tt_coadd_sources = pool_rg.tt_coadd_sources
+                rg.tt_coadd_detections = pool_rg.tt_coadd_detections
+    else:
+        rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
+
+    # rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
+    # if vasca_cfg["resources"]["coadd_exists"]:
+    #     rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
 
     # Calculate source statistics
     rg.set_src_stats(src_id_name="rg_src_id")

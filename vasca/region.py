@@ -432,7 +432,7 @@ class Region(TableCollection):
 
     def get_src_from_sky_pos(self, coordx, coordy, frame="icrs"):
         """
-        Get Source object containng all region table entries
+        Get Source object containing all region table entries
         relevant for the passed source position. The nearest source is matched.
 
         Parameters
