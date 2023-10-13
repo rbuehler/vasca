@@ -789,7 +789,7 @@ class TableCollection(object):
         else:
             logger.error("Unkown table name")
 
-        self.tt_sources.meta["CLUSTALG"] = "MeanShift"
+        #self.tt_sources.meta["CLUSTALG"] = "MeanShift"
 
         return nr_srcs
 
