@@ -188,8 +188,8 @@ class Source(TableCollection):
 
         # Prepare info for file reading
         rg_src_id = self.tt_sources["rg_src_id"][0]
-        ra_src = round(self.tt_sources["ra"][0], 5)
-        dec_src = round(self.tt_sources["dec"][0], 5)
+        ra_src = round(self.tt_sources["ra"][0], 3)
+        dec_src = round(self.tt_sources["dec"][0], 3)
 
         # Check if NUV file is present and load it, this is requires
         fname_nuv = (
