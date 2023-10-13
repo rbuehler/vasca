@@ -10,23 +10,7 @@ from astropy.table import Table
 from vasca.resource_manager import ResourceManager
 
 region_name = "ALL_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
-# srcs_ids = [
-#     55034,
-#     61491,
-#     64360,
-#     73354,
-#     76243,
-#     92867,
-#     104078,
-#     106745,
-#     226975,
-#     267514,
-#     588567,
-#     599887,
-# ]
 srcs_ids = [
-    2996,
-    11821,
     55034,
     61491,
     64360,
@@ -35,17 +19,33 @@ srcs_ids = [
     92867,
     104078,
     106745,
-    124860,
-    162490,
-    182622,
-    199884,
     226975,
     267514,
     588567,
     599887,
-    789511,
-    814134,
 ]
+# srcs_ids = [
+#     2996,
+#     11821,
+#     55034,
+#     61491,
+#     64360,
+#     73354,
+#     76243,
+#     92867,
+#     104078,
+#     106745,
+#     124860,
+#     162490,
+#     182622,
+#     199884,
+#     226975,
+#     267514,
+#     588567,
+#     599887,
+#     789511,
+#     814134,
+# ]
 rm = ResourceManager()
 outdir = rm.get_path("gal_gphoton", "sas_cloud")
 region_fname = (
@@ -77,12 +77,25 @@ for band in bands:
         # Load file
         fname_base = (
             "gPhoton_ra"
-            + str(round(tt_src["ra"][0], 5))
+            + str(round(tt_src["ra"][0], 3))
             + "_dec"
-            + str(round(tt_src["dec"][0], 5))
+            + str(round(tt_src["dec"][0], 3))
         )
         outfile_fin = outdir + "/" + fname_base + "_" + band.lower() + "_fin.npy"
         outfile_app = outdir + "/" + fname_base + "_" + band.lower() + "_app.npy"
+
+        # To rename files comment in
+        # fname2_base = (
+        #     "gPhoton_ra"
+        #     + str(round(tt_src["ra"][0], 3))
+        #     + "_dec"
+        #     + str(round(tt_src["dec"][0], 3))
+        # )
+        # outfile2_fin = outdir + "/" + fname2_base + "_" + band.lower() + "_fin.npy"
+        # outfile2_app = outdir + "/" + fname2_base + "_" + band.lower() + "_app.npy"
+        #
+        # os.rename(outfile_fin, outfile2_fin)
+        # os.rename(outfile_app, outfile2_app)
 
         # Run or load gFind
         if os.path.isfile(outfile_fin):
