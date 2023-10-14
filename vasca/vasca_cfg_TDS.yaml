@@ -9,7 +9,7 @@ general:
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
     nr_cpus         : 16                                  # Number of CPUs to use. If "null" all available are used.
     save_ref_srcs   : true                               # Store reference sources into region file
-    run_fields      : true                             # If fields have already been clustered and saved and should be reused set to "false". Otherwise the default is true
+    run_fields      : false                             # If fields have already been clustered and saved and should be reused set to "false". Otherwise the default is true
     
 resources:                      
     load_method      : "MAST_LOCAL"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
