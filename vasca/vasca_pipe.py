@@ -117,6 +117,9 @@ def keep_base_field(field):
     # Keep only base class columns
     for tt_name in field._table_names:
         cols = dd_vasca_tables["base_field"][tt_name]["names"]
+        print(tt_name)
+        print(cols)
+        print(field.__dict__[tt_name].columns)
         field.__dict__[tt_name] = field.__dict__[tt_name][cols]
 
 
