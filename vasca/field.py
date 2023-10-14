@@ -933,7 +933,7 @@ class GALEXField(BaseField):
 
         # Add fov size info
         dd_coadd_select["fov_diam"] = 1.2 * np.ones(len(tt_coadd_select["obs_id"]))
-        print(dd_coadd_select)
+
         self.add_table(dd_coadd_select, "base_field:tt_fields")
 
     def _load_galex_visits_info(self, obs_id, obs_filter, col_names=None):
