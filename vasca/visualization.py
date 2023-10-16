@@ -983,7 +983,7 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
 
     # Get also gPhoton light curve if it excists
     if "tt_gphoton_lc" in tc_src._table_names:
-        tt_gp_lc = tc_src.tt_gphoton_lc
+        tt_gp_lc = tc_src.tt_gphoton_lc[tc_src.tt_gphoton_lc["sel"]]
 
     # Check if figure was passed
     if type(fig) is type(None) and type(ax) is type(None):
