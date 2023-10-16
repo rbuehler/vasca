@@ -3,11 +3,11 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "TDS_ALL"
+    name            : "TDS_ALL_LOOSE"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
-    nr_cpus         : 1                                  # Number of CPUs to use. If "null" all available are used.
+    nr_cpus         : 8                                 # Number of CPUs to use. If "null" all available are used.
     save_ref_srcs   : true                               # Store reference sources into region file
     run_fields      : true                             # If fields have already been clustered and saved and should be reused set to "false". Otherwise the default is true
     
@@ -91,7 +91,7 @@ observations:
               # See variable description http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1
               range:
                   s2n            : [3, .inf]
-                  r_fov          : [0.0, 0.5]
+                  r_fov          : [0.0, 0.55]
                   ellip_world    : [0.0, 0.5]
                   size_world     : [0.0, 6.0]
                   class_star     : [0.15, 1.0]        # Extension classifier (extended=0, point like=1)
@@ -115,8 +115,8 @@ observations:
               presel_type : "and"
               sel_type : "and"  # These are all AND selections
               range:
-                  s2n            : [4,.inf]
-                  r_fov          : [0.0,0.5]
+                  s2n            : [5,.inf]
+                  r_fov          : [0.0,0.55]
                   ellip_world    : [0.0, 0.3]
                   size_world     : [0.0, 6.0]
                   class_star     : [0.15, 1.0]        # Extension classifier (extended=0, point like=1)
@@ -154,7 +154,7 @@ observations:
               # See variable description http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1
               range:
                   s2n            : [3, .inf]
-                  r_fov          : [0.0, 0.5]
+                  r_fov          : [0.0, 0.55]
                   ellip_world    : [0.0, 0.5]
                   size_world     : [0.0, 6.0]
                   class_star     : [0.15, 1.0]        # Extension classifier (extended=0, point like=1)
@@ -178,8 +178,8 @@ observations:
               presel_type : "and"
               sel_type : "and"  # These are all AND selections
               range:
-                  s2n            : [4,.inf]
-                  r_fov          : [0.0,0.5]
+                  s2n            : [5,.inf]
+                  r_fov          : [0.0,0.55]
                   ellip_world    : [0.0, 0.3]
                   size_world     : [0.0, 6.0]
                   class_star     : [0.15, 1.0]        # Extension classifier (extended=0, point like=1)
