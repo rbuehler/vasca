@@ -383,7 +383,7 @@ class Region(TableCollection):
                 src.get_light_curve(rg_src_ids=rg_src_id)[rg_src_id], "tt_source_lc"
             )
 
-            #Add additional info if asked
+            # Add additional info if asked
             if add_sed:
                 src.add_vizier_SED()
             if add_gphoton:
@@ -391,7 +391,7 @@ class Region(TableCollection):
             if add_spectrum:
                 src.add_spectrum()
 
-            #Write if asked
+            # Write if asked
             if write_to_file:
                 # create source directory if it does not exist
                 os.makedirs(self.region_path + "/sources", exist_ok=True)
@@ -609,7 +609,7 @@ class Region(TableCollection):
             tt_src["ra"].quantity,
             tt_src["dec"].quantity,
             frame="icrs",
-        )#[:100]
+        )  # [:100]
 
         # ---- Run SIMBAD query and modify query results
         if query_table.lower() == "simbad":
@@ -676,7 +676,7 @@ class Region(TableCollection):
             customVizier = Vizier(
                 columns=vizier_columns,
                 catalog=query_table,
-                timeout=180,
+                timeout=600,
             )
             tt_qr = (customVizier.query_region(coords, radius=query_radius))[0]
             logger.debug("..query done.")

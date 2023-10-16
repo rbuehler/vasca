@@ -328,7 +328,7 @@ def run(vasca_cfg):
                 rg.tt_sources = pool_rg.tt_sources
                 rg.tt_detections = pool_rg.tt_detections
             else:
-                rg.tt_coadd_sources = pool_rg.tt_coadd_sources
+                rg.add_table(pool_rg.tt_coadd_sources, "region:tt_coadd_sources")
                 rg.tt_coadd_detections = pool_rg.tt_coadd_detections
     else:
         rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])

@@ -9,43 +9,32 @@ from vasca.region import Region
 from astropy.table import Table
 from vasca.resource_manager import ResourceManager
 
-region_name = "ALL_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
+region_name = "ALL_10-800_LOOSE"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
+
 srcs_ids = [
-    55034,
-    61491,
-    64360,
-    73354,
-    76243,
-    92867,
-    104078,
-    106745,
-    226975,
-    267514,
-    588567,
-    599887,
+    8215,
+    32448,
+    54184,
+    98746,
+    151796,
+    166179,
+    172775,
+    193067,
+    199832,
+    259271,
+    265150,
+    297278,
+    305192,
+    388172,
+    432606,
+    472623,
+    535864,
+    541266,
+    625693,
+    1521738,
+    1551422,
+    2136829,
 ]
-# srcs_ids = [
-#     2996,
-#     11821,
-#     55034,
-#     61491,
-#     64360,
-#     73354,
-#     76243,
-#     92867,
-#     104078,
-#     106745,
-#     124860,
-#     162490,
-#     182622,
-#     199884,
-#     226975,
-#     267514,
-#     588567,
-#     599887,
-#     789511,
-#     814134,
-# ]
 rm = ResourceManager()
 outdir = rm.get_path("gal_gphoton", "sas_cloud")
 region_fname = (
