@@ -11,6 +11,7 @@ from itertools import cycle, islice, zip_longest
 from time import time
 from io import BytesIO
 from http.client import HTTPConnection
+from loguru import logger
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,6 +23,7 @@ from astropy.nddata import Cutout2D
 from astropy.table import Column, Table
 from astropy.time import Time
 from astropy.utils.exceptions import AstropyWarning
+from astropy.timeseries import LombScargle
 from matplotlib import colormaps as cm
 from matplotlib.colors import ListedColormap, hex2color
 from scipy.stats import binned_statistic
@@ -176,6 +178,41 @@ def get_col_cycler(ll_ogrp):
     for ogrp in ll_ogrp:
         ll_col.append(dd_ogrp2col[ogrp])
     return cycler(color=ll_col)
+
+
+def run_LombScargle(tt_lc, nbins_min=10):
+    # Check if enough bins to run
+    if len(tt_lc) < nbins_min + 1:
+        return None
+
+    dt = tt_lc["time"][1:] - tt_lc["time"][0:-1]
+    t_min = np.min(tt_lc["time"].quantity)
+    t_max = np.max(tt_lc["time"].quantity)
+    dt_tot = t_max - t_min
+    dt_min = np.min(dt.quantity)
+    f_min = 1 / (dt_tot / 4)
+    f_max = 1 / (4 * dt_min)
+
+    ls = LombScargle(
+        tt_lc["time"], tt_lc["flux"], tt_lc["flux_err"]
+    )  # normalization{‘standard’, ‘model’, ‘log’, ‘psd’},
+    freq, power = ls.autopower(minimum_frequency=f_min, maximum_frequency=f_max)
+    if len(power) < 10:
+        logger.warning(f"LombScargle could not be calculated, returning None")
+        return None
+    p_peak = power.max()
+    f_peak = freq[np.argmax(power)]
+    Pval = ls.false_alarm_probability(p_peak)
+
+    dd_ls_results = {
+        "ls": ls,
+        "ls_freq": freq,
+        "ls_power": power,
+        "ls_peak_freq": f_peak,
+        "ls_peak_power": p_peak,
+        "ls_peak_pval": Pval,
+    }
+    return dd_ls_results
 
 
 def query_vizier_sed(ra, dec, radius=1.0):

@@ -64,7 +64,9 @@ class TableCollection(object):
         """
 
         # Check dd_data type
-        if not (isinstance(dd_data, dict) or isinstance(dd_data, Table) or (dd_data is None)):
+        if not (
+            isinstance(dd_data, dict) or isinstance(dd_data, Table) or (dd_data is None)
+        ):
             logger.error(f"Passed data format not supported: {type(dd_data)}")
 
         # Takes pre-defined template dictionary
@@ -118,7 +120,7 @@ class TableCollection(object):
         # logging
         # Remove "defaults" from templates dictionary,
         # as astropy.Table does not support this
-        logger.debug(f"Created new table from template '{template_name}'.")
+        # logger.debug(f"Created new table from template '{template_name}'.")
         return tt_out
 
     def remove_tables(self, ll_table_names):
@@ -565,9 +567,10 @@ class TableCollection(object):
 
         """
 
-        logger.debug(
-            f"Getting light curve for fd_src_ids '{fd_src_ids}' and rg_src_ids '{rg_src_ids}'"
-        )
+        # logger.debug(
+        #    f"Getting light curve for fd_src_ids '{fd_src_ids}' and rg_src_ids
+        #    '{rg_src_ids}'"
+        # )
 
         # Setup input values depending on field or region
         src_ids = None
@@ -585,8 +588,6 @@ class TableCollection(object):
         elif fd_src_ids is not None:
             src_ids = [fd_src_ids]
             ids_type = "fd_src_id"
-
-        logger.debug(f"Getting lightcurve for {ids_type}: {src_ids}")
 
         # Dictionary to store light curve tables
         lc_dict = dict()
@@ -789,7 +790,7 @@ class TableCollection(object):
         else:
             logger.error("Unkown table name")
 
-        #self.tt_sources.meta["CLUSTALG"] = "MeanShift"
+        # self.tt_sources.meta["CLUSTALG"] = "MeanShift"
 
         return nr_srcs
 
