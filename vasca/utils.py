@@ -47,7 +47,7 @@ dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 # -----------------------------------------
 # Define object groups and related funtions
 dd_ogrp2otypes = {
-    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu", "EmO", "UV", "Opt"],
+    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu", "EmO", "UV", "Opt", "NIR"],
     "AGN": [
         "AGN",
         "SyG",
@@ -87,19 +87,6 @@ dd_ogrp2otypes = {
         "WV*",
         "cC*",
         "s*b",
-    ],
-    "WD*": ["WD*", "WD?"],
-    "PM*": ["PM*"],
-    "CVN*": ["CV*", "No*", "CV?"],
-    "B*": [
-        "EB*",
-        "SB*",
-        "**",
-        "EB?",
-    ],
-    "Grv": ["gLS", "LeI", "LI?", "LS?"],
-    "SN*": ["SN*"],
-    "S*": [
         "RS*",
         "BS*",
         "C*",
@@ -115,9 +102,18 @@ dd_ogrp2otypes = {
         "TT*",
         "Y*?",
         "Y*O",
+        "PM*",
+        "Mi*",
+        "s?b",
     ],
-    "Env": ["HII"],
-    "Misc": ["ULX", "UX?"],
+    "WD*": ["WD*", "WD?", "CV*", "No*", "CV?"],
+    "B*": [
+        "EB*",
+        "SB*",
+        "**",
+        "EB?",
+    ],
+    "Misc": ["ULX", "UX?", "gLS", "LeI", "LI?", "Le?", "LS?", "HII", "SN*", "SNR"],
 }
 dd_otype2ogroup = dict()
 for key, val in dd_ogrp2otypes.items():
@@ -140,23 +136,20 @@ dd_ogrp2col = {
     "GAL": "k",
     "Star*": "r",
     "WD*": "tab:green",
-    "PM*": "tab:orange",
-    "CVN*": "darkgreen",
     "B*": "tomato",
-    "Grv": "tab:olive",
-    "SN*": "tab:cyan",
-    "S*": "maroon",
-    "Env": "lightgreen",
     "none": "0.8",
     "Misc": "y",
 }
 
 
 # Add object group ID
-def add_ogrp(tc, tt_name, provenance="SIMBAD"):
+def add_ogrp(tt, provenance="SIMBAD"):
     """Helper funtion to add ogrp_id column to tables"""
-    tt = tc.__dict__[tt_name]
-    tc.add_column(tt_name, "ogrp")
+    table_size = len(tt)
+    col_data = np.array([dd_vasca_columns["ogrp"]["default"]] * table_size)
+    col_template_copy = dd_vasca_columns["ogrp"].copy()
+    del col_template_copy["default"]
+    tt["ogrp"] = Column(col_data, **col_template_copy)
     if provenance == "SIMBAD":
         has_mask = ma.is_masked(tt["otype"].data)
         for ii in range(len(tt)):
