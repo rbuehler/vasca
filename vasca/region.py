@@ -564,14 +564,16 @@ class Region(TableCollection):
         overwrite=False,
     ):
         """
-        Match sources in region with SIMBAD-catalogs or Vizier database catalog. Runs only over selected sources.
+        Match sources in region with SIMBAD-catalogs or Vizier database catalog. Runs
+        only over selected sources.
 
         Parameters
         ----------
         query_radius : astropy.quantity, optional
             Query up to this distance from VASCA sources. The default is 1 * uu.arcsec.
         query_table : str, optional
-            Vizier table to query, if "simbad" query SIMBAD instead. The default is the main GAIA-DR3 table.
+            Vizier table to query, if "simbad" query SIMBAD instead. The default is the
+            main GAIA-DR3 table.
         vizier_columns: list(str)
             Vizier catalog columns to get from the catalog. "*" is for default columns,
              "**" for all columns. The default is for selected GAIA columns, see:
@@ -614,7 +616,7 @@ class Region(TableCollection):
         # ---- Run SIMBAD query and modify query results
         if query_table.lower() == "simbad":
             customSimbad = Simbad()
-            customSimbad.TIMEOUT = 180
+            customSimbad.TIMEOUT = 600
 
             # Get only this subset of SIMBAD variables
             vo_entries = [
@@ -627,6 +629,9 @@ class Region(TableCollection):
                 "sptype",
             ]
             customSimbad.add_votable_fields(*vo_entries)
+
+            # TODO: Split here and for Vizier below into multiple queries to avoid
+            # server time out for >>10000 srcs
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", UserWarning)
                 logger.debug(f"Starting SIMBAD query for {len(coords)} sources..")
@@ -713,9 +718,9 @@ class Region(TableCollection):
         # Add table
         self.add_table(tt_qr, tab_name)
 
-        # Add table explaining the different otypes
-        if query_table.lower() == "simbad":
-            self.add_simbad_otype_info()
+    #        # Add table explaining the different otypes
+    #        if query_table.lower() == "simbad":
+    #            self.add_simbad_otype_info()
 
     def add_simbad_otype_info(self):
         """
@@ -762,8 +767,8 @@ class Region(TableCollection):
 
     def synch_src_sel(self):
         """
-        Synchronize selections among tables. All tables containing "rg_src_id" only keep rows
-        for selected sources in tt_sources
+        Synchronize selections among tables. All tables containing "rg_src_id" only keep
+        rows for selected sources in tt_sources
 
         Returns
         -------

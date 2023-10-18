@@ -33,6 +33,7 @@ def plot_sky_sources(
     ax=None,
     src_id="rg_src_id",
     sky_region_wcs=None,
+    draw_labels=True,
     src_kwargs=None,
     det_kwargs=None,
 ):
@@ -51,11 +52,13 @@ def plot_sky_sources(
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
     src_id: str, optional
-        Write the source ID next to its marker, saved in the passec column name, typically
-        "rg_src_id", "fd_src_id" or None. Default is ""rg_src_id""
+        Write the source ID next to its marker, saved in the passed column name,
+        typically "rg_src_id", "fd_src_id" or None. Default is ""rg_src_id""
     sky_region_wcs: (regions.SkyRegion, WCS) , optional
-        Plot only sources within the sky region. A WCS has to be passed along ina tupple.
+        Plot only sources within the sky region. A WCS has to be passed along ina tuple.
         Default is None.
+    draw_labels : bool, optional
+        Draw labels next to sources showing "src_iud" entry. The default is True.
     src_kwargs : dict, optional
         Keyword arguments for pyplot.plot of the sources. The default is None.
     det_kwargs : dict, optional
@@ -147,7 +150,7 @@ def plot_sky_sources(
         ax.plot(src["ra"], src["dec"], **plt_src_kwargs)
 
         # Add labels if src_id was passed
-        if type(src_id) is not type(None):
+        if type(src_id) is not type(None) and draw_labels:
             ax.annotate(
                 str(src[src_id]),
                 (src["ra"], src["dec"]),
@@ -243,7 +246,7 @@ def plot_field_sky_map(
         ax = plt.subplot(projection=wcs)
         ax.coords["ra"].set_major_formatter("d.dd")
         ax.coords["dec"].set_major_formatter("d.dd")
-        ax.set_xlabel("Ra")
+        ax.set_xlabel("RA")
         ax.set_ylabel("Dec")
     else:
         plt.gcf()
