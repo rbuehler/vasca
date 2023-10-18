@@ -640,6 +640,34 @@ dd_vasca_columns = {
         "default": -1,
         "description": "BP-RP colour from GAIA-DR3",
     },
+    "ls_peak_power": {
+        "name": "ls_peak_power",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "LombScargle power at peak frequency",
+    },
+    "ls_peak_freq": {
+        "name": "ls_peak_freq",
+        "dtype": "float32",
+        "unit": "1/d",
+        "default": -1,
+        "description": "LombScargle peak frequency",
+    },
+    "ls_peak_pval": {
+        "name": "ls_peak_pval",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "LombScargle power probability value",
+    },
+    "ls_pval_alt_flt": {
+        "name": "ls_pval_alt_flt",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "LombScargle power probability value for alternate filter",
+    },
 }
 
 
@@ -859,6 +887,16 @@ region = {
     "tt_spectrum": {
         "names": ["flux", "wavelength", "s2n", "sel"],
         "meta": {"INFO": "Spectrum"},
+    },
+    "tt_lombscargle": {
+        "names": [
+            "rg_src_id",
+            "ls_peak_power",
+            "ls_peak_freq",
+            "ls_peak_pval",
+            "ls_pval_alt_flt",
+        ],
+        "meta": {"INFO": "LombScargle results information"},
     },
 }
 

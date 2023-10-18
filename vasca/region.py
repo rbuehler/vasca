@@ -9,6 +9,7 @@ import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.table import Table, unique, join
+from astropy.timeseries import LombScargle
 from astropy.utils.exceptions import AstropyWarning
 from astroquery.simbad import Simbad
 from astroquery.vizier import Vizier
@@ -17,8 +18,8 @@ from loguru import logger
 from vasca.field import BaseField, GALEXDSField, GALEXField
 from vasca.source import Source
 from vasca.tables import TableCollection
-from vasca.tables_dict import dd_vasca_tables
-from vasca.utils import dd_filter2id
+from vasca.tables_dict import dd_vasca_tables, dd_vasca_columns
+from vasca.utils import dd_filter2id, run_LombScargle
 
 
 class Region(TableCollection):
@@ -354,6 +355,7 @@ class Region(TableCollection):
                 "tt_coadd_sources",
                 "tt_simbad",
                 "tt_gaiadr3",
+                "tt_lombscargle",
             ]
 
             for tt_name in ll_tables:
@@ -811,3 +813,56 @@ class Region(TableCollection):
             else:
                 rg.add_table(self.__dict__[tab_name], tab_name)
         return rg
+
+    def set_LombScargle(self, obs_filters=["NUV", "FUV"], nbins_min=10):
+        tt_src = self.tt_sources[self.tt_sources["sel"]]
+        logger.debug("Running LombScargle..")
+        dd_lcs = self.get_light_curve(rg_src_ids=tt_src["rg_src_id"])
+        logger.debug("Starting source loop")
+
+        # Prepare results dictionary
+        dd_ls = {
+            "rg_src_id": list(),
+            "ls_peak_power": list(),
+            "ls_peak_freq": list(),
+            "ls_peak_pval": list(),
+            "ls_pval_alt_flt": list(),
+        }
+
+        for src_id, tt_lc in dd_lcs.items():
+            # Consider only NUV fil
+            sel_flt0 = np.array(
+                (tt_lc["obs_filter"] == obs_filters[0]) * (tt_lc["sel"] == True),
+                dtype=bool,
+            )
+            dd_ls_results = run_LombScargle(tt_lc[sel_flt0], nbins_min=nbins_min)
+            if type(dd_ls_results) == type(None):
+                continue
+            dd_ls_results["rg_src_id"] = src_id
+            dd_ls_results["ls_pval_alt_flt"] = dd_vasca_columns["ls_pval_alt_flt"][
+                "default"
+            ]  # * uu.Unit(dd_vasca_columns["ls_pval_alt_flt"]["unit"])
+
+            if len(obs_filters) > 1:
+                sel_flt1 = np.array(
+                    (tt_lc["obs_filter"] == obs_filters[1]) * (tt_lc["sel"] == True),
+                    dtype=bool,
+                )
+                if sel_flt1.sum() > nbins_min:
+                    ls = LombScargle(
+                        tt_lc["time"][sel_flt1],
+                        tt_lc["flux"][sel_flt1],
+                        tt_lc["flux_err"][sel_flt1],
+                    )
+                    power = ls.power(dd_ls_results["ls_peak_freq"])
+                    Pval = ls.false_alarm_probability(power)
+                    dd_ls_results["ls_pval_alt_flt"] = Pval
+
+            dd_ls_results["ls_peak_freq"] = dd_ls_results["ls_peak_freq"].value
+            # Write out results
+            for var in dd_ls.keys():
+                dd_ls[var].append(dd_ls_results[var])
+        for key, val in dd_ls.items():
+            print(key, val[0])
+        self.add_table(dd_ls, "region:tt_lombscargle")
+        # Get confidence interval
