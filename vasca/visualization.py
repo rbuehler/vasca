@@ -21,7 +21,13 @@ from loguru import logger
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import ScalarFormatter
 
-from vasca.utils import dd_id2filter, flux2mag, mag2flux, select_obs_filter
+from vasca.utils import (
+    dd_id2filter,
+    flux2mag,
+    mag2flux,
+    select_obs_filter,
+    run_LombScargle,
+)
 
 # %% sky plotting
 
@@ -1079,6 +1085,96 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
 
 
 # %% SED plotting
+
+
+def freq2period(ff):
+    return 1 / ff
+
+
+def period2freq(pp):
+    return 1 / pp
+
+
+def plot_lombscargle(
+    tt_lc, fig=None, ax=None, ax_lc=None, obs_filter="NUV", nbins_min=10, **plot_kwargs
+):
+    """
+    Plots spectral energy distribution
+    Parameters
+    ----------
+    tc_src: vasca.TableCollection
+        Table collection containing tt_sed table.
+    fig: figure, optional
+        Matplotlib figure to draw on, if None a new figure is created. The default is None.
+    ax : axes, optional
+        Matplotlib axes to plot on. The default is None.
+    **errorbar_kwargs : dict
+        Key word arguments for pyplot.errorbars plotting.
+
+    Returns
+    -------
+    fig: figure
+        Matplotlib figure used to draw
+    ax : axes
+        Used Matplotlib axes.
+    """
+
+    logger.debug("Plotting Lomb-Scargle diagram ")
+
+    sel = np.array(
+        (tt_lc["obs_filter"] == obs_filter) * (tt_lc["sel"] == True), dtype=bool
+    )
+    if sel.sum() < nbins_min:
+        return
+    tt_lc = tt_lc[sel]
+
+    # Check if figure was passed
+    if type(fig) is type(None) and type(ax) is type(None):
+        fig = plt.figure(figsize=(6, 6))  # , constrained_layout=True
+    else:
+        plt.gcf()
+
+    # Check if axis was passed
+    if ax is None:
+        ax = plt.gca()
+
+    # Setup plotting parameters
+    plt_plot_kwargs = {}
+    if plot_kwargs is not None:
+        plt_plot_kwargs.update(plot_kwargs)
+
+    dd_ls_results = run_LombScargle(tt_lc, nbins_min=nbins_min)
+
+    probabilities = [
+        0.002699796063,
+        0.000063342484,
+        0.000000573303,
+    ]  # 3 sigma 0.002699796063, 4 sigma 0.000063342484, 5 sigma 0.000000573303
+
+    # Get confidence interval
+    conf = dd_ls_results["ls"].false_alarm_level(probabilities)
+    ax.axhline(conf[0], linewidth=0.5, ls="--", color="k", label="3/4/5 sigma")
+    ax.axhline(conf[1], linewidth=0.5, ls="--", color="k")
+    ax.axhline(conf[2], linewidth=0.5, ls="--", color="k")
+
+    # Plot LS
+    ax.plot(dd_ls_results["ls_freq"], dd_ls_results["ls_power"], **plt_plot_kwargs)
+
+    # Set labels
+    ax.set_xscale("log")
+    ax.set_xlabel("Frequency [1/day]")
+    ax.set_ylabel("LS power")
+    secax = ax.secondary_xaxis("top", functions=(freq2period, period2freq))
+    secax.set_xlabel("Period [day]")
+    ax.legend()
+
+    # Plot model on lc
+    if type(ax_lc) != type(None):
+        t_min = np.min(tt_lc["time"].quantity)
+        t_max = np.max(tt_lc["time"].quantity)
+        t_fit = np.linspace(t_min, t_max, 1000)
+        flux_fit = dd_ls_results["ls"].model(t_fit, dd_ls_results["ls_peak_freq"])
+        ax_lc.plot(t_fit, flux_fit, alpha=0.5)
 
 
 def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
