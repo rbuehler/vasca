@@ -1096,7 +1096,14 @@ def period2freq(pp):
 
 
 def plot_lombscargle(
-    tt_lc, fig=None, ax=None, ax_lc=None, obs_filter="NUV", nbins_min=10, **plot_kwargs
+    tt_lc,
+    fig=None,
+    ax=None,
+    ax_lc=None,
+    obs_filter="NUV",
+    nbins_min=10,
+    logy=True,
+    **plot_kwargs,
 ):
     """
     Plots spectral energy distribution
@@ -1121,12 +1128,14 @@ def plot_lombscargle(
 
     logger.debug("Plotting Lomb-Scargle diagram ")
 
+    # Prepare light curve
     sel = np.array(
         (tt_lc["obs_filter"] == obs_filter) * (tt_lc["sel"] == True), dtype=bool
     )
     if sel.sum() < nbins_min:
         return
     tt_lc = tt_lc[sel]
+    tt_lc.sort("time")
 
     # Check if figure was passed
     if type(fig) is type(None) and type(ax) is type(None):
@@ -1139,7 +1148,7 @@ def plot_lombscargle(
         ax = plt.gca()
 
     # Setup plotting parameters
-    plt_plot_kwargs = {}
+    plt_plot_kwargs = {"alpha": 0.5}
     if plot_kwargs is not None:
         plt_plot_kwargs.update(plot_kwargs)
 
@@ -1157,15 +1166,32 @@ def plot_lombscargle(
     ax.axhline(conf[1], linewidth=0.5, ls="--", color="k")
     ax.axhline(conf[2], linewidth=0.5, ls="--", color="k")
 
-    # Plot LS
-    ax.plot(dd_ls_results["ls_freq"], dd_ls_results["ls_power"], **plt_plot_kwargs)
-
     # Set labels
     ax.set_xscale("log")
+    if logy:
+        ax.set_yscale("log")
     ax.set_xlabel("Frequency [1/day]")
     ax.set_ylabel("LS power")
     secax = ax.secondary_xaxis("top", functions=(freq2period, period2freq))
     secax.set_xlabel("Period [day]")
+
+    # Plot frequency distribution of time bins
+    fbinsize = dd_ls_results["ls_freq"][1:] - dd_ls_results["ls_freq"][:-1]
+    fedges = dd_ls_results["ls_freq"][:-1] + fbinsize / 2.0
+    dtimes = tt_lc["time"][1:].data[None, :] - tt_lc["time"][:-1].data[:, None]
+    dfs = 1 / dtimes.flatten()
+    hist_f, _ = np.histogram(dfs, bins=fedges.data)
+    hist_f = 0.5 * hist_f / np.max(hist_f)  # normalize maximum to 0.5
+    ax.plot(
+        dd_ls_results["ls_freq"][1:-1],
+        hist_f,
+        label="frequency between visits",
+        **plt_plot_kwargs,
+    )
+
+    # Plot LS
+    ax.plot(dd_ls_results["ls_freq"], dd_ls_results["ls_power"], **plt_plot_kwargs)
+
     ax.legend()
 
     # Plot model on lc
