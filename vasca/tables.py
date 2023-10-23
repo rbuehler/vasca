@@ -505,7 +505,10 @@ class TableCollection(object):
                     # Check if variable is stored in verctor for all filters
                     var_vals = tt[var]
                     if len(np.array(var_vals[0]).flatten()) > 1:
-                        var_vals = var_vals[:, selections["obs_filter_idx"]]
+                        obs_filter_idx = self.tt_filters["obs_filter_idx"][
+                            self.tt_filters["obs_filter"] == selections["obs_filter"]
+                        ][0]
+                        var_vals = var_vals[:, obs_filter_idx]
 
                     sel = sel + (var_vals >= vals[0]) * (var_vals <= vals[1])
                     logger.info(
