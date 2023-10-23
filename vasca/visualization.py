@@ -1185,7 +1185,7 @@ def plot_lombscargle(
     ax.plot(
         dd_ls_results["ls_freq"][1:-1],
         hist_f,
-        label="frequency between visits",
+        label="Frequency between visits",
         **plt_plot_kwargs,
     )
 
