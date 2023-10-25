@@ -27,6 +27,7 @@ from astropy.timeseries import LombScargle
 from matplotlib import colormaps as cm
 from matplotlib.colors import ListedColormap, hex2color
 from scipy.stats import binned_statistic
+from scipy.stats import chi2
 from cycler import cycler
 
 from vasca.tables_dict import dd_vasca_columns
@@ -180,19 +181,52 @@ def get_col_cycler(ll_ogrp):
     return cycler(color=ll_col)
 
 
-def run_LombScargle(tt_lc, nbins_min=10):
+# Time to frequency conversions, to create secondary axis
+def freq2period(ff):
+    return 1 / ff
+
+
+def period2freq(pp):
+    return 1 / pp
+
+
+def run_LombScargle(
+    tt_lc,
+    nbins_min=40,
+    freq_range=[0.03, 2] / uu.d,
+):
+    """
+    Calculate Lomb Scargle diagram
+
+    Parameters
+        ----------
+        tt_lc: astropy.table
+            Table with the VASCA light curve
+        nbins_min : int, optional
+            Minimum number of time bins to perform LombScargle. The default is 20.
+
+        Returns
+        -------
+        dd_ls_results: dictionary
+            Dictionary with LombScargle objects
+    """
     # Check if enough bins to run
     if len(tt_lc) < nbins_min + 1:
         return None
 
-    dt = tt_lc["time"][1:] - tt_lc["time"][0:-1]
-    t_min = np.min(tt_lc["time"].quantity)
-    t_max = np.max(tt_lc["time"].quantity)
-    dt_tot = t_max - t_min
-    dt_min = np.min(dt.quantity)
-    f_min = 1 / (dt_tot / 4)
-    f_max = 1 / (4 * dt_min)
+    # Prepare LombsScargle binning
+    if type(freq_range) == type(None):
+        dt = tt_lc["time"][1:] - tt_lc["time"][0:-1]
+        t_min = np.min(tt_lc["time"].quantity)
+        t_max = np.max(tt_lc["time"].quantity)
+        dt_tot = t_max - t_min
+        dt_min = np.min(dt.quantity)
+        f_min = 1 / (dt_tot / 4)
+        f_max = 1 / (4 * dt_min)
+    else:
+        f_min, f_max = freq_range
 
+    # Run LombScargle and get values for highest peak
     ls = LombScargle(
         tt_lc["time"], tt_lc["flux"], tt_lc["flux_err"]
     )  # normalization{‘standard’, ‘model’, ‘log’, ‘psd’},
@@ -200,10 +234,19 @@ def run_LombScargle(tt_lc, nbins_min=10):
     if len(power) < 10:
         logger.warning(f"LombScargle could not be calculated, returning None")
         return None
+
+    # Get peak in specified range
     p_peak = power.max()
     f_peak = freq[np.argmax(power)]
     Pval = ls.false_alarm_probability(p_peak)
 
+    # Get reduced chsiquare for peak frequency model
+    flux_fit = ls.model(tt_lc["time"], f_peak)
+    chiq_el = np.array(
+        np.power(tt_lc["flux"] - flux_fit, 2) / np.power(tt_lc["flux_err"], 2)
+    )
+    chiq = np.sum(chiq_el)
+    n_dof = len(tt_lc["flux"]) - 3  # Assume 3 degrees of freedom for sine wave
     dd_ls_results = {
         "ls": ls,
         "ls_freq": freq,
@@ -211,6 +254,8 @@ def run_LombScargle(tt_lc, nbins_min=10):
         "ls_peak_freq": f_peak,
         "ls_peak_power": p_peak,
         "ls_peak_pval": Pval,
+        "ls_model_rchiq": chiq / n_dof,
+        "ls_model_pval": chi2.sf(chiq, n_dof),
     }
     return dd_ls_results
 

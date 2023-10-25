@@ -814,7 +814,23 @@ class Region(TableCollection):
                 rg.add_table(self.__dict__[tab_name], tab_name)
         return rg
 
-    def set_LombScargle(self, obs_filters=["NUV", "FUV"], nbins_min=10):
+    def set_LombScargle(self, obs_filters=["NUV", "FUV"], nbins_min=40):
+        """
+        Apply LombScargle analysis to selected sources.
+
+        Parameters
+        ----------
+        obs_filters array, optional
+            Observation filters to apply Lomb Scargle on.
+
+        nbins_min : int, optional
+            Minimum number of time bins to perform LombScargle. The default is 20.
+
+        Returns
+        -------
+        None
+
+        """
         tt_src = self.tt_sources[self.tt_sources["sel"]]
         logger.debug("Running LombScargle..")
         dd_lcs = self.get_light_curve(rg_src_ids=tt_src["rg_src_id"])
@@ -827,6 +843,8 @@ class Region(TableCollection):
             "ls_peak_freq": list(),
             "ls_peak_pval": list(),
             "ls_pval_alt_flt": list(),
+            "ls_model_rchiq": list(),
+            "ls_model_pval": list(),
         }
 
         for src_id, tt_lc in dd_lcs.items():
@@ -865,4 +883,3 @@ class Region(TableCollection):
         for key, val in dd_ls.items():
             print(key, val[0])
         self.add_table(dd_ls, "region:tt_lombscargle")
-        # Get confidence interval
