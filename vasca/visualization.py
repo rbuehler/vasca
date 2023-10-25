@@ -27,6 +27,8 @@ from vasca.utils import (
     mag2flux,
     select_obs_filter,
     run_LombScargle,
+    freq2period,
+    period2freq,
 )
 
 # %% sky plotting
@@ -1084,29 +1086,20 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
     return fig, ax
 
 
-# %% SED plotting
-
-
-def freq2period(ff):
-    return 1 / ff
-
-
-def period2freq(pp):
-    return 1 / pp
-
-
+# %% LombScargle
 def plot_lombscargle(
     tt_lc,
     fig=None,
     ax=None,
+    ax_phase=None,
     ax_lc=None,
     obs_filter="NUV",
-    nbins_min=10,
-    logy=True,
-    **plot_kwargs,
+    nbins_min=40,
+    logy=False,
 ):
     """
-    Plots spectral energy distribution
+    Plots Lomb Scargle diagram
+
     Parameters
     ----------
     tc_src: vasca.TableCollection
@@ -1114,9 +1107,18 @@ def plot_lombscargle(
     fig: figure, optional
         Matplotlib figure to draw on, if None a new figure is created. The default is None.
     ax : axes, optional
-        Matplotlib axes to plot on. The default is None.
-    **errorbar_kwargs : dict
-        Key word arguments for pyplot.errorbars plotting.
+        Matplotlib axes to plot LombScargle diagram on. The default is None.
+    ax_lc : axes, optional
+        Matplotlib axes to plot with the light curve to plot peak frequency model
+        on. The default is None.
+    ax_phase : axes, optional
+        Matplotlib axes to plot phase diagram. The default is None.
+    obs_filter : str, optional
+        Observational filter to perform LombScargle on. The default is "NUV"
+    nbins_min : int, optional
+        Minimum number of time bins to perform LombScargle. The default is 20.
+    logy : bool, optional
+        Plot LombScargle diagram in log(Power). The default is True.
 
     Returns
     -------
@@ -1149,8 +1151,6 @@ def plot_lombscargle(
 
     # Setup plotting parameters
     plt_plot_kwargs = {"alpha": 0.5}
-    if plot_kwargs is not None:
-        plt_plot_kwargs.update(plot_kwargs)
 
     dd_ls_results = run_LombScargle(tt_lc, nbins_min=nbins_min)
 
@@ -1190,7 +1190,12 @@ def plot_lombscargle(
     )
 
     # Plot LS
-    ax.plot(dd_ls_results["ls_freq"], dd_ls_results["ls_power"], **plt_plot_kwargs)
+    ax.plot(
+        dd_ls_results["ls_freq"],
+        dd_ls_results["ls_power"],
+        label="data",
+        **plt_plot_kwargs,
+    )
 
     ax.legend()
 
@@ -1198,9 +1203,33 @@ def plot_lombscargle(
     if type(ax_lc) != type(None):
         t_min = np.min(tt_lc["time"].quantity)
         t_max = np.max(tt_lc["time"].quantity)
-        t_fit = np.linspace(t_min, t_max, 1000)
+        nbins = int(
+            16 * (t_max.value - t_min.value) * dd_ls_results["ls_peak_freq"].value
+        )
+        t_fit = np.linspace(t_min, t_max, nbins)
         flux_fit = dd_ls_results["ls"].model(t_fit, dd_ls_results["ls_peak_freq"])
         ax_lc.plot(t_fit, flux_fit, alpha=0.5)
+
+    # Plot phase diagram
+    if type(ax_phase) != type(None):
+        period_peak = float(1 / dd_ls_results["ls_peak_freq"].value)
+        times_phased = tt_lc["time"] % period_peak
+        t_fit = np.linspace(0, period_peak, 40)
+        flux_fit = dd_ls_results["ls"].model(
+            t_fit * uu.d, dd_ls_results["ls_peak_freq"]
+        )
+        ax_phase.errorbar(
+            times_phased / period_peak,
+            tt_lc["flux"],
+            yerr=tt_lc["flux_err"],
+            linestyle="none",
+            marker="o",
+        )
+
+        ax_phase.plot(t_fit / period_peak, flux_fit, **plt_plot_kwargs)
+        ax_phase.set_xlabel("Phase")
+        ax_phase.set_ylabel("Flux [Jy]")
+    return fig, ax
 
 
 def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):

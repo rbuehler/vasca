@@ -668,6 +668,20 @@ dd_vasca_columns = {
         "default": -1,
         "description": "LombScargle power probability value for alternate filter",
     },
+    "ls_model_rchiq": {
+        "name": "ls_model_rchiq",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "Reduced chisquare of the LombScargle peak frequency sine wave",
+    },
+    "ls_model_pval": {
+        "name": "ls_model_pval",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "Chisquare probability of the LombScargle peak frequency model ",
+    },
 }
 
 
@@ -895,6 +909,8 @@ region = {
             "ls_peak_freq",
             "ls_peak_pval",
             "ls_pval_alt_flt",
+            "ls_model_rchiq",
+            "ls_model_pval",
         ],
         "meta": {"INFO": "LombScargle results information"},
     },
