@@ -423,6 +423,26 @@ class TableCollection(object):
 
         return out_str
 
+    def select_from_config(self, dd_selections):
+        """
+        Apply multiple selections at once.
+
+        Parameters
+        ----------
+        dd_selections : dict
+            Dictionary with selection table, variables and cut values
+
+        Returns
+        -------
+        None.
+
+
+        """
+        # Loop over selections any apply them
+        for sel_name, sel_cfg in dd_selections.items():
+            logger.info(f"Applying source selection '{sel_name}'")
+            self.select_rows(sel_cfg, remove_unselected=False)
+
     def select_rows(self, selections, remove_unselected=False):
         """
         Apply selection to a passed table.
@@ -454,7 +474,7 @@ class TableCollection(object):
 
         # Get selected events
         presel = tt["sel"].data.astype("bool")
-        nr_presel = presel.sum()
+        nr_rows = len(tt)
 
         if selections["sel_type"] == "and":
             sel = np.ones(len(tt), dtype=bool)
@@ -478,7 +498,7 @@ class TableCollection(object):
 
                     logger.info(
                         f"AND selecting '{var}' {vals}, "
-                        f"kept: {100*sel.sum()/nr_presel : .4f}%"
+                        f"kept: {100*sel.sum()/nr_rows : .4f}%"
                     )
 
             # Apply bitmask cuts
@@ -495,7 +515,7 @@ class TableCollection(object):
                     sel = sel * ~bit
                     logger.info(
                         f"AND selecting bitmask '{var}' removing {vals}, "
-                        f"kept: {100*sel.sum()/nr_presel : .4f}%"
+                        f"kept: {100*sel.sum()/nr_rows : .4f}%"
                     )
         elif selections["sel_type"] == "or":
             sel = np.zeros(len(tt), dtype=bool)
@@ -513,7 +533,7 @@ class TableCollection(object):
                     sel = sel + (var_vals >= vals[0]) * (var_vals <= vals[1])
                     logger.info(
                         f"OR selecting '{var}' {vals}, "
-                        f"kept: {100*sel.sum()/nr_presel : .4f}%"
+                        f"kept: {100*sel.sum()/nr_rows : .4f}%"
                     )
         elif selections["sel_type"] == "is_in":
             tt_ref = self.__dict__[selections["ref_table"]]
@@ -1044,7 +1064,7 @@ class TableCollection(object):
         self.tt_sources.meta["hr_flt1"] = obs_filter_id1
         self.tt_sources.meta["hr_flt2"] = obs_filter_id2
 
-    def add_column(self, table_name, col_name, col_template=None, col_data=None):
+    def add_column(self, table_name, col_name, col_data=None):
         """
         Adds column in a table, using the predefined VASCA columns.
         If column exists already replace it.
@@ -1155,12 +1175,13 @@ class TableCollection(object):
 
         """
 
-        logger.debug(f"Cross matching table {src_table_name}")
+        logger.info(f"Cross matching table {src_table_name}")
 
+        # get tables
         tt_cat = self.__dict__[cat_table_name]
+        tt_srcs = self.__dict__[src_table_name]
 
         # Get source positions
-        tt_srcs = self.__dict__[src_table_name]
         pos_srcs = SkyCoord(
             ra=tt_srcs["ra"], dec=tt_srcs["dec"], unit="deg", frame="icrs"
         )
@@ -1220,14 +1241,13 @@ class TableCollection(object):
                 coadd_fdiff_s2n[sel] = fdiff_s2n.data.flatten()
 
         # Store flux rations in source table
-        self.add_column(src_table_name, "coadd_ffactor", coadd_ffactor)
-        self.add_column(src_table_name, "coadd_fdiff_s2n", coadd_fdiff_s2n)
+        self.add_column(
+            src_table_name, col_name="coadd_ffactor", col_data=coadd_ffactor
+        )
+        self.add_column(
+            src_table_name, col_name="coadd_fdiff_s2n", col_data=coadd_fdiff_s2n
+        )
 
         np_rg_src_id = np.zeros(len(tt_cat), dtype=np.int32) - 1.0
         np_rg_src_id[idx_cat[sel]] = tt_srcs["rg_src_id"][sel]
         self.add_column(cat_table_name, "rg_src_id", np_rg_src_id)
-
-        # Mark as selected, if selection column exists
-        if "sel" in tt_cat.colnames:
-            tt_cat["sel"][:] = np.zeros(len(tt_cat), dtype=bool)
-            tt_cat["sel"][idx_cat[sel]] = np.ones(len(idx_cat[sel]), dtype=bool)
