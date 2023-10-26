@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "TDS_ELAISN1"# "ALL_10-800_LOOSE" #""ALL_10-800_LOOSE" #
+    name            : "ALL_10-800_LOOSE" #"TDS_ELAISN1"# ""ALL_10-800_LOOSE" #
     #""TDS_ELAISN1" # "ALL_10-800"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -161,8 +161,8 @@ observations:
                   # For GALEX a description is at the end of this document
                   artifacts :  [2,4,8,128,256] #[] ,8,16,32,64,128,256,512
 
-      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml
-      #obs_field_ids : !include  ./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_nuv_use.yaml
+      #obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml
+      obs_field_ids : !include  ./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_nuv_use.yaml
 
     - observatory   : "GALEX"
       obs_filter    : "FUV"
@@ -221,8 +221,8 @@ observations:
                   # For GALEX a description is at the end of this document
                   artifacts :  [2,4,8,128,256] #[] ,8,16,32,64,128,256,512
 
-      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml
-      #obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_fuv_use.yaml
+      #obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml
+      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_fuv_use.yaml
 
 # GALEX artifact flags
 # ( 1): edge; Detector bevel edge reflection (NUV only).
