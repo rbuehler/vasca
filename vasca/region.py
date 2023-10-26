@@ -767,10 +767,15 @@ class Region(TableCollection):
         # Add table and ogroup
         self.add_table(tt_nodes[all_idx], "tt_otypes")
 
-    def synch_src_sel(self):
+    def synch_src_sel(self, remove_unselected=False):
         """
-        Synchronize selections among tables. All tables containing "rg_src_id" only keep
-        rows for selected sources in tt_sources
+        Synchronize selections among tables. Select rows for tables containing
+        "rg_src_id" for sources selected in tt_sources.
+
+        Parameters
+        ----------
+        remove_unselected: bool, optional
+            Remove table rows which were not selected
 
         Returns
         -------
@@ -785,6 +790,10 @@ class Region(TableCollection):
                     self.tt_sources["rg_src_id"][self.tt_sources["sel"]],
                 )
                 self.__dict__[tab_name]["sel"] = sel
+                if remove_unselected:
+                    self.__dict__[tab_name] = self.__dict__[tab_name][
+                        self.__dict__[tab_name]["sel"]
+                    ]
 
     def get_region_catalog(self):
         """
@@ -820,7 +829,7 @@ class Region(TableCollection):
 
         Parameters
         ----------
-        obs_filters array, optional
+        obs_filters : array, optional
             Observation filters to apply Lomb Scargle on.
 
         nbins_min : int, optional

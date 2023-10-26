@@ -342,6 +342,11 @@ def run(vasca_cfg):
     if vasca_cfg["resources"]["coadd_exists"]:
         rg.set_src_stats(src_id_name="coadd_src_id")
 
+    # Remove sources which do not pass quality cuts
+    rg.tt_sources["sel"] = False
+    rg.select_from_config(vasca_cfg["selection_src_quality"])
+    rg.synch_src_sel(remove_unselected=True)
+
     # Add hardness ratio (default obs_filter_id 1 & 2 for GALEX)
     rg.set_hardness_ratio()
 
@@ -352,27 +357,18 @@ def run(vasca_cfg):
             dist_s2n_max=vasca_cfg["assoc_src_coadd"]["dist_s2n_max"],
         )
 
-    # Select variable sources
-    rg.select_rows(vasca_cfg["selection"]["src_variability"], remove_unselected=False)
-    if vasca_cfg["resources"]["coadd_exists"]:
-        rg.select_rows(
-            vasca_cfg["selection"]["src_coadd_diff"], remove_unselected=False
-        )
-
-    # Remove detections not associated to selected sources
-    if "det_association" in vasca_cfg["selection"].keys():
-        rg.select_rows(
-            vasca_cfg["selection"]["det_association"], remove_unselected=True
-        )
+    # Select variable sources, deselect all sources before
+    rg.tt_sources["sel"] = False
+    rg.select_from_config(vasca_cfg["selection_src"])
 
     # Set source id table
     rg.set_src_id_info()
 
-    # Write out region and reduced "catalog" region
+    # Write out region
     fname_base = rg.region_path + "/region_" + vasca_cfg["general"]["name"]
     rg.write_to_fits(file_name=fname_base + ".fits")
 
-    # Write out catalog region file
+    # Write out reduced catalog region
     rc = rg.get_region_catalog()
     rc.write_to_fits(file_name=fname_base + "_cat.fits")
 
