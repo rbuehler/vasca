@@ -496,7 +496,7 @@ class TableCollection(object):
                         * np.array((var_vals <= vals[1]), dtype=bool).flatten()
                     )
 
-                    logger.info(
+                    logger.debug(
                         f"AND selecting '{var}' {vals}, "
                         f"kept: {100*sel.sum()/nr_rows : .4f}%"
                     )
@@ -513,7 +513,7 @@ class TableCollection(object):
                         ignore_flags=vals,
                     )
                     sel = sel * ~bit
-                    logger.info(
+                    logger.debug(
                         f"AND selecting bitmask '{var}' removing {vals}, "
                         f"kept: {100*sel.sum()/nr_rows : .4f}%"
                     )
@@ -531,7 +531,7 @@ class TableCollection(object):
                         var_vals = var_vals[:, obs_filter_idx]
 
                     sel = sel + (var_vals >= vals[0]) * (var_vals <= vals[1])
-                    logger.info(
+                    logger.debug(
                         f"OR selecting '{var}' {vals}, "
                         f"kept: {100*sel.sum()/nr_rows : .4f}%"
                     )
@@ -545,6 +545,9 @@ class TableCollection(object):
         sel_tot = presel * sel
         if selections["presel_type"].casefold() == "or".casefold():
             sel_tot = presel + sel
+        logger.info(
+            f"Total table entries {nr_rows}, pre-selected rows {presel.sum()}, rows after new selection {sel_tot.sum()}"
+        )
 
         tt.replace_column("sel", sel_tot.astype("bool"))
 
