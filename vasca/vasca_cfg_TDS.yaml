@@ -1,15 +1,15 @@
 ---
 authors : "UC science"
-comment : "Example configuration file"
+comment : "GALEX Time Domain Survey fields configuration file"
 
 general:
     name            : "TDS_ALL_LOOSE"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
-    nr_cpus         : 8                                 # Number of CPUs to use. If "null" all available are used.
+    nr_cpus         : 8                                  # Number of CPUs to use. If "null" all available are used.
     save_ref_srcs   : true                               # Store reference sources into region file
-    run_fields      : true                             # If fields have already been clustered and saved and should be reused set to "false". Otherwise the default is true
+    run_fields      : true                               # If fields have already been clustered and saved and should be reused set to "false". Otherwise the default is true
     
 resources:                      
     load_method      : "MAST_LOCAL"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
