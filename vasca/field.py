@@ -1799,7 +1799,7 @@ class GALEXDSField(BaseField):
             if mast_col not in tt_detections_raw.colnames:
                 continue
             else:
-                vasca_col = col_names[mast_col]
+                vasca_col = col_names_map[mast_col]
                 dd_det[vasca_col] = tt_detections_raw[mast_col][sel_s2n].data
 
         # Correct flux flux outside of aperture, as listed here:
