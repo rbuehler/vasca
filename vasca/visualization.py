@@ -1414,7 +1414,6 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
             fit_flux = (fitted_bb(tt_sed["wavelength"].quantity) * uu.Unit("sr")).to(
                 uu.Unit("1e-6 Jy")
             )
-            # print(fit_flux[:10])
             fit_temp = (
                 np.round(fitted_bb.temperature.value, 0) * fitted_bb.temperature.unit
             )
