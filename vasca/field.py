@@ -25,8 +25,8 @@ from requests.exceptions import HTTPError
 
 from vasca.resource_manager import ResourceManager
 from vasca.tables import TableCollection
-from vasca.utils import dd_filter2id, get_field_id, name2id
 from vasca.tables_dict import dd_vasca_columns
+from vasca.utils import dd_filter2id, get_field_id, name2id
 
 # global paths
 # path to the dir. of this file
@@ -1318,9 +1318,10 @@ class GALEXField(BaseField):
 
         # set data as class attributes
 
-        # Correct flux flux outside of apperture, as listed here:
+        # Correct flux flux outside of aperture, as listed here:
         # http://www.galex.caltech.edu/researcher/techdoc-ch5.html
         acorr60 = 1.116863247 if obs_filter == "NUV" else 1.09647819
+
         # acorr38 = 1.21338885 if obs_filter == "NUV" else 1.202264
         def get_det_dict(tt_det):
             """Retieve dictionaly with detection/coadd_detections data,
@@ -1352,7 +1353,7 @@ class GALEXField(BaseField):
                 / 2
             )
 
-            # Add flux apperture ratio and covert counts to Jansky for r=3.8 arcsec apperture flux
+            # Add flux aperture ratio and covert counts to Jansky for r=3.8 arcsec aperture flux
             # Check to avoid divisions by zero
             idx_fauto = np.where(dd_det["flux_auto_flt"] > 0)
             cts2Jy = np.zeros(len(dd_det["flux_auto_flt"]))
@@ -1360,7 +1361,7 @@ class GALEXField(BaseField):
                 dd_det["flux_auto"][idx_fauto] / dd_det["flux_auto_flt"][idx_fauto]
             )
 
-            # Use apperture flux instead of AUTO flux, as it is more reliable for variability studies
+            # Use aperture flux instead of AUTO flux, as it is more reliable for variability studies
             dd_det["flux"] = dd_det["flux_r60"] * cts2Jy * acorr60
             dd_det["flux_err"] = dd_det["flux_r60_err"] * cts2Jy * acorr60
 
@@ -1369,7 +1370,7 @@ class GALEXField(BaseField):
                 dd_filter2id[obs_filter.upper()] + np.zeros(np.sum(sel_s2n))
             )
 
-            # Ratio between the flux-counts, correcting for difference in apperture
+            # Ratio between the flux-counts, correcting for difference in aperture
             idx_fr60 = np.where(dd_det["flux_r60"] > 0)
             dd_det["flux_app_ratio"] = (
                 np.zeros(
@@ -1718,20 +1719,19 @@ class GALEXDSField(BaseField):
             "alpha_j2000": "ra",
             "delta_j2000": "dec",
             "nuv_poserr": "pos_err",
-            "nuv_flux": "flux",
-            "nuv_fluxerr": "flux_err",
+            "nuv_flux": "flux_auto",
+            "nuv_fluxerr": "flux_auto_err",
             "nuv_s2n": "s2n",
             "fov_radius": "r_fov",
             "nuv_artifact": "artifacts",
             "NUV_CLASS_STAR": "class_star",
             "chkobj_type": "chkobj_type",
-            "NUV_A_WORLD": "size_world_a",  # Later combined & replaced with size_world
-            "NUV_B_WORLD": "size_world_b",  # Later combined & replaced with size_world
             "NUV_ELLIPTICITY": "ellip_world",
             "NUV_FLUX_APER_4": "flux_r60",
             "NUV_FLUXERR_APER_4": "flux_r60_err",
             "NUV_FLUX_APER_3": "flux_r38",
             "NUV_FLUXERR_APER_3": "flux_r38_err",
+            "NUV_FLUX_AUTO": "flux_auto_flt",
             "E_bv": "E_bv",
             "nuv_mag": "mag",
             "nuv_magerr": "mag_err",
@@ -1741,7 +1741,6 @@ class GALEXDSField(BaseField):
         # Visit detections
 
         # Opens and stacks all visit-detection catalogs, adds column for visit IDs,
-        # and selects required columns for VASCA
         logger.debug(f"Loading visit-detection catalogs for field '{self.field_name}'.")
 
         # Gets paths to all mcat (visit-detection catalogs) files
@@ -1756,7 +1755,7 @@ class GALEXDSField(BaseField):
             glob(f"{self.data_path}{os.sep}{vis_name}/*xd-mcat.fits")[0]
             for vis_name in tt_visits_select["vis_name"]
         ]
-        # Loops over visits to read mcat files and store only the required columns
+        # Loops over visits to read mcat files
         for i, (mcat_path, vis_id) in enumerate(
             zip(mcat_vis_paths, self.tt_visits["vis_id"])
         ):
@@ -1771,51 +1770,89 @@ class GALEXDSField(BaseField):
                 tt_mcat.add_column(
                     np.full(len(tt_mcat), vis_id), name="vis_id", index=0
                 )
-                tt_detections_raw = tt_mcat[col_names]
+                tt_detections_raw = tt_mcat
             # Appends all catalogs that follow
             else:
                 tt_mcat.add_column(
                     np.full(len(tt_mcat), vis_id), name="vis_id", index=0
                 )
-                tt_detections_raw = vstack([tt_detections_raw, tt_mcat[col_names]])
+                tt_detections_raw = vstack([tt_detections_raw, tt_mcat])
             # Clean-up
             del tt_mcat
 
-        # Replace geometric sizes of flux profile by combined quantity in arcsec
+        # Modify and augment visit-detections table
+        # and convert into dictionary with correct VASCA column names
+        dd_det = {}
 
-        # Computes average of A and B parameters
-        tt_detections_raw.add_column(
-            col=(
-                (
-                    tt_detections_raw["NUV_A_WORLD"].data
-                    + tt_detections_raw["NUV_B_WORLD"].data
-                )
-                / 2
-                * uu.deg
-            ).to("arcsec"),
-            name="NUV_SIZE_WORLD",
-        )
-        tt_detections_raw.remove_columns(["NUV_A_WORLD", "NUV_B_WORLD"])
-
-        # Apply changes to column names map
-        col_names_map.update({"NUV_SIZE_WORLD": "size_world"})
-        del col_names_map["NUV_A_WORLD"]
-        del col_names_map["NUV_B_WORLD"]
-        col_names = list(col_names_map.keys())
-
-        # Converts into dictionary with correct VASCA column names
-        dd_detections_raw = {}
-        # Keep only entries with detections
+        # Keep only entries with detections, check that by looking at s2n column
         sel_s2n = tt_detections_raw["nuv_s2n"] > 0
-        for col in col_names:
-            dd_detections_raw[col_names_map[col]] = tt_detections_raw[col][sel_s2n].data
+
+        # Warn in cases where there is a filed entry in MAST without detections
+        if len(tt_detections_raw[sel_s2n]) == 0:
+            logger.warning(
+                "No detection with s2n>0 in MAST for "
+                f"field {self.tt_visits['vis_name']}."
+            )
+
+        # Collect all columns that don't need modifications
+        for mast_col in col_names:
+            if mast_col not in tt_detections_raw.colnames:
+                continue
+            else:
+                vasca_col = col_names[mast_col]
+                dd_det[vasca_col] = tt_detections_raw[mast_col][sel_s2n].data
+
+        # Correct flux flux outside of aperture, as listed here:
+        # http://www.galex.caltech.edu/researcher/techdoc-ch5.html
+        acorr60 = 1.116863247  # 6.0 arcsec correction factor for NUV filter
+
+        # Add flux aperture ratio and covert counts to Jansky
+        # for r=3.8 arcsec aperture flux
+        # Check to avoid divisions by zero
+        idx_fauto = np.where(dd_det["flux_auto_flt"] > 0)
+        cts2Jy = np.zeros(len(dd_det["flux_auto_flt"]))
+        cts2Jy[idx_fauto] = (
+            dd_det["flux_auto"][idx_fauto] / dd_det["flux_auto_flt"][idx_fauto]
+        )
+
+        # Use aperture flux instead of AUTO flux,
+        # as it is more reliable for variability studies
+        dd_det["flux"] = dd_det["flux_r60"] * cts2Jy * acorr60
+        dd_det["flux_err"] = dd_det["flux_r60_err"] * cts2Jy * acorr60
+
         # Add filter_id
-        dd_detections_raw["obs_filter_id"] = np.array(
+        dd_det["obs_filter_id"] = np.array(
             dd_filter2id["NUV"] + np.zeros(np.sum(sel_s2n))
         )
-        self.add_table(dd_detections_raw, "galex_field:tt_detections")
 
-        # Coadd/reference image
+        # Ratio between the flux-counts, correcting for difference in aperture
+        idx_fr60 = np.where(dd_det["flux_r60"] > 0)
+        dd_det["flux_app_ratio"] = (
+            np.zeros(
+                len(dd_det["flux_r60"]),
+                dtype=dd_vasca_columns["flux_app_ratio"]["dtype"],
+            )
+            + dd_vasca_columns["flux_app_ratio"]["default"]
+        )
+        dd_det["flux_app_ratio"][idx_fr60] = (
+            dd_det["flux_r38"][idx_fr60] / dd_det["flux_r60"][idx_fr60]
+        )
+
+        # Compute geometric sizes of flux profile from average quantity in arcsec
+        dd_det["size_world"] = (
+            3600
+            * (
+                tt_detections_raw["NUV_A_WORLD"][sel_s2n].data
+                + tt_detections_raw["NUV_B_WORLD"][sel_s2n].data
+            )
+            / 2
+        )
+
+        # Create VASCA visit-detections table
+        self.add_table(dd_det, "galex_field:tt_detections")
+        del tt_detections_raw
+
+        # Co-add/reference image
         logger.debug(
             "Creating reference/coadd sky-map for field " f"'{self.field_name}'"
         )
@@ -1824,33 +1861,6 @@ class GALEXDSField(BaseField):
 
         # Loads the reference intensity map
         self.load_sky_map(coadd_int_file_name)
-
-        #         # For now just take the visit with longest exposure since no coadd is available
-        #         vis_id_tmax = self.tt_visits[np.argmax(self.tt_visits["time_bin_size"])][
-        #             "vis_id"
-        #         ]
-        #         vis_name_tmax = self.name_id_map(int(vis_id_tmax))
-        #         coadd_mcat_file_name = glob(
-        #             f"{self.data_path}{os.sep}{vis_name_tmax}{os.sep}*-xd-mcat.fits"
-        #         )[0]
-        #
-        #         # Opens the reference detections catalog and selects VASCA columns
-        #         with warnings.catch_warnings():
-        #             warnings.simplefilter("ignore", AstropyWarning)
-        #             tt_coadd_detections_raw = Table.read(coadd_mcat_file_name)
-        #
-        #         # Converts into dictionary with correct VASCA column names
-        #         dd_coadd_detections_raw = {}
-        #         # Loops over same columns as used for the visit detections, but skips "vis_id"
-        #         for col in col_names[1:]:
-        #             dd_coadd_detections_raw[col_names_map[col]] = tt_coadd_detections_raw[
-        #                 col
-        #             ].data
-        #         # Add filter_id
-        #         dd_coadd_detections_raw["obs_filter_id"] = np.array(
-        #             dd_filter2id["NUV"] + np.zeros(len(tt_coadd_detections_raw))
-        #         )
-        #         self.add_table(dd_coadd_detections_raw, "galex_field:tt_coadd_detections")
 
         # Loads visit intensity maps if requested
         logger.debug("Loading all visit-level sky maps.")
