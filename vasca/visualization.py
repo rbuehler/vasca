@@ -6,6 +6,7 @@ Visualization related methods for VASCA
 
 from collections import OrderedDict
 from itertools import cycle
+import warnings
 
 import astropy.units as uu
 from astropy import constants as cc
@@ -20,6 +21,8 @@ from astropy.modeling.models import BlackBody
 from loguru import logger
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import ScalarFormatter
+from astropy.modeling import models, fitting
+from astropy.utils.exceptions import AstropyUserWarning
 
 from vasca.utils import (
     dd_id2filter,
@@ -1295,28 +1298,28 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     tt_grp = tt_sed[~sel].group_by("observatory")
 
     # Plot black Body spectra for reference
-    for temp in [8000, 16000, 32000]:
-        lab = None
-        if temp == 8000:
-            lab = "Black Bodies of 8/16/32 kK"
-        bb = BlackBody(temperature=temp * uu.K)  # , scale=2.7e-25
-
-        # Normalize to NUV VASCA point
-        sel_nuv = tt_sed[sel]["obs_filter"] == "NUV"
-        vasca_flux = tt_sed[sel]["flux"].quantity[sel_nuv].to(uu.Jy)
-        vasca_wave = tt_sed[sel]["wavelength"].quantity[sel_nuv].to(uu.AA)
-        bb_flux = bb(vasca_wave).to(uu.Jy / uu.sr) * 1 * uu.sr
-        bb_scale = vasca_flux / bb_flux
-
-        bb_lambda = np.power(10, np.arange(3, 4.2, 0.01)) * uu.AA
-        bb_flux = bb(bb_lambda).to(uu.Jy / uu.sr) * 1 * uu.sr
-        ax.plot(
-            bb_lambda,
-            bb_scale * bb_flux.to(uu.Unit("1e-6 Jy")),
-            color="0.8",
-            ls=":",
-            label=lab,
-        )
+    # for temp in [8000, 16000, 32000]:
+    #     lab = None
+    #     if temp == 8000:
+    #         lab = "Black Bodies of 8/16/32 kK"
+    #     bb = BlackBody(temperature=temp * uu.K)  # , scale=2.7e-25
+    #
+    #     # Normalize to NUV VASCA point
+    #     sel_nuv = tt_sed[sel]["obs_filter"] == "NUV"
+    #     vasca_flux = tt_sed[sel]["flux"].quantity[sel_nuv].to(uu.Jy)
+    #     vasca_wave = tt_sed[sel]["wavelength"].quantity[sel_nuv].to(uu.AA)
+    #     bb_flux = bb(vasca_wave).to(uu.Jy / uu.sr) * 1 * uu.sr
+    #     bb_scale = vasca_flux / bb_flux
+    #
+    #     bb_lambda = np.power(10, np.arange(3, 4.2, 0.01)) * uu.AA
+    #     bb_flux = bb(bb_lambda).to(uu.Jy / uu.sr) * 1 * uu.sr
+    #     ax.plot(
+    #         bb_lambda,
+    #         bb_scale * bb_flux.to(uu.Unit("1e-6 Jy")),
+    #         color="0.8",
+    #         ls=":",
+    #         label=lab,
+    #     )
 
     # Plot spectrum, if present
     if "tt_spectrum" in tc_src._table_names:
@@ -1359,6 +1362,72 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
         **plt_errorbar_kwargs,
     )
 
+    # Fit if asked
+    # if do_fit.mayor() == "BB":
+    uscale = uu.Unit("1e-6 Jy/sr")
+    BB = models.BlackBody(temperature=2e4 * uu.K, scale=1e-24 * uscale)  #
+    # BB.temperature.bounds = [1e4 * uu.K, 5e4 * uu.K]
+    # BB.temperature.prior = 10000 * uu.K
+    # BB.temperature.default = 11000 * uu.K
+    # BB.scale.bounds = [1e-25, 1e-23]
+    # BB.scale.prior = 1e-23
+    print(BB.temperature, BB.scale)
+    # BB.scale.default = 2e-23
+    # fit = fitting.LMLSQFitter()
+    fit = fitting.LevMarLSQFitter()
+    # print(fit.fit_info)
+    # fit = fitting.TRFLSQFitter(use_min_max_bounds=False)
+    # fit the data with the fitter
+    # print(tt_sed)
+    bb_flux = (tt_sed["flux"].quantity / uu.Unit("sr")).to(uscale)
+    selfit = (
+        (bb_flux.value > 1)
+        * (bb_flux.value < 1e3)
+        * (tt_sed["wavelength"] > 0)
+        * (tt_sed["wavelength"] < 1e6)
+        #    * (tt_sed["flux_err"] > 1e-6)
+        #    * (tt_sed["flux_err"] < 1e-1)
+    )
+    # print("Good bins:", selfit.sum())
+
+    # print(tt_sed["wavelength"].quantity, bb_flux, tt_sed["flux"][:100])
+    with warnings.catch_warnings():
+        # Ignore model linearity warning from the fitter
+        warnings.filterwarnings(
+            "ignore",
+            message="Model is linear in parameters",
+            category=AstropyUserWarning,
+        )
+        fitted_bb = fit(
+            BB,
+            tt_sed["wavelength"].quantity[selfit],
+            bb_flux[selfit],
+            weights=None,  # 1 / tt_sed["flux_err"][selfit]
+            maxiter=100,
+            acc=1e-07,
+            epsilon=1.4901161193847656e-08,
+            estimate_jacobian=False,
+            filter_non_finite=True,
+        )
+        # print(fit.fit_info)
+        if fit.fit_info["ierr"] <= 4 and fit.fit_info["ierr"] >= 1:
+            fit_flux = (fitted_bb(tt_sed["wavelength"].quantity) * uu.Unit("sr")).to(
+                uu.Unit("1e-6 Jy")
+            )
+            # print(fit_flux[:10])
+            fit_temp = (
+                np.round(fitted_bb.temperature.value, 0) * fitted_bb.temperature.unit
+            )
+            ax.plot(
+                tt_sed["wavelength"],
+                fit_flux,
+                color="0.5",
+                ls="-",
+                label="BB " + str(fit_temp),
+            )
+        else:
+            print("Black body fir did not converge.")
+
     # Helper functions to define second axis
     def flux2mag_np(flux):
         return flux2mag(flux).data
@@ -1397,7 +1466,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     secay.yaxis.set_minor_formatter(formatter)
     secay.set_ylabel("AB magnitude")
 
-    ax.set_ylabel("Flux [Jy]")
+    ax.set_ylabel("Flux [$\mu$Jy]")
     ax.set_xlabel("Wavelength [Angstom]")
 
     ax.legend()
