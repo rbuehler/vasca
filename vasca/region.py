@@ -8,9 +8,8 @@ import healpy as hpy
 import numpy as np
 from astropy import units as uu
 from astropy.coordinates import SkyCoord
-from astropy.table import Table, unique, join
+from astropy.table import Table, unique
 from astropy.timeseries import LombScargle
-from astropy.utils.exceptions import AstropyWarning
 from astroquery.simbad import Simbad
 from astroquery.vizier import Vizier
 from loguru import logger
@@ -889,6 +888,4 @@ class Region(TableCollection):
             # Write out results
             for var in dd_ls.keys():
                 dd_ls[var].append(dd_ls_results[var])
-        for key, val in dd_ls.items():
-            print(key, val[0])
         self.add_table(dd_ls, "region:tt_lombscargle")

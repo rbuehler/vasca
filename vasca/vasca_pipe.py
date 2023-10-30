@@ -42,7 +42,6 @@ def set_config(cfg_file):
         VASCA pipeline configuration dictionary
     """
     with open(cfg_file) as file:
-        # vasca_cfg = yaml.safe_load(file)  # yaml.
         vasca_cfg = yaml.load(file, Loader=yaml.FullLoader)
 
     # Set output directory
@@ -86,12 +85,6 @@ def set_logger(vasca_cfg):
                 "backtrace": True,
                 "diagnose": True,
             },
-            # {
-            #     "sink": log_dir + log_file_name,
-            #     "serialize": True,
-            #     "backtrace": True,
-            #     "diagnose": True,
-            # },
         ],
     }
     logger.configure(**log_cfg)
@@ -104,7 +97,7 @@ def set_logger(vasca_cfg):
 
 
 def keep_base_field(field):
-    "Remove field data that is not needed for further analysis to save memory"
+    """Remove field data that is not needed for further analysis to save memory"""
     # Remove detections which did not pass selections and where not used in clustering
     field.remove_unselected("tt_detections")
     if hasattr(field, "tt_coadd_detections"):
@@ -128,8 +121,10 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     ----------
     obs_nr : int
         Observation number in the config file.
-    field : vasca.field
-        Field to run analysis on.
+    field_id : str
+        Field ID of the field to run
+    rg : vasca.Region
+        Region of the VASCA pipeline.
     vasca_cfg :
         VASCA configuration file
 
@@ -333,10 +328,6 @@ def run(vasca_cfg):
     else:
         rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
 
-    # rg.cluster_meanshift(**vasca_cfg["cluster_src"]["meanshift"])
-    # if vasca_cfg["resources"]["coadd_exists"]:
-    #     rg.cluster_meanshift(**vasca_cfg["cluster_coadd_dets"]["meanshift"])
-
     # Calculate source statistics
     rg.set_src_stats(src_id_name="rg_src_id")
     if vasca_cfg["resources"]["coadd_exists"]:
@@ -378,6 +369,7 @@ def run(vasca_cfg):
     )
     with open(yaml_out_name, "w") as yaml_file:
         yaml.dump(vasca_cfg, yaml_file)
+    logger.info("Done running VASCA pipeline.")
 
 
 def run_from_file():
