@@ -1,15 +1,15 @@
 ---
 authors : "UC science"
-comment : "Example configuration file"
+comment : "GALEX Time Domain Survey fields configuration file"
 
 general:
     name            : "TDS_ALL_LOOSE"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
-    nr_cpus         : 8                                 # Number of CPUs to use. If "null" all available are used.
+    nr_cpus         : 8                                  # Number of CPUs to use. If "null" all available are used.
     save_ref_srcs   : true                               # Store reference sources into region file
-    run_fields      : true                             # If fields have already been clustered and saved and should be reused set to "false". Otherwise the default is true
+    run_fields      : true                               # If fields have already been clustered and saved and should be reused set to "false". Otherwise the default is true
     
 resources:                      
     load_method      : "MAST_LOCAL"                   # Allowed are ["MAST_REMOTE", "MAST_LOCAL", "VASCA", "AUTO"]
@@ -46,26 +46,60 @@ assoc_src_coadd:
     dist_s2n_max  : 3        # Associate nearest source with this distance in units of "squared sumed position error"   
 
         
-selection:
-    src_variability:
+#Keep only sources which after second clustering full fill the following
+selection_src_quality:
+    selection_src_quality_nuv:
+        table: "tt_sources"
+        presel_type: "or"
+        sel_type: "and"
+        obs_filter: "NUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
+        range:
+            nr_det: [ 2,.inf ]
+            pos_cpval: [ 0.0001,.inf ]
+            pos_xv: [ -.inf,2 ]
+    selection_src_quality_fuv:
+        table: "tt_sources"
+        presel_type: "or"
+        sel_type: "and"
+        obs_filter: "FUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
+        range:
+            nr_det: [ 2,.inf ]
+            pos_cpval: [ 0.0001,.inf ]
+            pos_xv: [ -.inf,2 ]
+
+selection_src:
+    src_variability_nuv:
         table       : "tt_sources"
-        presel_type : "and"
+        presel_type : "or"
         sel_type    : "and"
         obs_filter  : "NUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
         range:
-            nr_det         : [2,.inf]
-            pos_cpval      : [0.0001,.inf]
-            pos_xv         : [-.inf,2]             
             flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
             flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%  
             flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
-    src_coadd_diff:
+    src_coadd_diff_nuv:
         table       : "tt_sources"
         presel_type : "or"
         sel_type    : "and"
         obs_filter  : "NUV" 
         range:
-            nr_det          : [2,.inf]   
+            coadd_ffactor   : [2.0,.inf]
+            coadd_fdiff_s2n : [7,.inf]
+    src_variability_fuv:
+        table       : "tt_sources"
+        presel_type : "or"
+        sel_type    : "and"
+        obs_filter  : "FUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
+        range:
+            flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
+            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%
+            flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
+    src_coadd_diff_fuv:
+        table       : "tt_sources"
+        presel_type : "or"
+        sel_type    : "and"
+        obs_filter  : "FUV"
+        range:
             coadd_ffactor   : [2.0,.inf]
             coadd_fdiff_s2n : [7,.inf]
                     
