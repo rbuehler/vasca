@@ -576,6 +576,20 @@ dd_vasca_columns = {
         "default": -1,
         "description": "VASCA internal source ID number for associated sources",
     },
+    "sp_type": {
+        "name": "sp_type",
+        "dtype": "S32",
+        "unit": "",
+        "default": "none",
+        "description": "SIMBAD spectral type",
+    },
+    "main_id": {
+        "name": "main_id",
+        "dtype": "S32",
+        "unit": "",
+        "default": "none",
+        "description": "SIMBAD main ID",
+    },
     # %%% origin
     "origin": {
         "name": "origin",
@@ -615,9 +629,16 @@ dd_vasca_columns = {
     "Plx": {
         "name": "Plx",
         "dtype": "float32",
-        "unit": "",
+        "unit": "1e-3 arcsec",
         "default": -1,
         "description": "Parallax from GAIA-DR3",
+    },
+    "e_Plx": {
+        "name": "e_Plx",
+        "dtype": "float32",
+        "unit": "1e-3 arcsec",
+        "default": -1,
+        "description": "Parallax error from GAIA-DR3",
     },
     "Gmag": {
         "name": "Gmag",
