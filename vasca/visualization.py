@@ -1097,7 +1097,7 @@ def plot_lombscargle(
     ax_phase=None,
     ax_lc=None,
     obs_filter="NUV",
-    nbins_min=40,
+    nbins_min=20,
     logy=False,
 ):
     """

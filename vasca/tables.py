@@ -11,7 +11,7 @@ from astropy import units as uu
 from astropy.coordinates import SkyCoord
 from astropy.io import fits
 from astropy.nddata import bitmask
-from astropy.table import Column, Table, join
+from astropy.table import Column, Table, join, MaskedColumn
 from astropy.wcs import wcs
 from astropy.timeseries import TimeSeries
 from loguru import logger
@@ -1086,9 +1086,17 @@ class TableCollection(object):
         None.
 
         """
+        # Check if no data was given and fill with default
         if type(col_data) == type(None):
             table_size = len(self.__dict__[table_name])
             col_data = np.array([dd_vasca_columns[col_name]["default"]] * table_size)
+
+        # Check if masked column was passed
+        if isinstance(col_data, MaskedColumn):
+            col_data.fill_value = dd_vasca_columns[col_name]["default"]
+            col_data = col_data.filled()
+
+        # Get Column definition in VASCA
         col_template_copy = dd_vasca_columns[col_name].copy()
         del col_template_copy["default"]
         col = Column(col_data, **col_template_copy)
