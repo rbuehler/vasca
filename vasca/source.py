@@ -221,7 +221,7 @@ class Source(TableCollection):
         )
         self.tt_gphoton_lc["sel"] = sel
 
-    def add_spectrum(self, search_radius=1 * uu.arcsec):
+    def add_spectrum(self, search_radius=2 * uu.arcsec):
         """
         Get spectrum from SDSS, if available
         Parameters
@@ -248,22 +248,24 @@ class Source(TableCollection):
         if type(tt_xid) != type(None):
             ll_sp = SDSS.get_spectra(matches=tt_xid)
             print("Nr of spectra found", len(ll_sp))
+            for ii in range(len(ll_sp)):
+                hdu_spec = ll_sp[ii]
+                tt_spec = Table(hdu_spec["COADD"].data)
+                c_Aps = cc.c.to(uu.AA / uu.s)
+                spec_flux = (
+                    tt_spec["flux"] * 1e-17 * uu.erg / (uu.cm**2 * uu.s * uu.AA)
+                )
+                spec_wave = np.power(10, tt_spec["loglam"]) * uu.AA
+                dd_spec = {
+                    "wavelength": spec_wave,
+                    "flux": (spec_flux * spec_wave**2 / c_Aps).to(uu.Unit("1e-6 Jy")),
+                    "s2n": tt_spec["flux"] * np.sqrt(tt_spec["ivar"]),
+                }
 
-            hdu_spec = ll_sp[0]
-            tt_spec = Table(hdu_spec["COADD"].data)
-            c_Aps = cc.c.to(uu.AA / uu.s)
-            spec_flux = tt_spec["flux"] * 1e-17 * uu.erg / (uu.cm**2 * uu.s * uu.AA)
-            spec_wave = np.power(10, tt_spec["loglam"]) * uu.AA
-            dd_spec = {
-                "wavelength": spec_wave,
-                "flux": (spec_flux * spec_wave**2 / c_Aps).to(uu.Unit("1e-6 Jy")),
-                "s2n": tt_spec["flux"] * np.sqrt(tt_spec["ivar"]),
-            }
-
-            # Add data to table collection
-            self.add_table(dd_spec, "region:tt_spectrum")
-
-            # Select only significant flux pponts
-            self.tt_spectrum["sel"] = self.tt_spectrum["s2n"] > 2
+                # Add data to table collection
+                tt_ii = self.table_from_template(dd_spec, "region:tt_spectrum")
+                # Select only significant flux pponts
+                tt_ii["sel"] = tt_ii["s2n"] > 2
+                self.add_table(tt_ii, "tt_spectrum_" + str(ii))
         else:
             logger.warning("No spectrum found")

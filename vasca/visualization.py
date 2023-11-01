@@ -1321,16 +1321,21 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     #         label=lab,
     #     )
 
-    # Plot spectrum, if present
-    if "tt_spectrum" in tc_src._table_names:
-        sel_spec = tc_src.tt_spectrum["sel"]
-        if sel_spec.sum() > 0:
-            ax.plot(
-                tc_src.tt_spectrum["wavelength"][sel_spec],
-                tc_src.tt_spectrum["flux"][sel_spec],
-                label="SDSS spectrum",
-                color="0.8",
-            )
+    # Plot spectra, if present. Up to 5
+    for ii in range(0, 5):
+        spec_name = "tt_spectrum_" + str(ii)
+        if spec_name in tc_src._table_names:
+            tt_spec_ii = tc_src.__dict__[spec_name]
+            sel_spec = tt_spec_ii["sel"]
+            if sel_spec.sum() > 0:
+                ax.plot(
+                    tt_spec_ii["wavelength"][sel_spec],
+                    tt_spec_ii["flux"][sel_spec],
+                    label="SDSS spectrum " + str(ii),
+                    alpha=0.5,
+                )
+        else:
+            break
 
     # Plot all none-VASCA points
     for tt, grp, col, mar in zip(tt_grp.groups, tt_grp.groups.keys, colors, markers):
