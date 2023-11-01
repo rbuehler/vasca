@@ -168,6 +168,13 @@ dd_vasca_columns = {
         "default": -1.0,
         "description": "Visit detection flux density (for GALEX from 6 arcsec apperture radius, with apperture correction).",
     },
+    "flux_model": {
+        "name": "flux",
+        "dtype": "float32",
+        "unit": "1e-6Jy",
+        "default": -1.0,
+        "description": "Flux from SDSS model spectrum.",
+    },
     # %%% flux_app_ratio
     "flux_app_ratio": {
         "name": "flux_app_ratio",
@@ -920,7 +927,7 @@ region = {
         "meta": {"INFO": "Light curve from gPhoton.gApperture"},
     },
     "tt_spectrum": {
-        "names": ["flux", "wavelength", "s2n", "sel"],
+        "names": ["flux", "wavelength", "s2n", "flux_model", "sel"],
         "meta": {"INFO": "Spectrum"},
     },
     "tt_lombscargle": {
