@@ -1334,6 +1334,13 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
                     label="SDSS spectrum " + str(ii),
                     alpha=0.5,
                 )
+                ax.plot(
+                    tt_spec_ii["wavelength"][sel_spec],
+                    tt_spec_ii["flux_model"][sel_spec],
+                    label="SDSS model " + str(ii),
+                    alpha=0.5,
+                    color="k",
+                )
         else:
             break
 

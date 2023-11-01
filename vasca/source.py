@@ -255,10 +255,16 @@ class Source(TableCollection):
                 spec_flux = (
                     tt_spec["flux"] * 1e-17 * uu.erg / (uu.cm**2 * uu.s * uu.AA)
                 )
+                model_flux = (
+                    tt_spec["model"] * 1e-17 * uu.erg / (uu.cm**2 * uu.s * uu.AA)
+                )
                 spec_wave = np.power(10, tt_spec["loglam"]) * uu.AA
                 dd_spec = {
                     "wavelength": spec_wave,
                     "flux": (spec_flux * spec_wave**2 / c_Aps).to(uu.Unit("1e-6 Jy")),
+                    "flux_model": (model_flux * spec_wave**2 / c_Aps).to(
+                        uu.Unit("1e-6 Jy")
+                    ),
                     "s2n": tt_spec["flux"] * np.sqrt(tt_spec["ivar"]),
                 }
 
