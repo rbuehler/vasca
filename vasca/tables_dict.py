@@ -647,6 +647,13 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Parallax error from GAIA-DR3",
     },
+    "Plx_dist": {
+        "name": "Plx_dist",
+        "dtype": "float32",
+        "unit": "pc",
+        "default": -1,
+        "description": "Parallax distance from GAIA-DR3",
+    },
     "Gmag": {
         "name": "Gmag",
         "dtype": "float32",

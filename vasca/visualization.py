@@ -17,10 +17,10 @@ from astropy.coordinates import SkyCoord
 from astropy.nddata import Cutout2D
 from astropy.time import Time
 from astropy.visualization.wcsaxes import SphericalCircle
-from astropy.modeling.models import BlackBody
 from loguru import logger
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import ScalarFormatter
+import matplotlib.cm as cm
 from astropy.modeling import models, fitting
 from astropy.utils.exceptions import AstropyUserWarning
 
@@ -1255,6 +1255,8 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
         Matplotlib figure used to draw
     ax : axes
         Used Matplotlib axes.
+    fit_info: dict
+        Dictionary with fit information
     """
 
     logger.debug("Plotting spectral energy distribution ")
@@ -1297,32 +1299,8 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     sel = tt_sed["origin"] == "VASCA"
     tt_grp = tt_sed[~sel].group_by("observatory")
 
-    # Plot black Body spectra for reference
-    # for temp in [8000, 16000, 32000]:
-    #     lab = None
-    #     if temp == 8000:
-    #         lab = "Black Bodies of 8/16/32 kK"
-    #     bb = BlackBody(temperature=temp * uu.K)  # , scale=2.7e-25
-    #
-    #     # Normalize to NUV VASCA point
-    #     sel_nuv = tt_sed[sel]["obs_filter"] == "NUV"
-    #     vasca_flux = tt_sed[sel]["flux"].quantity[sel_nuv].to(uu.Jy)
-    #     vasca_wave = tt_sed[sel]["wavelength"].quantity[sel_nuv].to(uu.AA)
-    #     bb_flux = bb(vasca_wave).to(uu.Jy / uu.sr) * 1 * uu.sr
-    #     bb_scale = vasca_flux / bb_flux
-    #
-    #     bb_lambda = np.power(10, np.arange(3, 4.2, 0.01)) * uu.AA
-    #     bb_flux = bb(bb_lambda).to(uu.Jy / uu.sr) * 1 * uu.sr
-    #     ax.plot(
-    #         bb_lambda,
-    #         bb_scale * bb_flux.to(uu.Unit("1e-6 Jy")),
-    #         color="0.8",
-    #         ls=":",
-    #         label=lab,
-    #     )
-
     # Plot spectra, if present. Up to 5
-    for ii in range(0, 5):
+    for ii, col in zip(range(0, 5), colors):
         spec_name = "tt_spectrum_" + str(ii)
         if spec_name in tc_src._table_names:
             tt_spec_ii = tc_src.__dict__[spec_name]
@@ -1333,13 +1311,14 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
                     tt_spec_ii["flux"][sel_spec],
                     label="SDSS spectrum " + str(ii),
                     alpha=0.5,
+                    color=col,
                 )
                 ax.plot(
                     tt_spec_ii["wavelength"][sel_spec],
                     tt_spec_ii["flux_model"][sel_spec],
                     label="SDSS model " + str(ii),
-                    alpha=0.5,
-                    color="k",
+                    # alpha=0.5,
+                    color=col,
                 )
         else:
             break
@@ -1374,35 +1353,18 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
         **plt_errorbar_kwargs,
     )
 
-    # Fit if asked
-    # if do_fit.mayor() == "BB":
+    # Fit Black Body spectrum
     uscale = uu.Unit("1e-6 Jy/sr")
     BB = models.BlackBody(temperature=2e4 * uu.K, scale=1e-24 * uscale)  #
-    # BB.temperature.bounds = [1e4 * uu.K, 5e4 * uu.K]
-    # BB.temperature.prior = 10000 * uu.K
-    # BB.temperature.default = 11000 * uu.K
-    # BB.scale.bounds = [1e-25, 1e-23]
-    # BB.scale.prior = 1e-23
-    print(BB.temperature, BB.scale)
-    # BB.scale.default = 2e-23
     # fit = fitting.LMLSQFitter()
     fit = fitting.LevMarLSQFitter()
-    # print(fit.fit_info)
-    # fit = fitting.TRFLSQFitter(use_min_max_bounds=False)
-    # fit the data with the fitter
-    # print(tt_sed)
     bb_flux = (tt_sed["flux"].quantity / uu.Unit("sr")).to(uscale)
     selfit = (
         (bb_flux.value > 1)
         * (bb_flux.value < 1e3)
         * (tt_sed["wavelength"] > 0)
         * (tt_sed["wavelength"] < 1e6)
-        #    * (tt_sed["flux_err"] > 1e-6)
-        #    * (tt_sed["flux_err"] < 1e-1)
     )
-    # print("Good bins:", selfit.sum())
-
-    # print(tt_sed["wavelength"].quantity, bb_flux, tt_sed["flux"][:100])
     with warnings.catch_warnings():
         # Ignore model linearity warning from the fitter
         warnings.filterwarnings(
@@ -1421,7 +1383,6 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
             estimate_jacobian=False,
             filter_non_finite=True,
         )
-        # print(fit.fit_info)
         if fit.fit_info["ierr"] <= 4 and fit.fit_info["ierr"] >= 1:
             fit_flux = (fitted_bb(tt_sed["wavelength"].quantity) * uu.Unit("sr")).to(
                 uu.Unit("1e-6 Jy")
@@ -1437,7 +1398,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
                 label="BB " + str(fit_temp),
             )
         else:
-            print("Black body fir did not converge.")
+            print("Black body fit did not converge.")
 
     # Helper functions to define second axis
     def flux2mag_np(flux):
@@ -1481,3 +1442,5 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     ax.set_xlabel("Wavelength [Angstom]")
 
     ax.legend()
+
+    return fig, ax, fit.fit_info

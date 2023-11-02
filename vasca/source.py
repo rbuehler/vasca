@@ -247,7 +247,6 @@ class Source(TableCollection):
         tt_xid = SDSS.query_region(pos, radius=search_radius, spectro=True)
         if type(tt_xid) != type(None):
             ll_sp = SDSS.get_spectra(matches=tt_xid)
-            print("Nr of spectra found", len(ll_sp))
             for ii in range(len(ll_sp)):
                 hdu_spec = ll_sp[ii]
                 tt_spec = Table(hdu_spec["COADD"].data)
