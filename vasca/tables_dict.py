@@ -633,6 +633,13 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Parallax divided by its standard error from GAIA-DR3",
     },
+    "VarFlag": {
+        "name": "VarFlag",
+        "dtype": "S32",
+        "unit": "1",
+        "default": "none",
+        "description": "Vizier GAIA-DR3 VarFlag",
+    },
     "Plx": {
         "name": "Plx",
         "dtype": "float32",
