@@ -561,7 +561,7 @@ class Region(TableCollection):
         self,
         query_radius=1 * uu.arcsec,
         query_table="I/355/gaiadr3",
-        vizier_columns=["*", "PQSO", "PGal", "PSS", "RPlx"],
+        vizier_columns=["*", "PQSO", "PGal", "PSS", "RPlx", "VarFlag", "o_Gmag"],
         overwrite=False,
     ):
         """
@@ -684,6 +684,7 @@ class Region(TableCollection):
                 catalog=query_table,
                 timeout=600,
             )
+
             tt_qr = (customVizier.query_region(coords, radius=query_radius))[0]
             logger.debug("..query done.")
 
@@ -718,10 +719,6 @@ class Region(TableCollection):
 
         # Add table
         self.add_table(tt_qr, tab_name)
-
-    #        # Add table explaining the different otypes
-    #        if query_table.lower() == "simbad":
-    #            self.add_simbad_otype_info()
 
     def add_simbad_otype_info(self):
         """
@@ -822,7 +819,7 @@ class Region(TableCollection):
                 rg.add_table(self.__dict__[tab_name], tab_name)
         return rg
 
-    def set_LombScargle(self, obs_filters=["NUV", "FUV"], nbins_min=40):
+    def set_LombScargle(self, obs_filters=["NUV", "FUV"], nbins_min=20):
         """
         Apply LombScargle analysis to selected sources.
 
