@@ -1358,13 +1358,16 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     BB = models.BlackBody(temperature=2e4 * uu.K, scale=1e-24 * uscale)  #
     # fit = fitting.LMLSQFitter()
     fit = fitting.LevMarLSQFitter()
+
+    # Restrict fit range of BB fit to reasonable range
     bb_flux = (tt_sed["flux"].quantity / uu.Unit("sr")).to(uscale)
     selfit = (
-        (bb_flux.value > 1)
-        * (bb_flux.value < 1e3)
-        * (tt_sed["wavelength"] > 0)
-        * (tt_sed["wavelength"] < 1e6)
+        (tt_sed["wavelength"] > 0)
+        * (tt_sed["wavelength"] < 1e20)
+        * (bb_flux.value > 1e-10)
+        * (bb_flux.value < 1e10)
     )
+
     with warnings.catch_warnings():
         # Ignore model linearity warning from the fitter
         warnings.filterwarnings(
@@ -1387,6 +1390,8 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
             fit_flux = (fitted_bb(tt_sed["wavelength"].quantity) * uu.Unit("sr")).to(
                 uu.Unit("1e-6 Jy")
             )
+            sel_fit = tt_sed
+
             fit_temp = (
                 np.round(fitted_bb.temperature.value, 0) * fitted_bb.temperature.unit
             )
@@ -1424,8 +1429,8 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
         return ev2AA_np(temp * w_kb_ev)
 
     # Axis and labels
-    # secax = ax.secondary_xaxis("top", functions=(AA2ev_np, ev2AA_np))
-    # secax.set_xlabel("eV")
+    secax = ax.secondary_xaxis("top", functions=(AA2ev_np, ev2AA_np))
+    secax.set_xlabel("eV")
 
     secax = ax.secondary_xaxis("top", functions=(AA2K_np, K2AA_np))
     secax.set_xlabel("K")
