@@ -32,6 +32,7 @@ from vasca.utils import (
     run_LombScargle,
     freq2period,
     period2freq,
+    dd_spec_lines,
 )
 
 # %% sky plotting
@@ -1299,9 +1300,31 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     sel = tt_sed["origin"] == "VASCA"
     tt_grp = tt_sed[~sel].group_by("observatory")
 
-    # Plot spectra, if present. Up to 5
+    # **********  Plot spectral lines in background first
+    if "tt_spectrum_0" in tc_src._table_names:
+        for lwavs, llabel, lls, lcol in zip(
+            dd_spec_lines.values(),
+            dd_spec_lines.keys(),
+            [":", "--", "-"],
+            ["0.7", "0.8", "0.9"],
+        ):
+            valabel = llabel
+            for lwav in lwavs:
+                ax.axvline(
+                    lwav.value,
+                    0.3,
+                    0.9,
+                    linestyle=lls,
+                    color=lcol,
+                    linewidth=1.0,
+                    label=valabel,
+                )
+                valabel = None
+
+    # ********** Plot spectra, if present. Up to 5
     for ii, col in zip(range(0, 5), colors):
         spec_name = "tt_spectrum_" + str(ii)
+        lines_draw = True
         if spec_name in tc_src._table_names:
             tt_spec_ii = tc_src.__dict__[spec_name]
             sel_spec = tt_spec_ii["sel"]
@@ -1323,7 +1346,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
         else:
             break
 
-    # Plot all none-VASCA points
+    # *********** Plot all none-VASCA points
     for tt, grp, col, mar in zip(tt_grp.groups, tt_grp.groups.keys, colors, markers):
         # Plot
         ax.errorbar(
@@ -1339,7 +1362,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
             **plt_errorbar_kwargs,
         )
 
-    # Plot VASCA points
+    # ************* Plot VASCA points
     ax.errorbar(
         tt_sed[sel]["wavelength"],
         tt_sed[sel]["flux"],
@@ -1353,6 +1376,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
         **plt_errorbar_kwargs,
     )
 
+    # ************* Plot Black Body
     # Fit Black Body spectrum
     uscale = uu.Unit("1e-6 Jy/sr")
     BB = models.BlackBody(temperature=2e4 * uu.K, scale=1e-24 * uscale)  #
