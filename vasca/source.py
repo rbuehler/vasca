@@ -150,8 +150,8 @@ class Source(TableCollection):
 
             # Get gphoton lc
             keep_keys = (
-                "t_mean",
-                "exptime",
+                "t0",
+                "t1",
                 "flux_bgsub",
                 "flux_bgsub_err",
                 "flags",
@@ -165,7 +165,7 @@ class Source(TableCollection):
             dd_gap["s2n"] = dd_gap["flux_bgsub"] / dd_gap["flux_bgsub_err"]
 
             # Rename key and change units
-            dd_gap["time_bin_size"] = dd_gap.pop("exptime")
+            dd_gap["time_bin_size"] = dd_gap["t1"] - dd_gap["t0"]
             # Units of flux_bgsub are in erg sec^-1 cm^-2 Å^-1. . Get also Jy flux from AB magnitude
             dd_gap["flux"], dd_gap["flux_err"] = mag2flux(
                 dd_gap["mag_mcatbgsub"], dd_gap["mag_mcatbgsub_err_2"]
@@ -178,10 +178,13 @@ class Source(TableCollection):
             dd_gap["flux_err"] = dd_gap["flux_err"] * acorr60
 
             # Units of time are in "GALEX Time" = "UNIX Time" - 315964800, change to MJD
-            dd_gap["time"] = tgalex_to_astrotime(dd_gap["t_mean"], "mjd")
+            dd_gap["time"] = tgalex_to_astrotime(
+                (dd_gap["t0"] + dd_gap["t1"]) / 2.0, "mjd"
+            )
 
             dd_gap["obs_filter"] = [obs_filter] * len(dd_gap["flux"])
             dd_gap["obs_filter_id"] = [dd_filter2id[obs_filter]] * len(dd_gap["flux"])
+            del dd_gap["t0"], dd_gap["t1"]
             return Table(dd_gap)
 
         # Get location of gphoton files
