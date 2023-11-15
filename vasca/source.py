@@ -22,6 +22,7 @@ from vasca.utils import (
     dd_filter2wavelength,
     mag2flux,
     tgalex_to_astrotime,
+    get_var_stat,
 )
 from vasca.resource_manager import ResourceManager
 
@@ -220,6 +221,23 @@ class Source(TableCollection):
             self.tt_gphoton_lc["s2n"] > s2n_min
         )
         self.tt_gphoton_lc["sel"] = sel
+
+        # Calculate variability statistic for each filter and add it to tt_source
+        tt_lc = tt_lc[sel]
+        filter_ids = np.sort(np.unique(tt_lc["obs_filter_id"].data))
+        dd_gp_var = {"rg_src_id": [rg_src_id], "nr_det": [[]]}
+        for flt_id in filter_ids:
+            # Get stats variables and write them all to dictionary
+            sel_flt = tt_lc["obs_filter_id"] == flt_id
+            dd_var = get_var_stat(tt_lc["flux"][sel_flt], tt_lc["flux_err"][sel_flt])
+            for var, val in dd_var.items():
+                if var in dd_gp_var.keys():
+                    dd_gp_var[var][0].append(val)
+                else:
+                    dd_gp_var[var] = [[val]]
+            # Add number of bins
+            dd_gp_var["nr_det"][0].append(sel_flt.sum())
+        self.add_table(dd_gp_var, "tt_gphoton_stats")
 
     def add_spectrum(self, search_radius=2 * uu.arcsec):
         """
