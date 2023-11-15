@@ -279,6 +279,13 @@ dd_vasca_columns = {
         "default": -1.0,
         "description": "Angular distance to associated source",
     },
+    "cat_dist": {
+        "name": "cat_dist",
+        "dtype": "float32",
+        "unit": "arcsec",
+        "default": -1.0,
+        "description": "Angular distance to associated catalog source",
+    },
     # %%% match_distance
     "match_distance": {
         "name": "match_distance",
@@ -542,6 +549,13 @@ dd_vasca_columns = {
         "unit": "1",
         "default": -1,
         "description": "Region coadd source ID nr",
+    },
+    "cat_src_id": {
+        "name": "cat_src_id",
+        "dtype": "int64",
+        "unit": "1",
+        "default": -1,
+        "description": "Catalog source ID nr",
     },
     # %%% otype
     "otype": {
