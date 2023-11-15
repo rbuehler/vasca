@@ -19,7 +19,7 @@ from scipy.stats import chi2
 from sklearn.cluster import MeanShift, estimate_bandwidth
 
 from vasca.tables_dict import dd_vasca_columns, dd_vasca_tables
-from vasca.utils import add_rg_src_id, table_to_array
+from vasca.utils import add_rg_src_id, table_to_array, get_var_stat
 
 # import warnings
 # from astropy.io.fits.verify import VerifyWarning
@@ -842,29 +842,6 @@ class TableCollection(object):
         """
 
         logger.debug("Calculating source statistics.")
-
-        def get_var_stat(vals, vals_err):
-            "Helper function to calculate error weighted average mean and its error"
-            rr = {}
-            wght = 1.0 / vals_err**2
-            rr["wght_mean"] = np.average(vals, weights=wght)
-            rr["wght_mean_err"] = np.sqrt(1.0 / np.sum(wght))
-            chiq_el = np.power(vals - rr["wght_mean"], 2) / np.power(vals_err, 2)
-            chiq = np.sum(chiq_el)
-            nr_vals = len(vals)
-
-            if nr_vals > 1:
-                rr["var"] = np.var(vals, ddof=1)
-                rr["nxv"] = (rr["var"] - np.mean(vals_err**2)) / (
-                    rr["wght_mean"] * rr["wght_mean"]
-                )
-                rr["rchiq"] = chiq / (nr_vals - 1)
-                rr["cpval"] = chi2.sf(chiq, nr_vals - 1)
-            else:
-                rr["var"] = rr["nxv"] = -100
-                rr["rchiq"] = rr["cpval"] = -1.0
-
-            return rr
 
         # Setup table names
         if src_id_name == "fd_src_id" or src_id_name == "rg_src_id":

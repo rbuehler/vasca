@@ -1453,8 +1453,8 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
         return ev2AA_np(temp * w_kb_ev)
 
     # Axis and labels
-    secax = ax.secondary_xaxis("top", functions=(AA2ev_np, ev2AA_np))
-    secax.set_xlabel("eV")
+    # secax = ax.secondary_xaxis("top", functions=(AA2ev_np, ev2AA_np))
+    # secax.set_xlabel("eV")
 
     secax = ax.secondary_xaxis("top", functions=(AA2K_np, K2AA_np))
     secax.set_xlabel("K")
