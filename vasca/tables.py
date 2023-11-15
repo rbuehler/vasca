@@ -1158,10 +1158,11 @@ class TableCollection(object):
         dist_s2n_max=3,
         cat_table_name="tt_coadd_sources",
         cat_id_name="coadd_src_id",
+        cat_name="coadd",
         src_table_name="tt_sources",
     ):
         """
-        Cross match sources to a catalogby position. Typically this is the coadd acatalog.
+        Cross match sources to a catalog by position. Typically this is the coadd catalog.
 
         Parameters
         ----------
@@ -1200,65 +1201,81 @@ class TableCollection(object):
 
         idx_cat, dist_cat, _ = pos_srcs.match_to_catalog_sky(pos_cat)
 
-        sel_dist = dist_cat.to("arcsec") < dist_max.to("arcsec")
+        sel = dist_cat.to("arcsec") < dist_max.to("arcsec")
 
-        # Check how compatible positions are within errors
-        sigma_dist = np.sqrt(
-            tt_srcs["pos_err"] ** 2 + tt_cat["pos_err"][idx_cat] ** 2
-        )  # Convert to 68% containment radius for 2D gaussian
-        sel_dist_s2n = (dist_cat.to("arcsec") / sigma_dist.to("arcsec")) < dist_s2n_max
+        # If s2n cut passed, apply it too
+        if type(dist_s2n_max) != type(None):
+            # Check how compatible positions are within errors
+            sigma_dist = np.sqrt(
+                tt_srcs["pos_err"] ** 2 + tt_cat["pos_err"][idx_cat] ** 2
+            )  # Convert to 68% containment radius for 2D gaussian
+            sel_dist_s2n = (
+                dist_cat.to("arcsec") / sigma_dist.to("arcsec")
+            ) < dist_s2n_max
 
-        sel = sel_dist + sel_dist_s2n
+            sel = sel + sel_dist_s2n
 
-        # Add info in source table on associated coadd source id na distance
-        tt_srcs["coadd_src_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
-        tt_srcs["coadd_dist"][sel] = dist_cat[sel].to("arcsec")
+        # Add catalog column to sources and rename
+        if cat_name != "coadd":
+            self.add_column(src_table_name, "cat_src_id")
+            tt_srcs.rename_column("cat_src_id", cat_name + "_src_id")
+            self.add_column(src_table_name, "cat_dist")
+            tt_srcs.rename_column("cat_dist", cat_name + "_dist")
 
-        # Create default arrays
-        nr_filters = len(np.array(tt_srcs["flux"][0]).flatten())
-        na_zero = np.array([np.zeros(nr_filters) for flt in range(len(tt_srcs))])
-        coadd_ffactor = na_zero + dd_vasca_columns["coadd_ffactor"]["default"]
-        coadd_fdiff_s2n = na_zero + dd_vasca_columns["coadd_fdiff_s2n"]["default"]
+        # Add info in source table on associated coadd source id and distance
+        tt_srcs[cat_name + "_src_id"][sel] = tt_cat[idx_cat[sel]][cat_id_name]
+        tt_srcs[cat_name + "_dist"][sel] = dist_cat[sel].to("arcsec")
 
-        # Check if only one filter
-        flt_iter = [None]
-        if nr_filters > 1:
-            flt_iter = range(nr_filters)
-
-        # Loop over all filters and calculate comparison variables
-        for flt_idx in flt_iter:
-            # Get variables
-            flux = tt_srcs["flux"][sel, flt_idx]
-            flux_cat = tt_cat["flux"][idx_cat[sel], flt_idx]
-            flux_err = tt_srcs["flux_err"][sel, flt_idx]
-            flux_err_cat = tt_cat["flux_err"][idx_cat[sel], flt_idx]
-
-            # Calculate ratio of coadd to visit average flux and significance of difference
-            ffactor = flux / flux_cat
-            fdiff_s2n = (flux - flux_cat) / np.sqrt(flux_err**2 + flux_err_cat**2)
-
-            # Remove invalid (negativ) ffactors due to default values of flux
-            sel_inv = ffactor <= 0
-            ffactor[sel_inv] = dd_vasca_columns["coadd_ffactor"]["default"]
-            fdiff_s2n[sel_inv] = dd_vasca_columns["coadd_fdiff_s2n"]["default"]
-
-            if nr_filters > 1:
-                coadd_ffactor[sel, flt_idx] = ffactor
-                coadd_fdiff_s2n[sel, flt_idx] = fdiff_s2n
-            else:
-                coadd_ffactor = coadd_ffactor.flatten()
-                coadd_fdiff_s2n = coadd_fdiff_s2n.flatten()
-                coadd_ffactor[sel] = ffactor.data.flatten()
-                coadd_fdiff_s2n[sel] = fdiff_s2n.data.flatten()
-
-        # Store flux rations in source table
-        self.add_column(
-            src_table_name, col_name="coadd_ffactor", col_data=coadd_ffactor
-        )
-        self.add_column(
-            src_table_name, col_name="coadd_fdiff_s2n", col_data=coadd_fdiff_s2n
-        )
-
+        # Add rg_src_id to catalog table
         np_rg_src_id = np.zeros(len(tt_cat), dtype=np.int32) - 1.0
         np_rg_src_id[idx_cat[sel]] = tt_srcs["rg_src_id"][sel]
         self.add_column(cat_table_name, "rg_src_id", np_rg_src_id)
+
+        # If coadd calculate comparison variables for each filter
+        if cat_name == "coadd":
+            # Create default arrays
+            nr_filters = len(np.array(tt_srcs["flux"][0]).flatten())
+            na_zero = np.array([np.zeros(nr_filters) for flt in range(len(tt_srcs))])
+            coadd_ffactor = na_zero + dd_vasca_columns["coadd_ffactor"]["default"]
+            coadd_fdiff_s2n = na_zero + dd_vasca_columns["coadd_fdiff_s2n"]["default"]
+
+            # Check if only one filter
+            flt_iter = [None]
+            if nr_filters > 1:
+                flt_iter = range(nr_filters)
+
+            # Loop over all filters and calculate comparison variables
+            for flt_idx in flt_iter:
+                # Get variables
+                flux = tt_srcs["flux"][sel, flt_idx]
+                flux_cat = tt_cat["flux"][idx_cat[sel], flt_idx]
+                flux_err = tt_srcs["flux_err"][sel, flt_idx]
+                flux_err_cat = tt_cat["flux_err"][idx_cat[sel], flt_idx]
+
+                # Calculate ratio of coadd to visit average flux and significance of difference
+                ffactor = flux / flux_cat
+                fdiff_s2n = (flux - flux_cat) / np.sqrt(
+                    flux_err**2 + flux_err_cat**2
+                )
+
+                # Remove invalid (negativ) ffactors due to default values of flux
+                sel_inv = ffactor <= 0
+                ffactor[sel_inv] = dd_vasca_columns["coadd_ffactor"]["default"]
+                fdiff_s2n[sel_inv] = dd_vasca_columns["coadd_fdiff_s2n"]["default"]
+
+                if nr_filters > 1:
+                    coadd_ffactor[sel, flt_idx] = ffactor
+                    coadd_fdiff_s2n[sel, flt_idx] = fdiff_s2n
+                else:
+                    coadd_ffactor = coadd_ffactor.flatten()
+                    coadd_fdiff_s2n = coadd_fdiff_s2n.flatten()
+                    coadd_ffactor[sel] = ffactor.data.flatten()
+                    coadd_fdiff_s2n[sel] = fdiff_s2n.data.flatten()
+
+            # Store flux rations in source table
+            self.add_column(
+                src_table_name, col_name="coadd_ffactor", col_data=coadd_ffactor
+            )
+            self.add_column(
+                src_table_name, col_name="coadd_fdiff_s2n", col_data=coadd_fdiff_s2n
+            )
