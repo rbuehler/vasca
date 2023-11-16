@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : ALL_10-800" #TDS_ELAISN1"# #"ALL_10-800_LOOSE"  #""TDS_ELAISN1" # "ALL_10-800"
+    name            : "ALL_10-800" #TDS_ELAISN1"# #"ALL_10-800_LOOSE"  #""TDS_ELAISN1" # "ALL_10-800"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "DEBUG"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
