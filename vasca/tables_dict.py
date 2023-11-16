@@ -959,7 +959,17 @@ region = {
         "meta": {"INFO": "Spectral Energy Distribution from VizieR database"},
     },
     "tt_gphoton_lc": {
-        "names": [*base_field["tt_source_lc"]["names"], "flags", "s2n"],
+        "names": [
+            "time",
+            "time_bin_size",
+            "flux",
+            "flux_err",
+            "sel",
+            "obs_filter",
+            "obs_filter_id",
+            "flags",
+            "s2n",
+        ],
         "meta": {"INFO": "Light curve from gPhoton.gApperture"},
     },
     "tt_spectrum": {
