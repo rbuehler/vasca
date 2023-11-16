@@ -845,6 +845,7 @@ base_field = {
             "ellip_world",
             "flux_auto",
             "flux_auto_err",
+            "vis_id",
         ],
         "meta": {"INFO": "Light curve flux table for one source"},
     },
