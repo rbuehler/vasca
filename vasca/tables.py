@@ -670,6 +670,7 @@ class TableCollection(object):
                 "ellip_world": tt_det_src["ellip_world"],
                 "flux_auto": tt_det_src["flux_auto"],
                 "flux_auto_err": tt_det_src["flux_auto_err"],
+                "vis_id": tt_det_src["vis_id"],
                 #                "ul": np.array(src_lc["ul"]),
             }
             # Create and store table
