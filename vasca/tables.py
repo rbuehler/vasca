@@ -661,7 +661,15 @@ class TableCollection(object):
                 "flux": np.array(tt_det_src[flux_var]),
                 "flux_err": np.array(tt_det_src[flux_var + "_err"]),
                 "obs_filter": flt_names,
-                "obs_filter_id": tt_det_src["obs_filter_id"]
+                "obs_filter_id": tt_det_src["obs_filter_id"],
+                "r_fov": tt_det_src["r_fov"],
+                "artifacts": tt_det_src["artifacts"],
+                "class_star": tt_det_src["class_star"],
+                "chkobj_type": tt_det_src["chkobj_type"],
+                "size_world": tt_det_src["size_world"],
+                "ellip_world": tt_det_src["ellip_world"],
+                "flux_auto": tt_det_src["flux_auto"],
+                "flux_auto_err": tt_det_src["flux_auto_err"],
                 #                "ul": np.array(src_lc["ul"]),
             }
             # Create and store table
