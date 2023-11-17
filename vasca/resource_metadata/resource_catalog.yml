@@ -19,7 +19,7 @@ sas_cloud:
         description: 'Complete list of all GALEX visits.'
         type: file
         project: vascarcat
-        path: /GALEX_visits_list/GALEX_visits_list.fits
+        path: /GALEX_visits_list/GALEX_visits_list_qualsel.fits
     1:
         name: gal_fields
         description: 'Collection of GALEX dataproducts for fileds of interest.'
