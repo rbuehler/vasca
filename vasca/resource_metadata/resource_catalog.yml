@@ -16,10 +16,10 @@
 sas_cloud:
     0:
         name: gal_visits_list
-        description: 'Complete list of all GALEX visits.'
+        description: 'Complete list of all GALEX visits with NUV exposure.'
         type: file
         project: vascarcat
-        path: /GALEX_visits_list/GALEX_visits_list_qualsel.fits
+        path: /GALEX_visits_list/GALEX_visits_list_qualvars.fits
     1:
         name: gal_fields
         description: 'Collection of GALEX dataproducts for fileds of interest.'
@@ -32,6 +32,12 @@ sas_cloud:
         type: directory
         project: vascarcat
         path: /GALEX_gPhoton
+    3:
+        name: gal_visits_list_qualsel
+        description: 'Complete list of all GALEX visits.'
+        type: file
+        project: vascarcat
+        path: /GALEX_visits_list/GALEX_visits_list_qualsel.fits
     
 lustre:
     0:

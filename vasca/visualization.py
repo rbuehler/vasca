@@ -23,6 +23,7 @@ from matplotlib.ticker import ScalarFormatter
 import matplotlib.cm as cm
 from astropy.modeling import models, fitting
 from astropy.utils.exceptions import AstropyUserWarning
+import astropy.constants as const
 
 from vasca.utils import (
     dd_id2filter,
@@ -1428,6 +1429,25 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
             )
         else:
             print("Black body fit did not converge.")
+
+    # Plot star black body if distance is available
+    if tc_src.tt_gaiadr3["Plx_dist"] > 1:
+        TS = 2700 * uu.K
+        rS = (0.1 * const.R_sun).to(uu.cm)
+        dS = (tc_src.tt_gaiadr3["Plx_dist"].quantity[0]).to(uu.cm)
+        BBS_scale = np.pi * (rS / dS) ** 2
+
+        BBS = models.BlackBody(temperature=TS, scale=BBS_scale)
+
+        wavS = np.linspace(7000, 110000, 100) * uu.AA
+        fluxS = (BBS(wavS) * uu.Unit("sr")).to(uu.Unit("1e-6 Jy"))
+        ax.plot(
+            wavS,
+            fluxS,
+            color="0.5",
+            ls="--",
+            label="BB star " + str(TS),
+        )
 
     # Helper functions to define second axis
     def flux2mag_np(flux):
