@@ -696,6 +696,13 @@ dd_vasca_columns = {
         "default": -1,
         "description": "BP-RP colour from GAIA-DR3",
     },
+    "Pwd": {
+        "name": "Pwd",
+        "dtype": "float32",
+        "unit": "",
+        "default": -1,
+        "description": "The probability of being a white dwarf in GAIA-EDR3 WD catalog",
+    },
     "ls_peak_power": {
         "name": "ls_peak_power",
         "dtype": "float32",

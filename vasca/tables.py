@@ -198,9 +198,7 @@ class TableCollection(object):
                 f"Table '{table_name}' does not exist. Can't remove rows. "
             )
 
-    def write_to_fits(
-        self, file_name="tables.fits", overwrite=True, fits_verify="warn"
-    ):
+    def write_to_fits(self, file_name="tables.fits", overwrite=True, fits_verify="fix"):
         """
         Write tables and image of a field to a fits file.
 
