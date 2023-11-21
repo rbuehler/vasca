@@ -1318,13 +1318,13 @@ class GALEXField(BaseField):
 
         # set data as class attributes
 
-        # Correct flux flux outside of aperture, as listed here:
+        # Correct for flux outside of aperture, as listed here:
         # http://www.galex.caltech.edu/researcher/techdoc-ch5.html
         acorr60 = 1.116863247 if obs_filter == "NUV" else 1.09647819
 
         # acorr38 = 1.21338885 if obs_filter == "NUV" else 1.202264
         def get_det_dict(tt_det):
-            """Retieve dictionaly with detection/coadd_detections data,
+            """Retrieve dictionary with detection/coadd_detections data,
             including some variables derived from other MAST variables"""
 
             # Convert into dictionary with correct VASCA column names

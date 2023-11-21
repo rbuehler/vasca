@@ -1270,6 +1270,10 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     else:
         tt_sed = tc_src.tt_sed
 
+    # Remove SkyMapper data, as it seems off
+    sel_SM = tt_sed["observatory"] == "SkyMapper/SkyMapper"
+    tt_sed = tt_sed[~sel_SM]
+
     # Check if figure was passed
     if type(fig) is type(None) and type(ax) is type(None):
         fig = plt.figure(figsize=(6, 6))  # , constrained_layout=True
@@ -1431,7 +1435,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
             print("Black body fit did not converge.")
 
     # Plot star black body if distance is available
-    if tc_src.tt_gaiadr3["Plx_dist"] > 1:
+    if "tt_gaiadr3" in tc_src._table_names and tc_src.tt_gaiadr3["Plx_dist"] > 1:
         TS = 2700 * uu.K
         rS = (0.1 * const.R_sun).to(uu.cm)
         dS = (tc_src.tt_gaiadr3["Plx_dist"].quantity[0]).to(uu.cm)

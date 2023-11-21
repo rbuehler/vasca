@@ -355,6 +355,8 @@ class Region(TableCollection):
                 "tt_simbad",
                 "tt_gaiadr3",
                 "tt_lombscargle",
+                "tt_maincat",
+                "tt_gfcat",
             ]
 
             for tt_name in ll_tables:
@@ -687,6 +689,9 @@ class Region(TableCollection):
 
             tt_qr = (customVizier.query_region(coords, radius=query_radius))[0]
             logger.debug("..query done.")
+
+            # Fix to avoid fits writing error when descriptions are too long
+            tt_qr.meta = {}
 
             # Add rg_src_id
             tt_qr["rg_src_id"] = tt_src["rg_src_id"][tt_qr["_q"] - 1]

@@ -336,7 +336,7 @@ def run(vasca_cfg):
     # Remove sources which do not pass quality cuts
     rg.tt_sources["sel"] = False
     rg.select_from_config(vasca_cfg["selection_src_quality"])
-    rg.synch_src_sel(remove_unselected=True)
+    rg.synch_src_sel(remove_unselected=False)
 
     # Add hardness ratio (default obs_filter_id 1 & 2 for GALEX)
     rg.set_hardness_ratio()
