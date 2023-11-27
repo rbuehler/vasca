@@ -66,3 +66,109 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 line_length = 88
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.11
+target-version = "py311"
+
+[tool.ruff.lint]
+# Ruff rules docs: https://docs.astral.sh/ruff/rules/
+# Selection below from: https://codebase.helmholtz.cloud/hifis/cloud/access-layer/portal/-/blob/4f9600fb942da5eefc2c0d88f70b120ef2b72206/pyproject.toml#L67
+select = [
+  "F",
+  "E",
+  "W",
+  "I",
+  "N",
+  "UP",
+  "ANN",
+  "BLE",
+  "FBT",
+  "B",
+  "A",
+  "C4",
+  "DTZ",
+  "T10",
+  "T20",
+  "DJ",
+  "EM",
+  "EXE",
+  "ISC",
+  "ICN",
+  "G",
+  "INP",
+  "PIE",
+  "PYI",
+  "PT",
+  "Q",
+  "RSE",
+  "RET",
+  "SLF",
+  "SIM",
+  "TID",
+  "TCH",
+  "INT",
+  "ARG",
+  "PTH",
+  "ERA",
+  "PD",
+  "PGH",
+  "PL",
+  "TRY",
+  "NPY",
+  "RUF"
+  ]
+
+ignore = ["ANN101"]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
