@@ -384,7 +384,23 @@ def run_from_file():
 
     # Argument parsing
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cfg", type=str, default=os.getcwd() + "/vasca_cfg.yaml")
+    parser.add_argument(
+        "cfg",
+        metavar="cfg",
+        type=str,
+        default=os.getcwd() + "/vasca_cfg.yaml",
+        help="Path to the pipeline configuration file.",
+    )
+    parser.add_argument(
+        "-u",
+        "--umask",
+        type=str,
+        default="003",
+        help=(
+            "Set the umask. Default is 003, user and group have full permissions, "
+            "other can only read."
+        ),
+    )
     args = parser.parse_args()
 
     print(
