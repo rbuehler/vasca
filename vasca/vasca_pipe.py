@@ -403,6 +403,9 @@ def run_from_file():
     )
     args = parser.parse_args()
 
+    # Sets the file and directory permissions
+    os.umask(int(f"0o{args.umask}", 0))
+
     print(
         50 * "-"
         + f"\n Running vasca_pipe.py with configuration file:\n {args.cfg}\n"
