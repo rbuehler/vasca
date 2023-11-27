@@ -44,6 +44,9 @@ documentation = "https://tbd.desy.de"
 repository = "https://gitlab.desy.de/ultrasat-camera/uc_vasca"
 changelog = "https://tbd.desy.de"
 
+[project.scripts]
+vasca_pipe = "vasca.vasca_pipe:run_from_file"
+
 [tool.setuptools]
 packages = ["vasca"]
 
