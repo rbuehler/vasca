@@ -13,7 +13,7 @@ import yaml
 from astropy import units as uu
 from astropy.table import unique
 from loguru import logger
-from yamlinclude import YamlIncludeConstructor
+
 
 from vasca.region import Region
 from vasca.tables_dict import dd_vasca_tables
@@ -21,10 +21,6 @@ from vasca.tables import TableCollection
 from vasca.utils import dd_obs_id_add, get_config
 
 import numpy as np
-
-YamlIncludeConstructor.add_to_loader_class(
-    loader_class=yaml.FullLoader
-)  # , base_dir="."
 
 
 def set_logger(vasca_cfg):
