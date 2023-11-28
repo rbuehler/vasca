@@ -18,7 +18,7 @@ from vasca.field import BaseField, GALEXDSField, GALEXField
 from vasca.source import Source
 from vasca.tables import TableCollection
 from vasca.tables_dict import dd_vasca_tables, dd_vasca_columns
-from vasca.utils import dd_filter2id, run_LombScargle
+from vasca.utils import dd_filter2id, run_LombScargle, get_config
 
 
 class Region(TableCollection):
@@ -891,3 +891,12 @@ class Region(TableCollection):
             for var in dd_ls.keys():
                 dd_ls[var].append(dd_ls_results[var])
         self.add_table(dd_ls, "region:tt_lombscargle")
+
+    def redo_src_selection(self, cfg_file_name="./vasca_cfg.yaml"):
+        # Get src selection dictionary from file
+        vasca_cfg = get_config(cfg_file_name)
+
+        # Apply selection
+        self.tt_sources["sel"] = False
+        self.select_from_config(vasca_cfg["selection_src"])
+        self.synch_src_sel(remove_unselected=False)

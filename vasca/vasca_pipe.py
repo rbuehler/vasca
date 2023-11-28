@@ -18,7 +18,7 @@ from yamlinclude import YamlIncludeConstructor
 from vasca.region import Region
 from vasca.tables_dict import dd_vasca_tables
 from vasca.tables import TableCollection
-from vasca.utils import dd_obs_id_add
+from vasca.utils import dd_obs_id_add, get_config
 
 import numpy as np
 
@@ -27,36 +27,9 @@ YamlIncludeConstructor.add_to_loader_class(
 )  # , base_dir="."
 
 
-def set_config(cfg_file):
-    """
-    Setup pipeline configuration file from yaml
-
-    Parameters
-    ----------
-    cfg_file : str
-        yaml configuration file name
-
-    Returns
-    -------
-    vasca_cfg : dict
-        VASCA pipeline configuration dictionary
-    """
-    with open(cfg_file) as file:
-        vasca_cfg = yaml.load(file, Loader=yaml.FullLoader)
-
-    # Set output directory
-    if vasca_cfg["general"]["out_dir_base"] == "CWD":
-        vasca_cfg["general"]["out_dir_base"] = os.getcwd()
-
-    # Store vasca_cfg file name in vasca_cfg dictionary
-    vasca_cfg["cfg_file"] = cfg_file
-
-    return vasca_cfg
-
-
 def set_logger(vasca_cfg):
     """
-    Setup logger. Gets configuration from global config variable set with set_config
+    Setup logger. Gets configuration from global config variable set with get_config
 
     Returns
     -------
@@ -333,11 +306,6 @@ def run(vasca_cfg):
     if vasca_cfg["resources"]["coadd_exists"]:
         rg.set_src_stats(src_id_name="coadd_src_id")
 
-    # Remove sources which do not pass quality cuts
-    rg.tt_sources["sel"] = False
-    rg.select_from_config(vasca_cfg["selection_src_quality"])
-    rg.synch_src_sel(remove_unselected=False)
-
     # Add hardness ratio (default obs_filter_id 1 & 2 for GALEX)
     rg.set_hardness_ratio()
 
@@ -351,6 +319,7 @@ def run(vasca_cfg):
     # Select variable sources, deselect all sources before
     rg.tt_sources["sel"] = False
     rg.select_from_config(vasca_cfg["selection_src"])
+    rg.synch_src_sel(remove_unselected=False)
 
     # Set source id table
     rg.set_src_id_info()
@@ -392,7 +361,7 @@ def run_from_file():
         + f"\n Running vasca_pipe.py with configuration file:\n {args.cfg}\n"
         + 50 * "-"
     )
-    vasca_cfg = set_config(args.cfg)
+    vasca_cfg = get_config(args.cfg)
     run(vasca_cfg)
 
 

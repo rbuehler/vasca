@@ -44,28 +44,6 @@ cluster_coadd_dets:
 assoc_src_coadd:
     dist_max      : 1        # Associate nearest source below this distance in arc_sec  OR
     dist_s2n_max  : 3        # Associate nearest source with this distance in units of "squared sumed position error"
-    
-        
-#Keep only sources which after second clustering full fill the following
-selection_src_quality:
-    selection_src_quality_nuv:
-        table: "tt_sources"
-        presel_type: "or"
-        sel_type: "and"
-        obs_filter: "NUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
-        range:
-            nr_det: [ 2,.inf ]
-            pos_cpval: [ 0.0001,.inf ]
-            pos_xv: [ -.inf,2 ]
-    selection_src_quality_fuv:
-        table: "tt_sources"
-        presel_type: "or"
-        sel_type: "and"
-        obs_filter: "FUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
-        range:
-            nr_det: [ 2,.inf ]
-            pos_cpval: [ 0.0001,.inf ]
-            pos_xv: [ -.inf,2 ]
 
 selection_src:
     src_variability_nuv:
@@ -74,6 +52,9 @@ selection_src:
         sel_type    : "and"
         obs_filter  : "NUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
         range:
+            nr_det: [ 2,.inf ]
+            pos_cpval: [ 0.0001,.inf ]
+            pos_xv: [ -.inf,2 ]
             flux_cpval     : [-0.5,0.573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
             flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%
             flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
@@ -83,25 +64,34 @@ selection_src:
         sel_type    : "and"
         obs_filter  : "NUV"
         range:
+            nr_det: [ 2,.inf ]
+            pos_cpval: [ 0.0001,.inf ]
+            pos_xv: [ -.inf,2 ]
             coadd_ffactor   : [2.0,.inf]
             coadd_fdiff_s2n : [7,.inf]
-    src_variability_fuv:
-        table       : "tt_sources"
-        presel_type : "or"
-        sel_type    : "and"
-        obs_filter  : "FUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
-        range:
-            flux_cpval     : [-0.5,0.573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
-            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%
-            flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
-    src_coadd_diff_fuv:
-        table       : "tt_sources"
-        presel_type : "or"
-        sel_type    : "and"
-        obs_filter  : "FUV"
-        range:
-            coadd_ffactor   : [2.0,.inf]
-            coadd_fdiff_s2n : [7,.inf]
+#    src_variability_fuv:
+#        table       : "tt_sources"
+#        presel_type : "or"
+#        sel_type    : "and"
+#        obs_filter  : "FUV"                             # Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions
+#        range:
+#            nr_det: [ 2,.inf ]
+#            pos_cpval: [ 0.0001,.inf ]
+#            pos_xv: [ -.inf,2 ]
+#            flux_cpval     : [-0.5,0.573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
+#            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%
+#            flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
+#    src_coadd_diff_fuv:
+#        table       : "tt_sources"
+#        presel_type : "or"
+#        sel_type    : "and"
+#        obs_filter  : "FUV"
+#        range:
+#            nr_det: [ 2,.inf ]
+#            pos_cpval: [ 0.0001,.inf ]
+#            pos_xv: [ -.inf,2 ]
+#            coadd_ffactor   : [2.0,.inf]
+#            coadd_fdiff_s2n : [7,.inf]
 observations:
   - observatory   : "GALEX"
     obs_filter    : "NUV"

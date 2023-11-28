@@ -29,6 +29,8 @@ from vasca.utils import (
     dd_id2filter,
     flux2mag,
     mag2flux,
+    flux2mag_np,
+    mag2flux_np,
     select_obs_filter,
     run_LombScargle,
     freq2period,
@@ -672,7 +674,7 @@ def plot_pipe_diagnostic(
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {"range": [0, 1]}
-            var_plt["flux_nxv"] = {"logx": True}
+            var_plt["flux_nxv"] = {}  # "logx": True
             var_plt["coadd_fdiff_s2n"] = {"range": [-10, 25]}
             var_plt["coadd_ffactor"] = {"range": [-2, 5]}
             var_plt["pos_cpval"] = {}
@@ -1072,12 +1074,6 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
 
     secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
     secax.set_xlabel("Year")
-
-    def flux2mag_np(flux):
-        return flux2mag(flux).data
-
-    def mag2flux_np(mag):
-        return mag2flux(mag).data
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 

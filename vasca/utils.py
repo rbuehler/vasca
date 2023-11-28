@@ -661,6 +661,15 @@ def mag2flux(mag, mag_err=None):  #
         return flux, flux_up - flux
 
 
+# The two numpy implementations below are needed for secondary_axis in matplotlib
+def flux2mag_np(flux):
+    return flux2mag(flux).data
+
+
+def mag2flux_np(mag):
+    return mag2flux(mag).data
+
+
 def get_field_id(obs_field_id, observaory, obs_filter):
     """
     Return VASCA field id, which also includes observatory and filter identifier.
@@ -1496,3 +1505,30 @@ def name2id(name, bits=32):
         raise ValueError(f"Expected 32 or 64 (type int) for parameter bits, got {bits}")
 
     return hash_int
+
+
+def get_config(cfg_file):
+    """
+    Setup pipeline configuration file from yaml
+
+    Parameters
+    ----------
+    cfg_file : str
+        yaml configuration file name
+
+    Returns
+    -------
+    vasca_cfg : dict
+        VASCA pipeline configuration dictionary
+    """
+    with open(cfg_file) as file:
+        vasca_cfg = yaml.load(file, Loader=yaml.FullLoader)
+
+    # Set output directory
+    if vasca_cfg["general"]["out_dir_base"] == "CWD":
+        vasca_cfg["general"]["out_dir_base"] = os.getcwd()
+
+    # Store vasca_cfg file name in vasca_cfg dictionary
+    vasca_cfg["cfg_file"] = cfg_file
+
+    return vasca_cfg
