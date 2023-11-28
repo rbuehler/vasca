@@ -29,6 +29,13 @@ from matplotlib.colors import ListedColormap, hex2color
 from scipy.stats import binned_statistic
 from scipy.stats import chi2
 from cycler import cycler
+import yaml
+from yamlinclude import YamlIncludeConstructor
+
+YamlIncludeConstructor.add_to_loader_class(
+    loader_class=yaml.FullLoader
+)  # , base_dir="."
+
 
 from vasca.tables_dict import dd_vasca_columns
 
@@ -1521,6 +1528,7 @@ def get_config(cfg_file):
     vasca_cfg : dict
         VASCA pipeline configuration dictionary
     """
+
     with open(cfg_file) as file:
         vasca_cfg = yaml.load(file, Loader=yaml.FullLoader)
 

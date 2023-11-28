@@ -10,6 +10,7 @@ import vasca.visualization as vvis
 from vasca import vasca_pipe
 from vasca.region import Region
 from vasca.resource_manager import ResourceManager
+from vasca.utils import get_config
 
 
 @pytest.fixture
@@ -36,7 +37,7 @@ def test_paths(tmp_path):
 
 def test_pipeline_vis(test_paths):
     # get pipeline config
-    vasca_cfg = vasca_pipe.set_config(test_paths["pipeline_cfg"])
+    vasca_cfg = get_config(test_paths["pipeline_cfg"])
 
     # temporary output directory
     pipeline_out = f"{test_paths['temp_path']}/pipe_out"
