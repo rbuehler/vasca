@@ -674,7 +674,7 @@ def plot_pipe_diagnostic(
         elif table_name == "tt_sources":
             var_plt["nr_det"] = {}
             var_plt["flux_cpval"] = {"range": [0, 1]}
-            var_plt["flux_nxv"] = {}  # "logx": True
+            var_plt["flux_nxv"] = {"range": [-0.01, 0.01]}  # "logx": True
             var_plt["coadd_fdiff_s2n"] = {"range": [-10, 25]}
             var_plt["coadd_ffactor"] = {"range": [-2, 5]}
             var_plt["pos_cpval"] = {}

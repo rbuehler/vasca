@@ -1138,7 +1138,7 @@ class TableCollection(object):
 
     def cross_match(
         self,
-        dist_max=1 * uu.arcsec,
+        dist_max=1.5 * uu.arcsec,
         dist_s2n_max=3,
         cat_table_name="tt_coadd_sources",
         cat_id_name="coadd_src_id",

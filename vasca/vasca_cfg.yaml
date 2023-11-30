@@ -3,7 +3,7 @@ authors : "UC science"
 comment : "Example configuration file"
 
 general:
-    name            : "TDS_ELAISN1"#"ALL_10-800" # #"ALL_10-800_LOOSE"  #""TDS_ELAISN1" # "ALL_10-800"
+    name            : "ALL_10-800" #"TDS_ELAISN1"#"ALL_10-800" # #"ALL_10-800_LOOSE"  #""TDS_ELAISN1" # "ALL_10-800"
     out_dir_base    : "./examples/vasca_pipeline"        # If "CWD" current work directory will be used.
     log_level       : "INFO"                            # ["NONE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
     log_file        : "default"                          # Will be written into "out_dir", if ""default" a default name will be created 
@@ -56,7 +56,7 @@ selection_src:
             pos_cpval: [ 0.0001,.inf ]
             pos_xv: [ -.inf,2 ]
             flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
-            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%  
+            flux_nxv       : [0.001,.inf]          # Excess variance above ~sqrt(cut)*100%
             flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
     src_coadd_diff_nuv:
         table       : "tt_sources"
@@ -79,7 +79,7 @@ selection_src:
             pos_cpval: [ 0.0001,.inf ]
             pos_xv: [ -.inf,2 ]
             flux_cpval     : [-0.5,0.000000573303]  # 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution
-            flux_nxv       : [0.0006,.inf]          # Excess variance above ~sqrt(cut)*100%
+            flux_nxv       : [0.01,.inf]          # Excess variance above ~sqrt(cut)*100%
             flux           : [0.144543,575.43]      # Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end
     src_coadd_diff_fuv:
         table       : "tt_sources"
@@ -151,8 +151,8 @@ observations:
                   # For GALEX a description is at the end of this document
                   artifacts :  [2,4,8,128,256] #[] ,8,16,32,64,128,256,512
 
-      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml
-      #obs_field_ids : !include  ./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_nuv_use.yaml
+      #obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml
+      obs_field_ids : !include  ./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_nuv_use.yaml
 
     - observatory   : "GALEX"
       obs_filter    : "FUV"
@@ -211,8 +211,8 @@ observations:
                   # For GALEX a description is at the end of this document
                   artifacts :  [2,4,8,128,256] #[] ,8,16,32,64,128,256,512
 
-      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml
-      #obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_fuv_use.yaml
+      #obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml
+      obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_fuv_use.yaml
 
 # GALEX artifact flags
 # ( 1): edge; Detector bevel edge reflection (NUV only).
