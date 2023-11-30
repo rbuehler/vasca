@@ -561,7 +561,7 @@ class Region(TableCollection):
 
     def cross_match_cds(
         self,
-        query_radius=1 * uu.arcsec,
+        query_radius=1.5 * uu.arcsec,
         query_table="I/355/gaiadr3",
         vizier_columns=["*", "PQSO", "PGal", "PSS", "RPlx", "VarFlag", "o_Gmag"],
         overwrite=False,

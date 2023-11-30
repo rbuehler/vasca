@@ -12,6 +12,7 @@ from time import time
 from io import BytesIO
 from http.client import HTTPConnection
 from loguru import logger
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
