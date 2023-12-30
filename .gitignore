@@ -61,3 +61,7 @@ vasca/examples/vasca_pipeline*
 /vasca/test/resources/6371091720297250816/VASCA_GALEX_6371091720297250816_NUV_field_data.fits
 /vasca/examples/resources/GALEX_field_id_lists/field_ids_AISMISDISCAINGSGII_exp800_vis10_fuv.yaml
 /vasca/examples/resources/GALEX_field_id_lists/field_ids_AISMISDISCAINGSGII_exp800_vis10_nuv.yaml
+/vasca/examples/AISMISDISCAINGSGII_exp800_vis10_nr_vis.pdf
+/vasca/examples/PlayGround.ipynb
+/vasca/examples/WDs/sources_WD_ALL_10-800_LOOSE_V02.ecsv
+/vasca/examples/WDs/sources_WD_ALL_10-800_LOOSE_V02.xlsx
