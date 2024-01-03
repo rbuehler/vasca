@@ -73,7 +73,7 @@ dd_ogrp2otypes = {
         "AG?",
         "Bz?",
     ],
-    "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG","ClG","SN*"],
+    "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG","ClG"],
     "Star*": [
         "*",
         "HB*",
@@ -127,7 +127,7 @@ dd_ogrp2otypes = {
         "No*",
         "CV?"
     ],
-    "Misc": ["ULX", "UX?", "gLS", "LeI", "LI?", "Le?", "LS?", "HII", "SNR"],
+    "Misc": ["ULX", "UX?", "gLS", "LeI", "LI?", "Le?", "LS?", "HII", "SNR","SN*"],
 }
 dd_otype2ogroup = dict()
 for key, val in dd_ogrp2otypes.items():
