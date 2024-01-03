@@ -308,7 +308,15 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -100.0,
-        "description": "Flux density normalized excess variance, entries for different filters",
+        "description": "Flux density normalized excess variance",
+    },
+    # %%% flux_ne
+    "flux_ne": {
+        "name": "flux_ne",
+        "dtype": "float32",
+        "unit": "1",
+        "default": -100.0,
+        "description": "Flux density square root of normalized excess variance",
     },
     # %%% flux_var
     "flux_var": {

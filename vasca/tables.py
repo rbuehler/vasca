@@ -1096,7 +1096,7 @@ class TableCollection(object):
         tab_name_from,
         copy_vars,
         match_var="rg_src_id",
-        select_matched=True,
+        select_matched=False,
     ):
         """
         Copy a column from one table to the other, for those columns that have a
@@ -1120,21 +1120,27 @@ class TableCollection(object):
 
         """
         logger.debug(
-            f"Copying columns {copy_vars} from table {tab_name_from} to {tab_name_to}"
+            f"Copying columns {copy_vars} from table {tab_name_from} to {tab_name_to} matching {match_var} "
         )
         tt_to = self.__dict__[tab_name_to]
         tt_from = self.__dict__[tab_name_from]
+
+        tt_join = join(tt_to, tt_from, keys=[match_var])
+
+        match_var_vals = tt_join[match_var]
         tt_to.add_index(match_var)
-        src_idx = tt_to.loc_indices[tt_from[match_var]]
+        src_idx_to = tt_to.loc_indices[match_var,match_var_vals]
+        tt_from.add_index(match_var)
+        src_idx_from = tt_from.loc_indices[match_var,match_var_vals]
 
         for var in copy_vars:
             self.add_column(tab_name_to, var)
-            tt_to[var][src_idx] = tt_from[var]
+            tt_to[var][src_idx_to] = tt_from[var][src_idx_from]
 
         # Select columns with matched values
         if select_matched:
             tt_to["sel"] = np.zeros(len(tt_to), dtype=bool)
-            tt_to["sel"][src_idx] = True
+            tt_to["sel"][src_idx_to] = True
 
     def cross_match(
         self,

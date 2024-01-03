@@ -69,12 +69,11 @@ dd_ogrp2otypes = {
         "Bla",
         "BLL",
         "QSO",
-        "ClG",
         "Q?",
         "AG?",
         "Bz?",
     ],
-    "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG"],
+    "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG","ClG","SN*"],
     "Star*": [
         "*",
         "HB*",
@@ -116,15 +115,19 @@ dd_ogrp2otypes = {
         "PM*",
         "Mi*",
         "s?b",
+        "WD*",
+        "WD?",
     ],
-    "WD*": ["WD*", "WD?", "CV*", "No*", "CV?"],
-    "B*": [
+    "Binary*": [
         "EB*",
         "SB*",
         "**",
         "EB?",
+        "CV*",
+        "No*",
+        "CV?"
     ],
-    "Misc": ["ULX", "UX?", "gLS", "LeI", "LI?", "Le?", "LS?", "HII", "SN*", "SNR"],
+    "Misc": ["ULX", "UX?", "gLS", "LeI", "LI?", "Le?", "LS?", "HII", "SNR"],
 }
 dd_otype2ogroup = dict()
 for key, val in dd_ogrp2otypes.items():
@@ -146,8 +149,8 @@ dd_ogrp2col = {
     "AGN": "tab:gray",
     "GAL": "k",
     "Star*": "r",
-    "WD*": "tab:green",
-    "B*": "tomato",
+#    "WD*": "tab:green",
+    "Binary*": "tomato",
     "none": "0.8",
     "Misc": "y",
 }
