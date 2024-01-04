@@ -58,7 +58,7 @@ dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 # -----------------------------------------
 # Define object groups and related funtions
 dd_ogrp2otypes = {
-    "UNK": ["?", "none", "X", "IR", "Rad", "ev", "blu", "EmO", "UV", "Opt", "NIR"],
+    "Unkown": ["?", "none", "X", "IR", "Rad", "ev", "blu", "EmO", "UV", "Opt", "NIR"],
     "AGN": [
         "AGN",
         "SyG",
@@ -73,8 +73,8 @@ dd_ogrp2otypes = {
         "AG?",
         "Bz?",
     ],
-    "GAL": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG","ClG"],
-    "Star*": [
+    "Galaxy": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG","ClG"],
+    "Star": [
         "*",
         "HB*",
         "LM*",
@@ -118,7 +118,7 @@ dd_ogrp2otypes = {
         "WD*",
         "WD?",
     ],
-    "Binary*": [
+    "Binary": [
         "EB*",
         "SB*",
         "**",
@@ -145,13 +145,13 @@ def otype2ogroup(otype):
 
 # Define fixed colors for plots and each object group
 dd_ogrp2col = {
-    "UNK": "tab:blue",
-    "AGN": "tab:gray",
-    "GAL": "k",
-    "Star*": "r",
+    "Unkown": "tab:gray",
+    "AGN": "tab:blue",
+    "Galaxy": "tab:purple",
+    "Star": "r",
 #    "WD*": "tab:green",
-    "Binary*": "tomato",
-    "none": "0.8",
+    "Binary": "tomato",
+    "none": "k",
     "Misc": "y",
 }
 
