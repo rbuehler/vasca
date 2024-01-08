@@ -40,6 +40,13 @@ dd_vasca_columns = {
         "default": "none",
         "description": "Field source ID nr",
     },
+    "src_name": {
+        "name": "src_name",
+        "dtype": "S24",
+        "unit": "1",
+        "default": "none",
+        "description": "Catalog source name",
+    },
     # %%% field_name
     "field_name": {
         "name": "field_name",
