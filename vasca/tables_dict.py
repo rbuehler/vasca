@@ -38,14 +38,14 @@ dd_vasca_columns = {
         "dtype": "S32",
         "unit": "1",
         "default": "none",
-        "description": "Field source ID nr",
+        "description": "Field source ID number",
     },
     "src_name": {
         "name": "src_name",
         "dtype": "S24",
         "unit": "1",
         "default": "none",
-        "description": "Catalog source name",
+        "description": "VASCA catalog source name",
     },
     # %%% field_name
     "field_name": {
@@ -69,7 +69,7 @@ dd_vasca_columns = {
         "dtype": "float64",
         "unit": "degree",
         "default": -1.0,
-        "description": "Center RA of the field (J2000)",
+        "description": "Sky coordinate Right Ascension (J2000)",
     },
     # %%% dec
     "dec": {
@@ -77,7 +77,7 @@ dd_vasca_columns = {
         "dtype": "float64",
         "unit": "degree",
         "default": -1.0,
-        "description": "Center Dec of the field (J2000)",
+        "description": "Sky coordinate Declination (J2000)",
     },
     # %%% observatory
     "observatory": {
@@ -109,7 +109,7 @@ dd_vasca_columns = {
         "dtype": "int32",
         "unit": "1",
         "default": 0,
-        "description": "Filter ID number",
+        "description": "Observation filter ID number",
     },
     # %%% wavelength
     "wavelength": {
@@ -133,7 +133,7 @@ dd_vasca_columns = {
         "dtype": "uint64",
         "unit": "1",
         "default": -1,
-        "description": "Visit ID nr",
+        "description": "Visit ID number",
     },
     # %%% time_bin_start
     "time_bin_start": {
@@ -165,7 +165,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "arcsec",
         "default": -1.0,
-        "description": "Visit position error",
+        "description": "Sky coordinate position error",
     },
     # %%% flux
     "flux": {
@@ -173,7 +173,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1e-6Jy",
         "default": -1.0,
-        "description": "Visit detection flux density (for GALEX from 6 arcsec apperture radius, with apperture correction).",
+        "description": "Flux density",
     },
     "flux_model": {
         "name": "flux",
@@ -196,7 +196,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1e-6Jy",
         "default": -1.0,
-        "description": "Visit detection flux density error",
+        "description": "Flux density error",
     },
     # %%% s2n
     "s2n": {
@@ -204,7 +204,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -1.0,
-        "description": "Signal to noise",
+        "description": "Flux signal to noise",
     },
     # %%% det_id
     "det_id": {
@@ -212,7 +212,7 @@ dd_vasca_columns = {
         "dtype": "int64",
         "unit": "1",
         "default": -1,
-        "description": "Reference source ID nr",
+        "description": "Reference source ID number",
     },
     # %%% mag
     "mag": {
@@ -244,7 +244,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "arcsec2",
         "default": -1.0,
-        "description": "Position excess variance, entries for different filters",
+        "description": "Sky position excess variance",
     },
     # %%% pos_var
     "pos_var": {
@@ -252,7 +252,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "arcsec2",
         "default": -1.0,
-        "description": "Position variance of detections, entries for different filters",
+        "description": "Sky position variance",
     },
     # %%% pos_cpval
     "pos_cpval": {
@@ -260,7 +260,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -1.0,
-        "description": "Position probability value for a constant from the chisquare test",
+        "description": "Sky position quality",
     },
     # %%% pos_rchiq
     "pos_rchiq": {
@@ -268,7 +268,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -1.0,
-        "description": "Position reduced chisquared of the constant mean",
+        "description": "Sky position reduced chisquared of the constant mean",
     },
     # %%% coadd_id
     "coadd_id": {
@@ -315,7 +315,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -100.0,
-        "description": "Flux density normalized excess variance",
+        "description": "Flux normalized excess variance",
     },
     # %%% flux_ne
     "flux_ne": {
@@ -323,7 +323,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -100.0,
-        "description": "Flux density square root of normalized excess variance",
+        "description": "Flux square root of normalized excess variance",
     },
     # %%% flux_var
     "flux_var": {
@@ -331,7 +331,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1e-12Jy2",
         "default": -1.0,
-        "description": "Flux density variance of detections, entries for different filters",
+        "description": "Flux variance",
     },
     # %%% flux_cpval
     "flux_cpval": {
@@ -339,7 +339,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -1.0,
-        "description": "Flux probability value for a constant from the chisquare test, entries for different filters",
+        "description": "Probability value for a constant flux from the chisquare test",
     },
     # %%% flux_rchiq
     "flux_rchiq": {
@@ -347,7 +347,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -1.0,
-        "description": "Flux reduced chisquared of the constant mean, entries for different filters",
+        "description": "Flux reduced chisquared of the constant mean",
     },
     # %%% coadd_ffactor
     "coadd_ffactor": {
@@ -355,7 +355,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -100.0,
-        "description": "Source flux divided by flux of the associated source, entries for different filters",
+        "description": "Source flux divided by flux of the associated co-add source",
     },
     # %%% time_start
     "time_start": {
@@ -363,7 +363,7 @@ dd_vasca_columns = {
         "dtype": "float64",
         "unit": "d",
         "default": -1.0,
-        "description": "Visit exposure start date and time in MJD",
+        "description": "Start date and time in MJD",
     },
     # %%% time
     "time": {
@@ -523,7 +523,7 @@ dd_vasca_columns = {
         "dtype": "int32",
         "unit": "1",
         "default": -1,
-        "description": "Region source ID nr",
+        "description": "Region source ID number",
     },
     # %%% rg_fd_id
     "rg_fd_id": {
@@ -531,7 +531,7 @@ dd_vasca_columns = {
         "dtype": "int64",
         "unit": "1",
         "default": -1,
-        "description": "Region field ID nr",
+        "description": "Region field ID number",
     },
     # %%% nr_fds
     "nr_fds": {
@@ -563,14 +563,14 @@ dd_vasca_columns = {
         "dtype": "int64",
         "unit": "1",
         "default": -1,
-        "description": "Region coadd source ID nr",
+        "description": "Coadd source internal ID number",
     },
     "cat_src_id": {
         "name": "cat_src_id",
         "dtype": "int64",
         "unit": "1",
         "default": -1,
-        "description": "Catalog source ID nr",
+        "description": "Catalog source ID number",
     },
     # %%% otype
     "otype": {
@@ -594,7 +594,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -1,
-        "description": "Flux hardness ratio, only strictly simulateneous detections considered",
+        "description": "Flux hardness ratio, only simulateneous detections considered",
     },
     # %%% hr_err
     "hr_err": {
@@ -760,8 +760,35 @@ dd_vasca_columns = {
         "default": -1,
         "description": "Chisquare probability of the LombScargle peak frequency model ",
     },
+    "maincat_match_id": {
+        "name": "maincat_match_id",
+        "dtype": "int32",
+        "unit": "",
+        "default": -1,
+        "description": "Internal source ID from associated source in the GAIA-EDR3 White Dwarf catalog",
+    },
+    "simbad_match_id": {
+        "name": "simbad_match_id",
+        "dtype": "int32",
+        "unit": "",
+        "default": -1,
+        "description": "Internal source ID from associated source in the SIMBAD data base",
+    },
+    "gaiadr3_match_id": {
+        "name": "gaiadr3_match_id",
+        "dtype": "int32",
+        "unit": "",
+        "default": -1,
+        "description": "Internal source ID from associated source in the GAIA-DR3 catalog",
+    },
+    "gfcat_src_id": {
+        "name": "gfcat_match_id",
+        "dtype": "int32",
+        "unit": "",
+        "default": -1,
+        "description": "Internal source ID from associated source in the GFCAT catalog",
+    },
 }
-
 
 # %% Table definitions
 # %%% base_field
