@@ -276,7 +276,7 @@ dd_vasca_columns = {
         "dtype": "int64",
         "unit": "1",
         "default": -1,
-        "description": "Associated source or detection ID",
+        "description": "Associated co-add source or detection ID",
     },
     # %%% coadd_dist
     "coadd_dist": {
@@ -515,7 +515,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -10000.0,
-        "description": "Signal to noise of the flux difference, entries for different filters",
+        "description": "Signal to noise of the flux difference",
     },
     # %%% rg_src_id
     "rg_src_id": {
@@ -563,7 +563,7 @@ dd_vasca_columns = {
         "dtype": "int64",
         "unit": "1",
         "default": -1,
-        "description": "Coadd source internal ID number",
+        "description": "Co-add source internal ID number",
     },
     "cat_src_id": {
         "name": "cat_src_id",
