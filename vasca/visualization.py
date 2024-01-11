@@ -1061,9 +1061,11 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
                 **plt_errorbar_kwargs,
             )
 
-    ax.legend(fontsize="small")  # bbox_to_anchor=(1.04, 1),
-    ax.set_xlabel("MJD")
-    ax.set_ylabel(r"Flux [$\mu$Jy]")
+    ax.legend(fontsize=12,frameon=False)  # bbox_to_anchor=(1.04, 1),
+    ax.set_xlabel("MJD", fontsize=14)
+    ax.set_ylabel(r"Flux [$\mu$Jy]", fontsize=14)
+    ax.text(0.3, 0.02, tc_src.tt_sources["src_name"][0] , size=16, transform=ax.transAxes,
+            ha='left',va='bottom',) # , color='purple'
 
     # Add a second time axis on top showing years
     def mjd2yr(mjd):
@@ -1073,7 +1075,8 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
         return Time(jyr, format="jyear").mjd
 
     secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
-    secax.set_xlabel("Year")
+    secax.ticklabel_format(useOffset=False, style='plain')
+    secax.set_xlabel("Year", fontsize=14)
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
@@ -1082,7 +1085,8 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
     formatter.set_scientific(False)
     secay.yaxis.set_minor_formatter(formatter)
 
-    secay.set_ylabel("AB magnitude")
+    secay.set_ylabel("AB magnitude", fontsize=14)
+
 
     return fig, ax
 
@@ -1233,7 +1237,7 @@ def plot_lombscargle(
     return fig, ax
 
 
-def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
+def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwargs):
     """
     Plots spectral energy distribution
     Parameters
@@ -1302,7 +1306,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     tt_grp = tt_sed[~sel].group_by("observatory")
 
     # **********  Plot spectral lines in background first
-    if "tt_spectrum_0" in tc_src._table_names:
+    if "tt_spectrum_0" in tc_src._table_names and plot_spec_lines:
         for lwavs, llabel, lls, lcol in zip(
             dd_spec_lines.values(),
             dd_spec_lines.keys(),
@@ -1340,7 +1344,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
                 ax.plot(
                     tt_spec_ii["wavelength"][sel_spec],
                     tt_spec_ii["flux_model"][sel_spec],
-                    label="SDSS model " + str(ii),
+                    label="SDSS model ",# + str(ii)
                     # alpha=0.5,
                     color=col,
                 )
@@ -1393,13 +1397,17 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
         * (bb_flux.value < 1e10)
     )
 
-    with warnings.catch_warnings():
+    with ((warnings.catch_warnings())):
         # Ignore model linearity warning from the fitter
         warnings.filterwarnings(
             "ignore",
             message="Model is linear in parameters",
             category=AstropyUserWarning,
         )
+
+        bb_bins = np.linspace(np.min(tt_sed["wavelength"][selfit]),
+                              np.max(tt_sed["wavelength"][selfit]),100
+                              )*tt_sed["wavelength"].unit
         fitted_bb = fit(
             BB,
             tt_sed["wavelength"].quantity[selfit],
@@ -1412,7 +1420,10 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
             filter_non_finite=True,
         )
         if fit.fit_info["ierr"] <= 4 and fit.fit_info["ierr"] >= 1:
-            fit_flux = (fitted_bb(tt_sed["wavelength"].quantity) * uu.Unit("sr")).to(
+            bb_bins = np.linspace(np.min(tt_sed["wavelength"][selfit]),
+                                  np.max(tt_sed["wavelength"][selfit]), 100
+                                  ) * tt_sed["wavelength"].unit
+            fit_flux = (fitted_bb(bb_bins) * uu.Unit("sr")).to(
                 uu.Unit("1e-6 Jy")
             )
             sel_fit = tt_sed
@@ -1421,7 +1432,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
                 np.round(fitted_bb.temperature.value, 0) * fitted_bb.temperature.unit
             )
             ax.plot(
-                tt_sed["wavelength"],
+                bb_bins,
                 fit_flux,
                 color="0.5",
                 ls="-",
@@ -1477,7 +1488,7 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     # secax.set_xlabel("eV")
 
     secax = ax.secondary_xaxis("top", functions=(AA2K_np, K2AA_np))
-    secax.set_xlabel("K")
+    secax.set_xlabel("Temperature [K]", fontsize=14)
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
@@ -1485,11 +1496,11 @@ def plot_sed(tc_src, fig=None, ax=None, **errorbar_kwargs):
     formatter = ScalarFormatter()
     formatter.set_scientific(False)
     secay.yaxis.set_minor_formatter(formatter)
-    secay.set_ylabel("AB magnitude")
+    secay.set_ylabel("AB magnitude", fontsize=14)
 
-    ax.set_ylabel("Flux [$\mu$Jy]")
-    ax.set_xlabel("Wavelength [Angstom]")
+    ax.set_ylabel("Flux [$\mu$Jy]", fontsize=14)
+    ax.set_xlabel("Wavelength [Angstom]", fontsize=14)
 
-    ax.legend()
+    ax.legend(frameon=False)
 
     return fig, ax, fit.fit_info
