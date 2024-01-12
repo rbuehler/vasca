@@ -1271,8 +1271,12 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
         tt_sed = tc_src.tt_sed
 
     # Remove SkyMapper data, as it seems off
-    sel_SM = tt_sed["observatory"] == "SkyMapper/SkyMapper"
-    tt_sed = tt_sed[~sel_SM]
+    sel_obs = np.ones(len(tt_sed),dtype=bool)
+    for obs in ["SkyMapper/SkyMapper","GAIA/GAIA2", "Gaia","GALEX", "SDSS"]:
+        sel_obs = sel_obs * ~(tt_sed["observatory"] == obs)
+    sel_obs = sel_obs + (tt_sed["origin"] == "VASCA")
+    sel_obs = sel_obs + (tt_sed["origin"] == "V/154/sdss16")
+    tt_sed = tt_sed[sel_obs]
 
     # Check if figure was passed
     if type(fig) is type(None) and type(ax) is type(None):
@@ -1337,14 +1341,14 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
                 ax.plot(
                     tt_spec_ii["wavelength"][sel_spec],
                     tt_spec_ii["flux"][sel_spec],
-                    label="SDSS spectrum " + str(ii),
+                    label="SDSS spectrum", # + str(ii),
                     alpha=0.5,
                     color=col,
                 )
                 ax.plot(
                     tt_spec_ii["wavelength"][sel_spec],
                     tt_spec_ii["flux_model"][sel_spec],
-                    label="SDSS model ",# + str(ii)
+                    label="SDSS model",# + str(ii)
                     # alpha=0.5,
                     color=col,
                 )
@@ -1353,6 +1357,7 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
 
     # *********** Plot all none-VASCA points
     for tt, grp, col, mar in zip(tt_grp.groups, tt_grp.groups.keys, colors, markers):
+
         # Plot
         ax.errorbar(
             tt["wavelength"],
@@ -1377,7 +1382,7 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
         marker="o",
         markersize=6,
         alpha=1.0,
-        label="VASCA",
+        label="GALEX/VASCA",
         **plt_errorbar_kwargs,
     )
 
