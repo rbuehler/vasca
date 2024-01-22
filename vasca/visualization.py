@@ -1021,7 +1021,7 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
         "alpha": 0.6,
         "capsize": 0,
         "lw": 0.2,
-        "linestyle": "dotted",
+        "linestyle": "None", #"dotted",
         "elinewidth": 0.7,
     }
     if errorbar_kwargs is not None:
@@ -1237,7 +1237,7 @@ def plot_lombscargle(
     return fig, ax
 
 
-def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwargs):
+def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = False, **errorbar_kwargs):
     """
     Plots spectral energy distribution
     Parameters
@@ -1248,6 +1248,10 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
         Matplotlib figure to draw on, if None a new figure is created. The default is None.
     ax : axes, optional
         Matplotlib axes to plot on. The default is None.
+    plot_spec_lines: bool
+        Plot typical spectral lines in White Dwarfs. The default is False.
+    plot_spec: bool
+        Plot typical spectral lines in White Dwarfs. The default is False.
     **errorbar_kwargs : dict
         Key word arguments for pyplot.errorbars plotting.
 
@@ -1331,29 +1335,30 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
                 valabel = None
 
     # ********** Plot spectra, if present. Up to 5
-    for ii, col in zip(range(0, 5), colors):
-        spec_name = "tt_spectrum_" + str(ii)
-        lines_draw = True
-        if spec_name in tc_src._table_names:
-            tt_spec_ii = tc_src.__dict__[spec_name]
-            sel_spec = tt_spec_ii["sel"]
-            if sel_spec.sum() > 0:
-                ax.plot(
-                    tt_spec_ii["wavelength"][sel_spec],
-                    tt_spec_ii["flux"][sel_spec],
-                    label="SDSS spectrum", # + str(ii),
-                    alpha=0.5,
-                    color=col,
-                )
-                ax.plot(
-                    tt_spec_ii["wavelength"][sel_spec],
-                    tt_spec_ii["flux_model"][sel_spec],
-                    label="SDSS model",# + str(ii)
-                    # alpha=0.5,
-                    color=col,
-                )
-        else:
-            break
+    if plot_spec:
+        for ii, col in zip(range(0, 5), colors):
+            spec_name = "tt_spectrum_" + str(ii)
+            lines_draw = True
+            if spec_name in tc_src._table_names:
+                tt_spec_ii = tc_src.__dict__[spec_name]
+                sel_spec = tt_spec_ii["sel"]
+                if sel_spec.sum() > 0:
+                    ax.plot(
+                        tt_spec_ii["wavelength"][sel_spec],
+                        tt_spec_ii["flux"][sel_spec],
+                        label="SDSS spectrum", # + str(ii),
+                        alpha=0.5,
+                        color=col,
+                    )
+                    ax.plot(
+                        tt_spec_ii["wavelength"][sel_spec],
+                        tt_spec_ii["flux_model"][sel_spec],
+                        label="SDSS model",# + str(ii)
+                        # alpha=0.5,
+                        color=col,
+                    )
+            else:
+                break
 
     # *********** Plot all none-VASCA points
     for tt, grp, col, mar in zip(tt_grp.groups, tt_grp.groups.keys, colors, markers):
@@ -1441,7 +1446,7 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
                 fit_flux,
                 color="0.5",
                 ls="-",
-                label="BB " + str(fit_temp),
+                #label="BB " + str(fit_temp),
             )
         else:
             print("Black body fit did not converge.")
@@ -1462,7 +1467,7 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
             fluxS,
             color="0.5",
             ls="--",
-            label="BB star " + str(TS),
+            #label="BB star " + str(TS),
         )
 
     # Helper functions to define second axis
@@ -1506,6 +1511,6 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, **errorbar_kwarg
     ax.set_ylabel("Flux [$\mu$Jy]", fontsize=14)
     ax.set_xlabel("Wavelength [Angstom]", fontsize=14)
 
-    ax.legend(frameon=False)
+    ax.legend(frameon=False, loc="upper right")
 
     return fig, ax, fit.fit_info
