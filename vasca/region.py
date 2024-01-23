@@ -563,7 +563,7 @@ class Region(TableCollection):
         self,
         query_radius=1.5 * uu.arcsec,
         query_table="I/355/gaiadr3",
-        vizier_columns=["*", "PQSO", "PGal", "PSS", "RPlx", "VarFlag", "o_Gmag"],
+        vizier_columns=["*", "PQSO", "PGal", "PSS", "RPlx", "VarFlag", "o_Gmag", "RFRP", "RFBP", "AG", "E(BP-RP)"],
         overwrite=False,
     ):
         """
@@ -594,6 +594,8 @@ class Region(TableCollection):
         # Define variables for later, depending on catalog source
         if query_table.lower() == "simbad":
             cat_name = "simbad"
+        elif query_table.lower() == "j/mnras/508/3877/maincat":
+            cat_name = "gaiaedr3_wd"
         else:
             cat_name = query_table.split("/")[-1]
         tab_name = "tt_" + cat_name
