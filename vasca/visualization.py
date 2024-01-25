@@ -1311,6 +1311,11 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
 
     # Prepare tables, to plot vasca point separatelly
     sel = tt_sed["origin"] == "VASCA"
+
+    #If ony VASCA point present, do not plot SED
+    if sel.sum()==len(tt_sed):
+        print("Only VASCA points in SED, not plotting")
+        return
     tt_grp = tt_sed[~sel].group_by("observatory")
 
     # **********  Plot spectral lines in background first
@@ -1452,23 +1457,28 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
             print("Black body fit did not converge.")
 
     # Plot star black body if distance is available
-    if "tt_gaiadr3" in tc_src._table_names and tc_src.tt_gaiadr3["Plx_dist"] > 1:
-        TS = 2700 * uu.K
-        rS = (0.1 * const.R_sun).to(uu.cm)
-        dS = (tc_src.tt_gaiadr3["Plx_dist"].quantity[0]).to(uu.cm)
-        BBS_scale = np.pi * (rS / dS) ** 2
 
-        BBS = models.BlackBody(temperature=TS, scale=BBS_scale)
+    if "tt_gaiadr3" in tc_src._table_names:
+        gaia_match_id = tc_src.tt_sources["gaiadr3_match_id"][0]
+        tc_src.tt_gaiadr3.add_index("gaiadr3_match_id")
+        gaia_idx = tc_src.tt_gaiadr3.loc_indices["gaiadr3_match_id", gaia_match_id]
+        if tc_src.tt_gaiadr3["Plx_dist"][gaia_idx] > 1:
+            TS = 2700 * uu.K
+            rS = (0.1 * const.R_sun).to(uu.cm)
+            dS = (tc_src.tt_gaiadr3["Plx_dist"].quantity[gaia_idx]).to(uu.cm)
+            BBS_scale = np.pi * (rS / dS) ** 2
 
-        wavS = np.linspace(7000, 110000, 100) * uu.AA
-        fluxS = (BBS(wavS) * uu.Unit("sr")).to(uu.Unit("1e-6 Jy"))
-        ax.plot(
-            wavS,
-            fluxS,
-            color="0.5",
-            ls="--",
-            #label="BB star " + str(TS),
-        )
+            BBS = models.BlackBody(temperature=TS, scale=BBS_scale)
+
+            wavS = np.linspace(7000, 110000, 100) * uu.AA
+            fluxS = (BBS(wavS) * uu.Unit("sr")).to(uu.Unit("1e-6 Jy"))
+            ax.plot(
+                wavS,
+                fluxS,
+                color="0.5",
+                ls="--",
+                #label="BB star " + str(TS),
+            )
 
     # Helper functions to define second axis
     def flux2mag_np(flux):

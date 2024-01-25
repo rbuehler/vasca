@@ -76,40 +76,46 @@ class Source(TableCollection):
         ra, dec = self.tt_sources["ra"][0], self.tt_sources["dec"][0]
         if "tt_simbad" in self._table_names:
             ra, dec = self.tt_simbad["ra"][0], self.tt_simbad["dec"][0]
-        tt_vizier = query_vizier_sed(ra, dec, radius=vizier_radius.to(uu.arcsec).value)
 
-        # Add columns in right formats for tt_sed later
-        tt_vizier["wavelength"] = (cc.c / tt_vizier["sed_freq"]).to(uu.AA)
-        tt_vizier["flux"] = tt_vizier["sed_flux"].quantity.to(uu.Unit("1e-6 Jy"))
-        tt_vizier["flux_err"] = tt_vizier["sed_eflux"].quantity.to(uu.Unit("1e-6 Jy"))
-        # tt_vizier.sort("wavelength")
-        # tt_vizier.pprint_all()
-
-        # Add Vizier info to SED table
         self.add_table(None, "region:tt_sed")
-        for row in tt_vizier:
-            ll_flt = str(row["sed_filter"]).split(":")
-            # Check if Vizier data ok
-            if (
-                np.isnan(row["flux"])
-                or np.isnan(row["flux_err"])
-                or len(ll_flt) != 2
-                or len(ll_flt[0]) == 0
-                or len(ll_flt[1]) == 0
-            ):
-                logger.warning("Skipping row as flux contains nan")
-            else:
-                obs, flt = ll_flt
-                dd_vdat = {
-                    "flux": row["flux"],
-                    "flux_err": row["flux_err"],
-                    "wavelength": row["wavelength"],
-                    "observatory": obs,
-                    "obs_filter": flt,
-                    "origin": row["_tabname"],
-                }
 
-                self.tt_sed.add_row(dd_vdat)
+        try:
+            tt_vizier = query_vizier_sed(ra, dec, radius=vizier_radius.to(uu.arcsec).value)
+
+            # Add columns in right formats for tt_sed later
+            tt_vizier["wavelength"] = (cc.c / tt_vizier["sed_freq"]).to(uu.AA)
+            tt_vizier["flux"] = tt_vizier["sed_flux"].quantity.to(uu.Unit("1e-6 Jy"))
+            tt_vizier["flux_err"] = tt_vizier["sed_eflux"].quantity.to(uu.Unit("1e-6 Jy"))
+            # tt_vizier.sort("wavelength")
+            # tt_vizier.pprint_all()
+
+            # Add Vizier info to SED table
+
+            for row in tt_vizier:
+                ll_flt = str(row["sed_filter"]).split(":")
+                # Check if Vizier data ok
+                if (
+                    np.isnan(row["flux"])
+                    or np.isnan(row["flux_err"])
+                    or len(ll_flt) != 2
+                    or len(ll_flt[0]) == 0
+                    or len(ll_flt[1]) == 0
+                ):
+                    logger.warning("Skipping row as flux contains nan")
+                else:
+                    obs, flt = ll_flt
+                    dd_vdat = {
+                        "flux": row["flux"],
+                        "flux_err": row["flux_err"],
+                        "wavelength": row["wavelength"],
+                        "observatory": obs,
+                        "obs_filter": flt,
+                        "origin": row["_tabname"],
+                    }
+
+                    self.tt_sed.add_row(dd_vdat)
+        except Exception:
+            print("No entries found in Vizier database")
 
         # Add mean VASCA flux for all filters
         flt_ids = np.array(self.tt_sources["obs_filter_id"]).flatten()
