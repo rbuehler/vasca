@@ -947,11 +947,11 @@ def plot_light_curves(
     secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
     secax.set_xlabel("Year")
 
-    def flux2mag_np(flux):
-        return flux2mag(flux).data
-
-    def mag2flux_np(mag):
-        return mag2flux(mag).data
+    # def flux2mag_np(flux):
+    #     return flux2mag(flux).data
+    #
+    # def mag2flux_np(mag):
+    #     return mag2flux(mag).data
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
