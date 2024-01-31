@@ -10,6 +10,10 @@ from astropy.table import Table
 from vasca.resource_manager import ResourceManager
 
 region_name = "ALL_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
+t_binning = 40 # Binning in seconds, if -1 "visit binning"
+t_name = ""
+if t_binning >0:
+    t_name = "_"+str(t_binning)
 
 # srcs_ids = [
 #     193067,
@@ -84,20 +88,7 @@ for band in bands:
             + str(round(tt_src["dec"][0], 3))
         )
         outfile_fin = outdir + "/" + fname_base + "_" + band.lower() + "_fin.npy"
-        outfile_app = outdir + "/" + fname_base + "_" + band.lower() + "_app.npy"
-
-        # To rename files comment in
-        # fname2_base = (
-        #     "gPhoton_ra"
-        #     + str(round(tt_src["ra"][0], 3))
-        #     + "_dec"
-        #     + str(round(tt_src["dec"][0], 3))
-        # )
-        # outfile2_fin = outdir + "/" + fname2_base + "_" + band.lower() + "_fin.npy"
-        # outfile2_app = outdir + "/" + fname2_base + "_" + band.lower() + "_app.npy"
-        #
-        # os.rename(outfile_fin, outfile2_fin)
-        # os.rename(outfile_app, outfile2_app)
+        outfile_app = outdir + "/" + fname_base + "_" + band.lower() + t_name + "_app.npy"
 
         # Run or load gFind
         if os.path.isfile(outfile_fin):
@@ -112,6 +103,18 @@ for band in bands:
             )  # ,maxgap=100.,minexp=100.
             t_bins = list(zip(dd_gfind[band]["t0"], dd_gfind[band]["t1"]))
             np.save(outfile_fin, dd_gfind)
+
+        #If binning with fixed time bins is requested, define bin times
+        if t_binning >0:
+            t_bins_start = []
+            t_bins_end = []
+            for bin in t_bins:
+                bins_fine = np.arange(bin[0], bin[1], t_binning)
+                t_bins_start.extend(bins_fine[:-1])
+                t_bins_end.extend(bins_fine[1:])
+            t_bins = list(zip(t_bins_start,t_bins_end))
+            print(t_bins)
+
 
         # Run or load gApperture
         if os.path.isfile(outfile_app):
