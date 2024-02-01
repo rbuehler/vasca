@@ -1029,10 +1029,10 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
 
     filter_ids = np.sort(np.unique(tt_lc["obs_filter_id"].data))
 
-    #    colors = cycle("bgrcmykbgrcmykbgrcmykbgrcmyk")
+    colors = cycle("brgcmykbgrcmykbgrcmykbgrcmyk")
     markers = cycle("osDd<>^v")
 
-    for flt_id, mar in zip(filter_ids, markers):
+    for flt_id, mar, col in zip(filter_ids, markers, colors):
         # Plot gPhoton light curve first, if present
         if show_gphoton and "tt_gphoton_lc" in tc_src._table_names:
             sel_gp = tt_gp_lc["obs_filter_id"] == flt_id
@@ -1052,18 +1052,31 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
 
         # Plot
         if sel.sum() > 0:
+            t_mean = [np.min(tt_lc["time"][sel]), np.max(tt_lc["time"][sel])]
+            flux_weight = 1.0 / tt_lc["flux_err"][sel] ** 2
+            flux_mean = np.average(tt_lc["flux"][sel], weights=flux_weight)
+            ax.plot(
+                t_mean,
+                [flux_mean, flux_mean],
+                ls="--",
+                color=col,
+                linewidth=0.5,
+            )
+
+
             ax.errorbar(
                 tt_lc["time"][sel],
                 tt_lc["flux"][sel],
                 yerr=tt_lc["flux_err"][sel],
                 marker=mar,
                 label=src_lab,
+                color=col,
                 **plt_errorbar_kwargs,
             )
 
     ax.legend(fontsize=12,frameon=False)  # bbox_to_anchor=(1.04, 1),
-    ax.set_xlabel("MJD", fontsize=14)
-    ax.set_ylabel(r"Flux [$\mu$Jy]", fontsize=14)
+    ax.set_xlabel("MJD", fontsize=18)
+    ax.set_ylabel(r"Flux [$\mu$Jy]", fontsize=18)
     ax.text(0.3, 0.02, tc_src.tt_sources["src_name"][0] , size=16, transform=ax.transAxes,
             ha='left',va='bottom',) # , color='purple'
 
@@ -1076,7 +1089,7 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
 
     secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
     secax.ticklabel_format(useOffset=False, style='plain')
-    secax.set_xlabel("Year", fontsize=14)
+    secax.set_xlabel("Year", fontsize=18)
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
@@ -1085,7 +1098,7 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
     formatter.set_scientific(False)
     secay.yaxis.set_minor_formatter(formatter)
 
-    secay.set_ylabel("AB magnitude", fontsize=14)
+    secay.set_ylabel("AB magnitude", fontsize=18)
 
 
     return fig, ax
@@ -1101,9 +1114,10 @@ def plot_lombscargle(
     obs_filter="NUV",
     nbins_min=20,
     logy=False,
+    freq_range = [0.03, 2]/ uu.d,
 ):
     """
-    Plots Lomb Scargle diagram
+    Runs and plots Lomb Scargle diagram
 
     Parameters
     ----------
@@ -1124,6 +1138,8 @@ def plot_lombscargle(
         Minimum number of time bins to perform LombScargle. The default is 20.
     logy : bool, optional
         Plot LombScargle diagram in log(Power). The default is True.
+    freq_range : list
+        Minimum and maximum Frequency. If None calculated automatically.
 
     Returns
     -------
@@ -1131,6 +1147,8 @@ def plot_lombscargle(
         Matplotlib figure used to draw
     ax : axes
         Used Matplotlib axes.
+    dd_ls_results: dict
+        Lomb Scargle results
     """
 
     logger.debug("Plotting Lomb-Scargle diagram ")
@@ -1157,7 +1175,7 @@ def plot_lombscargle(
     # Setup plotting parameters
     plt_plot_kwargs = {"alpha": 0.5}
 
-    dd_ls_results = run_LombScargle(tt_lc, nbins_min=nbins_min)
+    dd_ls_results = run_LombScargle(tt_lc, nbins_min=nbins_min, freq_range=freq_range)
 
     probabilities = [
         0.002699796063,
@@ -1218,6 +1236,7 @@ def plot_lombscargle(
     # Plot phase diagram
     if type(ax_phase) != type(None):
         period_peak = float(1 / dd_ls_results["ls_peak_freq"].value)
+        period_peak = 220.44/(24*60*60)
         times_phased = tt_lc["time"] % period_peak
         t_fit = np.linspace(0, period_peak, 40)
         flux_fit = dd_ls_results["ls"].model(
@@ -1232,9 +1251,9 @@ def plot_lombscargle(
         )
 
         ax_phase.plot(t_fit / period_peak, flux_fit, **plt_plot_kwargs)
-        ax_phase.set_xlabel("Phase")
+        ax_phase.set_xlabel("Phase "+str(period_peak*uu.d))
         ax_phase.set_ylabel("Flux [Jy]")
-    return fig, ax
+    return fig, ax, dd_ls_results
 
 
 def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = False, **errorbar_kwargs):

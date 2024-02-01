@@ -23,6 +23,7 @@ from vasca.utils import (
     mag2flux,
     tgalex_to_astrotime,
     get_var_stat,
+    get_lc_from_gphoton_npfile,
 )
 from vasca.resource_manager import ResourceManager
 
@@ -136,7 +137,7 @@ class Source(TableCollection):
         # Sort by wavelength
         self.tt_sed.sort("wavelength")
 
-    def add_gphoton_lc(self, s2n_min=3.0):
+    def add_gphoton_lc(self, s2n_min=3.0, tbin = -1):
         """
         Add light curve from gPhoton. Only include points with no flags.
         Assumes gPhoton flux is given for a 6 arcsec aperture.
@@ -145,53 +146,12 @@ class Source(TableCollection):
         ----------
         s2n_min: float, optional
             Minimum significance of points for selection in light curve.
+        tbin_name int
+            Time binning in seconds used in the gphoton analysis. If negative assume visit time binning.
         Returns
         -------
             None
         """
-
-        def get_lc_from_gphoton_npfile(file_name, obs_filter):
-            "Helper function to load gphoton results pickel with numpy"
-            dd_gph = np.load(file_name, allow_pickle="TRUE").item()
-
-            # Get gphoton lc
-            keep_keys = (
-                "t0",
-                "t1",
-                "flux_bgsub",
-                "flux_bgsub_err",
-                "flags",
-                "mag_mcatbgsub",
-                "mag_mcatbgsub_err_2",
-                "flags",
-            )
-            dd_gap = {
-                x: dd_gph["gAperture"][x] for x in keep_keys if x in dd_gph["gAperture"]
-            }
-            dd_gap["s2n"] = dd_gap["flux_bgsub"] / dd_gap["flux_bgsub_err"]
-
-            # Rename key and change units
-            dd_gap["time_bin_size"] = dd_gap["t1"] - dd_gap["t0"]
-            # Units of flux_bgsub are in erg sec^-1 cm^-2 Å^-1. . Get also Jy flux from AB magnitude
-            dd_gap["flux"], dd_gap["flux_err"] = mag2flux(
-                dd_gap["mag_mcatbgsub"], dd_gap["mag_mcatbgsub_err_2"]
-            )
-            # Correct flux flux outside of apperture, as listed here:
-            # http://www.galex.caltech.edu/researcher/techdoc-ch5.html
-            # Assumes 6 arcsec radius aperture in gphoton file
-            acorr60 = 1.116863247 if obs_filter == "NUV" else 1.09647819
-            dd_gap["flux"] = dd_gap["flux"] * acorr60
-            dd_gap["flux_err"] = dd_gap["flux_err"] * acorr60
-
-            # Units of time are in "GALEX Time" = "UNIX Time" - 315964800, change to MJD
-            dd_gap["time"] = tgalex_to_astrotime(
-                (dd_gap["t0"] + dd_gap["t1"]) / 2.0, "mjd"
-            )
-
-            dd_gap["obs_filter"] = [obs_filter] * len(dd_gap["flux"])
-            dd_gap["obs_filter_id"] = [dd_filter2id[obs_filter]] * len(dd_gap["flux"])
-            del dd_gap["t0"], dd_gap["t1"]
-            return Table(dd_gap)
 
         # Get location of gphoton files
         gphot_dir = rm.get_path("gal_gphoton", "sas_cloud")
@@ -201,6 +161,8 @@ class Source(TableCollection):
         ra_src = round(self.tt_sources["ra"][0], 3)
         dec_src = round(self.tt_sources["dec"][0], 3)
 
+        tname = "" if tbin < 0 else "_" + str(tbin)
+
         # Check if NUV file is present and load it, this is requires
         fname_nuv = (
             gphot_dir
@@ -208,7 +170,9 @@ class Source(TableCollection):
             + str(ra_src)
             + "_dec"
             + str(dec_src)
-            + "_nuv_app.npy"
+            + "_nuv"
+            + tname
+            +"_app.npy"
         )
         if os.path.exists(fname_nuv):
             tt_lc = get_lc_from_gphoton_npfile(fname_nuv, "NUV")

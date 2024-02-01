@@ -873,6 +873,7 @@ class Region(TableCollection):
                 "default"
             ]  # * uu.Unit(dd_vasca_columns["ls_pval_alt_flt"]["unit"])
 
+            #For second filter only check peak probability at first filter peak
             if len(obs_filters) > 1:
                 sel_flt1 = np.array(
                     (tt_lc["obs_filter"] == obs_filters[1]) * (tt_lc["sel"] == True),

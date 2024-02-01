@@ -360,7 +360,7 @@ def period2freq(pp):
 def run_LombScargle(
     tt_lc,
     nbins_min=40,
-    freq_range=[0.03, 2] / uu.d,
+    freq_range=[0.03, 2]/ uu.d
 ):
     """
     Calculate Lomb Scargle diagram
@@ -371,6 +371,8 @@ def run_LombScargle(
             Table with the VASCA light curve
         nbins_min : int, optional
             Minimum number of time bins to perform LombScargle. The default is 20.
+        freq_range : list
+            Minimum and maximum Frequency. If None calculated automatically.
 
         Returns
         -------
@@ -1544,3 +1546,62 @@ def get_config(cfg_file):
     vasca_cfg["cfg_file"] = cfg_file
 
     return vasca_cfg
+
+
+def get_lc_from_gphoton_npfile(file_name, obs_filter):
+    """
+    Get light curve from gphoton numpy  files
+
+    Parameters
+    ----------
+    file_name str
+        File name
+    obs_filter str
+        Obervation filter NUV or FUV
+    Returns
+    -------
+        astropy.Table
+        Light curve table
+
+    """
+    "Helper function to load gphoton results pickel with numpy"
+    dd_gph = np.load(file_name, allow_pickle="TRUE").item()
+
+    # Get gphoton lc
+    keep_keys = (
+        "t0",
+        "t1",
+        "flux_bgsub",
+        "flux_bgsub_err",
+        "flags",
+        "mag_mcatbgsub",
+        "mag_mcatbgsub_err_2",
+        "flags",
+    )
+    dd_gap = {
+        x: dd_gph["gAperture"][x] for x in keep_keys if x in dd_gph["gAperture"]
+    }
+    dd_gap["s2n"] = dd_gap["flux_bgsub"] / dd_gap["flux_bgsub_err"]
+
+    # Rename key and change units
+    dd_gap["time_bin_size"] = dd_gap["t1"] - dd_gap["t0"]
+    # Units of flux_bgsub are in erg sec^-1 cm^-2 Å^-1. . Get also Jy flux from AB magnitude
+    dd_gap["flux"], dd_gap["flux_err"] = mag2flux(
+        dd_gap["mag_mcatbgsub"], dd_gap["mag_mcatbgsub_err_2"]
+    )
+    # Correct flux flux outside of apperture, as listed here:
+    # http://www.galex.caltech.edu/researcher/techdoc-ch5.html
+    # Assumes 6 arcsec radius aperture in gphoton file
+    acorr60 = 1.116863247 if obs_filter == "NUV" else 1.09647819
+    dd_gap["flux"] = dd_gap["flux"] * acorr60
+    dd_gap["flux_err"] = dd_gap["flux_err"] * acorr60
+
+    # Units of time are in "GALEX Time" = "UNIX Time" - 315964800, change to MJD
+    dd_gap["time"] = tgalex_to_astrotime(
+        (dd_gap["t0"] + dd_gap["t1"]) / 2.0, "mjd"
+    )
+
+    dd_gap["obs_filter"] = [obs_filter] * len(dd_gap["flux"])
+    dd_gap["obs_filter_id"] = [dd_filter2id[obs_filter]] * len(dd_gap["flux"])
+    del dd_gap["t0"], dd_gap["t1"]
+    return Table(dd_gap)
