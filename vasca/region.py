@@ -355,7 +355,7 @@ class Region(TableCollection):
                 "tt_simbad",
                 "tt_gaiadr3",
                 "tt_lombscargle",
-                "tt_maincat",
+                "tt_gaiaedr3_wd",
                 "tt_gfcat",
             ]
 
