@@ -956,7 +956,7 @@ def plot_light_curves(
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
     # Avoid scientific notation for magnitudes
-    formatter = ScalarFormatter()
+
     formatter.set_scientific(False)
     secay.yaxis.set_minor_formatter(formatter)
 
@@ -965,7 +965,7 @@ def plot_light_curves(
     return fig, ax
 
 
-def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kwargs):
+def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True, **errorbar_kwargs):
     """
     Plots light curve
     Parameters
@@ -978,6 +978,8 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
         Matplotlib axes to plot on. The default is None.
     show_gphoton: bool, optional
         Show gphoton light curve too, if present in table collection?. The default is True.
+    add_axes: bool, optional
+        Add additional x- and y-axis on the empty sides
     **errorbar_kwargs : dict
         Key word arguments for pyplot.errorbars plotting.
 
@@ -1017,7 +1019,7 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
 
     # Setup plotting parameters
     plt_errorbar_kwargs = {
-        "markersize": 4,
+        "markersize": 6,
         "alpha": 0.6,
         "capsize": 0,
         "lw": 0.2,
@@ -1080,25 +1082,31 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, **errorbar_kw
     ax.text(0.3, 0.02, tc_src.tt_sources["src_name"][0] , size=16, transform=ax.transAxes,
             ha='left',va='bottom',) # , color='purple'
 
-    # Add a second time axis on top showing years
-    def mjd2yr(mjd):
-        return Time(mjd, format="mjd").jyear
-
-    def yr2mjd(jyr):
-        return Time(jyr, format="jyear").mjd
-
-    secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
-    secax.ticklabel_format(useOffset=False, style='plain')
-    secax.set_xlabel("Year", fontsize=18)
-
-    secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
-
-    # Avoid scientific notation for magnitudes
+    #Avoid scientific notation
     formatter = ScalarFormatter()
     formatter.set_scientific(False)
-    secay.yaxis.set_minor_formatter(formatter)
+    ax.yaxis.set_minor_formatter(formatter)
+    ax.yaxis.set_major_formatter(formatter)
 
-    secay.set_ylabel("AB magnitude", fontsize=18)
+
+    if add_axes:
+        # Add a second time axis on top showing years
+        def mjd2yr(mjd):
+            return Time(mjd, format="mjd").jyear
+
+        def yr2mjd(jyr):
+            return Time(jyr, format="jyear").mjd
+
+        secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
+        secax.ticklabel_format(useOffset=False, style='plain')
+        secax.set_xlabel("Year", fontsize=18)
+
+        secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
+
+        # Avoid scientific notation for magnitudes
+        secay.yaxis.set_minor_formatter(formatter)
+
+        secay.set_ylabel("AB magnitude", fontsize=18)
 
 
     return fig, ax
@@ -1236,7 +1244,7 @@ def plot_lombscargle(
     # Plot phase diagram
     if type(ax_phase) != type(None):
         period_peak = float(1 / dd_ls_results["ls_peak_freq"].value)
-        period_peak = 220.44/(24*60*60)
+        #period_peak = 220.44/(24*60*60)
         times_phased = tt_lc["time"] % period_peak
         t_fit = np.linspace(0, period_peak, 40)
         flux_fit = dd_ls_results["ls"].model(
@@ -1396,7 +1404,7 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
             markeredgecolor=col,
             marker=mar,
             label=str(grp[0]),
-            markersize=4,
+            markersize=6,
             alpha=0.4,
             **plt_errorbar_kwargs,
         )
@@ -1527,7 +1535,7 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
     # secax.set_xlabel("eV")
 
     secax = ax.secondary_xaxis("top", functions=(AA2K_np, K2AA_np))
-    secax.set_xlabel("Temperature [K]", fontsize=14)
+    secax.set_xlabel("Temperature [K]", fontsize=16)
 
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
@@ -1535,10 +1543,10 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
     formatter = ScalarFormatter()
     formatter.set_scientific(False)
     secay.yaxis.set_minor_formatter(formatter)
-    secay.set_ylabel("AB magnitude", fontsize=14)
+    secay.set_ylabel("AB magnitude", fontsize=16)
 
-    ax.set_ylabel("Flux [$\mu$Jy]", fontsize=14)
-    ax.set_xlabel("Wavelength [Angstom]", fontsize=14)
+    ax.set_ylabel("Flux [$\mu$Jy]", fontsize=16)
+    ax.set_xlabel("Wavelength [Angstom]", fontsize=16)
 
     ax.legend(frameon=False, loc="upper right")
 
