@@ -1120,9 +1120,10 @@ def plot_lombscargle(
     ax_phase=None,
     ax_lc=None,
     obs_filter="NUV",
-    nbins_min=20,
+    nbins_min=10,
     logy=False,
     freq_range = [0.03, 2]/ uu.d,
+    plot_dtbins =True
 ):
     """
     Runs and plots Lomb Scargle diagram
@@ -1160,6 +1161,7 @@ def plot_lombscargle(
     """
 
     logger.debug("Plotting Lomb-Scargle diagram ")
+    label_size = 18
 
     # Prepare light curve
     sel = np.array(
@@ -1186,39 +1188,41 @@ def plot_lombscargle(
     dd_ls_results = run_LombScargle(tt_lc, nbins_min=nbins_min, freq_range=freq_range)
 
     probabilities = [
+        0.95449973610364,
         0.002699796063,
         0.000063342484,
         0.000000573303,
-    ]  # 3 sigma 0.002699796063, 4 sigma 0.000063342484, 5 sigma 0.000000573303
+    ]  # 2-5 sigma
 
     # Get confidence interval
     conf = dd_ls_results["ls"].false_alarm_level(probabilities)
-    ax.axhline(conf[0], linewidth=0.5, ls="--", color="k", label="3/4/5 sigma")
+    ax.axhline(conf[0], linewidth=0.5, ls="--", color="k", label="3&4 sigma")
     ax.axhline(conf[1], linewidth=0.5, ls="--", color="k")
-    ax.axhline(conf[2], linewidth=0.5, ls="--", color="k")
+    #ax.axhline(conf[2], linewidth=0.5, ls="--", color="k")
 
     # Set labels
     ax.set_xscale("log")
     if logy:
         ax.set_yscale("log")
-    ax.set_xlabel("Frequency [1/day]")
-    ax.set_ylabel("LS power")
+    ax.set_xlabel("Frequency [1/day]", fontsize=label_size)
+    ax.set_ylabel("LS power", fontsize=label_size)
     secax = ax.secondary_xaxis("top", functions=(freq2period, period2freq))
-    secax.set_xlabel("Period [day]")
+    secax.set_xlabel("Period [day]", fontsize=label_size)
 
     # Plot frequency distribution of time bins
-    fbinsize = dd_ls_results["ls_freq"][1:] - dd_ls_results["ls_freq"][:-1]
-    fedges = dd_ls_results["ls_freq"][:-1] + fbinsize / 2.0
-    dtimes = tt_lc["time"][1:].data[None, :] - tt_lc["time"][:-1].data[:, None]
-    dfs = 1 / dtimes.flatten()
-    hist_f, _ = np.histogram(dfs, bins=fedges.data)
-    hist_f = 0.5 * hist_f / np.max(hist_f)  # normalize maximum to 0.5
-    ax.plot(
-        dd_ls_results["ls_freq"][1:-1],
-        hist_f,
-        label="Frequency between visits",
-        **plt_plot_kwargs,
-    )
+    if plot_dtbins:
+        fbinsize = dd_ls_results["ls_freq"][1:] - dd_ls_results["ls_freq"][:-1]
+        fedges = dd_ls_results["ls_freq"][:-1] + fbinsize / 2.0
+        dtimes = tt_lc["time"][1:].data[None, :] - tt_lc["time"][:-1].data[:, None]
+        dfs = 1 / dtimes.flatten()
+        hist_f, _ = np.histogram(dfs, bins=fedges.data)
+        hist_f = 0.5 * hist_f / np.max(hist_f)  # normalize maximum to 0.5
+        ax.plot(
+            dd_ls_results["ls_freq"][1:-1],
+            hist_f,
+            label="Frequency between visits",
+            **plt_plot_kwargs,
+        )
 
     # Plot LS
     ax.plot(
@@ -1259,8 +1263,8 @@ def plot_lombscargle(
         )
 
         ax_phase.plot(t_fit / period_peak, flux_fit, **plt_plot_kwargs)
-        ax_phase.set_xlabel("Phase "+str(period_peak*uu.d))
-        ax_phase.set_ylabel("Flux [Jy]")
+        ax_phase.set_xlabel("Phase ", fontsize=label_size)
+        ax_phase.set_ylabel("Flux [Jy]", fontsize=label_size)
     return fig, ax, dd_ls_results
 
 

@@ -10,7 +10,7 @@ from astropy.table import Table
 from vasca.resource_manager import ResourceManager
 
 region_name = "ALL_10-800"  # "TDS"  # "WD" #"MDIS_10-800" # _ELAISN1
-t_binning = 10 # Binning in seconds, if -1 "visit binning"
+t_binning = 5 # Binning in seconds, if -1 "visit binning"
 t_name = ""
 t_name = "" if t_binning < 0 else "_"+str(t_binning)
 
