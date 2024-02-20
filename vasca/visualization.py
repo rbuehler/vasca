@@ -957,8 +957,8 @@ def plot_light_curves(
 
     # Avoid scientific notation for magnitudes
 
-    formatter.set_scientific(False)
-    secay.yaxis.set_minor_formatter(formatter)
+    #formatter.set_scientific(False)
+    #secay.yaxis.set_minor_formatter(formatter)
 
     secay.set_ylabel("AB magnitude")
 
