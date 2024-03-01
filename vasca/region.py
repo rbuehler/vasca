@@ -338,8 +338,14 @@ class Region(TableCollection):
 
         src = Source()
 
+        src_name = str(rg_src_id)
+        if "src_name" in self.tt_sources.colnames:
+            self.tt_sources.add_index("rg_src_id")
+            src_name = str(self.tt_sources.loc["rg_src_id", [rg_src_id]]["src_name"])
+            src_name = src_name.replace(" ","_")
+
         # Check if source shall be loaded for file and file exists
-        fname_src = self.region_path + "/sources/src_" + str(rg_src_id) + ".fits"
+        fname_src = self.region_path + "/sources/src_" + src_name + ".fits"
         if os.path.exists(fname_src) and load_from_file:
             logger.debug(f"Loading source from file {fname_src}")
             src.load_from_fits(fname_src)
