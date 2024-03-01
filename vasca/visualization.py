@@ -1187,18 +1187,6 @@ def plot_lombscargle(
 
     dd_ls_results = run_LombScargle(tt_lc, nbins_min=nbins_min, freq_range=freq_range)
 
-    probabilities = [
-        0.95449973610364,
-        0.002699796063,
-        0.000063342484,
-        0.000000573303,
-    ]  # 2-5 sigma
-
-    # Get confidence interval
-    conf = dd_ls_results["ls"].false_alarm_level(probabilities)
-    ax.axhline(conf[0], linewidth=0.5, ls="--", color="k", label="3&4 sigma")
-    ax.axhline(conf[1], linewidth=0.5, ls="--", color="k")
-    #ax.axhline(conf[2], linewidth=0.5, ls="--", color="k")
 
     # Set labels
     ax.set_xscale("log")
@@ -1225,14 +1213,28 @@ def plot_lombscargle(
         )
 
     # Plot LS
-    ax.plot(
+    pl = ax.plot(
         dd_ls_results["ls_freq"],
         dd_ls_results["ls_power"],
-        label="data",
         **plt_plot_kwargs,
-    )
+    ) #label="data",
+    col = pl[0].get_color()
 
-    ax.legend()
+    probabilities = [
+        0.95449973610364,
+        0.002699796063,
+        0.000063342484,
+        0.000000573303,
+    ]  # 2-5 sigma
+
+    # Get confidence interval
+    conf = dd_ls_results["ls"].false_alarm_level(probabilities,  method='baluev') # "bootstrap"
+    ax.axhline(conf[0], linewidth=0.5, ls="--", color=col, label=r"$2 \sigma$ & $3 \sigma$ confidence levels") # col
+    ax.axhline(conf[1], linewidth=0.5, ls="--", color=col) #col
+    #ax.axhline(conf[2], linewidth=0.5, ls="--", color="k")
+
+
+    #ax.legend()
 
     # Plot model on lc
     if type(ax_lc) != type(None):
@@ -1260,6 +1262,7 @@ def plot_lombscargle(
             yerr=tt_lc["flux_err"],
             linestyle="none",
             marker="o",
+            color=col
         )
 
         ax_phase.plot(t_fit / period_peak, flux_fit, **plt_plot_kwargs)
