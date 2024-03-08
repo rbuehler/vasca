@@ -32,6 +32,7 @@ from scipy.stats import chi2
 from cycler import cycler
 import yaml
 from yamlinclude import YamlIncludeConstructor
+from astropy.time import Time
 
 YamlIncludeConstructor.add_to_loader_class(
     loader_class=yaml.FullLoader
@@ -682,6 +683,12 @@ def flux2mag_np(flux):
 def mag2flux_np(mag):
     return mag2flux(mag).data
 
+
+def mjd2yr(mjd):
+    return Time(mjd, format="mjd").jyear
+
+def yr2mjd(jyr):
+    return Time(jyr, format="jyear").mjd
 
 def get_field_id(obs_field_id, observaory, obs_filter):
     """

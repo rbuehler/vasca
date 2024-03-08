@@ -36,6 +36,8 @@ from vasca.utils import (
     freq2period,
     period2freq,
     dd_spec_lines,
+    mjd2yr,
+    yr2mjd,
 )
 
 # %% sky plotting
@@ -1091,11 +1093,6 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True
 
     if add_axes:
         # Add a second time axis on top showing years
-        def mjd2yr(mjd):
-            return Time(mjd, format="mjd").jyear
-
-        def yr2mjd(jyr):
-            return Time(jyr, format="jyear").mjd
 
         secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
         secax.ticklabel_format(useOffset=False, style='plain')
@@ -1229,9 +1226,9 @@ def plot_lombscargle(
 
     # Get confidence interval
     conf = dd_ls_results["ls"].false_alarm_level(probabilities,  method='baluev') # "bootstrap"
-    ax.axhline(conf[0], linewidth=0.5, ls="--", color=col, label=r"$2 \sigma$ & $3 \sigma$ confidence levels") # col
-    ax.axhline(conf[1], linewidth=0.5, ls="--", color=col) #col
-    #ax.axhline(conf[2], linewidth=0.5, ls="--", color="k")
+    ax.axhline(conf[1], linewidth=0.5, ls="--", color=col, label=r"$3 \sigma$ - $5 \sigma$ confidence levels") # col
+    ax.axhline(conf[2], linewidth=0.5, ls="--", color=col) #col
+    ax.axhline(conf[3], linewidth=0.5, ls="--", color=col)
 
 
     #ax.legend()
