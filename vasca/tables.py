@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-astropy.Table collection class for VASCA
-"""
+
 
 import os
 
@@ -36,6 +34,9 @@ ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 
 
 class TableCollection(object):
+    """
+    Collection of astropy.table.Table_ objects
+    """
     def __init__(self):
         # Configure logger
         # adds the class name as an extra key; accessible vie the handler format
@@ -1100,7 +1101,7 @@ class TableCollection(object):
     ):
         """
         Copy a column from one table to the other, for those columns that have a
-         matching variable value 'match_variable'
+        matching variable value 'match_variable'
         Parameters
         ----------
         tab_name_to str

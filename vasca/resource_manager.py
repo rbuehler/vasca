@@ -41,11 +41,6 @@ class ResourceManager:
         located at `CLASSDIR/resource_metadata`. Additional info my be added
         e.g. the set status of the env vars and the path they are pointing to.
 
-    Methods
-    -------
-    get_path(resource, storage)
-        Get the path to a specific resource file or directory.
-
     Notes
     -----
     The implementation requires a set of environment variables. The full list

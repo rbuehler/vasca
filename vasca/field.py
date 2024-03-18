@@ -56,10 +56,10 @@ class BaseField(TableCollection):
 
         Notes
         -----
-        Many class attributes are stored in astropy.table.Tables_. To see a
+        Many class attributes are stored in astropy.table.Table_. To see a
         description of each of their columns run :meth: `~vasca.field.BaseField.info`.
 
-        .. _astropy.table.Tables: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
+        .. _astropy.table.Table: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
 
         Returns
         -------

@@ -583,10 +583,12 @@ class Region(TableCollection):
         query_table : str, optional
             Vizier table to query, if "simbad" query SIMBAD instead. The default is the
             main GAIA-DR3 table.
-        vizier_columns: list(str)
-            Vizier catalog columns to get from the catalog. "*" is for default columns,
-             "**" for all columns. The default is for selected GAIA columns, see:
-            https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=I/355/gaiadr3
+        vizier_columns: list, optional
+            Vizier catalog columns to get from the catalog. \* is for default columns,
+            \*\* for all columns. The default is for selected `Vizier GAIA columns`_
+
+            .. _Vizier GAIA columns: https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=I/355/gaiadr3
+
         overwrite: bool, optional
             Overwrite preexisting association for this source. The default is False.
 
