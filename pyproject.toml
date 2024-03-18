@@ -5,11 +5,11 @@ requires = ["setuptools", "wheel"]  # PEP 508 specifications.
 [project]
 # Project metadata, following PEP 621 specifications.
 name = "vasca"
-version = "0.1.0"
+version = "1.0.0"
 description = "Ultraviolet Variability Analysis is an astronomy pipeline for time-variable sources."
 readme = "README.rst"
 requires-python = ">=3.9"
-# license = {file = "LICENSE.txt"}
+license = {file = "LICENSE.txt"}
 keywords = ["astronomy", "ultraviolet", "pipeline"]
 authors = [
     {name =  "Julian Schliwinski", email = "julian.schliwinski@desy.de"},
@@ -36,6 +36,8 @@ dependencies = [
   "ipywidgets ~= 8.0.6",
   "ipympl ~= 0.9.3",
   "jupyterlab ~= 4.0.2",
+  "sphinx~= 7.2.6",
+  "sphinx-rtd-theme = 2.0.0",
 ]
 
 [project.urls]

@@ -19,11 +19,11 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "VASCA"
-copyright = "2022, Julian, Andrea, Rolf"
-author = "Julian, Andrea, Rolf"
+copyright = "BSD 3-Clause License"
+author = "Rolf Buehler and Julian Schliwinski"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.1"
+release = "1.0.0"
 
 
 # -- General configuration ---------------------------------------------------
