@@ -5,13 +5,14 @@ The VAriable Source Cluster Analysis (VASCA) is an astronomy pipeline
 for time-variable sources. Its main purpose is to create a source catalog
 based on GALEX data.
 
-.. image:: https://gitlab.desy.de/ultrasat-camera/vasca/badges/main/pipeline.svg
-    :target: https://gitlab.desy.de/ultrasat-camera/vasca/-/commits/main
-    :alt: pipeline status
-    
-.. image:: https://gitlab.desy.de/ultrasat-camera/vasca/badges/main/coverage.svg
-    :target: https://gitlab.desy.de/ultrasat-camera/vasca/-/commits/main
-    :alt: coverage report
+..
+    .. image:: https://gitlab.desy.de/ultrasat-camera/vasca/badges/main/pipeline.svg
+        :target: https://gitlab.desy.de/ultrasat-camera/vasca/-/commits/main
+        :alt: pipeline status
+
+    .. image:: https://gitlab.desy.de/ultrasat-camera/vasca/badges/main/coverage.svg
+        :target: https://gitlab.desy.de/ultrasat-camera/vasca/-/commits/main
+        :alt: coverage report
 
 Installation
 ------------
@@ -41,10 +42,11 @@ The installation steps are:
 3. Setup the resource manager by including your cloud path location in the the ``.env_template`` file and rename it to ``.env``.
 
 
-**Prototyping and functional examples**
+Running the pipeline and post processing
+----------------------------------------
 
-We use `Jupyter lab <https://github.com/jupyterlab/jupyterlab>`__ for prototyping and for functional examples given in ``vasca/examples``.
-Follow these `instructions <https://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html/>`__ to add  a pyenv-generated virtual environment as a Jupyter kernel. Jupyter lab extensions can be used to enable interactive Matoplotlib figures: First install the `ipywidgets <https://github.com/jupyter-widgets/ipywidgets>`__ extension and then the `ipympl <https://github.com/matplotlib/ipympl>`__ extension.
+
+We use `Jupyter lab <https://github.com/jupyterlab/jupyterlab>`__ for post processing, functional examples given in ``vasca/examples``.
 
 Coding guidelines
 -----------------
@@ -58,10 +60,11 @@ version to use is 3.10.x . For docstrings we use the
 `ņumpy <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html>`__ 
 format.
 
-**Documentation**
+Build the documentation
+-----------------------
 
 For documentation we use `SPHINX <https://www.sphinx-doc.org/en/master/>`__.
-To build it do the following steps:
+To build it run the following:
 
 .. code:: bash
 
