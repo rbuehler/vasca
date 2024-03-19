@@ -61,7 +61,7 @@ def plot_sky_sources(
     ----------
     tt_src : astropy.table.Table
         Source list to plot. Has to contain "ra", "dec" and srd id columns.
-    tt_det : astropy.astropy.Table, optional
+    tt_det : astropy.table.Table, optional
         Detection list to plot. Has to contain "ra", "dec" and src_id columns.
         Default is None.
     only_selected: bool, optional
@@ -966,6 +966,7 @@ def plot_light_curve(
 ):
     """
     Plots light curve
+
     Parameters
     ----------
     tc_src: vasca.TableCollection

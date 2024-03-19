@@ -575,7 +575,7 @@ class GALEXField(BaseField):
             # Sets convenience class attributes
             gf.set_field_attr()
         # field_id = get_field_id(
-        #     obs_field_id=obs_id, observaory="GALEX", obs_filter=obs_filter
+        #     obs_field_id=obs_id, observatory="GALEX", obs_filter=obs_filter
         # )
 
         # # Check consistency
@@ -924,7 +924,7 @@ class GALEXField(BaseField):
         # Converts obs_id colimn  into VASCA field_id
         for row in tt_coadd_select:
             row["obs_id"] = get_field_id(
-                obs_field_id=row["obs_id"], observaory="GALEX", obs_filter=obs_filter
+                obs_field_id=row["obs_id"], observatory="GALEX", obs_filter=obs_filter
             )
 
         # Convert into dictionary with correct VASCA column names
@@ -1627,7 +1627,7 @@ class GALEXDSField(BaseField):
             [
                 get_field_id(
                     obs_field_id=tt_fields["field_id"][0],
-                    observaory="GALEX_DS",
+                    observatory="GALEX_DS",
                     obs_filter="NUV",
                 )
             ],
