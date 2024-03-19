@@ -32,23 +32,19 @@ rm = ResourceManager()
 
 class Source(TableCollection):
     """
-    `~vasca.Source` is  class to store all vasca information for one particular
-    source. This class is for conviniece, the same data is also found in the Field
+    Class to store all VASCA information for one particular
+    source. This class is for convenience, the same data is also found in the Field
     and Region classes containing this source."""
 
     def __init__(self):
         """
+        Many class attributes are stored in astropy.table.Table_.
 
-        Notes
-        -----
-        Many class attributes are stored in astropy.table.Tables_. To see a
-        description of each of their columns run :meth: `~vasca.Regions.info`.
-
-        .. _astropy.table.Tables: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
+        .. _astropy.table.Table: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
 
         Returns
         -------
-        None.
+        None
 
         """
         # Sets skeleton
@@ -57,20 +53,17 @@ class Source(TableCollection):
     def add_vizier_SED(self, vizier_radius=1 * uu.arcsec):
         """
         Add spectral energy distribution table (tt_sed) with all
-        spectral points from VizieR within given radius
+        spectral points from VizieR within given radius. Uses
+        ``vasca.utils.query_vizier_sed()``
 
         Parameters
         ----------
-        self vasca.TableCollection
-            Table collection with all source information. SED table
-            will be added to this collection.
-
-        vizier_radius astropy.quantity
+        vizier_radius astropy.Quantity
             Radius within which to add flux points from VizieR
 
         Returns
         -------
-
+        None
         """
 
         # Search for Vizier flux around source, or simbad associated source if present
@@ -81,12 +74,16 @@ class Source(TableCollection):
         self.add_table(None, "region:tt_sed")
 
         try:
-            tt_vizier = query_vizier_sed(ra, dec, radius=vizier_radius.to(uu.arcsec).value)
+            tt_vizier = query_vizier_sed(
+                ra, dec, radius=vizier_radius.to(uu.arcsec).value
+            )
 
             # Add columns in right formats for tt_sed later
             tt_vizier["wavelength"] = (cc.c / tt_vizier["sed_freq"]).to(uu.AA)
             tt_vizier["flux"] = tt_vizier["sed_flux"].quantity.to(uu.Unit("1e-6 Jy"))
-            tt_vizier["flux_err"] = tt_vizier["sed_eflux"].quantity.to(uu.Unit("1e-6 Jy"))
+            tt_vizier["flux_err"] = tt_vizier["sed_eflux"].quantity.to(
+                uu.Unit("1e-6 Jy")
+            )
             # tt_vizier.sort("wavelength")
             # tt_vizier.pprint_all()
 
@@ -137,7 +134,7 @@ class Source(TableCollection):
         # Sort by wavelength
         self.tt_sed.sort("wavelength")
 
-    def add_gphoton_lc(self, s2n_min=3.0, tbin = -1):
+    def add_gphoton_lc(self, s2n_min=3.0, tbin=-1):
         """
         Add light curve from gPhoton. Only include points with no flags.
         Assumes gPhoton flux is given for a 6 arcsec aperture.
@@ -146,11 +143,11 @@ class Source(TableCollection):
         ----------
         s2n_min: float, optional
             Minimum significance of points for selection in light curve.
-        tbin_name int
+        tbin_name int, optional
             Time binning in seconds used in the gphoton analysis. If negative assume visit time binning.
         Returns
         -------
-            None
+        None
         """
 
         # Get location of gphoton files
@@ -172,7 +169,7 @@ class Source(TableCollection):
             + str(dec_src)
             + "_nuv"
             + tname
-            +"_app.npy"
+            + "_app.npy"
         )
         if os.path.exists(fname_nuv):
             tt_lc = get_lc_from_gphoton_npfile(fname_nuv, "NUV")
@@ -242,9 +239,7 @@ class Source(TableCollection):
                 hdu_spec = ll_sp[ii]
                 tt_spec = Table(hdu_spec["COADD"].data)
                 c_Aps = cc.c.to(uu.AA / uu.s)
-                spec_flux = (
-                    tt_spec["flux"] * 1e-17 * uu.erg / (uu.cm**2 * uu.s * uu.AA)
-                )
+                spec_flux = tt_spec["flux"] * 1e-17 * uu.erg / (uu.cm**2 * uu.s * uu.AA)
                 model_flux = (
                     tt_spec["model"] * 1e-17 * uu.erg / (uu.cm**2 * uu.s * uu.AA)
                 )

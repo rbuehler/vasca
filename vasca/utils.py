@@ -45,9 +45,10 @@ from vasca.tables_dict import dd_vasca_columns
 #: Note that filter_id need to be powers of 2, to be able to be used as bitmask
 #: 1,2,4,8,..
 dd_filter2id = {"NUV": 1, "FUV": 2}
+#: Inverted ``dd_filter2id``
 dd_id2filter = dict((v, k) for (k, v) in dd_filter2id.items())
-# Inverted key&value dictionary
 
+#: Central wavelength for a given filter
 dd_filter2wavelength = {"NUV": 2271 * uu.AA, "FUV": 1528 * uu.AA}
 
 
@@ -56,8 +57,7 @@ dd_filter2wavelength = {"NUV": 2271 * uu.AA, "FUV": 1528 * uu.AA}
 #: See ``get_field_id`` function below.
 dd_obs_id_add = {"GALEXNUV": "GNU", "GALEXFUV": "GFU", "GALEX_DSNUV": "GDS"}
 
-# -----------------------------------------
-# Define object groups and related funtions
+#:  Define object groups for each object type
 dd_ogrp2otypes = {
     "Unkown": ["?", "none", "X", "IR", "Rad", "ev", "blu", "EmO", "UV", "Opt", "NIR"],
     "AGN": [
@@ -74,7 +74,7 @@ dd_ogrp2otypes = {
         "AG?",
         "Bz?",
     ],
-    "Galaxy": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG","ClG"],
+    "Galaxy": ["G", "LSB", "bCG", "SBG", "H2G", "EmG", "BiC", "GiC", "GrG", "ClG"],
     "Star": [
         "*",
         "HB*",
@@ -119,17 +119,10 @@ dd_ogrp2otypes = {
         "WD*",
         "WD?",
     ],
-    "Binary": [
-        "EB*",
-        "SB*",
-        "**",
-        "EB?",
-        "CV*",
-        "No*",
-        "CV?"
-    ],
-    "Misc": ["ULX", "UX?", "gLS", "LeI", "LI?", "Le?", "LS?", "HII", "SNR","SN*"],
+    "Binary": ["EB*", "SB*", "**", "EB?", "CV*", "No*", "CV?"],
+    "Misc": ["ULX", "UX?", "gLS", "LeI", "LI?", "Le?", "LS?", "HII", "SNR", "SN*"],
 }
+#: Inverted ``dd_ogrp2otypes``
 dd_otype2ogroup = dict()
 for key, val in dd_ogrp2otypes.items():
     for ii in val:
@@ -137,29 +130,76 @@ for key, val in dd_ogrp2otypes.items():
 
 
 def otype2ogroup(otype):
-    "Returns object group for a given object type"
+    """
+    Returns object group for a given object type.
+    Allows adding the default value of unkown type is
+    asked.
+
+    Parameters
+    ----------
+    otype: str
+        Object type
+
+    Returns
+    -------
+    str
+        Object group
+
+
+    """
     if otype in dd_otype2ogroup.keys():
         return dd_otype2ogroup[otype]
     else:
         return dd_vasca_columns["ogrp"]["default"]
 
 
-# Define fixed colors for plots and each object group
+#:  Define fixed colors for plots and each object group
 dd_ogrp2col = {
     "Unkown": "tab:gray",
     "AGN": "tab:blue",
     "Galaxy": "tab:purple",
     "Star": "r",
-#    "WD*": "tab:green",
+    #    "WD*": "tab:green",
     "Binary": "tomato",
     "none": "k",
     "Misc": "y",
 }
 
 
+def get_col_cycler(ll_ogrp):
+    """
+    Helper function to get matplotlib color cycler mathcing the colors defined
+    in ``dd_ogrp2col``
+
+    Parameters
+    ----------
+    ll_ogrp: list
+        Return colors for passed object groups
+    Returns
+    -------
+    matplotlib.cycler
+
+    """
+    ll_col = list()
+    for ogrp in ll_ogrp:
+        ll_col.append(dd_ogrp2col[ogrp])
+    return cycler(color=ll_col)
+
+
 # Add object group ID
 def add_ogrp(tt, provenance="SIMBAD"):
-    """Helper funtion to add ogrp_id column to tables"""
+    """
+    Helper function to add ogrp_id column to tables
+
+    Parameters
+    ----------
+    provenance: str
+        Where does object group definition come from, 'SIMBAD' or 'GAIA'
+
+    Returns
+    -------
+    None
+    """
     table_size = len(tt)
     col_data = np.array([dd_vasca_columns["ogrp"]["default"]] * table_size)
     col_template_copy = dd_vasca_columns["ogrp"].copy()
@@ -185,17 +225,9 @@ def add_ogrp(tt, provenance="SIMBAD"):
         logger.warning("No valid provenance, cannot asign object group")
 
 
-def get_col_cycler(ll_ogrp):
-    "Helper function to get matplotlib color cycler mathcing the colors defined above"
-    ll_col = list()
-    for ogrp in ll_ogrp:
-        ll_col.append(dd_ogrp2col[ogrp])
-    return cycler(color=ll_col)
-
-
-# Spectral lines dictionary  H and He
-# He from https://physics.nist.gov/PhysRefData/Handbook/Tables/heliumtable2.htm
-# Keeping only one of the lines if very close and >1500 AA
+#: Spectral lines dictionary  H and He
+#: He from https://physics.nist.gov/PhysRefData/Handbook/Tables/heliumtable2.htm
+#: Keeping only one of the lines if very close and >1500 AA
 dd_spec_lines = {
     "H-a": np.array(
         [
@@ -326,7 +358,22 @@ dd_spec_lines = {
 
 
 def get_var_stat(vals, vals_err):
-    """Helper function to calculate variability parameters"""
+    """
+    Calculate variability parameters
+
+    Parameters
+    ----------
+    vals: list of floats
+        Variable values
+    vals_err: list of floats
+        Variable errors
+
+    Returns
+    -------
+    dict
+        Dictionary with weighted mean, chisquare, excess variance, etc.
+    """
+
     rr = {}
     wght = 1.0 / vals_err**2
     rr["wght_mean"] = np.average(vals, weights=wght)
@@ -349,35 +396,32 @@ def get_var_stat(vals, vals_err):
     return rr
 
 
-# Time to frequency conversions, to create secondary axis
+#: Time to frequency conversions, to create secondary axis
 def freq2period(ff):
     return 1 / ff
 
 
+#: Period to frequency conversions, to create secondary axis
 def period2freq(pp):
     return 1 / pp
 
 
-def run_LombScargle(
-    tt_lc,
-    nbins_min=40,
-    freq_range=[0.03, 2]/ uu.d
-):
+def run_LombScargle(tt_lc, nbins_min=40, freq_range=[0.03, 2] / uu.d):
     """
-    Calculate Lomb Scargle diagram
+    Calculate Lomb Scargle periodogram
 
     Parameters
         ----------
-        tt_lc: astropy.table
+        tt_lc: astropy.table.Table
             Table with the VASCA light curve
         nbins_min : int, optional
-            Minimum number of time bins to perform LombScargle. The default is 20.
+            Minimum number of time bins to perform LombScargle.
         freq_range : list
             Minimum and maximum Frequency. If None calculated automatically.
 
         Returns
         -------
-        dd_ls_results: dictionary
+        dict
             Dictionary with LombScargle objects
     """
     # Check if enough bins to run
@@ -473,7 +517,7 @@ def sel_sources(tt_srcs):
     Parameters
     ----------
     tt_srcs : astropy.table.Table
-        DESCRIPTION.
+        Source table
 
     Returns
     -------
@@ -527,11 +571,11 @@ def sel_sources_nuv_only(tt_srcs):
     Parameters
     ----------
     tt_srcs : astropy.table.Table
-        DESCRIPTION.
+        Source table
 
     Returns
     -------
-    sel_vasca : [bool]
+    sel_vasca : list of bool
         Selected sources.
 
     """
@@ -610,18 +654,18 @@ def flux2mag(flux, flux_err=None):
 
     Parameters
     ----------
-    flux : [Astropy Quantitiy or numpy array]
+    flux : list of astropy.Quantity or numpy array
         Flux density array in micro Jy
-    flux_err : [Astropy Quantitiy  or numpy array]
+    flux_err : list of astropy.Quantity  or numpy array
         Flux error array in micro Jy. Default is none.
 
     Returns
     -------
-    mag : [Astropy Quantitiy]
+    list of astropy.Quantity
         AB magnitude array. If flux was zero or positive -1 is returned.
-    dmag : [Astropy Quantitiy], optional
+    list of astropy.Quantity, optional
         AB magnitude error array. If flux was zero or positive -1 is returned.
-        If no flux errors are passed nothing is returned returned.
+        If no flux errors are passed nothing is returned.
 
     """
 
@@ -658,12 +702,12 @@ def mag2flux(mag, mag_err=None):  #
 
     Parameters
     ----------
-    mag : [float]
+    mag : list of float
         Array of AB magnitudes
 
     Returns
     -------
-    astropy Quantity
+    astropy.Quantity
         Flux in micro Jy
 
     """
@@ -675,22 +719,27 @@ def mag2flux(mag, mag_err=None):  #
         return flux, flux_up - flux
 
 
-# The two numpy implementations below are needed for secondary_axis in matplotlib
 def flux2mag_np(flux):
+    """Flux to magnitude for numpy arrays only for secondary_axis in matplotlib"""
     return flux2mag(flux).data
 
 
 def mag2flux_np(mag):
+    """Magnitude to flux for numpy arrays only for secondary_axis in matplotlib"""
     return mag2flux(mag).data
 
 
 def mjd2yr(mjd):
+    """Convert MJD to Time object"""
     return Time(mjd, format="mjd").jyear
 
+
 def yr2mjd(jyr):
+    """Convert time in jyear format to MJD"""
     return Time(jyr, format="jyear").mjd
 
-def get_field_id(obs_field_id, observaory, obs_filter):
+
+def get_field_id(obs_field_id, observatory, obs_filter):
     """
     Return VASCA field id, which also includes observatory and filter identifier.
     The first 3 characters characterize the observatory and filter. Afterwards the
@@ -700,7 +749,7 @@ def get_field_id(obs_field_id, observaory, obs_filter):
     ----------
     obs_field_id : int
         Field ID for the given observatory.
-    observaory : str
+    observatory : str
         Observatory name.
     obs_filter : TYPE
         Observation filter.
@@ -711,7 +760,7 @@ def get_field_id(obs_field_id, observaory, obs_filter):
         Region field identifier.
 
     """
-    return dd_obs_id_add[str(observaory) + str(obs_filter)] + str(obs_field_id)
+    return dd_obs_id_add[str(observatory) + str(obs_filter)] + str(obs_field_id)
 
 
 def extr_value(inputlist, upper=False):
@@ -898,6 +947,8 @@ def sky_sep2d(coords, seperation_limit=180):
 
 
 def get_time_delta(tt_visit_dates, unit=None):
+    """Get time difference in seconds between visits"""
+
     # set astropy unit, defaults to seconds
     if unit is None:
         unit = uu.second
@@ -914,6 +965,8 @@ def get_time_delta(tt_visit_dates, unit=None):
 
 
 def get_time_delta_mean(tt_visit_dates, unit=None, deviation=True):
+    """Get mean time difference in seconds between visits"""
+
     # set astropy unit, defaults to seconds
     if unit is None:
         unit = uu.second
@@ -1049,7 +1102,7 @@ def get_cutout_mask(tt_mcat, cutout_bounds, frame="icrs"):
     return mask_cutout_ra * mask_cutout_dec
 
 
-# TODO: This funtion  could be more effcient, as it works none vectorized.
+# TODO: This function  could be more efficient, as it works none vectorized.
 # Best wait till astropy implements Multiindex (see below)
 def add_rg_src_id(tt_ref, tt_add):
     """
@@ -1058,14 +1111,14 @@ def add_rg_src_id(tt_ref, tt_add):
 
     Parameters
     ----------
-    tt_ref : astropy.Table
+    tt_ref : astropy.table.Table
         Reference table has to contain "rg_src_id", "rg_fd_id" and "fd_src_id"
-    tt_add : astropy.Table
+    tt_add : astropy.table.Table
         Table to add "rg_src_id", has to contain "rg_src_id", "rg_fd_id" and "fd_src_id"
 
     Returns
     -------
-    None.
+    None
 
     """
 
@@ -1585,9 +1638,7 @@ def get_lc_from_gphoton_npfile(file_name, obs_filter):
         "mag_mcatbgsub_err_2",
         "flags",
     )
-    dd_gap = {
-        x: dd_gph["gAperture"][x] for x in keep_keys if x in dd_gph["gAperture"]
-    }
+    dd_gap = {x: dd_gph["gAperture"][x] for x in keep_keys if x in dd_gph["gAperture"]}
     dd_gap["s2n"] = dd_gap["flux_bgsub"] / dd_gap["flux_bgsub_err"]
 
     # Rename key and change units
@@ -1604,9 +1655,7 @@ def get_lc_from_gphoton_npfile(file_name, obs_filter):
     dd_gap["flux_err"] = dd_gap["flux_err"] * acorr60
 
     # Units of time are in "GALEX Time" = "UNIX Time" - 315964800, change to MJD
-    dd_gap["time"] = tgalex_to_astrotime(
-        (dd_gap["t0"] + dd_gap["t1"]) / 2.0, "mjd"
-    )
+    dd_gap["time"] = tgalex_to_astrotime((dd_gap["t0"] + dd_gap["t1"]) / 2.0, "mjd")
 
     dd_gap["obs_filter"] = [obs_filter] * len(dd_gap["flux"])
     dd_gap["obs_filter_id"] = [dd_filter2id[obs_filter]] * len(dd_gap["flux"])

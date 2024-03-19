@@ -1584,6 +1584,11 @@ class GALEXDSField(BaseField):
     def _load_info(self, field_name):
         """
         Load field and associated visits information.
+
+        Parameters
+        ----------
+        field_name : str
+            GALEX field name.
         """
 
         # Central visits table

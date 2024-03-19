@@ -35,8 +35,10 @@ ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 
 class TableCollection(object):
     """
-    Collection of astropy.table.Table_ objects
+    Collection of astropy.table.Table_ objects. Base calss for data
+    storage classes in VASCA.
     """
+
     def __init__(self):
         # Configure logger
         # adds the class name as an extra key; accessible vie the handler format
@@ -129,7 +131,7 @@ class TableCollection(object):
 
         Parameters
         ----------
-        ll_table_names : list(str)
+        ll_table_names : list of str
             List with name of tables
         """
         logger.debug(f"Removing tables '{ll_table_names}'")
@@ -141,7 +143,7 @@ class TableCollection(object):
 
     def add_table(self, data, template_name):
         """
-        Add a VASCA table to the field.
+        Add a VASCA table to the colection
 
         Parameters
         ----------
@@ -154,7 +156,8 @@ class TableCollection(object):
             separated by a colon, e.g. template_name=<class_key>:<table_key>.
             If no ":" is in the templatename, assume that this is not a VASCA
             table, but proceed adding it to the collection anyhow. template_name
-            will be used as a table name in that case.
+            will be used as a table name in that case. The available VASCA templates
+            are defined in ``vasca.tables_dict``.
 
         """
         logger.debug(f"Adding table '{template_name}'")
@@ -201,7 +204,7 @@ class TableCollection(object):
 
     def write_to_fits(self, file_name="tables.fits", overwrite=True, fits_verify="fix"):
         """
-        Write tables and image of a field to a fits file.
+        Write tables and image of a collection to a fits file.
 
         Parameters
         ----------
@@ -314,7 +317,7 @@ class TableCollection(object):
 
     def load_from_fits(self, file_name):
         """
-        Loads field from a fits file
+        Loads collection from a fits file
 
         Parameters
         ----------
@@ -393,7 +396,7 @@ class TableCollection(object):
 
     def info(self):
         """
-        Print out information about the field, its visits and sources.
+        Print out information on tables in the collection.
 
         Returns
         -------
@@ -408,7 +411,7 @@ class TableCollection(object):
 
     def __str__(self):
         """
-        Return string with information about the field, its visits and sources.
+        Return string with information about the collection.
 
         Returns
         -------
@@ -433,7 +436,7 @@ class TableCollection(object):
 
         Returns
         -------
-        None.
+        None
 
 
         """
@@ -455,7 +458,7 @@ class TableCollection(object):
 
         Returns
         -------
-        None.
+        None
 
         """
 
@@ -586,9 +589,9 @@ class TableCollection(object):
 
         Returns
         -------
-        lc_dict : dict
+        dict
             Dictionary {src_id : light_curve). Light curve as an astropy Table
-                compatible with astropy BinnedTimeSeries.
+            compatible with astropy BinnedTimeSeries.
 
         """
 
@@ -845,7 +848,7 @@ class TableCollection(object):
 
         Returns
         -------
-        None.
+        None
 
         """
 
@@ -991,18 +994,18 @@ class TableCollection(object):
     def set_hardness_ratio(self, obs_filter_id1=1, obs_filter_id2=2):
         """
         Calculated hardness ratio from detections flux(filter_2)/ flux(filter_1).
-        Only simultanous detections are considered
+        Only simultaneous detections are considered
 
         Parameters
         ----------
         obs_filter_id1 : int, optional
             Observation filter ID1. The default is 1.
-        obs_filter_id2 : TYPE, optional
+        obs_filter_id2 : int, optional
             Observation filter ID2. The default is 1. The default is 2.
 
         Returns
         -------
-        None.
+        None
 
         """
         logger.debug("Calculating hardness ratio")
@@ -1068,7 +1071,7 @@ class TableCollection(object):
 
         Returns
         -------
-        None.
+        None
 
         """
         # Check if no data was given and fill with default
@@ -1130,9 +1133,9 @@ class TableCollection(object):
 
         match_var_vals = tt_join[match_var]
         tt_to.add_index(match_var)
-        src_idx_to = tt_to.loc_indices[match_var,match_var_vals]
+        src_idx_to = tt_to.loc_indices[match_var, match_var_vals]
         tt_from.add_index(match_var)
-        src_idx_from = tt_from.loc_indices[match_var,match_var_vals]
+        src_idx_from = tt_from.loc_indices[match_var, match_var_vals]
 
         for var in copy_vars:
             self.add_column(tab_name_to, var)
@@ -1170,11 +1173,11 @@ class TableCollection(object):
         cat_id_name : str, optional
             Catalog ID Br. variable name. The default is "coadd_src_id".
         src_table_name : str, optional
-            Table to crossmatch to catalog. The default is "tt_sources".
+            Table to cross match to catalog. The default is "tt_sources".
 
         Returns
         -------
-        None.
+        None
 
         """
 
@@ -1245,9 +1248,7 @@ class TableCollection(object):
 
                 # Calculate ratio of coadd to visit average flux and significance of difference
                 ffactor = flux / flux_cat
-                fdiff_s2n = (flux - flux_cat) / np.sqrt(
-                    flux_err**2 + flux_err_cat**2
-                )
+                fdiff_s2n = (flux - flux_cat) / np.sqrt(flux_err**2 + flux_err_cat**2)
 
                 # Remove invalid (negativ) ffactors due to default values of flux
                 sel_inv = ffactor <= 0

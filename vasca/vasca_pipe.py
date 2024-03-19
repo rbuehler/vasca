@@ -25,11 +25,16 @@ import numpy as np
 
 def set_logger(vasca_cfg):
     """
-    Setup logger. Gets configuration from global config variable set with get_config
+    Setup logger. Gets configuration from global config variable set with get_config.
+
+    Parameters
+    ----------
+    vasca_cfg: dict
+        Dictionary with the VASCA configuration, typically from a YAML file
 
     Returns
     -------
-    None.
+    None
 
     """
     log_dir = (
@@ -66,7 +71,19 @@ def set_logger(vasca_cfg):
 
 
 def keep_base_field(field):
-    """Remove field data that is not needed for further analysis to save memory"""
+    """
+    Remove field data that is not needed for further analysis to save memory
+
+    Parameters
+    ----------
+    field: vasca.field.BaseField
+        VASCA field
+
+    Returns
+    -------
+    None
+
+    """
     # Remove detections which did not pass selections and where not used in clustering
     field.remove_unselected("tt_detections")
     if hasattr(field, "tt_coadd_detections"):
@@ -92,14 +109,14 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
         Observation number in the config file.
     field_id : str
         Field ID of the field to run
-    rg : vasca.Region
+    rg : vasca.region.Region
         Region of the VASCA pipeline.
-    vasca_cfg :
-        VASCA configuration file
+    vasca_cfg : dict
+        VASCA configuration
 
     Returns
     -------
-    field : vasca.field
+    vasca.field.BaseField
         Modified field with results
 
     """
@@ -167,6 +184,27 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
 
 
 def run_cluster_fields(meanshift_cfg, tt_fd_src, tt_fd_det=None, cluster_coadd=False):
+    """
+    Helper function to do clustering for passed sources or detections.
+    The main purpose is to only keep the needed tables, to save memory usage
+
+    Parameters
+    ----------
+    meanshift_cfg: dict
+        Mean shift parameters
+    tt_fd_src: astropy.table.Table
+        Table with sources
+    tt_fd_det: astropy.table.Table
+        Table with detections
+    cluster_coadd: bool
+        Clustering coadd sources?
+
+    Returns
+    -------
+    vasca.tables.TableCollection
+        Table collection with calculated clusters
+
+    """
     tc = TableCollection()
     if cluster_coadd:
         tc.add_table(tt_fd_src, "tt_coadd_detections")
@@ -188,7 +226,7 @@ def run(vasca_cfg):
 
     Returns
     -------
-    None.
+    None
 
     """
 
@@ -343,7 +381,7 @@ def run_from_file():
 
     Returns
     -------
-    None.
+    None
 
     """
 

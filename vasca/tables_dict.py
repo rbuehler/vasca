@@ -21,7 +21,7 @@ Defines dictionary for the tables used by vasca.tables.TableCollection
 # >iinfo(min=-9223372036854775808, max=9223372036854775807, dtype=int64)
 #
 # Based on the above, we need float64 for MJD, ra, dec and int64 for external ID numbers
-# For enverything else float32 and int32 should be sufficient
+# For everything else float32 and int32 should be sufficient
 # (e.g. for all flux variables and errors)
 
 # import numpy as np

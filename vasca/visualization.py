@@ -59,9 +59,9 @@ def plot_sky_sources(
 
     Parameters
     ----------
-    tt_src : astropy.Table
+    tt_src : astropy.table.Table
         Source list to plot. Has to contain "ra", "dec" and srd id columns.
-    tt_det : astropy.Table, optional
+    tt_det : astropy.astropy.Table, optional
         Detection list to plot. Has to contain "ra", "dec" and src_id columns.
         Default is None.
     only_selected: bool, optional
@@ -83,10 +83,10 @@ def plot_sky_sources(
 
     Returns
     -------
-    ax : axes
+    matplotlib.axes
         Used Matplotlib axes.
-    src_ids: astropy.Table
-        Sources  plotted from tt_src
+    astropy.table.Table
+        Sources plotted from tt_src
     """
 
     logger.debug("Plotting sky sources")
@@ -202,9 +202,9 @@ def plot_field_sky_map(
 
     Returns
     -------
-    fig: figure
+    matplotlib.figure
         Matplotlib figure used to draw
-    graph : AxesImage
+    matplotlib.graph.AxesImage
         Matplotlib axes of 2D image.
 
     """
@@ -307,7 +307,7 @@ def plot_region_sky_gnomeview(
 
     Returns
     -------
-    ax : axes
+    matplotlib.axes
         Used Matplotlib axes.
 
     """
@@ -359,7 +359,7 @@ def plot_region_sky_gnomeview(
 def plot_region_sky_mollview(region, var="nr_vis", mw_kwargs=None):
     """
     Plot the nr visits, fields or exposure on the sky. Coverage table has to be
-    previosly created with region.add_coverage_hp.
+    previously created with region.add_coverage_hp.
 
     Parameters
     ----------
@@ -374,7 +374,7 @@ def plot_region_sky_mollview(region, var="nr_vis", mw_kwargs=None):
 
     Returns
     -------
-    ax : axes
+    matplotlib.axes
         Used Matplotlib axes.
 
     """
@@ -419,18 +419,18 @@ def plot_region_sky_mollview(region, var="nr_vis", mw_kwargs=None):
 
 def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwargs):
     """
-    Plot histogram for passed astropy.Table and variable
+    Plot histogram for passed astropy.table.Table and variable
 
     Parameters
     ----------
-    tt : astropy.Table
+    tt : astropy.table.Table
         Table containing a column with the plotted variable.
     var : str, optional
         Variable name
     ax : matplotlib.axes, optional
         Axes to draw on. The default is None.
     logx : bool, optional
-        Histoogram of log10(var) instead of var. The default is False.
+        Histogram of log10(var) instead of var. The default is False.
     obs_filter_id: int, optional
         Observation filter ID Nr., if None all filters are shown. THe default is None.
     **hist_kwargs : dict
@@ -438,11 +438,11 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
 
     Returns
     -------
-    ax : matplotlix.axes
+    matplotlib.axes
         Axes that where used to draw.
-    vals: [float]
+    list of float
         Histogram bin values.
-    bins : [float]
+    list of float
         Histogram bins, default is [selected, all] events.
 
     """
@@ -510,11 +510,11 @@ def plot_table_scatter(
     **scatter_kwargs,
 ):
     """
-    Plot scatter plot for passed astropy.Table and variables
+    Plot scatter plot for passed astropy.table.Table and variables
 
     Parameters
     ----------
-    tt : astropy.Table
+    tt : astropy.table.Table
         Table containing columns with the plotted variables.
     varx : str
         Variable name on X-axis
@@ -642,9 +642,9 @@ def plot_pipe_diagnostic(
 
     Returns
     -------
-    fig : matplotlib.figure
+    matplotlib.figure
         Figure used for plotting
-    var_plt : dict
+    dict
         Dictionary with plot variables keys and plot settings values
 
     """
@@ -843,9 +843,9 @@ def plot_light_curves(
 
     Returns
     -------
-    fig: figure
+    matplotlib.figure
         Matplotlib figure used to draw
-    ax : axes
+    matplotlib.axes
         Used Matplotlib axes.
 
     """
@@ -949,25 +949,21 @@ def plot_light_curves(
     secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
     secax.set_xlabel("Year")
 
-    # def flux2mag_np(flux):
-    #     return flux2mag(flux).data
-    #
-    # def mag2flux_np(mag):
-    #     return mag2flux(mag).data
-
     secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
 
     # Avoid scientific notation for magnitudes
 
-    #formatter.set_scientific(False)
-    #secay.yaxis.set_minor_formatter(formatter)
+    # formatter.set_scientific(False)
+    # secay.yaxis.set_minor_formatter(formatter)
 
     secay.set_ylabel("AB magnitude")
 
     return fig, ax
 
 
-def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True, **errorbar_kwargs):
+def plot_light_curve(
+    tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True, **errorbar_kwargs
+):
     """
     Plots light curve
     Parameters
@@ -987,9 +983,9 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True
 
     Returns
     -------
-    fig: figure
+    matplotlib.figure
         Matplotlib figure used to draw
-    ax : axes
+    matplotlib.axes
         Used Matplotlib axes.
     """
 
@@ -1025,7 +1021,7 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True
         "alpha": 0.6,
         "capsize": 0,
         "lw": 0.2,
-        "linestyle": "None", #"dotted",
+        "linestyle": "None",  # "dotted",
         "elinewidth": 0.7,
     }
     if errorbar_kwargs is not None:
@@ -1067,7 +1063,6 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True
                 linewidth=0.5,
             )
 
-
             ax.errorbar(
                 tt_lc["time"][sel],
                 tt_lc["flux"][sel],
@@ -1078,24 +1073,30 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True
                 **plt_errorbar_kwargs,
             )
 
-    ax.legend(fontsize=12,frameon=False)  # bbox_to_anchor=(1.04, 1),
+    ax.legend(fontsize=12, frameon=False)  # bbox_to_anchor=(1.04, 1),
     ax.set_xlabel("MJD", fontsize=18)
     ax.set_ylabel(r"Flux [$\mu$Jy]", fontsize=18)
-    ax.text(0.3, 0.02, tc_src.tt_sources["src_name"][0] , size=16, transform=ax.transAxes,
-            ha='left',va='bottom',) # , color='purple'
+    ax.text(
+        0.3,
+        0.02,
+        tc_src.tt_sources["src_name"][0],
+        size=16,
+        transform=ax.transAxes,
+        ha="left",
+        va="bottom",
+    )  # , color='purple'
 
-    #Avoid scientific notation
+    # Avoid scientific notation
     formatter = ScalarFormatter()
     formatter.set_scientific(False)
     ax.yaxis.set_minor_formatter(formatter)
     ax.yaxis.set_major_formatter(formatter)
 
-
     if add_axes:
         # Add a second time axis on top showing years
 
         secax = ax.secondary_xaxis("top", functions=(mjd2yr, yr2mjd))
-        secax.ticklabel_format(useOffset=False, style='plain')
+        secax.ticklabel_format(useOffset=False, style="plain")
         secax.set_xlabel("Year", fontsize=18)
 
         secay = ax.secondary_yaxis("right", functions=(flux2mag_np, mag2flux_np))
@@ -1104,7 +1105,6 @@ def plot_light_curve(tc_src, fig=None, ax=None, show_gphoton=True, add_axes=True
         secay.yaxis.set_minor_formatter(formatter)
 
         secay.set_ylabel("AB magnitude", fontsize=18)
-
 
     return fig, ax
 
@@ -1119,8 +1119,8 @@ def plot_lombscargle(
     obs_filter="NUV",
     nbins_min=10,
     logy=False,
-    freq_range = [0.03, 2]/ uu.d,
-    plot_dtbins =True
+    freq_range=[0.03, 2] / uu.d,
+    plot_dtbins=True,
 ):
     """
     Runs and plots Lomb Scargle diagram
@@ -1149,11 +1149,11 @@ def plot_lombscargle(
 
     Returns
     -------
-    fig: figure
+    matplotlib.figure
         Matplotlib figure used to draw
-    ax : axes
+    matplotlib.axes
         Used Matplotlib axes.
-    dd_ls_results: dict
+    dict
         Lomb Scargle results
     """
 
@@ -1184,7 +1184,6 @@ def plot_lombscargle(
 
     dd_ls_results = run_LombScargle(tt_lc, nbins_min=nbins_min, freq_range=freq_range)
 
-
     # Set labels
     ax.set_xscale("log")
     if logy:
@@ -1214,7 +1213,7 @@ def plot_lombscargle(
         dd_ls_results["ls_freq"],
         dd_ls_results["ls_power"],
         **plt_plot_kwargs,
-    ) #label="data",
+    )  # label="data",
     col = pl[0].get_color()
 
     probabilities = [
@@ -1225,13 +1224,20 @@ def plot_lombscargle(
     ]  # 2-5 sigma
 
     # Get confidence interval
-    conf = dd_ls_results["ls"].false_alarm_level(probabilities,  method='baluev') # "bootstrap"
-    ax.axhline(conf[1], linewidth=0.5, ls="--", color=col, label=r"$3 \sigma$ - $5 \sigma$ confidence levels") # col
-    ax.axhline(conf[2], linewidth=0.5, ls="--", color=col) #col
+    conf = dd_ls_results["ls"].false_alarm_level(
+        probabilities, method="baluev"
+    )  # "bootstrap"
+    ax.axhline(
+        conf[1],
+        linewidth=0.5,
+        ls="--",
+        color=col,
+        label=r"$3 \sigma$ - $5 \sigma$ confidence levels",
+    )  # col
+    ax.axhline(conf[2], linewidth=0.5, ls="--", color=col)  # col
     ax.axhline(conf[3], linewidth=0.5, ls="--", color=col)
 
-
-    #ax.legend()
+    # ax.legend()
 
     # Plot model on lc
     if type(ax_lc) != type(None):
@@ -1247,7 +1253,7 @@ def plot_lombscargle(
     # Plot phase diagram
     if type(ax_phase) != type(None):
         period_peak = float(1 / dd_ls_results["ls_peak_freq"].value)
-        #period_peak = 220.44/(24*60*60)
+        # period_peak = 220.44/(24*60*60)
         times_phased = tt_lc["time"] % period_peak
         t_fit = np.linspace(0, period_peak, 40)
         flux_fit = dd_ls_results["ls"].model(
@@ -1259,7 +1265,7 @@ def plot_lombscargle(
             yerr=tt_lc["flux_err"],
             linestyle="none",
             marker="o",
-            color=col
+            color=col,
         )
 
         ax_phase.plot(t_fit / period_peak, flux_fit, **plt_plot_kwargs)
@@ -1268,9 +1274,12 @@ def plot_lombscargle(
     return fig, ax, dd_ls_results
 
 
-def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = False, **errorbar_kwargs):
+def plot_sed(
+    tc_src, fig=None, ax=None, plot_spec_lines=False, plot_spec=False, **errorbar_kwargs
+):
     """
     Plots spectral energy distribution
+
     Parameters
     ----------
     tc_src: vasca.TableCollection
@@ -1288,11 +1297,11 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
 
     Returns
     -------
-    fig: figure
+    matplotlib.figure
         Matplotlib figure used to draw
-    ax : axes
+    matplotlib.axes
         Used Matplotlib axes.
-    fit_info: dict
+    dict
         Dictionary with fit information
     """
 
@@ -1306,8 +1315,8 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
         tt_sed = tc_src.tt_sed
 
     # Remove SkyMapper data, as it seems off
-    sel_obs = np.ones(len(tt_sed),dtype=bool)
-    for obs in ["SkyMapper/SkyMapper","GAIA/GAIA2", "Gaia","GALEX", "SDSS"]:
+    sel_obs = np.ones(len(tt_sed), dtype=bool)
+    for obs in ["SkyMapper/SkyMapper", "GAIA/GAIA2", "Gaia", "GALEX", "SDSS"]:
         sel_obs = sel_obs * ~(tt_sed["observatory"] == obs)
     sel_obs = sel_obs + (tt_sed["origin"] == "VASCA")
     sel_obs = sel_obs + (tt_sed["origin"] == "V/154/sdss16")
@@ -1343,8 +1352,8 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
     # Prepare tables, to plot vasca point separatelly
     sel = tt_sed["origin"] == "VASCA"
 
-    #If ony VASCA point present, do not plot SED
-    if sel.sum()==len(tt_sed):
+    # If ony VASCA point present, do not plot SED
+    if sel.sum() == len(tt_sed):
         print("Only VASCA points in SED, not plotting")
         return
     tt_grp = tt_sed[~sel].group_by("observatory")
@@ -1382,14 +1391,14 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
                     ax.plot(
                         tt_spec_ii["wavelength"][sel_spec],
                         tt_spec_ii["flux"][sel_spec],
-                        label="SDSS spectrum", # + str(ii),
+                        label="SDSS spectrum",  # + str(ii),
                         alpha=0.5,
                         color=col,
                     )
                     ax.plot(
                         tt_spec_ii["wavelength"][sel_spec],
                         tt_spec_ii["flux_model"][sel_spec],
-                        label="SDSS model",# + str(ii)
+                        label="SDSS model",  # + str(ii)
                         # alpha=0.5,
                         color=col,
                     )
@@ -1443,7 +1452,7 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
         * (bb_flux.value < 1e10)
     )
 
-    with ((warnings.catch_warnings())):
+    with warnings.catch_warnings():
         # Ignore model linearity warning from the fitter
         warnings.filterwarnings(
             "ignore",
@@ -1451,9 +1460,14 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
             category=AstropyUserWarning,
         )
 
-        bb_bins = np.linspace(np.min(tt_sed["wavelength"][selfit]),
-                              np.max(tt_sed["wavelength"][selfit]),100
-                              )*tt_sed["wavelength"].unit
+        bb_bins = (
+            np.linspace(
+                np.min(tt_sed["wavelength"][selfit]),
+                np.max(tt_sed["wavelength"][selfit]),
+                100,
+            )
+            * tt_sed["wavelength"].unit
+        )
         fitted_bb = fit(
             BB,
             tt_sed["wavelength"].quantity[selfit],
@@ -1466,12 +1480,15 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
             filter_non_finite=True,
         )
         if fit.fit_info["ierr"] <= 4 and fit.fit_info["ierr"] >= 1:
-            bb_bins = np.linspace(np.min(tt_sed["wavelength"][selfit]),
-                                  np.max(tt_sed["wavelength"][selfit]), 100
-                                  ) * tt_sed["wavelength"].unit
-            fit_flux = (fitted_bb(bb_bins) * uu.Unit("sr")).to(
-                uu.Unit("1e-6 Jy")
+            bb_bins = (
+                np.linspace(
+                    np.min(tt_sed["wavelength"][selfit]),
+                    np.max(tt_sed["wavelength"][selfit]),
+                    100,
+                )
+                * tt_sed["wavelength"].unit
             )
+            fit_flux = (fitted_bb(bb_bins) * uu.Unit("sr")).to(uu.Unit("1e-6 Jy"))
             sel_fit = tt_sed
 
             fit_temp = (
@@ -1482,7 +1499,7 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
                 fit_flux,
                 color="0.5",
                 ls="-",
-                #label="BB " + str(fit_temp),
+                # label="BB " + str(fit_temp),
             )
         else:
             print("Black body fit did not converge.")
@@ -1508,15 +1525,10 @@ def plot_sed(tc_src, fig=None, ax=None, plot_spec_lines =False, plot_spec = Fals
                 fluxS,
                 color="0.5",
                 ls="--",
-                #label="BB star " + str(TS),
+                # label="BB star " + str(TS),
             )
 
     # Helper functions to define second axis
-    def flux2mag_np(flux):
-        return flux2mag(flux).data
-
-    def mag2flux_np(mag):
-        return mag2flux(mag).data
 
     def AA2ev_np(wave):
         return (cc.h * cc.c / (wave * uu.AA)).to(uu.eV).value

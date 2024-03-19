@@ -309,13 +309,13 @@ class Region(TableCollection):
             Store source into the  "./sources" directory of the analysis directory.
             The default is True.
         add_sed: bool, optional
-            Add a Spectral Energy Distribution using vasca.source.add_vizier_SED().
+            Add Spectral Energy Distribution using ``vasca.source.Source.add_vizier_SED()``.
             The default is True.
         add_gphoton: bool, optional
-            Add gphoton light curve using vasca.source.add_gphoton_lc().
+            Add gphoton light curve using ``vasca.source.Source.add_gphoton_lc()``.
             The default is True.
         add_spectrum: bool, optional
-            Add spectrum using vasca.source.add_spectrum()
+            Add spectrum using ``vasca.source.Source.add_spectrum()``.
             The default is True.
 
         Returns
