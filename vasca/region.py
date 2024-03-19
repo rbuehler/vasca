@@ -23,24 +23,21 @@ from vasca.utils import dd_filter2id, run_LombScargle, get_config
 
 class Region(TableCollection):
     """
-    `~vasca.Region` defines a region in the sky as a
+    Defines a region in the sky as a
     list of vasca.field objects. It provides functionality to
     loop over fields to derive source lists, etc.
     """
 
     def __init__(self):
         """
-
-        Notes
-        -----
-        Many class attributes are stored in astropy.table.Tables_. To see a
+        Many class attributes are stored in astropy.table.Table_. To see a
         description of each of their columns run :meth: `~vasca.Regions.info`.
 
-        .. _astropy.table.Tables: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
+        .. _astropy.table.Table: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
 
         Returns
         -------
-        None.
+        None
 
         """
         # Sets skeleton
@@ -54,7 +51,7 @@ class Region(TableCollection):
     @classmethod
     def load_from_config(cls, vasca_cfg):
         """
-        Loads region from configuration from dictionary
+        Loads region from configuration dictionary.
 
         Parameters
         ----------
@@ -64,7 +61,7 @@ class Region(TableCollection):
 
         Returns
         -------
-        None.
+        None
 
         """
 
@@ -133,25 +130,22 @@ class Region(TableCollection):
 
         return rg
 
-    def add_table_from_fields(
-        self, table_name, only_selected=False, sum_obs_filter=False
-    ):
+    def add_table_from_fields(self, table_name, only_selected=False):
         """
         Add tables from the fields to the region by stacking them,
         adding the rg_fd_id column.
 
-
         Parameters
         ----------
         table_name : str
-            Table to be added
+            Table to be added.
         only_selected : bool, optional
             Only selected rows from the field tables are copied over to the region.
             The default is False.
 
         Returns
         -------
-        None.
+        None
 
         """
 
@@ -189,24 +183,6 @@ class Region(TableCollection):
         for tt in ll_tt:
             for colname in colnames:
                 dd_data[colname].extend(tt[colname].tolist())
-        # For vector columns convert to numpy arrays of type object_
-        # This is needed for correct writing to fits in Astropy v5.0.4
-        # for colname in colnames:
-        #    if len(np.array(dd_data[colname], dtype=object).shape) > 1:
-        #        dd_data[colname] = np.array(dd_data[colname], dtype=np.object_)
-        # tt_tmp = self.table_from_template(dd_data, "region:" + table_name)
-        # print("l", len(tt_tmp))
-        # if sum_obs_filter:
-        #     tt_tmp.add_index("vis_id")
-        #     vis_ids = np.unique(tt_tmp["vis_id"])
-        #     for vis_id in vis_ids:
-        #         idxs = tt_tmp.loc_indices["vis_id", vis_id]
-
-        #         flt_id = np.unique(tt_tmp["obs_filter_id"][idxs].data).sum()
-        #         # flt_id_vec = flt_id.sum() * np.ones(len(flt_id))
-
-        #         tt_tmp[idxs]["vis_id"] = flt_id
-        #     tt_tmp = unique(tt_tmp, keys="vis_id")
 
         self.add_table(dd_data, "region:" + table_name)
 
@@ -219,16 +195,16 @@ class Region(TableCollection):
         nside : int, optional
             NSIDE of healpix binning. The default is 4096.
         coord_sys : str, optional
-            Coordinate system, "galactic" or "icrs"
+            Coordinate system, "galactic" or "icrs".
 
         Returns
         -------
-        hp_nr_vis : [int]
-            Array with number of visits per pixel
-        hp_exp : TYPE
-            Array with exposure per pixel
-        hp_nr_fds : TYPE
-            Array with number of fields
+        list of int
+            Array with number of visits per pixel.
+        list of int
+            Array with exposure per pixel.
+        list of int
+            Array with number of fields.
 
         """
 
@@ -282,19 +258,19 @@ class Region(TableCollection):
 
     def load_from_fits(self, file_name, load_fields=False):
         """
-        Loads field from a fits file
+        Loads field from a fits file.
 
         Parameters
         ----------
         file_name : str, optional
             Region file name.
-        load_fields : bool,
+        load_fields : bool, optional
             Load the fields, which have to be located as fits in the subfolder "./fields/"
             of the region file in "file_name". Default is False.
 
         Returns
         -------
-        None.
+        None
 
         """
 
@@ -320,16 +296,31 @@ class Region(TableCollection):
     ):
         """
         Get Source object containing all region table entries
-        relevant for the passed rg_src_id
+        relevant for the passed rg_src_id.
 
         Parameters
         ----------
         rg_src_id : int
             Region source ID.
+        load_from_file : bool, optional
+            Load from a previously stored source, assumed to be in the "./sources"
+            directory of the analysis directory. The default is True.
+        write_to_file: bool, optional
+            Store source into the  "./sources" directory of the analysis directory.
+            The default is True.
+        add_sed: bool, optional
+            Add a Spectral Energy Distribution using vasca.source.add_vizier_SED().
+            The default is True.
+        add_gphoton: bool, optional
+            Add gphoton light curve using vasca.source.add_gphoton_lc().
+            The default is True.
+        add_spectrum: bool, optional
+            Add spectrum using vasca.source.add_spectrum()
+            The default is True.
 
         Returns
         -------
-        src : vasca.table.Source
+        vasca.table.source
             VASCA source object.
 
         """
@@ -342,7 +333,7 @@ class Region(TableCollection):
         if "src_name" in self.tt_sources.colnames:
             self.tt_sources.add_index("rg_src_id")
             src_name = str(self.tt_sources.loc["rg_src_id", [rg_src_id]]["src_name"])
-            src_name = src_name.replace(" ","_")
+            src_name = src_name.replace(" ", "_")
 
         # Check if source shall be loaded for file and file exists
         fname_src = self.region_path + "/sources/src_" + src_name + ".fits"
@@ -415,7 +406,7 @@ class Region(TableCollection):
 
         Returns
         -------
-        None.
+        None
 
         """
         logger.debug("Setting table tt_src_id_map.")
@@ -446,9 +437,9 @@ class Region(TableCollection):
 
         Parameters
         ----------
-        coordx : str, float
+        coordx : str or float
             First coordinate component in any astropy.SkyCoord compatible format.
-        coordx : str, float
+        coordy : str or float
             Second coordinate component in any astropy.SkyCoord compatible format.
         frame : str
             Coordinate system. Any astropy compatible format,
@@ -456,9 +447,9 @@ class Region(TableCollection):
 
         Returns
         -------
-        src : vasca.table.Source
+        vasca.table.source
             VASCA source object.
-        dist: astropy.Quantity
+        astropy.Quantity
             Distance to the nearest source
         """
 
@@ -490,23 +481,25 @@ class Region(TableCollection):
 
         Parameters
         ----------
-        field_id : TYPE, str
+        field_id : str
             Field ID. The default is None.
-        rg_fd_id : TYPE, int
+        rg_fd_id : int
             Region field ID. The default is None.
-        load_method : TYPE, optional
+        load_method : str, optional
             Method to load the field. Either from "FITS", from "MAST" or from "VASCA".
             The default is "FITS". Note that if the field is already in the
             region.fields dictionary, this will be ignored and the later be returned.
-        add_field : TYPE, optional
+        add_field : bool, optional
             Add the field to the region.fields dictionary. The default is True.
         mast_products : str, optional
             load_products option of field.load_from_MAST. Sets to what level data
             products are downloaded.
+        field_kwargs : dict, optional
+            Keyword arguments passed to the field loading function.
 
         Returns
         -------
-        field
+        vasca.field
             VASCA field
 
         """
@@ -549,9 +542,11 @@ class Region(TableCollection):
             )
 
             gf = gfield_load_func(
-                str(fd_row["field_name"][0])
-                if fd_row["observatory"] == "GALEX_DS"
-                else int(str(fd_row["field_id"][0])[3:]),
+                (
+                    str(fd_row["field_name"][0])
+                    if fd_row["observatory"] == "GALEX_DS"
+                    else int(str(fd_row["field_id"][0])[3:])
+                ),
                 obs_filter=str(fd_row["obs_filter"][0]),
                 method=load_method,
                 load_products=mast_products,
@@ -569,7 +564,19 @@ class Region(TableCollection):
         self,
         query_radius=1.5 * uu.arcsec,
         query_table="I/355/gaiadr3",
-        vizier_columns=["*", "PQSO", "PGal", "PSS", "RPlx", "VarFlag", "o_Gmag", "RFRP", "RFBP", "AG", "E(BP-RP)"],
+        vizier_columns=[
+            "*",
+            "PQSO",
+            "PGal",
+            "PSS",
+            "RPlx",
+            "VarFlag",
+            "o_Gmag",
+            "RFRP",
+            "RFBP",
+            "AG",
+            "E(BP-RP)",
+        ],
         overwrite=False,
     ):
         """
@@ -594,7 +601,7 @@ class Region(TableCollection):
 
         Returns
         -------
-        None.
+        None
 
         """
         logger.debug(f"Query {query_table} table")
@@ -737,7 +744,7 @@ class Region(TableCollection):
 
     def add_simbad_otype_info(self):
         """
-        Add table explaing SIMBAD ogroups
+        Add table explaing SIMBAD object groups
 
         Returns
         -------
@@ -790,7 +797,7 @@ class Region(TableCollection):
 
         Returns
         -------
-        None.
+        None
 
         """
         for tab_name in self._table_names:
@@ -812,7 +819,7 @@ class Region(TableCollection):
 
         Returns
         -------
-        rg : vasca.Region
+        vasca.Region
             Region with only the selected sources
 
         """
@@ -836,7 +843,8 @@ class Region(TableCollection):
 
     def set_LombScargle(self, obs_filters=["NUV", "FUV"], nbins_min=20):
         """
-        Apply LombScargle analysis to selected sources.
+        Apply LombScargle analysis to selected sources. Results
+        are stored into the tt_lombscargle table of the region.
 
         Parameters
         ----------
@@ -881,7 +889,7 @@ class Region(TableCollection):
                 "default"
             ]  # * uu.Unit(dd_vasca_columns["ls_pval_alt_flt"]["unit"])
 
-            #For second filter only check peak probability at first filter peak
+            # For second filter only check peak probability at first filter peak
             if len(obs_filters) > 1:
                 sel_flt1 = np.array(
                     (tt_lc["obs_filter"] == obs_filters[1]) * (tt_lc["sel"] == True),
@@ -904,6 +912,21 @@ class Region(TableCollection):
         self.add_table(dd_ls, "region:tt_lombscargle")
 
     def redo_src_selection(self, cfg_file_name="./vasca_cfg.yaml"):
+        """
+        Redo source selection, set in the tt_sources["sel"] column
+        of the region based on the passed configuration file.
+
+        Parameters
+        ----------
+        cfg_file_name: str, optional
+            File name of the YAML configuration file specifying the source selection.
+
+        Returns
+        -------
+
+        None
+
+        """
         # Get src selection dictionary from file
         vasca_cfg = get_config(cfg_file_name)
 
