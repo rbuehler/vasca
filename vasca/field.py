@@ -39,7 +39,7 @@ dimless = uu.dimensionless_unscaled
 
 class BaseField(TableCollection):
     """
-    `~vasca.field.BaseField` provides class that defines the basic
+    Class that defines the basic
     data structure for field-based analysis. One *field* is generally
     the area in the sky covered by a telescope in one observation.
     A field is generally composed of several *visits* of the telescope
@@ -53,9 +53,6 @@ class BaseField(TableCollection):
 
     def __init__(self):
         """
-
-        Notes
-        -----
         Many class attributes are stored in astropy.table.Table_. To see a
         description of each of their columns run :meth: `~vasca.field.BaseField.info`.
 
@@ -63,7 +60,7 @@ class BaseField(TableCollection):
 
         Returns
         -------
-        None.
+        None
 
         """
         # Sets skeleton
@@ -108,13 +105,13 @@ class BaseField(TableCollection):
         ----------
         filename : str
             File name of image FITS
-        img_attr: str
+        img_attr: str, optional
             Class attribute to store the image in, 'ref_img' or 'vis_img'.
             Default is 'ref_img'
 
         Returns
         -------
-        None.
+        None
 
         """
         logger.debug(f"Loading skypmap from file: '{file_name}'")
@@ -138,7 +135,7 @@ class BaseField(TableCollection):
 
         Returns
         -------
-        upper_limits : float array
+        float array
             Array of upper limits for each visit
 
         """
@@ -171,7 +168,7 @@ class BaseField(TableCollection):
 
         Returns
         -------
-        None.
+        None
 
         """
         logger.info(
@@ -241,14 +238,13 @@ class BaseField(TableCollection):
 
     def remove_double_visit_detections(self):
         """
-        Helper function of cluster_meanshift().
         Remove multiple detections of one source in one visit from tt_detections.
         Keep only the closest detection.
 
         Returns
         -------
         list
-            List of removed det_ids
+            List of removed detection IDs
 
         """
         logger.debug("Scanning for doubled visit detections")
@@ -313,6 +309,10 @@ class BaseField(TableCollection):
         dd_names : dict, None
             List of strings containing the parameter names. If None (default),
             a set of pre-defined parameters is set.
+
+        Returns
+        -------
+        None
         """
 
         if dd_names is None:
@@ -413,11 +413,12 @@ class BaseField(TableCollection):
         return par
 
     def get_sky_region(self):
-        """Get region on the sky of the field.
+        """
+        Get region on the sky of the field.
 
         Returns
         -------
-        region : regions.SkyRegion
+        regions.SkyRegion
             Region on the sky of the field.
         """
         if self.observatory.casefold() in ["GALEX".casefold(), "GALEX_DS".casefold()]:
@@ -428,7 +429,7 @@ class BaseField(TableCollection):
 
     def load_from_fits(self, file_name="tables.fits"):
         """
-        Loads field from a fits file and sets field attibutes.
+        Loads field from a fits file and sets field attributes.
 
         Parameters
         ----------
@@ -437,7 +438,7 @@ class BaseField(TableCollection):
 
         Returns
         -------
-        None.
+        None
 
         """
         super().load_from_fits(file_name)
@@ -821,7 +822,7 @@ class GALEXField(BaseField):
 
         Returns
         -------
-        upper_limits : float array
+        float array
             Array of upper limits for each visit
 
         """
@@ -1120,9 +1121,9 @@ class GALEXField(BaseField):
                 },
                 1: {
                     "name": "int_map",
-                    "file_name": "nd-int.fits.gz"
-                    if obs_filter == "NUV"
-                    else "fd-int.fits.gz",
+                    "file_name": (
+                        "nd-int.fits.gz" if obs_filter == "NUV" else "fd-int.fits.gz"
+                    ),
                     "product_type": "map",
                 },
             }

@@ -255,7 +255,7 @@ def run(vasca_cfg):
 
     # Add field tables to region
     # For visits merge obs_filter_id and remove doubles
-    rg.add_table_from_fields("tt_visits", sum_obs_filter=True)
+    rg.add_table_from_fields("tt_visits")
     rg.tt_visits = unique(rg.tt_visits, keys="vis_id")
     rg.add_table_from_fields("tt_sources")
     rg.add_table_from_fields("tt_detections", only_selected=False)
