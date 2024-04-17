@@ -160,7 +160,7 @@ dd_ogrp2col = {
     "Galaxy": "tab:purple",
     "Star": "r",
     #    "WD*": "tab:green",
-    "Binary": "tomato",
+    "Binary": "tab:orange",  # "tomato",
     "none": "k",
     "Misc": "y",
 }

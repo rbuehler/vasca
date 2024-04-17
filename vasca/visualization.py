@@ -493,6 +493,24 @@ def plot_table_hist(tt, var, ax=None, logx=False, obs_filter_id=None, **hist_kwa
     return ax, vals, bins
 
 
+def scatter_hist(x, y, ax, ax_histx, ax_histy):
+    # no labels
+    ax_histx.tick_params(axis="x", labelbottom=False)
+    ax_histy.tick_params(axis="y", labelleft=False)
+
+    # the scatter plot:
+    ax.scatter(x, y)
+
+    # now determine nice limits by hand:
+    binwidth = 0.25
+    xymax = max(np.max(np.abs(x)), np.max(np.abs(y)))
+    lim = (int(xymax / binwidth) + 1) * binwidth
+
+    bins = np.arange(-lim, lim + binwidth, binwidth)
+    ax_histx.hist(x, bins=bins)
+    ax_histy.hist(y, bins=bins, orientation="horizontal")
+
+
 def plot_table_scatter(
     tt,
     varx,
@@ -507,6 +525,7 @@ def plot_table_scatter(
     obs_filter_id=None,
     grp_var="sel",
     grp_vals=None,
+    add_projection=False,
     **scatter_kwargs,
 ):
     """
@@ -535,6 +554,8 @@ def plot_table_scatter(
     grp_var: str, optional
         Group scatter plot by colors based on this table variable. The default is "sel".
         If None is passed no groups will be done.
+    add_projection: bool, optional
+        Add histogram with projection on the sides
     **plot_kwargs : dict
         Key word arguments passed tu plt.plot
 
@@ -548,6 +569,12 @@ def plot_table_scatter(
 
     if ax is None:
         ax = plt.gca()
+
+    if add_projection:
+        ax_histx = ax.inset_axes([0, 1.05, 1, 0.25], sharex=ax)
+        ax_histy = ax.inset_axes([1.05, 0, 0.25, 1], sharey=ax)
+        ax_histx.tick_params(axis="x", labelbottom=False)
+        ax_histy.tick_params(axis="y", labelleft=False)
 
     if obs_filter_id is not None:
         tt = select_obs_filter(tt, obs_filter_id)
@@ -577,12 +604,27 @@ def plot_table_scatter(
                 tt_grp.groups.keys[grp_var] == grp
             )  # obs_by_name.groups.keys['name'] == 'M101'
             t_grp = tt_grp.groups[mask]
-            ax.plot(
+            pp = ax.plot(
                 t_grp[varx],
                 t_grp[vary],
                 label=grp,
                 **plot_kwargs,
             )
+            if add_projection:
+                ccol = pp[0].get_color()
+                binsx = 10 ** np.linspace(np.log10(xlim[0]), np.log10(xlim[1]), 30)
+                ax_histx.hist(
+                    t_grp[varx], bins=binsx, log=True, histtype="step", color=ccol
+                )  #
+                binsy = 10 ** np.linspace(np.log10(ylim[0]), np.log10(ylim[1]), 30)
+                ax_histy.hist(
+                    t_grp[vary],
+                    bins=binsy,
+                    orientation="horizontal",
+                    log=True,
+                    histtype="step",
+                    color=ccol,
+                )
 
     # Set labels
     xlabel = varx + " [" + str(tt[varx].unit) + "]"
