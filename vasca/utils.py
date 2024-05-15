@@ -647,6 +647,46 @@ def select_obs_filter(tt_in, obs_filter_id):
     return tt
 
 
+def get_flat_table(tt_in):
+
+    # Copy table
+    tt = Table(tt_in, copy=True)
+
+    # If table contains filter dependent information, flatten it
+    if (
+        "obs_filter_id" in tt.colnames
+        and len(np.array(tt[0]["obs_filter_id"]).flatten()) > 1
+    ):
+        flt_ids = np.array(tt[0]["obs_filter_id"]).flatten()
+        nr_flts = len(flt_ids)
+        flt_indices = range(0, nr_flts)
+        print("Filters", flt_ids, nr_flts, flt_indices)
+
+        # Loop oover all columns
+        for colname in tt.colnames:
+
+            nr_entries = len(np.array(tt[0][colname]).flatten())
+            print("Colname", colname, "with nr of entries", nr_entries)
+
+            if nr_entries == nr_flts:
+
+                # Loop over filters
+                for flt_idx in flt_indices:
+                    flt_name = dd_id2filter[flt_ids[flt_idx]]
+                    print("Filtername", flt_name)
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore", AstropyWarning)
+                        col_template_copy = dd_vasca_columns[colname].copy()
+                        del col_template_copy["default"]
+                        col_template_copy["name"] = colname + "_" + str(flt_name)
+                        col = Column(
+                            tt[colname][:, flt_idx].data.flatten(), **col_template_copy
+                        )
+                        tt.add_column(col)
+                tt.remove_column(colname)
+    return tt
+
+
 # TODO: Add check if flux <=0
 def flux2mag(flux, flux_err=None):
     """

@@ -1123,7 +1123,7 @@ def plot_light_curve(
         0.3,
         0.02,
         tc_src.tt_sources["src_name"][0],
-        size=16,
+        size=22,
         transform=ax.transAxes,
         ha="left",
         va="bottom",
@@ -1362,7 +1362,9 @@ def plot_sed(
     for obs in ["SkyMapper/SkyMapper", "GAIA/GAIA2", "Gaia", "GALEX", "SDSS"]:
         sel_obs = sel_obs * ~(tt_sed["observatory"] == obs)
     sel_obs = sel_obs + (tt_sed["origin"] == "VASCA")
-    sel_obs = sel_obs + (tt_sed["origin"] == "V/154/sdss16")
+    sel_obs = sel_obs + (tt_sed["origin"] == "J/MNRAS/486/2169/table3")
+
+    # sel_obs = sel_obs + (tt_sed["origin"] == "V/154/sdss16")
     tt_sed = tt_sed[sel_obs]
 
     # Check if figure was passed
@@ -1544,6 +1546,7 @@ def plot_sed(
                 ls="-",
                 # label="BB " + str(fit_temp),
             )
+            print("BB fit temperature:", fit_temp)
         else:
             print("Black body fit did not converge.")
 
