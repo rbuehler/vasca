@@ -648,6 +648,22 @@ def select_obs_filter(tt_in, obs_filter_id):
 
 
 def get_flat_table(tt_in):
+    """
+    Helper function to flatten tables when observation ID
+    dependent entries are vectorized
+
+    Parameters
+    ----------
+    tt_in : astropy.table.Table
+        Input table
+
+    Returns
+    -------
+    tt : astropy.table.Table
+        Copy of the input table with a separate column for every observation filter
+        dependent entry.
+
+    """
 
     # Copy table
     tt = Table(tt_in, copy=True)
