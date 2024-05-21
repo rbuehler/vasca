@@ -61,7 +61,7 @@ dd_vasca_columns = {
         "dtype": "S32",
         "unit": "",
         "default": "none",
-        "description": "Field project, typicaly survey name",
+        "description": "Field project, typically survey name",
     },
     # %%% ra
     "ra": {
@@ -188,7 +188,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -1.0,
-        "description": "Flux ratio meassured at a different appertures (3.8 arcsec / 6 arcsec radius for GALEX)",
+        "description": "Flux ratio measured at a different apertures (3.8 arcsec / 6 arcsec radius for GALEX)",
     },
     # %%% flux_err
     "flux_err": {
@@ -459,7 +459,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "Jy",
         "default": -1.0,
-        "description": "Flux error from a fixed circular apperture (3.8 arcsec radius for GALEX)",
+        "description": "Flux error from a fixed circular aperture (3.8 arcsec radius for GALEX)",
     },
     # %%% E_bv
     "E_bv": {
@@ -594,7 +594,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -1,
-        "description": "Flux hardness ratio, only simulateneous detections considered",
+        "description": "Flux hardness ratio, only simultaneous detections considered",
     },
     # %%% hr_err
     "hr_err": {
@@ -1069,7 +1069,7 @@ region = {
             "flags",
             "s2n",
         ],
-        "meta": {"INFO": "Light curve from gPhoton.gApperture"},
+        "meta": {"INFO": "Light curve from gPhoton.gAperture"},
     },
     "tt_spectrum": {
         "names": ["flux", "wavelength", "s2n", "flux_model", "sel"],
