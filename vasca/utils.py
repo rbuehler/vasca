@@ -676,20 +676,20 @@ def get_flat_table(tt_in):
         flt_ids = np.array(tt[0]["obs_filter_id"]).flatten()
         nr_flts = len(flt_ids)
         flt_indices = range(0, nr_flts)
-        print("Filters", flt_ids, nr_flts, flt_indices)
+        # print("Filters", flt_ids, nr_flts, flt_indices)
 
         # Loop oover all columns
         for colname in tt.colnames:
 
             nr_entries = len(np.array(tt[0][colname]).flatten())
-            print("Colname", colname, "with nr of entries", nr_entries)
+            # print("Colname", colname, "with nr of entries", nr_entries)
 
             if nr_entries == nr_flts:
 
                 # Loop over filters
                 for flt_idx in flt_indices:
                     flt_name = dd_id2filter[flt_ids[flt_idx]]
-                    print("Filtername", flt_name)
+                    # print("Filtername", flt_name)
                     with warnings.catch_warnings():
                         warnings.simplefilter("ignore", AstropyWarning)
                         col_template_copy = dd_vasca_columns[colname].copy()

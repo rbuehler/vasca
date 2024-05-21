@@ -586,7 +586,7 @@ dd_vasca_columns = {
         "dtype": "S8",
         "unit": "1",
         "default": "none",
-        "description": "SIMBAD source type group, defined in vasca.utils",
+        "description": "SIMBAD source type group in VASCA",
     },
     # %%% hr
     "hr": {
@@ -625,6 +625,27 @@ dd_vasca_columns = {
         "unit": "",
         "default": "none",
         "description": "SIMBAD main ID",
+    },
+    "Source": {
+        "name": "Source",
+        "dtype": "S32",
+        "unit": "",
+        "default": "none",
+        "description": "GAIA DR3 source ID",
+    },
+    "gfcat_objid": {
+        "name": "gfcat_objid",
+        "dtype": "S32",
+        "unit": "",
+        "default": "none",
+        "description": "GFCAT object ID",
+    },
+    "WDJname": {
+        "name": "WDJname",
+        "dtype": "S32",
+        "unit": "",
+        "default": "none",
+        "description": "GAIA-EDR3-WD object name",
     },
     # %%% origin
     "origin": {
