@@ -315,7 +315,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -100.0,
-        "description": "Flux normalized excess variance",
+        "description": "Flux normalised excess variance",
     },
     # %%% flux_ne
     "flux_ne": {
@@ -323,7 +323,7 @@ dd_vasca_columns = {
         "dtype": "float32",
         "unit": "1",
         "default": -100.0,
-        "description": "Flux square root of normalized excess variance",
+        "description": "Flux square root of normalised excess variance",
     },
     # %%% flux_var
     "flux_var": {
@@ -563,7 +563,7 @@ dd_vasca_columns = {
         "dtype": "int64",
         "unit": "1",
         "default": -1,
-        "description": "Co-add source internal ID number",
+        "description": "Co-add source ID number",
     },
     "cat_src_id": {
         "name": "cat_src_id",
