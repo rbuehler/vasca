@@ -3,16 +3,9 @@ Variable Source Cluster Analysis
 
 The VAriable Source Cluster Analysis (VASCA) is an astronomy pipeline
 for time-variable sources. Its main purpose is to create a source catalog
-based on GALEX data.
+based on GALEX data. A pipeline description can be found in the 
+`publication <https://arxiv.org/abs/2405.14269>`--.
 
-..
-    .. image:: https://gitlab.desy.de/ultrasat-camera/vasca/badges/main/pipeline.svg
-        :target: https://gitlab.desy.de/ultrasat-camera/vasca/-/commits/main
-        :alt: pipeline status
-
-    .. image:: https://gitlab.desy.de/ultrasat-camera/vasca/badges/main/coverage.svg
-        :target: https://gitlab.desy.de/ultrasat-camera/vasca/-/commits/main
-        :alt: coverage report
 
 Installation
 ------------
@@ -31,8 +24,6 @@ The installation steps are:
 .. code:: bash
 
    git clone git@github.com:rbuehler/vasca.git
-   
-   If your are not cloning from the github repository, exchange accordingly, e.g. at DESY use gitlab.desy.de:ultrasat-camera/vasca.git
  
 2. Install the ``VASCA`` package:
 
