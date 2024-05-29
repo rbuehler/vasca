@@ -30,7 +30,9 @@ The installation steps are:
 
 .. code:: bash
 
-   git clone git@gitlab.desy.de:ultrasat-camera/vasca.git
+   git clone git@github.com:rbuehler/vasca.git
+   
+   If your are not cloning from the github repository, exchange accordingly, e.g. at DESY use gitlab.desy.de:ultrasat-camera/vasca.git
  
 2. Install the ``VASCA`` package:
 
