@@ -50,7 +50,7 @@ tools like `isort <https://github.com/pycqa/isort>`__,
 `flake8 <https://github.com/PyCQA/flake8>`__ and
 `black <https://black.readthedocs.io/en/stable/#>`__. We set `88 characters <https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html?highlight=88%20#line-length>`__ as the default line width. The recommended Python
 version to use is 3.10.x . For docstrings we use the
-`ņumpy <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html>`__ 
+`numpy <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html>`__ 
 format.
 
 Build the documentation
