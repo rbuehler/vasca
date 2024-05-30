@@ -1,5 +1,5 @@
 .. image:: VASCA_icon.png
-  :width: 1024
+  :width: 512
   :alt: VASCA icon
 
 Variable Source Cluster Analysis
