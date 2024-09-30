@@ -8,7 +8,9 @@ Variable Source Cluster Analysis
 The VAriable Source Cluster Analysis (VASCA) is an astronomy pipeline
 for time-variable sources. Its main purpose is to create a source catalog
 based on GALEX data. A pipeline description can be found in the 
-`publication <https://arxiv.org/abs/2405.14269>`__.
+`publication <https://arxiv.org/abs/2405.14269>`__. The source code can
+also be found at `Zenodo <10.5281/zenodo.13861071>`__.
+
 
 
 Installation
