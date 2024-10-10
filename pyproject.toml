@@ -38,6 +38,7 @@ dependencies = [
   "jupyterlab ~= 4.0.2",
   "sphinx ~= 7.2.6",
   "sphinx-rtd-theme ~= 2.0.0",
+  "myst_parser~=4",
 ]
 
 [project.urls]
