@@ -31,25 +31,22 @@ vasca/examples/gPhoton/out
 vasca/examples/Swift_coverage/*.fits
 vasca_pipeline*
 
-# Local documentation
-build/*
-
-# Documentation
+# Sphinx build
 docs/_build
-docs/modules.rst
-docs/vasca.rst
-docs/vasca.test.rst
+docs/html
+docs/doctrees
+
+# git plugins
+mailmap
+
+# PyPi
+dist
 
 # Pytest
 .pytest_cache
 .coverage
-coverage.xmluvva/uvva.log
 
-# UVVA legacy
-uvva/*
-uvva.egg-info
-
-#pipeline example output
+# Pipeline example and testing output
 vasca/examples/vasca_pipeline*
 /vasca/test/resources/6388191295067652096/VASCA_GALEX_6388191295067652096_NUV_field_data.fits
 /vasca/test/resources/6388191295067652096/MAST_6388191295067652096_FUV_coadd.fits
