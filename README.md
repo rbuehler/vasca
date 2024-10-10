@@ -16,9 +16,7 @@ time-domain astronomy, especially given the increasing volume of data from large
 surveys such as ZTF, LSST, and ULTRASAT. Designed to analyze time-variable cosmic sources
 like active galactic nuclei, stars, and transient events, VASCA provides a modular,
 scalable solution for integrating data from multiple instruments and conducting a
-cohesive analysis. The main output of the pipeline is a catalog of time-variable cosmic
-sources, including detailed classifications and cross-matches with existing astronomical
-databases.
+cohesive analysis.
 
 ## Pipeline Overview
 
@@ -29,6 +27,10 @@ cosmic sources using mean-shift clustering.
 variations against a constant hypothesis at a 5-σ significance level.
 3. **Source Classification**: Classify detected sources, including cross-matching with
 external catalogs (e.g., SIMBAD, Gaia).
+
+The main output of the pipeline is a catalog of time-variable cosmic
+sources, including detailed classifications and cross-matches with existing astronomical
+databases.
 
 ## Key Features
 
