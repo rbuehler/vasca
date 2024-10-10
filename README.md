@@ -1,5 +1,7 @@
 
 ![VASCA icon](docs/images/VASCA_icon.png)
+[![🧪 pytest](https://github.com/rbuehler/vasca/actions/workflows/ci.yml/badge.svg)](https://github.com/rbuehler/vasca/actions/workflows/ci.yml)
+
 
 # Variable Source Cluster Analysis (VASCA)
 
