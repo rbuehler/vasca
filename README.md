@@ -1,6 +1,7 @@
 
 ![VASCA icon](docs/images/VASCA_icon.png)
 [![🧪 pytest](https://github.com/rbuehler/vasca/actions/workflows/ci.yml/badge.svg)](https://github.com/rbuehler/vasca/actions/workflows/ci.yml)
+[![📚 docs](https://github.com/rbuehler/vasca/actions/workflows/docs.yml/badge.svg)](https://schliwiju.github.io/vasca-mirror/)
 
 
 # Variable Source Cluster Analysis (VASCA)
@@ -60,7 +61,7 @@ including a description of VASCA's pipeline can be found here:
 ## Documentation and Installation
 
 VASCA is distributed as an open-source package. Comprehensive documentation is available
-[here](), including example notebooks and an API reference to help users get started.
+[here](https://schliwiju.github.io/vasca-mirror/), including example notebooks and an API reference to help users get started.
 For quick installation, VASCA can be installed via [PyPI]() using:
 ```shell
 pip install vasca
