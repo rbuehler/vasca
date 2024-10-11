@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="Top-level documentation for VASCA package, with links to the rest of the site.. " lang="en" name="description" xml:lang="en" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Variable Source Cluster Analysis (VASCA) &mdash; VASCA 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            VASCA
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">VASCA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Variable Source Cluster Analysis (VASCA)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <!-- start Intro -->
+<p><img alt="VASCA icon" src="_images/VASCA_icon.png" />
+<a class="reference external" href="https://github.com/rbuehler/vasca/actions/workflows/ci.yml"><img alt="🧪 pytest" src="https://github.com/rbuehler/vasca/actions/workflows/ci.yml/badge.svg" /></a></p>
+<section id="variable-source-cluster-analysis-vasca">
+<h1>Variable Source Cluster Analysis (VASCA)<a class="headerlink" href="#variable-source-cluster-analysis-vasca" title="Link to this heading"></a></h1>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#motivation">Motivation</a></p></li>
+<li><p><a class="reference internal" href="#pipeline-overview">Pipeline Overview</a></p></li>
+<li><p><a class="reference internal" href="#key-features">Key Features</a></p></li>
+<li><p><a class="reference internal" href="#proof-of-principle-study">Proof-of-Principle Study</a></p></li>
+<li><p><a class="reference internal" href="#documentation-and-installation">Documentation and Installation</a></p></li>
+<li><p><a class="reference internal" href="getting_started.html#getting-started"><span class="std std-ref">Getting Started</span></a></p></li>
+</ol>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading"></a></h2>
+<p>VASCA is a high-performance software package developed to address the challenges of
+time-domain astronomy, especially given the increasing volume of data from large-scale
+surveys such as ZTF, LSST, and ULTRASAT. Designed to analyze time-variable cosmic sources
+like active galactic nuclei, stars, and transient events, VASCA provides a modular,
+scalable solution for integrating data from multiple instruments and conducting a
+cohesive analysis.</p>
+</section>
+<section id="pipeline-overview">
+<h2>Pipeline Overview<a class="headerlink" href="#pipeline-overview" title="Link to this heading"></a></h2>
+<p>The VASCA analysis pipeline consists of three primary steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Spatial Clustering</strong>: Associate detections from repeated observations to unique
+cosmic sources using mean-shift clustering.</p></li>
+<li><p><strong>Statistical Variability Detection</strong>: Identify time-variable sources by testing flux
+variations against a constant hypothesis at a 5-σ significance level.</p></li>
+<li><p><strong>Source Classification</strong>: Classify detected sources, including cross-matching with
+external catalogs (e.g., SIMBAD, Gaia).</p></li>
+</ol>
+<p>The main output of the pipeline is a catalog of time-variable cosmic
+sources, including detailed classifications and cross-matches with existing astronomical
+databases.</p>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Simplicity and Modularity</strong>: The software uses a hierarchical data model and modular
+processing to ensure scalability and ease of use. It supports data from multiple
+instruments seamlessly.</p></li>
+<li><p><strong>Proven Algorithms</strong>: VASCA relies on established algorithms and statistical methods,
+ensuring robustness and reducing the maintenance burden.</p></li>
+<li><p><strong>Focus on Specific Use Case</strong>: Optimized for analyzing time-domain astronomical data,
+VASCA keeps complexity low, simplifying auditing and debugging.</p></li>
+<li><p><strong>Standards Compliance</strong>: Outputs are designed for publication readiness by adhering to
+IAU and CDS standards, using widely-accepted, non-proprietary data formats.</p></li>
+<li><p><strong>Customization and Extensibility</strong>: VASCA allows flexible configuration, making it
+adaptable to different datasets and instrument-specific requirements.</p></li>
+</ul>
+</section>
+<section id="proof-of-principle-study">
+<h2>Proof-of-Principle Study<a class="headerlink" href="#proof-of-principle-study" title="Link to this heading"></a></h2>
+<p>VASCA was applied to a proof-of-principle study  using the Galaxy Evolution Explorer
+(GALEX) archive (2003-2013). This study produced a catalog of over 4,000 UV-variable
+sources, revealing UV variability across all classes of stars. Notably, a massive,
+pulsating white dwarf exhibited unique long-term variability in the UV. The full article
+including a description of VASCA’s pipeline can be found here:
+<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2024A%26A...687A.313B/abstract">The time-variable ultraviolet sky: Active galactic nuclei, stars, and white dwarfs</a>.</p>
+</section>
+<section id="documentation-and-installation">
+<h2>Documentation and Installation<a class="headerlink" href="#documentation-and-installation" title="Link to this heading"></a></h2>
+<p>VASCA is distributed as an open-source package. Comprehensive documentation is available
+<a class="reference internal" href="#"><span class="xref myst">here</span></a>, including example notebooks and an API reference to help users get started.
+For quick installation, VASCA can be installed via <a class="reference internal" href="#"><span class="xref myst">PyPI</span></a> using:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>vasca
+</pre></div>
+</div>
+<p>For more info see the <a class="reference internal" href="installation_guide.html#installation"><span class="std std-ref">installation guide</span></a>.</p>
+<!-- end Intro -->
+<!-- start Docs Overview -->
+</section>
+</section>
+<section id="documentation">
+<h1>Documentation!<a class="headerlink" href="#documentation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#running-the-pipeline-and-post-processing">Running the pipeline and post-processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#coding-guidelines">Coding guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#build-the-documentation">Build the documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<!-- end Docs Overview -->
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright BSD 3-Clause License.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
