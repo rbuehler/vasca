@@ -1,20 +1,20 @@
 [build-system]
 # Minimum requirements for the build system to execute.
-requires = ["setuptools", "wheel"]  # PEP 508 specifications.
+requires = ["setuptools", "wheel", "build"]  # PEP 508 specifications.
 
 [project]
 # Project metadata, following PEP 621 specifications.
 name = "vasca"
 version = "1.0.0"
 description = "Ultraviolet Variability Analysis is an astronomy pipeline for time-variable sources."
-readme = "README.rst"
-requires-python = ">=3.9"
+readme = "README.md"
+readme-content-type = "text/markdown"
+requires-python = ">=3.10"
 license = {file = "LICENSE.txt"}
 keywords = ["astronomy", "ultraviolet", "pipeline"]
 authors = [
-    {name =  "Julian Schliwinski", email = "julian.schliwinski@desy.de"},
+    {name = "Julian Schliwinski", email = "julian.schliwinski@desy.de"},
     {name = "Rolf Bühler", email = "rolf.buehler@desy.de"},
-    {name = "Andrea Porelli", email = "andrea.porelli@desy.de"},
 ]
 dependencies = [
   "astropy ~= 5.3",
@@ -42,9 +42,9 @@ dependencies = [
 ]
 
 [project.urls]
-homepage = "https://tbd.desy.de"
-documentation = "https://tbd.desy.de"
-repository = "https://gitlab.desy.de/ultrasat-camera/uc_vasca"
+homepage = "https://schliwiju.github.io/vasca-mirror/"
+documentation = "https://schliwiju.github.io/vasca-mirror/"
+repository = "https://github.com/rbuehler/vasca"
 changelog = "https://tbd.desy.de"
 
 [project.scripts]
@@ -58,10 +58,7 @@ packages = ["vasca"]
 minversion = "6.0"
 addopts = "-v"
 testpaths = ["vasca/test"]
-# log_file = "logs/pytest-logs.txt"
-# log_file_level = "INFO"
 log_cli = true
-# log_cli_level = "INFO"
 
 [tool.isort]
 # Black-Isort compatibility (https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#isort)
