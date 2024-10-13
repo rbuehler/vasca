@@ -2,6 +2,7 @@
 ![VASCA icon](docs/images/VASCA_icon.png)
 [![🧪 pytest](https://github.com/rbuehler/vasca/actions/workflows/ci.yml/badge.svg)](https://github.com/rbuehler/vasca/actions/workflows/ci.yml)
 [![📚 docs](https://github.com/rbuehler/vasca/actions/workflows/docs.yml/badge.svg)](https://schliwiju.github.io/vasca-mirror/)
+[![🚀 pypi](https://github.com/rbuehler/vasca/actions/workflows/pypi.yml/badge.svg)](https://test.pypi.org/project/vasca/)
 
 
 # Variable Source Cluster Analysis (VASCA)
