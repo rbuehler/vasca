@@ -8,7 +8,6 @@ name = "vasca"
 version = "1.0.0"
 description = "Ultraviolet Variability Analysis is an astronomy pipeline for time-variable sources."
 readme = "README.md"
-readme-content-type = "text/markdown"
 requires-python = ">=3.10"
 license = {file = "LICENSE.txt"}
 keywords = ["astronomy", "ultraviolet", "pipeline"]
