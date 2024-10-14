@@ -12,6 +12,7 @@
 #
 import os
 import sys
+from importlib.metadata import version as get_version
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -23,7 +24,9 @@ copyright = "BSD 3-Clause License"
 author = "Rolf Buehler and Julian Schliwinski"
 
 # The full version, including alpha/beta/rc tags
-release = "1.0.0"
+release = get_version("vasca")
+# for example take major/minor
+version = ".".join(release.split(".")[:2])
 
 
 # -- General configuration ---------------------------------------------------

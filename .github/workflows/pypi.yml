@@ -59,7 +59,7 @@ jobs:
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        packages_dir: dist/pypi/
+        packages-dir: dist/pypi/
   
   github-release:
     name: >-
@@ -143,9 +143,9 @@ jobs:
       with:
         python-version: "3.x"
     
-    - name: Modify version for TestPyPI
-      run: |
-        sed -i 's/version = "1.0.0"/version = "1.0.0.dev${{ github.run_number }}"/' pyproject.toml
+    # - name: Modify version for TestPyPI
+    #   run: |
+    #     sed -i 's/version = "1.0.0"/version = "1.0.0.dev${{ github.run_number }}"/' pyproject.toml
     
     - name: Install pypa/build
       run: >-

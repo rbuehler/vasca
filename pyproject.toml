@@ -1,11 +1,10 @@
 [build-system]
-# Minimum requirements for the build system to execute.
-requires = ["setuptools", "wheel", "build"]  # PEP 508 specifications.
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
 
 [project]
-# Project metadata, following PEP 621 specifications.
 name = "vasca"
-version = "1.0.6"
+dynamic = ["version"]
 description = "Ultraviolet Variability Analysis is an astronomy pipeline for time-variable sources."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -51,6 +50,9 @@ vasca_pipe = "vasca.vasca_pipe:run_from_file"
 
 [tool.setuptools]
 packages = ["vasca"]
+
+[tool.setuptools_scm]
+write_to = "vasca/_version.py"
 
 [tool.pytest.ini_options]
 # Pytest settings (https://docs.pytest.org/en/6.2.x/reference.html#configuration-options)
