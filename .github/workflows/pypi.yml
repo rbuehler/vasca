@@ -78,20 +78,28 @@ jobs:
         name: python-package-distributions
         path: dist/
     
-    - name: Set up Python virtual environment
-      run: |
-        python3 -m venv venv
-        source venv/bin/activate
-    
-    - name: Install Sigstore dependencies in the virtual environment
-      run: |
-        pip install --upgrade pip
-        pip install sigstore
+    # - name: Set up Python virtual environment
+    #   run: |
+    #     python3 -m venv venv
+    #     source venv/bin/activate
+    # 
+    # - name: Install Sigstore dependencies in the virtual environment
+    #   run: |
+    #     pip install --upgrade pip
+    #     pip install sigstore
+    # 
+    # - name: Sign the dists with Sigstore
+    #   run: |
+    #     source venv/bin/activate
+    #     sigstore sign ./dist/*.tar.gz ./dist/*.whl
     
     - name: Sign the dists with Sigstore
-      run: |
-        source venv/bin/activate
-        sigstore sign ./dist/*.tar.gz ./dist/*.whl
+      uses: sigstore/gh-action-sigstore-python@v2.1.1
+      with:
+        inputs: >-
+          ./dist/*.tar.gz
+          ./dist/*.whl
+        internal-be-careful-debug: true
     
     - name: Create GitHub Release
       env:
@@ -115,6 +123,7 @@ jobs:
   
   publish-to-testpypi:
     name: Publish Python 🐍 distribution 📦 to TestPyPI
+    if: startsWith(github.ref, 'refs/tags/') && github.repository == 'rbuehler/vasca'
     needs:
     - build
     runs-on: ubuntu-latest
