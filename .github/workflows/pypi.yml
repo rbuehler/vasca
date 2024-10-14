@@ -149,6 +149,7 @@ jobs:
     
     - name: Modify version for TestPyPI
       run: |
+        ls -la  # To confirm the file exists
         sed -i 's/version = "1.0.0"/version = "1.0.0.dev${{ github.run_number }}"/' pyproject.toml
     
     - name: Publish distribution 📦 to TestPyPI
