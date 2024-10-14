@@ -6,7 +6,7 @@ on:
   push
 
 jobs:
-  pypi:
+  build:
     name: Build distribution 📦
     if: startsWith(github.ref, 'refs/tags/') && github.repository == 'rbuehler/vasca'
     runs-on: ubuntu-latest
@@ -101,14 +101,6 @@ jobs:
       run: |
         source venv/bin/activate
         sigstore sign ./dist/*.tar.gz ./dist/*.whl
-    
-    # - name: Sign the dists with Sigstore
-    #   uses: sigstore/gh-action-sigstore-python@v2.1.1
-    #   with:
-    #     inputs: >-
-    #       ./dist/*.tar.gz
-    #       ./dist/*.whl
-    #     internal-be-careful-debug: true
     
     - name: Create GitHub Release
       env:
