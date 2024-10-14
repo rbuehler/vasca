@@ -78,12 +78,20 @@ jobs:
         name: python-package-distributions
         path: dist/
     
+    - name: Set up Python virtual environment
+      run: |
+        python3 -m venv venv
+        source venv/bin/activate
+    
+    - name: Install Sigstore dependencies in the virtual environment
+      run: |
+        pip install --upgrade pip
+        pip install sigstore
+    
     - name: Sign the dists with Sigstore
-      uses: sigstore/gh-action-sigstore-python@v2.1.1
-      with:
-        inputs: >-
-          ./dist/*.tar.gz
-          ./dist/*.whl
+      run: |
+        source venv/bin/activate
+        sigstore sign ./dist/*.tar.gz ./dist/*.whl
     
     - name: Create GitHub Release
       env:
