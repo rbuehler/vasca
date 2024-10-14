@@ -6,8 +6,8 @@ on:
   push
 
 jobs:
-  build-pypi:
-    name: Build distribution 📦 for pypi
+  pypi:
+    name: Build distribution 📦
     if: startsWith(github.ref, 'refs/tags/') && github.repository == 'rbuehler/vasca'
     runs-on: ubuntu-latest
     
@@ -27,19 +27,21 @@ jobs:
         --user
     
     - name: Build a binary wheel and a source tarball
-      run: python3 -m build --outdir dist/pypi
+      run: python3 -m build
     
     - name: Store the distribution packages
       uses: actions/upload-artifact@v4
       with:
-        name: pypi-python-package-distributions
-        path: dist/pypi
+        name: python-package-distributions
+        path: dist/
+  
+  #######################################################################################
   
   publish-to-pypi:
     name: >-
       Publish Python 🐍 distribution 📦 to PyPI
     needs:
-      - build-pypi
+      - build
     runs-on: ubuntu-latest
     
     environment:
@@ -53,13 +55,13 @@ jobs:
     - name: Download all the dists
       uses: actions/download-artifact@v4
       with:
-        name: pypi-python-package-distributions
-        path: dist/pypi/
+        name: python-package-distributions
+        path: dist/
     
     - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        packages-dir: dist/pypi/
+        packages-dir: dist/
   
   github-release:
     name: >-
@@ -77,8 +79,8 @@ jobs:
     - name: Download all the dists
       uses: actions/download-artifact@v4
       with:
-        name: pypi-python-package-distributions
-        path: dist/pypi
+        name: python-package-distributions
+        path: dist/
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -98,7 +100,7 @@ jobs:
     - name: Sign the dists with Sigstore
       run: |
         source venv/bin/activate
-        sigstore sign ./dist/pypi/*.tar.gz ./dist/pypi/*.whl
+        sigstore sign ./dist/*.tar.gz ./dist/*.whl
     
     # - name: Sign the dists with Sigstore
     #   uses: sigstore/gh-action-sigstore-python@v2.1.1
@@ -130,43 +132,10 @@ jobs:
   
   #######################################################################################
   
-  build-testpypi:
-    name: Build distribution 📦 for testpypi
-    if: github.repository == 'rbuehler/vasca'
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.x"
-    
-    # - name: Modify version for TestPyPI
-    #   run: |
-    #     sed -i 's/version = "1.0.0"/version = "1.0.0.dev${{ github.run_number }}"/' pyproject.toml
-    
-    - name: Install pypa/build
-      run: >-
-        python3 -m
-        pip install
-        build
-        --user
-    
-    - name: Build a binary wheel and a source tarball
-      run: python3 -m build --outdir dist/testpypi
-    
-    - name: Store the distribution packages
-      uses: actions/upload-artifact@v4
-      with:
-        name: testpypi-python-package-distributions
-        path: dist/testpypi
-  
   publish-to-testpypi:
     name: Publish Python 🐍 distribution 📦 to TestPyPI
     needs:
-    - build-testpypi
+    - build
     runs-on: ubuntu-latest
     
     environment:
@@ -180,11 +149,11 @@ jobs:
     - name: Download all the dists
       uses: actions/download-artifact@v4
       with:
-        name: testpypi-python-package-distributions
-        path: dist/testpypi/
+        name: python-package-distributions
+        path: dist/
     
     - name: Publish distribution 📦 to TestPyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
-        packages_dir: dist/testpypi/
+        packages_dir: dist/
