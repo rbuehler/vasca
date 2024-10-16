@@ -18,20 +18,18 @@ jobs:
       with:
         python-version: "3.x"
     
-    - name: Allow local version
-      # If this is not a tag push, allow local versions
-      # See https://github.com/pypa/setuptools_scm/issues/455
-      if: ! startsWith(github.ref, 'refs/tags/')
-      run: |
-        echo 'local_scheme = "no-local-version"' >> pyproject.toml
-        git update-index --assume-unchanged pyproject.toml
-    
     - name: Install pypa/build
       run: >-
         python3 -m
         pip install
         build
         --user
+
+    - name: Allow local version
+      if: ! startsWith(github.ref, 'refs/tags/')
+      run: |
+        echo 'local_scheme = "no-local-version"' >> pyproject.toml
+        git update-index --assume-unchanged pyproject.toml
     
     - name: Build a binary wheel and a source tarball
       run: python3 -m build
