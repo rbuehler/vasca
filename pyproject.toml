@@ -148,6 +148,7 @@ select = [
   "PL",
   "TRY",
   "NPY",
+  "NPY201",
   "RUF"
   ]
 
