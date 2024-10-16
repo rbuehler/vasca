@@ -1,0 +1,3 @@
+exclude docs/**
+exclude vasca/examples/**
+exclude vasca/mpl_style_sheets/**

@@ -2,6 +2,7 @@
 __pycache__
 .env
 vasca.egg-info
+_version.py
 
 # Pyenv
 .python-version
