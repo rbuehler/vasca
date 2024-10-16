@@ -16,45 +16,93 @@ from importlib.metadata import version as get_version
 
 sys.path.insert(0, os.path.abspath(".."))
 
+# -- Run Autodoc -------------------------------------------------------
+#
+# def run_apidoc(_) -> None:
+#     ignore_paths = []
+#
+#     argv = [
+#         "-f",
+#         "-e",
+#         "-M",
+#         "-T",
+#         # "--templatedir",
+#         # "_templates",
+#         "-o",
+#         "api/",
+#         "../vasca",
+#     ] + ignore_paths
+#
+#     try:
+#         import vasca
+#     except ImportError:
+#         raise ImportError(
+#             "Package must first be installed before creating documentation"
+#         )
+#
+#     from sphinx.ext import apidoc
+#
+#     apidoc.main(argv)
+#
+#
+# def setup(app) -> None:
+#     app.connect("builder-inited", run_apidoc)
+
 
 # -- Project information -----------------------------------------------------
+#
 
 project = "VASCA"
 copyright = "BSD 3-Clause License"
 author = "Rolf Buehler and Julian Schliwinski"
 
-# The full version, including alpha/beta/rc tags
+# The full version, including alpha/beta/rc/dev tags
 release = get_version("vasca")
-# for example take major/minor
-version = ".".join(release.split(".")[:2])
+version = ".".join(release.split(".")[:3])
+if release.split(".")[3].startswith("dev"):
+    version += "dev"
 
 
 # -- General configuration ---------------------------------------------------
+#
 
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
 extensions = [
-    "sphinx.ext.autodoc",
+    # Sphinx
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.todo",
+    # External
     "myst_parser",
+    "autodoc2",
+    "sphinx_copybutton",
 ]
-autodoc_default_options = {
-    "members": True,
-    "member-order": "bysource",
-    "special-members": "__init__",
-}
+# autodoc_default_options = {
+#     "members": True,
+#     "member-order": "bysource",
+#     "special-members": "__init__",
+# }
 
+# -- Options for Autodoc --------------------------------------------------------------
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ["_templates"]
+autosummary_generate = True
 
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+# autodoc_member_order = "bysource"
+# autodoc_preserve_defaults = True
+# autodoc_typehints = "description"
 
+# numpydoc_show_class_members = False
+autodoc2_packages = [
+    {
+        "path": "../vasca",
+        "exclude_dirs": ["examples", "test"],
+    }
+]
+autodoc2_output_dir = "api"
+
+# -- Options for intersphinx -------------------------------------------------
+#
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "loguru": ("https://loguru.readthedocs.io/en/stable", None),
@@ -65,15 +113,23 @@ intersphinx_mapping = {
 
 # -- Options for HTML output -------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
+# html_theme = "sphinx_rtd_theme"
+# html_theme = "pydata_sphinx_theme"
+html_theme = "furo"
+html_title = f"VASCA v{version}"
+
+html_theme_options = {
+    "source_repository": "https://github.com/rbuehler/vasca/",
+    "source_branch": "main",
+    "source_directory": "docs/",
+}
+
+
+# -- Options for Markdown files ----------------------------------------------
 #
-html_theme = "sphinx_rtd_theme"
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
-
-# suppress_warnings = ["myst.xref_missing"]
 myst_heading_anchors = 3
+
+# -- Options for coppybutton ----------------------------------------------
+#
+
+copybutton_exclude = ".linenos, .gp, .go"
