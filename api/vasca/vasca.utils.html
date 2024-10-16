@@ -1,0 +1,1245 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="vasca.field" href="vasca.field.html" /><link rel="prev" title="vasca.visualization" href="vasca.visualization.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
+        <title>vasca.utils - VASCA v1.0.13</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">VASCA v1.0.13</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">VASCA v1.0.13</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../user_guide/index.html">User Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of User Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current has-children"><a class="reference internal" href="vasca.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of vasca</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="vasca.region.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.region</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="vasca.visualization.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.visualization</span></code></a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.utils</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="vasca.field.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.field</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="vasca.tables_dict.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.tables_dict</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="vasca._version.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca._version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="vasca.resource_manager.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.resource_manager</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="vasca.source.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.source</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="vasca.vasca_pipe.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.vasca_pipe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="vasca.tables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.tables</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/rbuehler/vasca/blob/main/docs/api/vasca/vasca.utils.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/rbuehler/vasca/edit/main/docs/api/vasca/vasca.utils.rst" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-vasca.utils">
+<span id="vasca-utils"></span><h1><a class="reference internal" href="#module-vasca.utils" title="vasca.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.utils</span></code></a><a class="headerlink" href="#module-vasca.utils" title="Link to this heading">¶</a></h1>
+<p>Utilities for VASCA</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-left">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.otype2ogroup" title="vasca.utils.otype2ogroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">otype2ogroup</span></code></a></p></td>
+<td><p>Returns object group for a given object type.
+Allows adding the default value of unkown type is
+asked.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.get_col_cycler" title="vasca.utils.get_col_cycler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_col_cycler</span></code></a></p></td>
+<td><p>Helper function to get matplotlib color cycler mathcing the colors defined
+in <code class="docutils literal notranslate"><span class="pre">dd_ogrp2col</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.add_ogrp" title="vasca.utils.add_ogrp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_ogrp</span></code></a></p></td>
+<td><p>Helper function to add ogrp_id column to tables</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.get_var_stat" title="vasca.utils.get_var_stat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_var_stat</span></code></a></p></td>
+<td><p>Calculate variability parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.freq2period" title="vasca.utils.freq2period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">freq2period</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.period2freq" title="vasca.utils.period2freq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period2freq</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.run_LombScargle" title="vasca.utils.run_LombScargle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_LombScargle</span></code></a></p></td>
+<td><p>Calculate Lomb Scargle periodogram</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.query_vizier_sed" title="vasca.utils.query_vizier_sed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_vizier_sed</span></code></a></p></td>
+<td><p>Query VizieR Photometry tool around a given position.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.sel_sources" title="vasca.utils.sel_sources"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sel_sources</span></code></a></p></td>
+<td><p>Helper function to redo cuts, should be revisited/obsolete once table selection is
+rewritten</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.sel_sources_nuv_only" title="vasca.utils.sel_sources_nuv_only"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sel_sources_nuv_only</span></code></a></p></td>
+<td><p>Helper function to redo cuts, should be revisited/obsolete once table selection is
+rewritten</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.select_obs_filter" title="vasca.utils.select_obs_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_obs_filter</span></code></a></p></td>
+<td><p>Helper function to select rows or columns ob the passed obs_filter_id in a table</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.get_flat_table" title="vasca.utils.get_flat_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_flat_table</span></code></a></p></td>
+<td><p>Helper function to flatten tables when observation ID
+dependent entries are vectorized</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.flux2mag" title="vasca.utils.flux2mag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flux2mag</span></code></a></p></td>
+<td><p>Converts flux in Jy into AB magnitudes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.mag2flux" title="vasca.utils.mag2flux"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mag2flux</span></code></a></p></td>
+<td><p>Converts AB magnitudes to flux in Jansky</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.flux2mag_np" title="vasca.utils.flux2mag_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flux2mag_np</span></code></a></p></td>
+<td><p>Flux to magnitude for numpy arrays only for secondary_axis in matplotlib</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.mag2flux_np" title="vasca.utils.mag2flux_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mag2flux_np</span></code></a></p></td>
+<td><p>Magnitude to flux for numpy arrays only for secondary_axis in matplotlib</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.mjd2yr" title="vasca.utils.mjd2yr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mjd2yr</span></code></a></p></td>
+<td><p>Convert MJD to Time object</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.yr2mjd" title="vasca.utils.yr2mjd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">yr2mjd</span></code></a></p></td>
+<td><p>Convert time in jyear format to MJD</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.get_field_id" title="vasca.utils.get_field_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_field_id</span></code></a></p></td>
+<td><p>Return VASCA field id, which also includes observatory and filter identifier.
+The first 3 characters characterize the observatory and filter. Afterwards the
+observatory field ID is attached.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.extr_value" title="vasca.utils.extr_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extr_value</span></code></a></p></td>
+<td><p>Computes the extremum value in a list of numeric lists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.get_hist_bins" title="vasca.utils.get_hist_bins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hist_bins</span></code></a></p></td>
+<td><p>Generates an array of bin edges for creating a histogram with specified bin size.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.sky_sep2d" title="vasca.utils.sky_sep2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sky_sep2d</span></code></a></p></td>
+<td><p>computes 2D distances between all possible pairs of coordinates
+that are closer together than the separation limit
+(default: 180 -&gt; all-sky)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.get_time_delta" title="vasca.utils.get_time_delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_time_delta</span></code></a></p></td>
+<td><p>Get time difference in seconds between visits</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.get_time_delta_mean" title="vasca.utils.get_time_delta_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_time_delta_mean</span></code></a></p></td>
+<td><p>Get mean time difference in seconds between visits</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.table_to_array" title="vasca.utils.table_to_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">table_to_array</span></code></a></p></td>
+<td><p>Converts an astropy Table object into a regular numpy ndarray.
+Caveat: All table columns must have the same type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.get_cutout" title="vasca.utils.get_cutout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cutout</span></code></a></p></td>
+<td><p>Wrapper function to create a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.nddata.Cutout2D.html#astropy.nddata.Cutout2D" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cutout2D</span></code></a> from a
+<a class="reference internal" href="vasca.field.html#vasca.field.BaseField" title="vasca.field.BaseField"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></a> input.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.get_cutout_bounds" title="vasca.utils.get_cutout_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cutout_bounds</span></code></a></p></td>
+<td><p>Returns <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SkyCoord</span></code></a> object
+defining a rectangular cutout with upperight and lower left pixels
+in coordinate system of <code class="docutils literal notranslate"><span class="pre">out_frame</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.get_cutout_mask" title="vasca.utils.get_cutout_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cutout_mask</span></code></a></p></td>
+<td><p>Returns a bool array to mask a coordinate dataset for given cutout bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.add_rg_src_id" title="vasca.utils.add_rg_src_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_rg_src_id</span></code></a></p></td>
+<td><p>Helper function, adds “rg_src_id” based on “rg_fd_id” and “fd_src_id”
+from the passed reference table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.nb_fig" title="vasca.utils.nb_fig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nb_fig</span></code></a></p></td>
+<td><p>Helper function for plotting in Jupyter notebooks.
+Wraps <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pylplot.subplots</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.binned_stat" title="vasca.utils.binned_stat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binned_stat</span></code></a></p></td>
+<td><p>Compute a binned statistic for one or more sets of data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.tgalex_to_astrotime" title="vasca.utils.tgalex_to_astrotime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tgalex_to_astrotime</span></code></a></p></td>
+<td><p>Converts a GALEX time stamp to astropy.time.Time object
+with unix format and UTC scale.
+GALEX time is equal to UNIX time - 315964800.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.galex_obs_info" title="vasca.utils.galex_obs_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">galex_obs_info</span></code></a></p></td>
+<td><p>Collects information form a light curve dataset
+(e.g. fetched using gPhoton.gAperture) and returns a pandas.DataFrame.
+The data frame contains columns for exposure time, observation gap time
+as well as observation start and stop date</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.timeit" title="vasca.utils.timeit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeit</span></code></a></p></td>
+<td><p>Decorator to track total processing time (work in progress).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.marker_set" title="vasca.utils.marker_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">marker_set</span></code></a></p></td>
+<td><p>Returns a list of <cite>n</cite> Matplotlib markers for use in plots.
+The list is generated by selecting markers from a curated set of markers
+supporting separate edge and face colors.
+By default, a set of markers are excluded, which can be overridden by
+providing the <cite>exclude</cite> argument.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.color_palette" title="vasca.utils.color_palette"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_palette</span></code></a></p></td>
+<td><p>Return a palette of <cite>n</cite> colors from the matplotlib registry and additional
+qualitative palettes adopted from seaborn.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.name2id" title="vasca.utils.name2id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name2id</span></code></a></p></td>
+<td><p>Generates a 32-bit or 64-bit integer from a string input.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.get_config" title="vasca.utils.get_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_config</span></code></a></p></td>
+<td><p>Setup pipeline configuration file from yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.get_lc_from_gphoton_npfile" title="vasca.utils.get_lc_from_gphoton_npfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_lc_from_gphoton_npfile</span></code></a></p></td>
+<td><p>Get light curve from gphoton numpy  files</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="data">
+<h3>Data<a class="headerlink" href="#data" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-left">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_filter2id" title="vasca.utils.dd_filter2id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_filter2id</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_id2filter" title="vasca.utils.dd_id2filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_id2filter</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_filter2wavelength" title="vasca.utils.dd_filter2wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_filter2wavelength</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_obs_id_add" title="vasca.utils.dd_obs_id_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_obs_id_add</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_ogrp2otypes" title="vasca.utils.dd_ogrp2otypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_ogrp2otypes</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_otype2ogroup" title="vasca.utils.dd_otype2ogroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_otype2ogroup</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_ogrp2col" title="vasca.utils.dd_ogrp2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_ogrp2col</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_spec_lines" title="vasca.utils.dd_spec_lines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_spec_lines</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="api">
+<h3>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h3>
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_filter2id">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_filter2id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.utils.dd_filter2id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_id2filter">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_id2filter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dict(...)'</span></em><a class="headerlink" href="#vasca.utils.dd_id2filter" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_filter2wavelength">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_filter2wavelength</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.utils.dd_filter2wavelength" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_obs_id_add">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_obs_id_add</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.utils.dd_obs_id_add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_ogrp2otypes">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_ogrp2otypes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.utils.dd_ogrp2otypes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_otype2ogroup">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_otype2ogroup</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dict(...)'</span></em><a class="headerlink" href="#vasca.utils.dd_otype2ogroup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.otype2ogroup">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">otype2ogroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">otype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#otype2ogroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.otype2ogroup" title="Link to this definition">¶</a></dt>
+<dd><p>Returns object group for a given object type.
+Allows adding the default value of unkown type is
+asked.</p>
+<dl class="simple">
+<dt>otype: str</dt><dd><p>Object type</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>str</dt><dd><p>Object group</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_ogrp2col">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_ogrp2col</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.utils.dd_ogrp2col" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_col_cycler">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_col_cycler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ll_ogrp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_col_cycler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_col_cycler" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to get matplotlib color cycler mathcing the colors defined
+in <code class="docutils literal notranslate"><span class="pre">dd_ogrp2col</span></code></p>
+<dl class="simple">
+<dt>ll_ogrp: list</dt><dd><p>Return colors for passed object groups</p>
+</dd>
+</dl>
+<p>matplotlib.cycler</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.add_ogrp">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">add_ogrp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provenance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SIMBAD'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#add_ogrp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.add_ogrp" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to add ogrp_id column to tables</p>
+<dl class="simple">
+<dt>provenance: str</dt><dd><p>Where does object group definition come from, ‘SIMBAD’ or ‘GAIA’</p>
+</dd>
+</dl>
+<p>None</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_spec_lines">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_spec_lines</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.utils.dd_spec_lines" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_var_stat">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_var_stat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vals_err</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_var_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_var_stat" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate variability parameters</p>
+<dl class="simple">
+<dt>vals: list of floats</dt><dd><p>Variable values</p>
+</dd>
+<dt>vals_err: list of floats</dt><dd><p>Variable errors</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict</dt><dd><p>Dictionary with weighted mean, chisquare, excess variance, etc.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.freq2period">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">freq2period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ff</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#freq2period"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.freq2period" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.period2freq">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">period2freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#period2freq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.period2freq" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.run_LombScargle">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">run_LombScargle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.03,</span> <span class="pre">2]</span> <span class="pre">/</span> <span class="pre">uu.d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#run_LombScargle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.run_LombScargle" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate Lomb Scargle periodogram</p>
+<dl>
+<dt>Parameters</dt><dd><dl class="simple">
+<dt>tt_lc: astropy.table.Table</dt><dd><p>Table with the VASCA light curve</p>
+</dd>
+<dt>nbins_min<span class="classifier">int, optional</span></dt><dd><p>Minimum number of time bins to perform LombScargle.</p>
+</dd>
+<dt>freq_range<span class="classifier">list</span></dt><dd><p>Minimum and maximum Frequency. If None calculated automatically.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict</dt><dd><p>Dictionary with LombScargle objects</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.query_vizier_sed">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">query_vizier_sed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#query_vizier_sed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.query_vizier_sed" title="Link to this definition">¶</a></dt>
+<dd><p>Query VizieR Photometry tool around a given position.</p>
+<p>The VizieR photometry tool is here
+.. url:: <a class="reference external" href="http://vizier.u-strasbg.fr/vizier/sed/doc/">http://vizier.u-strasbg.fr/vizier/sed/doc/</a></p>
+<dl class="simple">
+<dt>ra: float</dt><dd><p>Position RA in degrees in ICRS.</p>
+</dd>
+<dt>dec: float</dt><dd><p>Position RA in degrees in ICRS.</p>
+</dd>
+<dt>radius: float</dt><dd><p>Position matching  radius in arseconds.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>table: astropy.Table</dt><dd><p>VO table returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.sel_sources">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">sel_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_srcs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#sel_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.sel_sources" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to redo cuts, should be revisited/obsolete once table selection is
+rewritten</p>
+<dl class="simple">
+<dt>tt_srcs<span class="classifier">astropy.table.Table</span></dt><dd><p>Source table</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>sel_vasca<span class="classifier">[bool]</span></dt><dd><p>Selected sources.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.sel_sources_nuv_only">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">sel_sources_nuv_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_srcs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#sel_sources_nuv_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.sel_sources_nuv_only" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to redo cuts, should be revisited/obsolete once table selection is
+rewritten</p>
+<dl class="simple">
+<dt>tt_srcs<span class="classifier">astropy.table.Table</span></dt><dd><p>Source table</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>sel_vasca<span class="classifier">list of bool</span></dt><dd><p>Selected sources.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.select_obs_filter">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">select_obs_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_filter_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#select_obs_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.select_obs_filter" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to select rows or columns ob the passed obs_filter_id in a table</p>
+<dl class="simple">
+<dt>tt_in<span class="classifier">astropy.table.Table</span></dt><dd><p>Input table</p>
+</dd>
+<dt>obs_filter_id<span class="classifier">TYPE</span></dt><dd><p>Observation filter ID Nr.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>tt<span class="classifier">astropy.table.Table</span></dt><dd><p>Copy of the input table with only entries for the requested filter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_flat_table">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_flat_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_in</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_flat_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_flat_table" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to flatten tables when observation ID
+dependent entries are vectorized</p>
+<dl class="simple">
+<dt>tt_in<span class="classifier">astropy.table.Table</span></dt><dd><p>Input table</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>tt<span class="classifier">astropy.table.Table</span></dt><dd><p>Copy of the input table with a separate column for every observation filter
+dependent entry.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.flux2mag">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">flux2mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#flux2mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.flux2mag" title="Link to this definition">¶</a></dt>
+<dd><p>Converts flux in Jy into AB magnitudes</p>
+<dl class="simple">
+<dt>flux<span class="classifier">list of astropy.Quantity or numpy array</span></dt><dd><p>Flux density array in micro Jy</p>
+</dd>
+<dt>flux_err<span class="classifier">list of astropy.Quantity  or numpy array</span></dt><dd><p>Flux error array in micro Jy. Default is none.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>list of astropy.Quantity</dt><dd><p>AB magnitude array. If flux was zero or positive -1 is returned.</p>
+</dd>
+<dt>list of astropy.Quantity, optional</dt><dd><p>AB magnitude error array. If flux was zero or positive -1 is returned.
+If no flux errors are passed nothing is returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.mag2flux">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">mag2flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#mag2flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.mag2flux" title="Link to this definition">¶</a></dt>
+<dd><p>Converts AB magnitudes to flux in Jansky</p>
+<dl class="simple">
+<dt>mag<span class="classifier">list of float</span></dt><dd><p>Array of AB magnitudes</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>astropy.Quantity</dt><dd><p>Flux in micro Jy</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.flux2mag_np">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">flux2mag_np</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#flux2mag_np"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.flux2mag_np" title="Link to this definition">¶</a></dt>
+<dd><p>Flux to magnitude for numpy arrays only for secondary_axis in matplotlib</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.mag2flux_np">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">mag2flux_np</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#mag2flux_np"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.mag2flux_np" title="Link to this definition">¶</a></dt>
+<dd><p>Magnitude to flux for numpy arrays only for secondary_axis in matplotlib</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.mjd2yr">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">mjd2yr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#mjd2yr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.mjd2yr" title="Link to this definition">¶</a></dt>
+<dd><p>Convert MJD to Time object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.yr2mjd">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">yr2mjd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jyr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#yr2mjd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.yr2mjd" title="Link to this definition">¶</a></dt>
+<dd><p>Convert time in jyear format to MJD</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_field_id">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_field_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_field_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observatory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_field_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_field_id" title="Link to this definition">¶</a></dt>
+<dd><p>Return VASCA field id, which also includes observatory and filter identifier.
+The first 3 characters characterize the observatory and filter. Afterwards the
+observatory field ID is attached.</p>
+<dl class="simple">
+<dt>obs_field_id<span class="classifier">int</span></dt><dd><p>Field ID for the given observatory.</p>
+</dd>
+<dt>observatory<span class="classifier">str</span></dt><dd><p>Observatory name.</p>
+</dd>
+<dt>obs_filter<span class="classifier">TYPE</span></dt><dd><p>Observation filter.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>str</dt><dd><p>Region field identifier.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.extr_value">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">extr_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputlist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#extr_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.extr_value" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the extremum value in a list of numeric lists.</p>
+<dl class="simple">
+<dt>inputlist<span class="classifier">list</span></dt><dd><p>A list of numeric lists.</p>
+</dd>
+<dt>upper<span class="classifier">bool, optional</span></dt><dd><p>Specifies whether to compute the maximum value. Defaults to False, which
+computes the minimum value.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>float or None</dt><dd><p>The computed extremum value if the input list is not empty and contains valid
+numeric values. Returns None if the input list is empty or contains only NaN
+values.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]])</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="n">upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">9</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]])</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="n">upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">9</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([])</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([[],</span> <span class="p">[]])</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]])</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]])</span>
+<span class="go">-6</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extr_value</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]],</span> <span class="n">upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">7</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_hist_bins">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_hist_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_hist_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_hist_bins" title="Link to this definition">¶</a></dt>
+<dd><p>Generates an array of bin edges for creating a histogram with specified bin size.</p>
+<dl class="simple">
+<dt>data<span class="classifier">array-like, list</span></dt><dd><p>The input data for which to generate the histogram bin edges. It can be either a
+1D numpy array or a list of lists. If it’s a list of lists, each sub-list can
+have a different number of elements, and the bin edges will be determined based
+on the minimum and maximum values across all sub-lists (only one level of nesting
+is allowed)</p>
+</dd>
+<dt>bin_size<span class="classifier">float</span></dt><dd><p>The desired width of each histogram bin.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>An array of bin edges that can be used for creating a histogram of the input data</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the input data structure is not supported.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bin_size</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_hist_bins</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bin_size</span><span class="p">)</span>
+<span class="go">array([ 1.,  3.,  5.,  7.,  9., 11.])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bin_size</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_hist_bins</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bin_size</span><span class="p">)</span>
+<span class="go">array([ 1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10.])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bin_size</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_hist_bins</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bin_size</span><span class="p">)</span>
+<span class="go">array([1. , 1.5, 2. , 2.5, 3. , 3.5, 4. , 4.5, 5. , 5.5, 6. , 6.5, 7. , 7.5,</span>
+<span class="go">      8. , 8.5, 9. , 9.5])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.sky_sep2d">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">sky_sep2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seperation_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#sky_sep2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.sky_sep2d" title="Link to this definition">¶</a></dt>
+<dd><p>computes 2D distances between all possible pairs of coordinates
+that are closer together than the separation limit
+(default: 180 -&gt; all-sky)</p>
+<p>if the all-sky case is set, the number of unique distance values
+is determined as follows:
+for the number of coordinates n = len(coords) a number of
+pairwise distances values N = 1/2 * (n-1)*n is returned</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_time_delta">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_time_delta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_visit_dates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_time_delta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_time_delta" title="Link to this definition">¶</a></dt>
+<dd><p>Get time difference in seconds between visits</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_time_delta_mean">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_time_delta_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_visit_dates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deviation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_time_delta_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_time_delta_mean" title="Link to this definition">¶</a></dt>
+<dd><p>Get mean time difference in seconds between visits</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.table_to_array">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">table_to_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#table_to_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.table_to_array" title="Link to this definition">¶</a></dt>
+<dd><p>Converts an astropy Table object into a regular numpy ndarray.
+Caveat: All table columns must have the same type.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_cutout">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_cutout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_cutout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_cutout" title="Link to this definition">¶</a></dt>
+<dd><p>Wrapper function to create a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.nddata.Cutout2D.html#astropy.nddata.Cutout2D" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cutout2D</span></code></a> from a
+<a class="reference internal" href="vasca.field.html#vasca.field.BaseField" title="vasca.field.BaseField"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></a> input.</p>
+<dl>
+<dt>field<span class="classifier"><a class="reference internal" href="vasca.field.html#vasca.field.BaseField" title="vasca.field.BaseField"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></a></span></dt><dd><p>Field data object from which the reference image data and
+corresponding WCS are used to create the cutout.</p>
+</dd>
+<dt>position<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SkyCoord</span></code></a></span></dt><dd><p>The position of the cutout array’s center with respect to the data array.
+The position can be specified either as a (x, y) tuple of pixel coordinates
+or a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SkyCoord</span></code></a>,
+in which case wcs is a required input.</p>
+</dd>
+<dt>size<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.units.Quantity</span></code></a></span></dt><dd><p>The size of the cutout array along each axis. For more inforamtion
+see documentaiont of <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.nddata.Cutout2D.html#astropy.nddata.Cutout2D" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cutout2D</span></code></a>.</p>
+</dd>
+</dl>
+<p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.nddata.Cutout2D.html#astropy.nddata.Cutout2D" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cutout2D</span></code></a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_cutout_bounds">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_cutout_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'icrs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_cutout_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_cutout_bounds" title="Link to this definition">¶</a></dt>
+<dd><p>Returns <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SkyCoord</span></code></a> object
+defining a rectangular cutout with upperight and lower left pixels
+in coordinate system of <code class="docutils literal notranslate"><span class="pre">out_frame</span></code>.</p>
+<dl>
+<dt>cutout<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.nddata.Cutout2D.html#astropy.nddata.Cutout2D" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cutout2D</span></code></a></span></dt><dd><p>Cutout object from which to derive the bounds.</p>
+</dd>
+<dt>out_frame<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCoordinateFrame</span></code></a>     class or instance, or <cite>:py:class:`~astropy.coordinates.SkyCoord</cite> instance, optional</span></dt><dd><p>Coordinate frame of returned <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SkyCoord</span></code></a> object.</p>
+</dd>
+</dl>
+<p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SkyCoord</span></code></a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_cutout_mask">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_cutout_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_mcat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutout_bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'icrs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_cutout_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_cutout_mask" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a bool array to mask a coordinate dataset for given cutout bounds.</p>
+<dl>
+<dt>tt_mcat<span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>Table to be masked</p>
+</dd>
+</dl>
+<p>cutout_bounds : <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SkyCoord</span></code></a></p>
+<p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.add_rg_src_id">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">add_rg_src_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tt_add</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#add_rg_src_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.add_rg_src_id" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function, adds “rg_src_id” based on “rg_fd_id” and “fd_src_id”
+from the passed reference table.</p>
+<dl class="simple">
+<dt>tt_ref<span class="classifier">astropy.table.Table</span></dt><dd><p>Reference table has to contain “rg_src_id”, “rg_fd_id” and “fd_src_id”</p>
+</dd>
+<dt>tt_add<span class="classifier">astropy.table.Table</span></dt><dd><p>Table to add “rg_src_id”, has to contain “rg_src_id”, “rg_fd_id” and “fd_src_id”</p>
+</dd>
+</dl>
+<p>None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.nb_fig">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">nb_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gr_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#nb_fig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.nb_fig" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function for plotting in Jupyter notebooks.
+Wraps <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pylplot.subplots</span></code>.</p>
+<dl>
+<dt>num<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, optional</span></dt><dd><p>Figure number, i.e. name handle</p>
+</dd>
+<dt>gr_size<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>, optional</span></dt><dd><p>Golden ratio size. Figure width in inches. The hight
+is calculated according to the golden ratio.</p>
+</dd>
+<dt>kwargs</dt><dd><p>Parameters passed to <code class="xref py py-class docutils literal notranslate"><span class="pre">subplots</span></code></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></dt><dd><p>Tuple containg the figure and plot axis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.binned_stat">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">binned_stat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_bin_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_bin_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_bin_centers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">bining_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#binned_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.binned_stat" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a binned statistic for one or more sets of data.</p>
+<p>This wraps <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.stats.binned_statistic</span></code> in combination
+with <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.histogram_bin_edges</span></code>
+to support automatic &amp; optimized calculation of the bin edges.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.tgalex_to_astrotime">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">tgalex_to_astrotime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">galex_timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#tgalex_to_astrotime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.tgalex_to_astrotime" title="Link to this definition">¶</a></dt>
+<dd><p>Converts a GALEX time stamp to astropy.time.Time object
+with unix format and UTC scale.
+GALEX time is equal to UNIX time - 315964800.</p>
+<dl class="simple">
+<dt>galex_timestamp<span class="classifier">float or vector of floats</span></dt><dd><p>The GALEX time epoch.</p>
+</dd>
+<dt>output_format<span class="classifier">{None, “iso”, “tt”}, optional</span></dt><dd><p>Specifies the time format/scale of the return value
+The default is None where the GALEX time stamp is converted and returned
+astropy.time.Time object with format=unix and scale=utc.
+Keywords “iso” and “tt” change return value to str using the astropy methods
+astropy.time.Time.iso and astropy.time.Time.tt respectively.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, default False</span></dt><dd><p>Enable verbose printing to show format and scale if the converted time</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>astropy.time.Time or str</dt><dd><p>An astropy.time.Time object or str depending on <cite>output_format</cite>.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>Only floats or ints are supported for conversion</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.galex_obs_info">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">galex_obs_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#galex_obs_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.galex_obs_info" title="Link to this definition">¶</a></dt>
+<dd><p>Collects information form a light curve dataset
+(e.g. fetched using gPhoton.gAperture) and returns a pandas.DataFrame.
+The data frame contains columns for exposure time, observation gap time
+as well as observation start and stop date</p>
+<dl class="simple">
+<dt>lc<span class="classifier">dictionary, data frame or astropy.Table</span></dt><dd><p>GALEX light curve dataset.
+Requires existence of keys/columns named “t0” (start)
+and “t1” (stop) each containing numerical arrays with
+the start/stop time in GALEX time format.</p>
+</dd>
+<dt>verbose<span class="classifier">bool, default False</span></dt><dd><p>Enable verbose printing</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>pandas.DataFrame</dt><dd><p>A data frame containing the timing meta data of GALEX observations
+in human readable formats.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.timeit">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">timeit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#timeit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.timeit" title="Link to this definition">¶</a></dt>
+<dd><p>Decorator to track total processing time (work in progress).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.marker_set">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">marker_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#marker_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.marker_set" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of <cite>n</cite> Matplotlib markers for use in plots.
+The list is generated by selecting markers from a curated set of markers
+supporting separate edge and face colors.
+By default, a set of markers are excluded, which can be overridden by
+providing the <cite>exclude</cite> argument.</p>
+<dl class="simple">
+<dt>n<span class="classifier">int</span></dt><dd><p>The number of markers to return.</p>
+</dd>
+<dt>exclude<span class="classifier">str, None, optional</span></dt><dd><p>A list of markers to exclude from the selection.</p>
+</dd>
+<dt>exclude_default<span class="classifier">bool, optional</span></dt><dd><p>Whether to exclude markers by default: <code class="docutils literal notranslate"><span class="pre">[&quot;,&quot;,</span> <span class="pre">&quot;8&quot;,</span> <span class="pre">&quot;H&quot;]</span></code>.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>list</dt><dd><p>A list of n markers</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.color_palette">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">color_palette</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_in_notebook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#color_palette"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.color_palette" title="Link to this definition">¶</a></dt>
+<dd><p>Return a palette of <cite>n</cite> colors from the matplotlib registry and additional
+qualitative palettes adopted from seaborn.</p>
+<p>For continuous palettes, evenly-spaced discrete samples are chosen while
+excluding the minimum and maximum value in the colormap to provide better
+contrast at the extremes.</p>
+<p>For qualitative palettes (e.g. those from colorbrewer), exact values are
+indexed (rather than interpolated).</p>
+<dl class="simple">
+<dt>name<span class="classifier">string</span></dt><dd><p>Name of the palette. This should be a named matplotlib colormap.</p>
+</dd>
+<dt>n<span class="classifier">int</span></dt><dd><p>Number of discrete colors in the palette.</p>
+</dd>
+<dt>show_in_notebook<span class="classifier">bool</span></dt><dd><p>Wether to show the returned colors in a juypter notebook</p>
+</dd>
+</dl>
+<p>list of RGBA tuples</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.name2id">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">name2id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#name2id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.name2id" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a 32-bit or 64-bit integer from a string input.</p>
+<dl class="simple">
+<dt>name<span class="classifier">str,</span></dt><dd><p>String input from which to generate the number</p>
+</dd>
+<dt>bits<span class="classifier">int, optional</span></dt><dd><p>Bit-size of the output integer</p>
+</dd>
+</dl>
+<p>int</p>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If bits is neither 32 or 64</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_config">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_config" title="Link to this definition">¶</a></dt>
+<dd><p>Setup pipeline configuration file from yaml</p>
+<dl class="simple">
+<dt>cfg_file<span class="classifier">str</span></dt><dd><p>yaml configuration file name</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>vasca_cfg<span class="classifier">dict</span></dt><dd><p>VASCA pipeline configuration dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.utils.get_lc_from_gphoton_npfile">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">get_lc_from_gphoton_npfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/utils.html#get_lc_from_gphoton_npfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.utils.get_lc_from_gphoton_npfile" title="Link to this definition">¶</a></dt>
+<dd><p>Get light curve from gphoton numpy  files</p>
+<dl class="simple">
+<dt>file_name str</dt><dd><p>File name</p>
+</dd>
+<dt>obs_filter str</dt><dd><p>Obervation filter NUV or FUV</p>
+</dd>
+</dl>
+<blockquote>
+<div><p>astropy.Table
+Light curve table</p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="vasca.field.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.field</span></code></div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="vasca.visualization.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.visualization</span></code></div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; BSD 3-Clause License
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.utils</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#data">Data</a></li>
+<li><a class="reference internal" href="#api">API</a><ul>
+<li><a class="reference internal" href="#vasca.utils.dd_filter2id"><code class="docutils literal notranslate"><span class="pre">dd_filter2id</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.dd_id2filter"><code class="docutils literal notranslate"><span class="pre">dd_id2filter</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.dd_filter2wavelength"><code class="docutils literal notranslate"><span class="pre">dd_filter2wavelength</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.dd_obs_id_add"><code class="docutils literal notranslate"><span class="pre">dd_obs_id_add</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.dd_ogrp2otypes"><code class="docutils literal notranslate"><span class="pre">dd_ogrp2otypes</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.dd_otype2ogroup"><code class="docutils literal notranslate"><span class="pre">dd_otype2ogroup</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.otype2ogroup"><code class="docutils literal notranslate"><span class="pre">otype2ogroup()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.dd_ogrp2col"><code class="docutils literal notranslate"><span class="pre">dd_ogrp2col</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_col_cycler"><code class="docutils literal notranslate"><span class="pre">get_col_cycler()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.add_ogrp"><code class="docutils literal notranslate"><span class="pre">add_ogrp()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.dd_spec_lines"><code class="docutils literal notranslate"><span class="pre">dd_spec_lines</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_var_stat"><code class="docutils literal notranslate"><span class="pre">get_var_stat()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.freq2period"><code class="docutils literal notranslate"><span class="pre">freq2period()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.period2freq"><code class="docutils literal notranslate"><span class="pre">period2freq()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.run_LombScargle"><code class="docutils literal notranslate"><span class="pre">run_LombScargle()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.query_vizier_sed"><code class="docutils literal notranslate"><span class="pre">query_vizier_sed()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.sel_sources"><code class="docutils literal notranslate"><span class="pre">sel_sources()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.sel_sources_nuv_only"><code class="docutils literal notranslate"><span class="pre">sel_sources_nuv_only()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.select_obs_filter"><code class="docutils literal notranslate"><span class="pre">select_obs_filter()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_flat_table"><code class="docutils literal notranslate"><span class="pre">get_flat_table()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.flux2mag"><code class="docutils literal notranslate"><span class="pre">flux2mag()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.mag2flux"><code class="docutils literal notranslate"><span class="pre">mag2flux()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.flux2mag_np"><code class="docutils literal notranslate"><span class="pre">flux2mag_np()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.mag2flux_np"><code class="docutils literal notranslate"><span class="pre">mag2flux_np()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.mjd2yr"><code class="docutils literal notranslate"><span class="pre">mjd2yr()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.yr2mjd"><code class="docutils literal notranslate"><span class="pre">yr2mjd()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_field_id"><code class="docutils literal notranslate"><span class="pre">get_field_id()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.extr_value"><code class="docutils literal notranslate"><span class="pre">extr_value()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_hist_bins"><code class="docutils literal notranslate"><span class="pre">get_hist_bins()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.sky_sep2d"><code class="docutils literal notranslate"><span class="pre">sky_sep2d()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_time_delta"><code class="docutils literal notranslate"><span class="pre">get_time_delta()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_time_delta_mean"><code class="docutils literal notranslate"><span class="pre">get_time_delta_mean()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.table_to_array"><code class="docutils literal notranslate"><span class="pre">table_to_array()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_cutout"><code class="docutils literal notranslate"><span class="pre">get_cutout()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_cutout_bounds"><code class="docutils literal notranslate"><span class="pre">get_cutout_bounds()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_cutout_mask"><code class="docutils literal notranslate"><span class="pre">get_cutout_mask()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.add_rg_src_id"><code class="docutils literal notranslate"><span class="pre">add_rg_src_id()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.nb_fig"><code class="docutils literal notranslate"><span class="pre">nb_fig()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.binned_stat"><code class="docutils literal notranslate"><span class="pre">binned_stat()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.tgalex_to_astrotime"><code class="docutils literal notranslate"><span class="pre">tgalex_to_astrotime()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.galex_obs_info"><code class="docutils literal notranslate"><span class="pre">galex_obs_info()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.timeit"><code class="docutils literal notranslate"><span class="pre">timeit()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.marker_set"><code class="docutils literal notranslate"><span class="pre">marker_set()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.color_palette"><code class="docutils literal notranslate"><span class="pre">color_palette()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.name2id"><code class="docutils literal notranslate"><span class="pre">name2id()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_config"><code class="docutils literal notranslate"><span class="pre">get_config()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.get_lc_from_gphoton_npfile"><code class="docutils literal notranslate"><span class="pre">get_lc_from_gphoton_npfile()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=44636418"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
+    </body>
+</html>

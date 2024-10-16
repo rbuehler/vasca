@@ -1,0 +1,25 @@
+:py:mod:`vasca`
+===============
+
+.. py:module:: vasca
+
+.. autodoc2-docstring:: vasca
+   :allowtitles:
+
+Submodules
+----------
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   vasca.region
+   vasca.visualization
+   vasca.utils
+   vasca.field
+   vasca.tables_dict
+   vasca._version
+   vasca.resource_manager
+   vasca.source
+   vasca.vasca_pipe
+   vasca.tables

@@ -18,5 +18,20 @@ myst:
 :caption: Contents:
    
 getting_started
+user_guide/index
 ```
 <!-- end Docs Overview -->
+
+# Modules
+<!-- ```{eval-rst}
+.. autosummary::
+
+  vasca.resource_manager.ResourceManager
+  vasca.field.GALEXField
+``` -->
+```{autodoc2-summary}
+:renderer: myst
+
+~vasca.resource_manager.ResourceManager
+~vasca.field.GALEXField
+```
