@@ -16,38 +16,6 @@ from importlib.metadata import version as get_version
 
 sys.path.insert(0, os.path.abspath(".."))
 
-# -- Run Autodoc -------------------------------------------------------
-#
-# def run_apidoc(_) -> None:
-#     ignore_paths = []
-#
-#     argv = [
-#         "-f",
-#         "-e",
-#         "-M",
-#         "-T",
-#         # "--templatedir",
-#         # "_templates",
-#         "-o",
-#         "api/",
-#         "../vasca",
-#     ] + ignore_paths
-#
-#     try:
-#         import vasca
-#     except ImportError:
-#         raise ImportError(
-#             "Package must first be installed before creating documentation"
-#         )
-#
-#     from sphinx.ext import apidoc
-#
-#     apidoc.main(argv)
-#
-#
-# def setup(app) -> None:
-#     app.connect("builder-inited", run_apidoc)
-
 
 # -- Project information -----------------------------------------------------
 #
@@ -58,9 +26,14 @@ author = "Rolf Buehler and Julian Schliwinski"
 
 # The full version, including alpha/beta/rc/dev tags
 release = get_version("vasca")
-version = ".".join(release.split(".")[:3])
-if release.split(".")[3].startswith("dev"):
-    version += "dev"
+print(release)
+print(type(release))
+try:
+    version = ".".join(release.split(".")[:3])
+    if release.split(".")[3].startswith("dev"):
+        version += "dev"
+except:
+    version = "1.0.13"
 
 
 # -- General configuration ---------------------------------------------------
@@ -78,21 +51,9 @@ extensions = [
     "autodoc2",
     "sphinx_copybutton",
 ]
-# autodoc_default_options = {
-#     "members": True,
-#     "member-order": "bysource",
-#     "special-members": "__init__",
-# }
 
 # -- Options for Autodoc --------------------------------------------------------------
 
-autosummary_generate = True
-
-# autodoc_member_order = "bysource"
-# autodoc_preserve_defaults = True
-# autodoc_typehints = "description"
-
-# numpydoc_show_class_members = False
 autodoc2_packages = [
     {
         "path": "../vasca",
@@ -113,8 +74,6 @@ intersphinx_mapping = {
 
 # -- Options for HTML output -------------------------------------------------
 
-# html_theme = "sphinx_rtd_theme"
-# html_theme = "pydata_sphinx_theme"
 html_theme = "furo"
 html_title = f"VASCA v{version}"
 
@@ -127,6 +86,7 @@ html_theme_options = {
 
 # -- Options for Markdown files ----------------------------------------------
 #
+
 myst_heading_anchors = 3
 
 # -- Options for coppybutton ----------------------------------------------

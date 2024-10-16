@@ -29,14 +29,18 @@ dependencies = [
   "PyYAML ~= 6.0",
   "scikit-learn ~= 1.3.0",
   "setuptools ~= 67.8.0",
+  "setuptools_scm",
   "regions ~= 0.7",
   "pyyaml-include ~= 1.3",
   "ipywidgets ~= 8.0.6",
   "ipympl ~= 0.9.3",
   "jupyterlab ~= 4.0.2",
   "sphinx ~= 7.2.6",
-  "sphinx-rtd-theme ~= 2.0.0",
   "myst-parser ~= 4.0",
+  "furo",
+  "sphinx_autodoc2",
+  "sphinx_copybutton",
+  
 ]
 
 [project.urls]
