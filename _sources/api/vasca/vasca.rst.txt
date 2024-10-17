@@ -18,7 +18,6 @@ Submodules
    vasca.utils
    vasca.field
    vasca.tables_dict
-   vasca._version
    vasca.resource_manager
    vasca.source
    vasca.vasca_pipe

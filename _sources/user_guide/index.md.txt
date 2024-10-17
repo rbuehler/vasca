@@ -9,7 +9,7 @@ listed below.
 
 ## Reference/API
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 3
 :caption: API:
 
 ../api/index
