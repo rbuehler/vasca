@@ -14,7 +14,6 @@ Submodules
    :maxdepth: 1
 
    vasca.field
-   vasca._version
    vasca.region
    vasca.resource_manager
    vasca.visualization
