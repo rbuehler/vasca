@@ -190,6 +190,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/VASCA_icon.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">VASCA v1.0.14dev</span>
   
@@ -220,6 +223,17 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pypa/pip">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/vasca">PyPi</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">See Also</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
 </ul>
 
 </div>
@@ -275,14 +289,44 @@
 <p>More detailed information on using the package is provided on separate pages,
 listed below.</p>
 </section>
+<section id="supported-instruments">
+<h2>Supported Instruments<a class="headerlink" href="#supported-instruments" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Instrument</p></th>
+<th class="head"><p>Filters</p></th>
+<th class="head"><p>Data Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GALEX</p></td>
+<td><p>NUV, FUV</p></td>
+<td><p><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a> observations in the far and near ultra violet. Photometric data, processed by the mission pipeline, is accessed from MAST via the astroquery package. A manifest of all visits and all fields con be found here.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GALEXDS</p></td>
+<td><p>NUV</p></td>
+<td><p>GALEX drift scan, was a special observation mode that was used at the end of the mission life time. Observations were funded by third parties and most data is not publicly accessible. One exception is data of the GCK survey. However, data must be downloaded locally to work with VASCA.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="reference-api">
 <h2>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">API:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/vasca/vasca.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.region.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.region</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.visualization.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.visualization</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.utils</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.field.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.field</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.tables_dict.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.tables_dict</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.resource_manager.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.resource_manager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.source.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.source</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.vasca_pipe.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.vasca_pipe</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/vasca/vasca.tables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.tables</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -357,6 +401,7 @@ listed below.</p>
 <li><a class="reference internal" href="#">User Guide</a><ul>
 <li><a class="reference internal" href="#intro">Intro</a></li>
 <li><a class="reference internal" href="#using-vasca">Using <code class="docutils literal notranslate"><span class="pre">VASCA</span></code></a></li>
+<li><a class="reference internal" href="#supported-instruments">Supported Instruments</a></li>
 <li><a class="reference internal" href="#reference-api">Reference/API</a></li>
 </ul>
 </li>
@@ -369,11 +414,15 @@ listed below.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=fd631bda"></script>
+</div><script src="../_static/documentation_options.js?v=9fd30140"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
+    <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
+    <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
+    <script defer="defer" src="../_static/tippy/user_guide/index.d4400f5b-8420-48df-a928-e617319d3b8a.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

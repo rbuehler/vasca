@@ -180,7 +180,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -191,6 +191,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/VASCA_icon.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">VASCA v1.0.14dev</span>
   
@@ -221,6 +224,17 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pypa/pip">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/vasca">PyPi</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">See Also</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
 </ul>
 
 </div>
@@ -259,13 +273,21 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <!-- start Intro -->
+          <!-- start Sidebar -->
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<!-- end Sidebar -->
+<!-- start Intro -->
 <p><img alt="VASCA icon" src="_images/VASCA_icon.png" />
 <a class="reference external" href="https://github.com/rbuehler/vasca/actions/workflows/ci.yml"><img alt="🧪 pytest" src="https://github.com/rbuehler/vasca/actions/workflows/ci.yml/badge.svg" /></a>
 <a class="reference external" href="https://rbuehler.github.io/vasca/"><img alt="📚 docs" src="https://github.com/rbuehler/vasca/actions/workflows/docs.yml/badge.svg" /></a>
@@ -337,53 +359,17 @@ For quick installation, VASCA can be installed via <a class="reference external"
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>vasca
 </pre></div>
 </div>
-<p>For more info see the <a class="reference internal" href="installation_guide.html#installation"><span class="std std-ref">installation guide</span></a>.</p>
+<p>For more info see the <a class="reference internal" href="getting_started.html#installation"><span class="std std-ref">installation guide</span></a>.</p>
 <!-- end Intro -->
-<!-- start Docs Overview -->
-</section>
-</section>
-<section id="documentation">
-<h1>Documentation!<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html#running-the-pipeline-and-post-processing">Running the pipeline and post-processing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html#coding-guidelines">Coding guidelines</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html#build-the-documentation">Build the documentation</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="user_guide/index.html">User Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="user_guide/index.html#intro">Intro</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user_guide/index.html#using-vasca">Using <code class="docutils literal notranslate"><span class="pre">VASCA</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="user_guide/index.html#reference-api">Reference/API</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<!-- end Docs Overview -->
-</section>
-<section id="modules">
-<h1>Modules<a class="headerlink" href="#modules" title="Link to this heading">¶</a></h1>
-<!-- ```{eval-rst}
-.. autosummary::
+<!-- # Modules
 
-  vasca.resource_manager.ResourceManager
-  vasca.field.GALEXField
+```{autodoc2-summary}
+:renderer: myst
+
+~vasca.resource_manager.ResourceManager
+~vasca.field.GALEXField
 ``` -->
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-left">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/vasca/vasca.resource_manager.html#vasca.resource_manager.ResourceManager" title="vasca.resource_manager.ResourceManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ResourceManager</span></code></a></p></td>
-<td><p>Manages access to external resources.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/vasca/vasca.field.html#vasca.field.GALEXField" title="vasca.field.GALEXField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GALEXField</span></code></a></p></td>
-<td><p>Instance of one GALEX field</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+</section>
 </section>
 
         </article>
@@ -426,42 +412,21 @@ For quick installation, VASCA can be installed via <a class="reference external"
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Variable Source Cluster Analysis (VASCA)</a><ul>
-<li><a class="reference internal" href="#motivation">Motivation</a></li>
-<li><a class="reference internal" href="#pipeline-overview">Pipeline Overview</a></li>
-<li><a class="reference internal" href="#key-features">Key Features</a></li>
-<li><a class="reference internal" href="#proof-of-principle-study">Proof-of-Principle Study</a></li>
-<li><a class="reference internal" href="#documentation-and-installation">Documentation and Installation</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#documentation">Documentation!</a></li>
-<li><a class="reference internal" href="#modules">Modules</a></li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=fd631bda"></script>
+</div><script src="_static/documentation_options.js?v=9fd30140"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=6dbb43f8"></script>
+    <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
+    <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
+    <script defer="defer" src="_static/tippy/index.fab58c2e-5730-4a7c-96c7-bebf3af8e270.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

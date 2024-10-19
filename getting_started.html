@@ -190,6 +190,9 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/VASCA_icon.png" alt="Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">VASCA v1.0.14dev</span>
   
@@ -220,6 +223,17 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pypa/pip">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/vasca">PyPi</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">See Also</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
 </ul>
 
 </div>
@@ -268,29 +282,42 @@
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>Typically, you want to create a new Python 3.10 environment, e.g., with conda or mamba:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mamba<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>vasca<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10
+<p>VASCA is tested to work with Python 3.10 and 3.11. Typically, you want to create a new
+Python environment, e.g., with conda or mamba:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mamba<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>vasca<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11
 mamba<span class="w"> </span>activate<span class="w"> </span>vasca
 </pre></div>
 </div>
-<p>The installation steps are:</p>
-<ol class="arabic simple">
-<li><p>Clone this repository:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:rbuehler/vasca.git
+<p>For standard usage, install VASCA from <a class="reference external" href="https://pypi.org/project/vasca/">PyPi</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>vasca
 </pre></div>
 </div>
-<ol class="arabic simple" start="2">
-<li><p>Install the <code class="docutils literal notranslate"><span class="pre">VASCA</span></code> package:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>./vasca
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<p>Standard usage covers all pipeline functions for data from instruments that are already
+implemented in VASCA. For more information consult the <a class="reference internal" href="user_guide/index.html#supported-instruments"><span class="std std-ref">list</span></a>
+of supported instruments.</p>
+<p>In order to extend VASCA to incorporate another instrument’s data, install it directly
+from the Github repository.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>git+https://github.com/rbuehler/vasca
 </pre></div>
 </div>
-<ol class="arabic simple" start="3">
-<li><p>Set up the resource manager by including your cloud path location in the <code class="docutils literal notranslate"><span class="pre">.env_template</span></code> file and rename it to <code class="docutils literal notranslate"><span class="pre">.env</span></code>.</p></li>
-</ol>
-<!-- end installation -->
+<p>This will ensure that all resources for testing and the jupyter examples are included in
+the installation.</p>
+</section>
+<section id="resource-management">
+<h2>Resource management<a class="headerlink" href="#resource-management" title="Link to this heading">¶</a></h2>
+<p>Management of the input observational data is handled in VASCA via the
+<a class="reference internal" href="api/vasca/vasca.resource_manager.html#vasca.resource_manager.ResourceManager" title="vasca.resource_manager.ResourceManager"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">ResourceManager</span></code></a> class. Before first use, users need to edit environment variables
+that specify the data storage locations in an <code class="docutils literal notranslate"><span class="pre">.env</span></code> file in VASCA’s root directory.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The easiest way to set up the resource manager is to duplicate the <code class="docutils literal notranslate"><span class="pre">.env_template</span></code> and
+rename it. Then edit your paths to the location of cloud-synced or local directories.</p>
+</div>
+<p>The system is very flexible and can be tailored to your needs. New environment variables
+specifying storage locations can be added in the <a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/resource_metadata/resource_envs.yml"><code class="docutils literal notranslate"><span class="pre">resource_envs.yml</span></code></a>
+file. New data items that might be required to support additional instruments can be
+added in the <a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/resource_metadata/resource_catalog.yml"><code class="docutils literal notranslate"><span class="pre">resource_catalog.yml</span></code></a>
+file.</p>
 </section>
 <section id="running-the-pipeline-and-post-processing">
 <h2>Running the pipeline and post-processing<a class="headerlink" href="#running-the-pipeline-and-post-processing" title="Link to this heading">¶</a></h2>
@@ -379,6 +406,7 @@ make<span class="w"> </span>html
             <ul>
 <li><a class="reference internal" href="#">Getting started</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#resource-management">Resource management</a></li>
 <li><a class="reference internal" href="#running-the-pipeline-and-post-processing">Running the pipeline and post-processing</a></li>
 <li><a class="reference internal" href="#coding-guidelines">Coding guidelines</a></li>
 <li><a class="reference internal" href="#build-the-documentation">Build the documentation</a></li>
@@ -393,11 +421,15 @@ make<span class="w"> </span>html
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=fd631bda"></script>
+</div><script src="_static/documentation_options.js?v=9fd30140"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=6dbb43f8"></script>
+    <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
+    <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
+    <script defer="defer" src="_static/tippy/getting_started.a4e1a36b-fa02-472a-83e4-77c3419090b7.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
