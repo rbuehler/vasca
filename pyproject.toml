@@ -40,6 +40,7 @@ dependencies = [
   "furo",
   "sphinx_autodoc2",
   "sphinx_copybutton",
+  "sphinx-tippy",
   
 ]
 

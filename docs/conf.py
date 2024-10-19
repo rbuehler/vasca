@@ -40,6 +40,7 @@ extensions = [
     "myst_parser",
     "autodoc2",
     "sphinx_copybutton",
+    "sphinx_tippy",
 ]
 
 # -- Options for Autodoc --------------------------------------------------------------
@@ -67,6 +68,7 @@ intersphinx_mapping = {
 #
 html_theme = "furo"
 html_title = f"VASCA v{version}"
+html_logo = "images/VASCA_icon.png"
 
 html_theme_options = {
     "source_repository": "https://github.com/rbuehler/vasca/",
@@ -86,11 +88,16 @@ html_theme_options = {
     ],
 }
 
+tippy_enable_mathjax = True
+tippy_anchor_parent_selector = "div.content"
+
 # -- Options for Markdown files ----------------------------------------------
 #
 
 myst_heading_anchors = 3
-
+myst_enable_extensions = [
+    "colon_fence",
+]
 # -- Options for coppybutton ----------------------------------------------
 #
 

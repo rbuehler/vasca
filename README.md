@@ -67,4 +67,4 @@ For quick installation, VASCA can be installed via [PyPI](https://pypi.org/proje
 ```shell
 pip install vasca
 ```
-For more info see the [installation guide](docs/installation_guide.md#installation).
+For more info see the [installation guide](docs/getting_started.md#installation).
