@@ -31,7 +31,7 @@ Defines dictionary for the tables used by vasca.tables.TableCollection
 
 # %% Column definitions
 
-dd_vasca_columns = {
+dd_vasca_columns: dict[str, dict[str, str | float]] = {
     # %%% field_id
     "field_id": {
         "name": "field_id",
@@ -838,10 +838,29 @@ dd_vasca_columns = {
         "description": "Internal source ID from associated source in the GFCAT catalog",
     },
 }
+"""
+Definitions of all columns that are regisitered to be used in VASCA.
+
+Each coulmn definition consists of five required parameters:
+
+`name`
+    Name of the column
+`dtype`
+    FITS compatible data type
+`unit`
+    FITS compatible data unit
+`default`
+    Default value wich will be used to populate the tabel column
+`description`
+    Short description of the column which is shown by
+    :py:attr:`~astropy.table.Table.info` method of :py:class:`astropy.table.Table`.
+
+Users may add column items here if required for instrument-specific field classes.
+"""
 
 # %% Table definitions
 # %%% base_field
-base_field = {
+base_field: dict[str, dict] = {
     "tt_fields": {
         "names": [
             "field_id",
@@ -948,6 +967,9 @@ base_field = {
         "meta": {"INFO": "Light curve flux table for one source"},
     },
 }
+"""
+Definitions of tables and columns for the :class:`~vasca.field.BaseField` class.
+"""
 # %%% galex_field
 galex_field = {
     "tt_visits": {
@@ -982,6 +1004,9 @@ galex_field = {
         "meta": {"INFO": "Reference detections table", "PRECUTS": "List of pre-cuts"},
     },
 }
+"""
+Extension of the `base_field` definitions for the :class:`~vasca.field.GALEXField` class
+"""
 # %%% region
 region = {
     "tt_fields": {
@@ -1088,7 +1113,9 @@ region = {
         "meta": {"INFO": "LombScargle results information"},
     },
 }
-
+"""
+Definitions of tables and columns for the :class:`~vasca.region.Region` class.
+"""
 
 # global, combined dictionary
 class_keys = ["base_field", "galex_field", "region"]

@@ -59,7 +59,7 @@ autodoc2_output_dir = "api"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "loguru": ("https://loguru.readthedocs.io/en/stable", None),
-    "astropy": ("http://docs.astropy.org/en/stable", None),
+    "astropy": ("https://docs.astropy.org/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
     "matplotlib": ("https://matplotlib.org/stable/", None),
 }
@@ -97,6 +97,7 @@ tippy_anchor_parent_selector = "div.content"
 myst_heading_anchors = 3
 myst_enable_extensions = [
     "colon_fence",
+    "deflist",
 ]
 # -- Options for coppybutton ----------------------------------------------
 #
