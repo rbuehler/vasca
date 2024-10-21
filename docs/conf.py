@@ -21,7 +21,7 @@ try:
     version = ".".join(release.split(".")[:3])
     if release.split(".")[3].startswith("dev"):
         version += "dev"
-except Exception() as e:
+except Exception as e:
     print(f"Failed to parse package version from `{release}`. Exception:\n {e}")  # noqa:T201
     version = "0.0.1"
 
