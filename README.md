@@ -15,9 +15,9 @@
 6. [Getting Started](docs/getting_started.md#getting-started)
 
 ## Motivation
-VASCA is a high-performance software package developed to address the challenges of
-time-domain astronomy, especially given the increasing volume of data from large-scale
-surveys such as [ZTF](https://en.wikipedia.org/wiki/Zwicky_Transient_Facility),
+VASCA (Italian for "bathtub" 🛁) is a high-performance software package developed to
+address the challenges of time-domain astronomy, especially given the increasing volume
+of data from large-scale surveys such as [ZTF](https://en.wikipedia.org/wiki/Zwicky_Transient_Facility),
 [LSST](https://en.wikipedia.org/wiki/Vera_C._Rubin_Observatory), and [ULTRASAT](https://www.weizmann.ac.il/ultrasat/).
 Designed to analyze time-variable cosmic sources like active galactic nuclei, stars, and
 transient events, VASCA provides a modular, scalable solution for integrating data from

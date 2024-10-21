@@ -18,7 +18,7 @@ user_guide/index
 :caption: Project
 :hidden:
 
-GitHub <https://github.com/pypa/pip>
+GitHub <https://github.com/rbuehler/vasca>
 PyPi <https://pypi.org/project/vasca>
 ```
 
