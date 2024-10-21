@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="User Guide" href="user_guide/index.html" /><link rel="prev" title="Variable Source Cluster Analysis (VASCA)" href="index.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>Getting started - VASCA v1.0.14dev</title>
+        <title>Getting started - VASCA v1.0.15dev</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">VASCA v1.0.14dev</div></a>
+      <a href="index.html"><div class="brand">VASCA v1.0.15dev</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v1.0.14dev</span>
+  <span class="sidebar-brand-text">VASCA v1.0.15dev</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -206,6 +206,11 @@
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting started</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="user_guide/index.html">User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of User Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/data_model.html">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/pipeline.html">Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/post_processing.html">Post-Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/instruments.html">Supported Instruments</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="api/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/vasca/vasca.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of vasca</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.region.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.region</span></code></a></li>
@@ -283,7 +288,8 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p>VASCA is tested to work with Python 3.10 and 3.11. Typically, you want to create a new
-Python environment, e.g., with conda or mamba:</p>
+Python environment, e.g., with <a class="reference external" href="https://github.com/pyenv/pyenv-virtualenv">pyenv-virtualenv</a>
+or <a class="reference external" href="https://github.com/mamba-org/mamba">mamba</a>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mamba<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>vasca<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11
 mamba<span class="w"> </span>activate<span class="w"> </span>vasca
 </pre></div>
@@ -293,7 +299,7 @@ mamba<span class="w"> </span>activate<span class="w"> </span>vasca
 </pre></div>
 </div>
 <p>Standard usage covers all pipeline functions for data from instruments that are already
-implemented in VASCA. For more information consult the <a class="reference internal" href="user_guide/index.html#supported-instruments"><span class="std std-ref">list</span></a>
+implemented in VASCA. For more information consult the <a class="reference internal" href="user_guide/instruments.html#supported-instruments"><span class="std std-ref">list</span></a>
 of supported instruments.</p>
 <p>In order to extend VASCA to incorporate another instrument’s data, install it directly
 from the Github repository.</p>
@@ -321,22 +327,36 @@ file.</p>
 </section>
 <section id="running-the-pipeline-and-post-processing">
 <h2>Running the pipeline and post-processing<a class="headerlink" href="#running-the-pipeline-and-post-processing" title="Link to this heading">¶</a></h2>
-<p>We use <a class="reference external" href="https://github.com/jupyterlab/jupyterlab">Jupyter Lab</a> for post-processing, with functional examples provided in <code class="docutils literal notranslate"><span class="pre">vasca/examples</span></code>.</p>
+<p>To start the pipeline processing go into the <code class="docutils literal notranslate"><span class="pre">vasca</span></code> directory and start the command line
+script:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>vasca-pipe<span class="w"> </span>&lt;path-to-config.yml&gt;
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="user_guide/configuration.html#configuration"><span class="std std-ref">user guide</span></a> for more infos on how to
+configure the pipeline in the yaml file.</p>
+<p>We use <a class="reference external" href="https://github.com/jupyterlab/jupyterlab">Jupyter Lab</a> for post-processing, with
+functional examples provided in <code class="docutils literal notranslate"><span class="pre">vasca/examples</span></code>.</p>
 </section>
 <section id="coding-guidelines">
 <h2>Coding guidelines<a class="headerlink" href="#coding-guidelines" title="Link to this heading">¶</a></h2>
-<p>We use the <a class="reference external" href="https://realpython.com/python-pep8/">PEP 8</a> coding conventions. Before contributing, please consider the use of automatic code formatting tools like <a class="reference external" href="https://github.com/pycqa/isort">isort</a>, <a class="reference external" href="https://github.com/PyCQA/flake8">flake8</a>, and <a class="reference external" href="https://black.readthedocs.io/en/stable/#">black</a>. We set <a class="reference external" href="https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html?highlight=88%20#line-length">88 characters</a> as the default line width. The recommended Python version to use is 3.10.x. For docstrings, we use the <a class="reference external" href="https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html">numpy format</a>.</p>
+<p>We use the <a class="reference external" href="https://realpython.com/python-pep8/">PEP 8</a> coding conventions. Before
+contributing, please consider the use of automatic code formatting tools. We recommend <a class="reference external" href="https://docs.astral.sh/ruff/"><code class="docutils literal notranslate"><span class="pre">ruff</span></code></a>.
+It is a one-stop-shop that combines all style rules from tools like <a class="reference external" href="https://github.com/pycqa/isort"><code class="docutils literal notranslate"><span class="pre">isort</span></code></a>,
+<a class="reference external" href="https://github.com/PyCQA/flake8"><code class="docutils literal notranslate"><span class="pre">flake8</span></code></a>, and <a class="reference external" href="https://black.readthedocs.io/en/stable/#"><code class="docutils literal notranslate"><span class="pre">black</span></code></a>.
+All ruff configurations can be found in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file. We set <a class="reference external" href="https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html?highlight=88%20#line-length">88 characters</a>
+as the default line width. The recommended Python version to use is 3.11. For docstrings,
+we use the <a class="reference external" href="https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html">numpy format</a>.</p>
 </section>
 <section id="build-the-documentation">
 <h2>Build the documentation<a class="headerlink" href="#build-the-documentation" title="Link to this heading">¶</a></h2>
-<p>For documentation, we use <a class="reference external" href="https://www.sphinx-doc.org/en/master/">SPHINX</a>. To build it, run the following:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sphinx-apidoc<span class="w"> </span>-f<span class="w"> </span>-o<span class="w"> </span>docs<span class="w"> </span>vasca
-<span class="nb">cd</span><span class="w"> </span>docs/
-make<span class="w"> </span>html
+<p>For documentation, we use <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>. To build it
+locally, run the following command from VASCA’s <code class="docutils literal notranslate"><span class="pre">root</span></code> directory:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>sphinx-build<span class="w"> </span>docs<span class="w"> </span>docs/_build
 </pre></div>
 </div>
-<p>To create Unified Modeling Language diagrams, install <a class="reference external" href="https://pylint.pycqa.org/en/latest/pyreverse.html">pyreverse</a> and <a class="reference external" href="https://graphviz.org/">graphviz</a>, then run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pyreverse<span class="w"> </span>vasca<span class="w"> </span>-o<span class="w"> </span>png<span class="w"> </span>-d<span class="w"> </span>./docs/
+<p>To create Unified Modeling Language diagrams, install <a class="reference external" href="https://pylint.pycqa.org/en/latest/pyreverse.html">pyreverse</a>
+and <a class="reference external" href="https://graphviz.org/">graphviz</a>, then run:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pyreverse<span class="w"> </span>vasca<span class="w"> </span>-o<span class="w"> </span>png<span class="w"> </span>-d<span class="w"> </span>./docs/
 </pre></div>
 </div>
 </section>
@@ -421,7 +441,7 @@ make<span class="w"> </span>html
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=9fd30140"></script>
+</div><script src="_static/documentation_options.js?v=c6b62da5"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
@@ -429,7 +449,7 @@ make<span class="w"> </span>html
     <script src="_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="_static/tippy/getting_started.a4e1a36b-fa02-472a-83e4-77c3419090b7.js"></script>
+    <script defer="defer" src="_static/tippy/getting_started.474787e1-d49a-42c5-b887-f2ac9efd24db.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

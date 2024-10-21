@@ -43,12 +43,14 @@ API
 
 .. py:data:: dd_vasca_columns
    :canonical: vasca.tables_dict.dd_vasca_columns
+   :type: dict[str, dict[str, str | float]]
    :value: None
 
    .. autodoc2-docstring:: vasca.tables_dict.dd_vasca_columns
 
 .. py:data:: base_field
    :canonical: vasca.tables_dict.base_field
+   :type: dict[str, dict]
    :value: None
 
    .. autodoc2-docstring:: vasca.tables_dict.base_field

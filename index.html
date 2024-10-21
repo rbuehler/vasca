@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Getting started" href="getting_started.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>VASCA v1.0.14dev</title>
+        <title>VASCA v1.0.15dev</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">VASCA v1.0.14dev</div></a>
+      <a href="#"><div class="brand">VASCA v1.0.15dev</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v1.0.14dev</span>
+  <span class="sidebar-brand-text">VASCA v1.0.15dev</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -207,6 +207,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="user_guide/index.html">User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of User Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/data_model.html">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/pipeline.html">Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/post_processing.html">Post-Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/instruments.html">Supported Instruments</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="api/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/vasca/vasca.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of vasca</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.region.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.region</span></code></a></li>
@@ -306,17 +311,18 @@
 <h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading">¶</a></h2>
 <p>VASCA is a high-performance software package developed to address the challenges of
 time-domain astronomy, especially given the increasing volume of data from large-scale
-surveys such as ZTF, LSST, and ULTRASAT. Designed to analyze time-variable cosmic sources
-like active galactic nuclei, stars, and transient events, VASCA provides a modular,
-scalable solution for integrating data from multiple instruments and conducting a
-cohesive analysis.</p>
+surveys such as <a class="reference external" href="https://en.wikipedia.org/wiki/Zwicky_Transient_Facility">ZTF</a>,
+<a class="reference external" href="https://en.wikipedia.org/wiki/Vera_C._Rubin_Observatory">LSST</a>, and <a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a>.
+Designed to analyze time-variable cosmic sources like active galactic nuclei, stars, and
+transient events, VASCA provides a modular, scalable solution for integrating data from
+multiple instruments and conducting a cohesive analysis.</p>
 </section>
 <section id="pipeline-overview">
 <h2>Pipeline Overview<a class="headerlink" href="#pipeline-overview" title="Link to this heading">¶</a></h2>
 <p>The VASCA analysis pipeline consists of three primary steps:</p>
 <ol class="arabic simple">
 <li><p><strong>Spatial Clustering</strong>: Associate detections from repeated observations to unique
-cosmic sources using mean-shift clustering.</p></li>
+cosmic sources using <a class="reference external" href="https://en.wikipedia.org/wiki/Mean_shift">mean-shift</a> clustering.</p></li>
 <li><p><strong>Statistical Variability Detection</strong>: Identify time-variable sources by testing flux
 variations against a constant hypothesis at a 5-σ significance level.</p></li>
 <li><p><strong>Source Classification</strong>: Classify detected sources, including cross-matching with
@@ -418,7 +424,7 @@ For quick installation, VASCA can be installed via <a class="reference external"
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=9fd30140"></script>
+</div><script src="_static/documentation_options.js?v=c6b62da5"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
@@ -426,7 +432,7 @@ For quick installation, VASCA can be installed via <a class="reference external"
     <script src="_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="_static/tippy/index.fab58c2e-5730-4a7c-96c7-bebf3af8e270.js"></script>
+    <script defer="defer" src="_static/tippy/index.9c16069b-3eda-4d1e-bc00-d3c196439b11.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="vasca.resource_manager" href="vasca.resource_manager.html" /><link rel="prev" title="vasca.field" href="vasca.field.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>vasca.tables_dict - VASCA v1.0.14dev</title>
+        <title>vasca.tables_dict - VASCA v1.0.15dev</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">VASCA v1.0.14dev</div></a>
+      <a href="../../index.html"><div class="brand">VASCA v1.0.15dev</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v1.0.14dev</span>
+  <span class="sidebar-brand-text">VASCA v1.0.15dev</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -206,6 +206,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../user_guide/index.html">User Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of User Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/data_model.html">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/pipeline.html">Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/post_processing.html">Post-Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/instruments.html">Supported Instruments</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3 current has-children"><a class="reference internal" href="vasca.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of vasca</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="vasca.region.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.region</span></code></a></li>
@@ -289,16 +294,16 @@
 <table class="autosummary longtable docutils align-left">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#vasca.tables_dict.dd_vasca_columns" title="vasca.tables_dict.dd_vasca_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_vasca_columns</span></code></a></p></td>
-<td></td>
+<td><p>Definitions of all columns that are regisitered to be used in VASCA.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#vasca.tables_dict.base_field" title="vasca.tables_dict.base_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base_field</span></code></a></p></td>
-<td></td>
+<td><p>Definitions of tables and columns for the <a class="reference internal" href="vasca.field.html#vasca.field.BaseField" title="vasca.field.BaseField"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></a> class.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#vasca.tables_dict.galex_field" title="vasca.tables_dict.galex_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">galex_field</span></code></a></p></td>
-<td></td>
+<td><p>Extension of the <cite>base_field</cite> definitions for the <a class="reference internal" href="vasca.field.html#vasca.field.GALEXField" title="vasca.field.GALEXField"><code class="xref py py-class docutils literal notranslate"><span class="pre">GALEXField</span></code></a> class</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#vasca.tables_dict.region" title="vasca.tables_dict.region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">region</span></code></a></p></td>
-<td></td>
+<td><p>Definitions of tables and columns for the <a class="reference internal" href="vasca.region.html#vasca.region.Region" title="vasca.region.Region"><code class="xref py py-class docutils literal notranslate"><span class="pre">Region</span></code></a> class.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#vasca.tables_dict.class_keys" title="vasca.tables_dict.class_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_keys</span></code></a></p></td>
 <td></td>
@@ -317,23 +322,42 @@
 <h3>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h3>
 <dl class="py data">
 <dt class="sig sig-object py" id="vasca.tables_dict.dd_vasca_columns">
-<span class="sig-prename descclassname"><span class="pre">vasca.tables_dict.</span></span><span class="sig-name descname"><span class="pre">dd_vasca_columns</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.tables_dict.dd_vasca_columns" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">vasca.tables_dict.</span></span><span class="sig-name descname"><span class="pre">dd_vasca_columns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.tables_dict.dd_vasca_columns" title="Link to this definition">¶</a></dt>
+<dd><p>Definitions of all columns that are regisitered to be used in VASCA.</p>
+<p>Each coulmn definition consists of five required parameters:</p>
+<dl class="simple">
+<dt><cite>name</cite></dt><dd><p>Name of the column</p>
+</dd>
+<dt><cite>dtype</cite></dt><dd><p>FITS compatible data type</p>
+</dd>
+<dt><cite>unit</cite></dt><dd><p>FITS compatible data unit</p>
+</dd>
+<dt><cite>default</cite></dt><dd><p>Default value wich will be used to populate the tabel column</p>
+</dd>
+<dt><cite>description</cite></dt><dd><p>Short description of the column which is shown by
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table.info" title="(in Astropy v6.1)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">info</span></code></a> method of <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a>.</p>
+</dd>
+</dl>
+<p>Users may add column items here if required for instrument-specific field classes.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="vasca.tables_dict.base_field">
-<span class="sig-prename descclassname"><span class="pre">vasca.tables_dict.</span></span><span class="sig-name descname"><span class="pre">base_field</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.tables_dict.base_field" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">vasca.tables_dict.</span></span><span class="sig-name descname"><span class="pre">base_field</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.tables_dict.base_field" title="Link to this definition">¶</a></dt>
+<dd><p>Definitions of tables and columns for the <a class="reference internal" href="vasca.field.html#vasca.field.BaseField" title="vasca.field.BaseField"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></a> class.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="vasca.tables_dict.galex_field">
 <span class="sig-prename descclassname"><span class="pre">vasca.tables_dict.</span></span><span class="sig-name descname"><span class="pre">galex_field</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.tables_dict.galex_field" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Extension of the <cite>base_field</cite> definitions for the <a class="reference internal" href="vasca.field.html#vasca.field.GALEXField" title="vasca.field.GALEXField"><code class="xref py py-class docutils literal notranslate"><span class="pre">GALEXField</span></code></a> class</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="vasca.tables_dict.region">
 <span class="sig-prename descclassname"><span class="pre">vasca.tables_dict.</span></span><span class="sig-name descname"><span class="pre">region</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.tables_dict.region" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Definitions of tables and columns for the <a class="reference internal" href="vasca.region.html#vasca.region.Region" title="vasca.region.Region"><code class="xref py py-class docutils literal notranslate"><span class="pre">Region</span></code></a> class.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="vasca.tables_dict.class_keys">
@@ -442,7 +466,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=9fd30140"></script>
+</div><script src="../../_static/documentation_options.js?v=c6b62da5"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -450,7 +474,7 @@
     <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.tables_dict.84e4cac6-0819-46fa-95e6-5728d7ae8b79.js"></script>
+    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.tables_dict.35797b67-de19-4dd2-a25e-bba3a842aef2.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
