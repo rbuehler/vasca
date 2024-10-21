@@ -17,16 +17,17 @@
 ## Motivation
 VASCA is a high-performance software package developed to address the challenges of
 time-domain astronomy, especially given the increasing volume of data from large-scale
-surveys such as ZTF, LSST, and ULTRASAT. Designed to analyze time-variable cosmic sources
-like active galactic nuclei, stars, and transient events, VASCA provides a modular,
-scalable solution for integrating data from multiple instruments and conducting a
-cohesive analysis.
+surveys such as [ZTF](https://en.wikipedia.org/wiki/Zwicky_Transient_Facility),
+[LSST](https://en.wikipedia.org/wiki/Vera_C._Rubin_Observatory), and [ULTRASAT](https://www.weizmann.ac.il/ultrasat/).
+Designed to analyze time-variable cosmic sources like active galactic nuclei, stars, and
+transient events, VASCA provides a modular, scalable solution for integrating data from
+multiple instruments and conducting a cohesive analysis.
 
 ## Pipeline Overview
 
 The VASCA analysis pipeline consists of three primary steps:
 1. **Spatial Clustering**: Associate detections from repeated observations to unique
-cosmic sources using mean-shift clustering.
+cosmic sources using [mean-shift](https://en.wikipedia.org/wiki/Mean_shift) clustering.
 2. **Statistical Variability Detection**: Identify time-variable sources by testing flux
 variations against a constant hypothesis at a 5-σ significance level.
 3. **Source Classification**: Classify detected sources, including cross-matching with
