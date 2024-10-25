@@ -1,7 +1,7 @@
 name: 📚 docs
 on:
   workflow_run:
-    workflows: ["🧪 pytest"]
+    # workflows: ["🧪 pytest"]
     branches:
       - main
     types:
