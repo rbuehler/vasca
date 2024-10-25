@@ -47,7 +47,7 @@ jobs:
           pip install .
           cat vasca/_version.py
           git describe
-          python -m ipykernel install --user --name <vasca-github> --display-name "<vasca-github>"
+          python -m ipykernel install --user --name vasca-github --display-name "vasca-github"
           jupyter kernelspec list
 
 
