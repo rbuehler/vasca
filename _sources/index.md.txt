@@ -12,6 +12,7 @@ myst:
    
 getting_started
 user_guide/index
+tutorials/index
 ```
 
 ```{toctree}
