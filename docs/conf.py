@@ -5,6 +5,7 @@
 #
 import os
 import sys
+import jupytext
 from importlib.metadata import version as get_version
 
 sys.path.insert(0, os.path.abspath(".."))
@@ -26,6 +27,23 @@ except Exception as e:
     version = "0.0.1"
 
 
+# -- Convert py:percent files to markdown notebooks -----------------------------------
+#
+def convert_py_to_md() -> None:
+    tutorials_dir = os.path.join(os.path.dirname(__file__), "tutorials")
+    for filename in os.listdir(tutorials_dir):
+        if filename.endswith(".py"):
+            filepath = os.path.join(tutorials_dir, filename)
+            md_filepath = filepath.replace(".py", ".md")
+            jupytext.write(jupytext.read(filepath), md_filepath, fmt="md:myst")
+            print(f"Converted {filepath} to {md_filepath}")
+
+
+# Hook to run before the build process starts
+def setup(app):
+    app.connect("builder-inited", lambda app: convert_py_to_md())
+
+
 # -- General configuration ---------------------------------------------------
 #
 
@@ -37,11 +55,13 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.todo",
     # External
-    "myst_parser",
+    "myst_nb",
     "autodoc2",
     "sphinx_copybutton",
     "sphinx_tippy",
 ]
+
+exclude_patterns = ["jupyter_execute", ".jupyter_cache"]
 
 # -- Options for Autodoc --------------------------------------------------------------
 
@@ -98,7 +118,9 @@ myst_heading_anchors = 3
 myst_enable_extensions = [
     "colon_fence",
     "deflist",
+    "html_image",
 ]
+nb_execution_mode = "cache"
 # -- Options for coppybutton ----------------------------------------------
 #
 

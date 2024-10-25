@@ -36,11 +36,12 @@ dependencies = [
   "ipympl ~= 0.9.3",
   "jupyterlab ~= 4.0.2",
   "sphinx ~= 7.2.6",
-  "myst-parser ~= 4.0",
+  "myst-nb",
   "furo",
   "sphinx_autodoc2",
   "sphinx_copybutton",
   "sphinx-tippy",
+  "jupytext",
   
 ]
 
@@ -181,3 +182,7 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+
+[tool.jupytext]
+formats = "ipynb,py:percent"
+hide_notebook_metadata=true 

@@ -36,6 +36,9 @@ vasca_pipeline*
 docs/_build
 docs/html
 docs/doctrees
+docs/jupyter_execute
+docs/.jupyter_cache
+
 
 # git plugins
 mailmap
