@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '📚DOCS:')"
+    # if: "!contains(github.event.head_commit.message, '📚DOCS:')"
     strategy:
       matrix:
         python-version: ['3.10', '3.11']
