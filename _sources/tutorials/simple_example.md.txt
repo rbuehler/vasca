@@ -15,6 +15,7 @@ kernelspec:
 ---
 
 ```{code-cell}
+:tags: [remove-cell]
 
 # ruff: noqa: T201
 ```

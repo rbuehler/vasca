@@ -215,6 +215,7 @@
 <li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.region.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.region</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.visualization.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.visualization</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.utils</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.columns.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.columns</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.field.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.field</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.tables_dict.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.tables_dict</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/vasca/vasca.resource_manager.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.resource_manager</span></code></a></li>
@@ -229,6 +230,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Tutorials</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/simple_example.html">Test Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/test_table.html">Table Display</a></li>
 </ul>
 </li>
 </ul>
@@ -279,7 +281,7 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#Y"><strong>Y</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#Y"><strong>Y</strong></a></div>
 </section>
 <section id="_" class="genindex-section">
   <h2>_</h2>
@@ -405,15 +407,19 @@
 </li>
         <li><a href="api/vasca/vasca.utils.html#vasca.utils.dd_ogrp2otypes">dd_ogrp2otypes (in module vasca.utils)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/vasca/vasca.utils.html#vasca.utils.dd_otype2ogroup">dd_otype2ogroup (in module vasca.utils)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/vasca/vasca.utils.html#vasca.utils.dd_spec_lines">dd_spec_lines (in module vasca.utils)</a>
 </li>
         <li><a href="api/vasca/vasca.tables_dict.html#vasca.tables_dict.dd_vasca_columns">dd_vasca_columns (in module vasca.tables_dict)</a>
 </li>
         <li><a href="api/vasca/vasca.tables_dict.html#vasca.tables_dict.dd_vasca_tables">dd_vasca_tables (in module vasca.tables_dict)</a>
+</li>
+        <li><a href="api/vasca/vasca.columns.html#vasca.columns.VASCAColumn.default">default (vasca.columns.VASCAColumn attribute)</a>
+</li>
+        <li><a href="api/vasca/vasca.columns.html#vasca.columns.VASCAColumn.description">description (vasca.columns.VASCAColumn attribute)</a>
 </li>
         <li><a href="api/vasca/vasca.field.html#vasca.field.dimless">dimless (in module vasca.field)</a>
 
@@ -421,6 +427,8 @@
           <li><a href="api/vasca/vasca.tables.html#vasca.tables.dimless">(in module vasca.tables)</a>
 </li>
         </ul></li>
+        <li><a href="api/vasca/vasca.columns.html#vasca.columns.VASCAColumn.dtype">dtype (vasca.columns.VASCAColumn attribute)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -439,6 +447,8 @@
   <h2>F</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/vasca/vasca.columns.html#vasca.columns.field_id">field_id (in module vasca.columns)</a>
+</li>
         <li><a href="api/vasca/vasca.field.html#vasca.field.FILE_DIR">FILE_DIR (in module vasca.field)</a>
 
         <ul>
@@ -597,6 +607,8 @@
         <ul>
           <li><a href="api/vasca/vasca.html#module-vasca">vasca</a>
 </li>
+          <li><a href="api/vasca/vasca.columns.html#module-vasca.columns">vasca.columns</a>
+</li>
           <li><a href="api/vasca/vasca.field.html#module-vasca.field">vasca.field</a>
 </li>
           <li><a href="api/vasca/vasca.region.html#module-vasca.region">vasca.region</a>
@@ -624,6 +636,8 @@
   <h2>N</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/vasca/vasca.columns.html#vasca.columns.VASCAColumn.name">name (vasca.columns.VASCAColumn attribute)</a>
+</li>
         <li><a href="api/vasca/vasca.utils.html#vasca.utils.name2id">name2id() (in module vasca.utils)</a>
 </li>
     </ul></td>
@@ -784,13 +798,25 @@
 </li>
         <li><a href="api/vasca/vasca.utils.html#vasca.utils.table_to_array">table_to_array() (in module vasca.utils)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/vasca/vasca.tables.html#vasca.tables.TableCollection">TableCollection (class in vasca.tables)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/vasca/vasca.utils.html#vasca.utils.tgalex_to_astrotime">tgalex_to_astrotime() (in module vasca.utils)</a>
 </li>
         <li><a href="api/vasca/vasca.utils.html#vasca.utils.timeit">timeit() (in module vasca.utils)</a>
+</li>
+        <li><a href="api/vasca/vasca.columns.html#vasca.columns.VASCAColumn.to_dict">to_dict() (vasca.columns.VASCAColumn method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/vasca/vasca.columns.html#vasca.columns.VASCAColumn.unit">unit (vasca.columns.VASCAColumn attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -805,6 +831,13 @@
 
         <ul>
           <li><a href="api/vasca/vasca.html#module-vasca">module</a>
+</li>
+        </ul></li>
+        <li>
+    vasca.columns
+
+        <ul>
+          <li><a href="api/vasca/vasca.columns.html#module-vasca.columns">module</a>
 </li>
         </ul></li>
         <li>
@@ -872,6 +905,8 @@
           <li><a href="api/vasca/vasca.visualization.html#module-vasca.visualization">module</a>
 </li>
         </ul></li>
+        <li><a href="api/vasca/vasca.columns.html#vasca.columns.VASCAColumn">VASCAColumn (class in vasca.columns)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -935,7 +970,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=7668a856"></script>
+</div><script src="_static/documentation_options.js?v=3f704cae"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

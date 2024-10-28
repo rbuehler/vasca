@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="Tutorials" href="index.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Table Display" href="test_table.html" /><link rel="prev" title="Tutorials" href="index.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
         <title>Test Tutorial - VASCA v1.0.15dev</title>
@@ -217,6 +217,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/vasca/vasca.region.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.region</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/vasca/vasca.visualization.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.visualization</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/vasca/vasca.utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.utils</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/vasca/vasca.columns.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.columns</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/vasca/vasca.field.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.field</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/vasca/vasca.tables_dict.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.tables_dict</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/vasca/vasca.resource_manager.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.resource_manager</span></code></a></li>
@@ -231,6 +232,7 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Tutorials</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Tutorials</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Test Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test_table.html">Table Display</a></li>
 </ul>
 </li>
 </ul>
@@ -288,14 +290,7 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ruff: noqa: T201</span>
-</pre></div>
-</div>
-</div>
-</div>
-<section id="test-tutorial">
+          <section id="test-tutorial">
 <h1>Test Tutorial<a class="headerlink" href="#test-tutorial" title="Link to this heading">¶</a></h1>
 <p>The contents of this page are edited in a python file which is converted to a markdown
 file prior to the sphinx build and then executed during build time. See how long it
@@ -393,8 +388,8 @@ Number: 19
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3.14159
-CPU times: user 125 ms, sys: 217 ms, total: 342 ms
-Wall time: 89.9 ms
+CPU times: user 118 ms, sys: 199 ms, total: 317 ms
+Wall time: 83.5 ms
 </pre></div>
 </div>
 </div>
@@ -449,15 +444,27 @@ Wall time: 89.9 ms
 </thead>
 <tbody>
 <tr class="row-even"><td><p><a class="xref doc reference internal" href="index.html"><span class="doc">tutorials/index</span></a></p></td>
-<td><p>2024-10-25 15:33</p></td>
+<td><p>2024-10-28 17:25</p></td>
 <td><p>cache</p></td>
-<td><p>1.17</p></td>
+<td><p>1.18</p></td>
 <td><p>✅</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="xref doc reference internal" href="#"><span class="doc">tutorials/simple_example</span></a></p></td>
-<td><p>2024-10-25 15:33</p></td>
+<td><p>2024-10-28 17:25</p></td>
 <td><p>cache</p></td>
-<td><p>1.82</p></td>
+<td><p>1.51</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="xref doc reference internal" href="test_table.html"><span class="doc">tutorials/test_table</span></a></p></td>
+<td><p>2024-10-28 17:25</p></td>
+<td><p>cache</p></td>
+<td><p>1.52</p></td>
+<td><p>✅</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="xref doc reference internal" href="../user_guide/data_model.html"><span class="doc">user_guide/data_model</span></a></p></td>
+<td><p>2024-10-28 17:25</p></td>
+<td><p>cache</p></td>
+<td><p>1.67</p></td>
 <td><p>✅</p></td>
 </tr>
 </tbody>
@@ -471,7 +478,15 @@ Wall time: 89.9 ms
       <footer>
         
         <div class="related-pages">
-          
+          <a class="next-page" href="test_table.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Table Display</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
           <a class="prev-page" href="index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
@@ -535,7 +550,7 @@ Wall time: 89.9 ms
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=7668a856"></script>
+</div><script src="../_static/documentation_options.js?v=3f704cae"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -543,7 +558,7 @@ Wall time: 89.9 ms
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/tutorials/simple_example.98b6b96c-35e6-4421-9498-07b7b5b2dc08.js"></script>
+    <script defer="defer" src="../_static/tippy/tutorials/simple_example.1d808c3e-2467-4620-8992-7c96f7562e24.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
