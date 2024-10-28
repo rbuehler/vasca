@@ -42,6 +42,7 @@ dependencies = [
   "sphinx_copybutton",
   "sphinx-tippy",
   "jupytext",
+  "itables",
   
 ]
 

@@ -15,7 +15,7 @@
 #     name: vasca-github
 # ---
 
-
+# %% tags=["remove-cell"]
 # ruff: noqa: T201
 
 # %% [markdown]

@@ -17,6 +17,7 @@ Submodules
    vasca.region
    vasca.resource_manager
    vasca.visualization
+   vasca.columns
    vasca.utils
    vasca.tables_dict
    vasca.tables

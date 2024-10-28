@@ -34,4 +34,5 @@ rng.random()
 :titlesonly:
 
 simple_example
+test_table
 ```
