@@ -51,7 +51,7 @@ API
 
    .. autodoc2-docstring:: vasca.source.Source.__init__
 
-   .. py:method:: add_vizier_SED(vizier_radius: astropy.units.Quantitiy = 1 * uu.arcsec) -> None
+   .. py:method:: add_vizier_SED(vizier_radius: astropy.units.Quantity = 1 * uu.arcsec) -> None
       :canonical: vasca.source.Source.add_vizier_SED
 
       .. autodoc2-docstring:: vasca.source.Source.add_vizier_SED
@@ -61,7 +61,7 @@ API
 
       .. autodoc2-docstring:: vasca.source.Source.add_gphoton_lc
 
-   .. py:method:: add_spectrum(search_radius: astropy.units.Quantitiy = 2 * uu.arcsec) -> None
+   .. py:method:: add_spectrum(search_radius: astropy.units.Quantity = 2 * uu.arcsec) -> None
       :canonical: vasca.source.Source.add_spectrum
 
       .. autodoc2-docstring:: vasca.source.Source.add_spectrum
