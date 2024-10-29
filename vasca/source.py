@@ -44,7 +44,7 @@ class Source(TableCollection):
         # Sets skeleton
         super().__init__()
 
-    def add_vizier_SED(self, vizier_radius: uu.Quantitiy = 1 * uu.arcsec) -> None:
+    def add_vizier_SED(self, vizier_radius: uu.Quantity = 1 * uu.arcsec) -> None:
         """Add spectral energy distribution table (tt_sed) with all
         spectral points from VizieR within given radius. Uses
         :py:func:`~vasca.utils.query_vizier_sed()`
@@ -195,7 +195,7 @@ class Source(TableCollection):
             dd_gp_var["nr_det"][0].append(sel_flt.sum())
         self.add_table(dd_gp_var, "tt_gphoton_stats")
 
-    def add_spectrum(self, search_radius: uu.Quantitiy = 2 * uu.arcsec) -> None:
+    def add_spectrum(self, search_radius: uu.Quantity = 2 * uu.arcsec) -> None:
         """Get spectrum from SDSS, if available
 
         :param search_radius: Search radius around multifrequency counterpart, or if
