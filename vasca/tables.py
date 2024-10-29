@@ -33,37 +33,34 @@ FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = FILE_DIR + "/../"  # path to the root directory of the repository
 
 
-class TableCollection(object):
+class TableCollection:
     """
-    Collection of astropy.table.Table_ objects. Base calss for data
-    storage classes in VASCA.
+    Collection of :py:class:`~astropy.table.Table` objects. Base calss for data storage
+    classes in VASCA.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Configure logger
         # adds the class name as an extra key; accessible vie the handler format
         logger.configure(extra={"classname": self.__class__.__name__})
 
-        self._table_names = list()
+        self._table_names = []
 
     @staticmethod
-    def table_from_template(dd_data, template_name):
-        """
-        Creates a new astropy table.
+    def table_from_template(dd_data: dict, template_name: str) -> Table:
+        """Creates a new astropy table.
 
-        Parameters
-        ----------
-        dd_data : dict
-            Data dictionaty with the key corresponding to the templates columns.
-            Id data==None an empty template table is returned.
-        template_name : str
+        :param dd_data: Data dictionaty with the key corresponding to the templates
+            columns. Id data==None an empty template table is returned.
+        :type dd_data: dict
+        :param template_name:
             Identifier to select a table template. Templates are selected by
             setting the class key and a corresponding table key in one string
             separated by a colon, e.g. template_name=<class_key>:<table_key>.
+        :type template_name: str
 
-        Returns
-        -------
-        astropy.table.Table
+
+        :rtype: :py:class:`~astropy.table.Table`
         """
 
         # Check dd_data type
@@ -126,13 +123,12 @@ class TableCollection(object):
         # logger.debug(f"Created new table from template '{template_name}'.")
         return tt_out
 
-    def remove_tables(self, ll_table_names):
+    def remove_tables(self, ll_table_names: list[str]) -> None:
         """Removes table from collection
 
-        Parameters
-        ----------
-        ll_table_names : list of str
-            List with name of tables
+        :param ll_table_names: List with name of tables
+        :type ll_table_names: list[str]
+
         """
         logger.debug(f"Removing tables '{ll_table_names}'")
         for table_name in ll_table_names:
@@ -141,23 +137,20 @@ class TableCollection(object):
             if table_name in self._table_names:
                 self._table_names.remove(table_name)
 
-    def add_table(self, data, template_name):
-        """
-        Add a VASCA table to the colection
+    def add_table(self, data: list | np.ndarray, template_name: str) -> None:
+        """Add a VASCA table to the colection
 
-        Parameters
-        ----------
-        data : list, array-like
-            Data of the table with shape (n, n_cols) or as dictionary with the
+        :param data: Data of the table with shape (n, n_cols) or as dictionary with the
             key corresponding to the templates columns.
-        template_name : str
-            Identifier to select a table template. Templates are selected by
-            setting the class key and a corresponding table key in one string
-            separated by a colon, e.g. template_name=<class_key>:<table_key>.
+        :type data: list, array-like
+        :param template_name: Identifier to select a table template. Templates are
+            selected by setting the class key and a corresponding table key in one
+            string separated by a colon, e.g. template_name=<class_key>:<table_key>.
             If no ":" is in the templatename, assume that this is not a VASCA
             table, but proceed adding it to the collection anyhow. template_name
             will be used as a table name in that case. The available VASCA templates
-            are defined in ``vasca.tables_dict``.
+            are defined in :py:mod:`~vasca.tables_dict`.
+        :type template_name: str
 
         """
         logger.debug(f"Adding table '{template_name}'")
@@ -179,18 +172,12 @@ class TableCollection(object):
 
         setattr(self, table_key, tt)
 
-    def remove_unselected(self, table_name):
-        """
-        Remove unselected rows from given table
+    def remove_unselected(self, table_name: str) -> None:
+        """Remove unselected rows from given table
 
-        Parameters
-        ----------
-        table_name : str
-            Table to delete the unselected rows from. Has to contain the "sel" column.
-
-        Returns
-        -------
-        None
+        :param table_name: Table to delete the unselected rows from. Has to contain the
+            "sel" column.
+        :type table_name: str
 
         """
         logger.debug(f"Removing unselected rows in table '{table_name}'")
@@ -202,25 +189,23 @@ class TableCollection(object):
                 f"Table '{table_name}' does not exist. Can't remove rows. "
             )
 
-    def write_to_fits(self, file_name="tables.fits", overwrite=True, fits_verify="fix"):
-        """
-        Write tables and image of a collection to a fits file.
+    def write_to_fits(
+        self,
+        file_name: str = "tables.fits",
+        overwrite: bool = True,
+        fits_verify: str = "fix",
+    ) -> None:
+        """Write tables and image of a collection to a fits file.
 
-        Parameters
-        ----------
-        file_name : str, optional
-            File name. The default is "field_default.fits".
-        overwrite : bool, optional
-            Overwrite existing file. The default is True.
-        fits_verfy: str, optional
-            Verify if output is compatible with FITS format. Options are:
+        :param file_name: File name. The default is "field_default.fits".
+        :type file_name: str, optional
+        :param overwrite: Overwrite existing file. The default is True.
+        :type overwrite: bool, optional
+        :param fits_verfy: Verify if output is compatible with FITS format. Options are:
             'exception', 'ignore', 'fix', 'silentfix', 'warn'
             See https://docs.astropy.org/en/stable/io/fits/api/verification.html
             The default is 'warn'.
-
-        Returns
-        -------
-        None.
+        :type fits_verfy: str, optional
 
         """
         logger.info(f"Writing file with name '{file_name}'")
@@ -315,18 +300,11 @@ class TableCollection(object):
                     ext_nr += 1
         ff.close()
 
-    def load_from_fits(self, file_name):
-        """
-        Loads collection from a fits file
+    def load_from_fits(self, file_name: str) -> None:
+        """Loads collection from a fits file
 
-        Parameters
-        ----------
-        file_name : str, optional
-            File name.
-
-        Returns
-        -------
-        None.
+        :param file_name: File name
+        :type file_name: str
 
         """
         logger.debug(f"Loading file with name '{file_name}'")
@@ -394,30 +372,16 @@ class TableCollection(object):
                 else:
                     self.add_table(ta_data, "base_field:" + ta_name)
 
-    def info(self):
-        """
-        Print out information on tables in the collection.
-
-        Returns
-        -------
-        None.
-
-        """
+    def info(self) -> None:
+        """Print out information on tables in the collection."""
         for key in self._table_names:
             if key in self.__dict__:
                 print(f"\n {key}:")
                 self.__dict__[key].info()
                 print(self.__dict__[key].meta)
 
-    def __str__(self):
-        """
-        Return string with information about the collection.
-
-        Returns
-        -------
-        str
-
-        """
+    def __str__(self) -> str:
+        """Return string with information about the collection."""
         out_str = ""
         for key in self._table_names:
             if key in self.__dict__:
@@ -425,18 +389,11 @@ class TableCollection(object):
 
         return out_str
 
-    def select_from_config(self, dd_selections):
-        """
-        Apply multiple selections at once.
+    def select_from_config(self, dd_selections: dict) -> None:
+        """Apply multiple selections at once.
 
-        Parameters
-        ----------
-        dd_selections : dict
-            Dictionary with selection table, variables and cut values
-
-        Returns
-        -------
-        None
+        :param dd_selections: Dictionary with selection table, variables and cut values
+        :type dd_selections: dict
 
 
         """
@@ -445,20 +402,13 @@ class TableCollection(object):
             logger.info(f"Applying source selection '{sel_name}'")
             self.select_rows(sel_cfg, remove_unselected=False)
 
-    def select_rows(self, selections, remove_unselected=False):
-        """
-        Apply selection to a passed table.
+    def select_rows(self, selections: dict, remove_unselected: bool = False) -> None:
+        """Apply selection to a passed table.
 
-        Parameters
-        ----------
-        selections : dict
-            Dictionary with selection table, variables and cut values
-        remove_unselected: bool
-            Remove table rows with entry False in 'sel' table.
-
-        Returns
-        -------
-        None
+        :param selections: Dictionary with selection table, variables and cut values
+        :type selections: dict
+        :param remove_unselected: Remove table rows with entry False in 'sel' table.
+        :type remove_unselected: bool, optional
 
         """
 
@@ -562,36 +512,32 @@ class TableCollection(object):
                 logger.info(f"Setting range for '{var}' to '{vals}'")
                 tt[var][:] = (tt[var] >= vals[0]) * tt[var] + (
                     tt[var] < vals[0]
-                ) * vals[
-                    0
-                ]  # Set minimum
+                ) * vals[0]  # Set minimum
                 tt[var][:] = (tt[var] <= vals[1]) * tt[var] + (
                     tt[var] > vals[1]
-                ) * vals[
-                    1
-                ]  # Set maximum
+                ) * vals[1]  # Set maximum
 
         self.__dict__[table_name] = tt
 
-    def get_light_curve(self, fd_src_ids=None, rg_src_ids=None, flux_var="flux"):
-        """
-        Get a light curves for one or list of sources, for regions or fields.
+    def get_light_curve(
+        self,
+        fd_src_ids: int | list[int] | None = None,
+        rg_src_ids: int | list[int] | None = None,
+        flux_var: str = "flux",
+    ) -> dict:
+        """Get a light curves for one or list of sources, for regions or fields.
 
-        Parameters
-        ----------
-        fd_src_ids : list or int
-            List or single field source IDs to plot. Default is None.
-        rg_src_ids : list or int
-            List or single region source IDs to plot. Default is None.
-        flux_var: str, optional
-            Variable in table to be used to get flux Jy. Flux error assumed to be named
-            flux_var+'_err'
+        :param fd_src_ids: List or single field source IDs to plot. Default is None.
+        :type fd_src_ids: list, int, optional
+        :param rg_src_ids: List or single region source IDs to plot. Default is None.
+        :type rg_src_ids: list, int, optional
+        :param flux_var: Variable in table to be used to get flux Jy. Flux error assumed
+            to be named flux_var+'_err'
+        :type flux_var: str, optional
 
-        Returns
-        -------
-        dict
-            Dictionary {src_id : light_curve). Light curve as an astropy Table
-            compatible with astropy BinnedTimeSeries.
+        :returns: Dictionary {src_id : light_curve). Light curve as an astropy
+            Table compatible with astropy BinnedTimeSeries.
+        :rtype: dict
 
         """
 
@@ -682,23 +628,19 @@ class TableCollection(object):
 
         return lc_dict
 
-    def cluster_meanshift(self, **ms_kw):
-        """
-        Apply _MeanShift clustering algorithm using to derive sources. Runs only on selected
-        detections or sources.
+    def cluster_meanshift(self, **ms_kw) -> int:
+        """Apply MeanShift_ clustering algorithm using to derive sources. Runs only on
+        selected detections or sources.
 
         .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html
 
-        Parameters
-        ----------
-        ms_kw : dict, optional
-            Keywords passed to the scikit MeanShift function. Note that the
+        :param ms_kw: Keywords passed to the scikit MeanShift function. Note that the
             bandwidth is assumed to be in units of arc seconds.
+        :type ms_kw: dict, optional
 
-        Returns
-        -------
-        int
-            Number of detected clusters.
+        :returns: Number of detected clusters.
+        :rtype: int
+
         """
 
         # Select seed table, detections or sources
@@ -833,22 +775,14 @@ class TableCollection(object):
 
     # Calculation is done on a field level for easy numpy paralleization,
     # as this calculation is computationally intensive.
-    def set_src_stats(self, src_id_name="fd_src_id"):
-        """
-        Calculates source parameters from detections and stores them
+    def set_src_stats(self, src_id_name: str = "fd_src_id") -> None:
+        """Calculates source parameters from detections and stores them
         in the source table (tt_source).
 
-        Parameters
-        ----------
-        src_id_name : str, optional
-            Name of the src_id to calculate statistics for. 'rg_src_id' indicates
-            operations being performed on ``vasca.region`` objects whereas 'fd_src_id'
-            would indicate ``vasca.field`` objects.
-
-
-        Returns
-        -------
-        None
+        :param src_id_name: Name of the src_id to calculate statistics for. 'rg_src_id'
+            indicates operations being performed on ``vasca.region`` objects whereas
+            'fd_src_id' would indicate ``vasca.field`` objects.
+        :type src_id_name: str, optional
 
         """
 
@@ -991,21 +925,17 @@ class TableCollection(object):
                 table_name=tt_src_name, col_name=svar, col_data=dd_src_var[svar]
             )
 
-    def set_hardness_ratio(self, obs_filter_id1=1, obs_filter_id2=2):
-        """
-        Calculated hardness ratio from detections flux(filter_2)/ flux(filter_1).
+    def set_hardness_ratio(
+        self, obs_filter_id1: int = 1, obs_filter_id2: int = 2
+    ) -> None:
+        """Calculated hardness ratio from detections flux(filter_2)/ flux(filter_1).
         Only simultaneous detections are considered
 
-        Parameters
-        ----------
-        obs_filter_id1 : int, optional
-            Observation filter ID1. The default is 1.
-        obs_filter_id2 : int, optional
-            Observation filter ID2. The default is 1. The default is 2.
-
-        Returns
-        -------
-        None
+        :param obs_filter_id1: Observation filter ID1. The default is 1.
+        :type obs_filter_id1: int, optional
+        :param obs_filter_id2: Observation filter ID2. The default is 1.
+            The default is 2.
+        :type obs_filter_id2: int, optional
 
         """
         logger.debug("Calculating hardness ratio")
@@ -1055,23 +985,19 @@ class TableCollection(object):
         self.tt_sources.meta["hr_flt1"] = obs_filter_id1
         self.tt_sources.meta["hr_flt2"] = obs_filter_id2
 
-    def add_column(self, table_name, col_name, col_data=None):
-        """
-        Adds column in a table, using the predefined VASCA columns.
+    def add_column(
+        self, table_name: str, col_name: str, col_data: dict | np.ndarray | None = None
+    ) -> None:
+        """Adds column in a table, using the predefined VASCA columns.
         If column exists already replace it.
 
-        Parameters
-        ----------
-        table_name : str
-            Name of the table.
-        col_name: str
-            Name of the column
-        col_data  dict or array
-            Data to be inserted. If "None" use vasca.table_dict default value.
-
-        Returns
-        -------
-        None
+        :param table_name: Name of the table.
+        :type table_name: str
+        :param col_name: Name of the column
+        :type col_name: str
+        :param col_data: Data to be inserted. If "None" use vasca.table_dict default
+            value.
+        :type col_data:  dict or np.ndarray
 
         """
         # Check if no data was given and fill with default
@@ -1096,31 +1022,25 @@ class TableCollection(object):
 
     def copy_table_columns(
         self,
-        tab_name_to,
-        tab_name_from,
-        copy_vars,
-        match_var="rg_src_id",
-        select_matched=False,
-    ):
-        """
-        Copy a column from one table to the other, for those columns that have a
+        tab_name_to: str,
+        tab_name_from: str,
+        copy_vars: list[str],
+        match_var: str = "rg_src_id",
+        select_matched: bool = False,
+    ) -> None:
+        """Copy a column from one table to the other, for those columns that have a
         matching variable value 'match_variable'
-        Parameters
-        ----------
-        tab_name_to str
-            Table name of tabla to copy into
-        tab_name_from str
-            Table name of tabla to copy into
-        copy_vars list
-            Variable names of column to copy
-        match_var
-            Variable name to match rows in tables
-        select_matched
-            Adjust the "sel" column in 'tab_name_to'
 
-        Returns
-        -------
-            None
+        :param tab_name_to: Table name of tabla to copy into
+        :type tab_name_to: str
+        :param tab_name_from: Table name of tabla to copy into
+        :type tab_name_from: str
+        :param copy_vars: Variable names of column to copy
+        :type copy_vars: list[str]
+        :param match_var: Variable name to match rows in tables
+        :type match_var: str
+        :param select_matched: Adjust the "sel" column in 'tab_name_to'
+        :type select_matched: bool
 
         """
         logger.debug(
@@ -1148,36 +1068,31 @@ class TableCollection(object):
 
     def cross_match(
         self,
-        dist_max=1.5 * uu.arcsec,
-        dist_s2n_max=3,
-        cat_table_name="tt_coadd_sources",
-        cat_id_name="coadd_src_id",
-        cat_name="coadd",
-        src_table_name="tt_sources",
-    ):
-        """
-        Cross match sources to a catalog by position. Typically this is the coadd catalog.
+        dist_max: uu.Quantity = 1.5 * uu.arcsec,
+        dist_s2n_max: float = 3,
+        cat_table_name: str = "tt_coadd_sources",
+        cat_id_name: str = "coadd_src_id",
+        cat_name: str = "coadd",
+        src_table_name: str = "tt_sources",
+    ) -> None:
+        """Cross match sources to a catalog by position. Typically this is the coadd
+        catalog.
 
-        Parameters
-        ----------
-        dist_max astropy.Quantity
-            Maximum angular distance under which all associations are done, independent
-            of dist_s2n. The default is "1 arcsec".
-        dist_s2n_max float
-            Maximum distance in units of position error. All sources below this cut are
-            associated, independently of the dist_max selection.
-        cat_table_name : str, optional
-            Catalog table name. Has to contain "ra","dec" (in deg), "flux" (in microJy)
-            and "cat_id_name" columns.  Marks associated catalog sources
-            in the "sel" column of the catalog table, if it exists.
-        cat_id_name : str, optional
-            Catalog ID Br. variable name. The default is "coadd_src_id".
-        src_table_name : str, optional
-            Table to cross match to catalog. The default is "tt_sources".
-
-        Returns
-        -------
-        None
+        :param dist_max: Maximum angular distance under which all associations are done,
+            independent of dist_s2n. The default is "1 arcsec".
+        :type dist_max: :py:class:`~astropy.units.Quantity`, optional
+        :param dist_s2n_max: Maximum distance in units of position error. All sources
+            below this cut are associated, independently of the dist_max selection.
+        :type dist_s2n_max: float, optional
+        :param cat_table_name: Catalog table name. Has to contain "ra","dec" (in deg),
+            "flux" (in microJy) and "cat_id_name" columns.  Marks associated catalog
+            sources in the "sel" column of the catalog table, if it exists.
+        :type cat_table_name: str, optional
+        :param cat_id_name: Catalog ID Br. variable name. The default is "coadd_src_id".
+        :type cat_id_name: str, optional
+        :param src_table_name: Table to cross match to catalog. The default is
+            "tt_sources".
+        :type src_table_name: str, optional
 
         """
 

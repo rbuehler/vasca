@@ -32,19 +32,15 @@ In the case of GALEX, the detection lists created by the mission pipeline ("mcat
 have a large number of different observables and parameters (columns) per detection (see
 GALEX docs [here](http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1)).
 A subset is used by VASCA, where GALEX specific parameters are added to the ones used by
-{class}`BaseField`. This is implemented in the instrument specific [](#TableCollection)
+[](#BaseField). This is implemented in the instrument specific [](#TableCollection)
 object [](#GALEXField) and its corresponding [column definitions](#vasca.tables_dict.galex_field).
 
 ## Data Structures
 All data structures in VASCA are based on [](#TableCollection). As the name tells, these
-objects describe a collection of astropy [Table](inv:#astropy.table.Table).
-```{autodoc2-object} vasca.tables.TableCollection
-render_plugin = "myst"
-no_index = true
-annotations = false
-docstrings = false
-hidden_objects = ["undoc", "dunder", "inherited"]
-```
+objects describe a collection of astropy [Table](inv:#astropy.table.Table). A general
+API is provided to [add](#add_table) and [remove](#remove_tables) tables to and from
+these objects. This is used when, for instance, an individual VASCA [](#Source) is
+extracted out of a [](#Region).
 
 ### VASCA Columns
 See the full list of data columns defined by VASCA below:

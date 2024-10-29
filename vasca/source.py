@@ -5,6 +5,7 @@ Created on Thu Jan 19 10:17:54 2023
 
 @author: buehler
 """
+
 import os
 import numpy as np
 from astropy import constants as cc
@@ -31,39 +32,26 @@ rm = ResourceManager()
 
 
 class Source(TableCollection):
-    """
-    Class to store all VASCA information for one particular
+    """Class to store all VASCA information for one particular
     source. This class is for convenience, the same data is also found in the Field
-    and Region classes containing this source."""
+    and Region classes containing this source.
+    """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
-        Many class attributes are stored in astropy.table.Table_.
-
-        .. _astropy.table.Table: https://docs.astropy.org/en/stable/api/astropy.table.Table.html
-
-        Returns
-        -------
-        None
-
+        Many class attributes are stored in :py:class:`~astropy.table.Table`.
         """
         # Sets skeleton
         super().__init__()
 
-    def add_vizier_SED(self, vizier_radius=1 * uu.arcsec):
-        """
-        Add spectral energy distribution table (tt_sed) with all
+    def add_vizier_SED(self, vizier_radius: uu.Quantitiy = 1 * uu.arcsec) -> None:
+        """Add spectral energy distribution table (tt_sed) with all
         spectral points from VizieR within given radius. Uses
-        ``vasca.utils.query_vizier_sed()``
+        :py:func:`~vasca.utils.query_vizier_sed()`
 
-        Parameters
-        ----------
-        vizier_radius astropy.Quantity
-            Radius within which to add flux points from VizieR
-
-        Returns
-        -------
-        None
+        :param vizier_radius: Radius within which to add flux points from VizieR
+            (Default value = 1 * uu.arcsec)
+        :type vizier_radius: :py:class:`~astropy.units.Quantity`
         """
 
         # Search for Vizier flux around source, or simbad associated source if present
@@ -134,20 +122,18 @@ class Source(TableCollection):
         # Sort by wavelength
         self.tt_sed.sort("wavelength")
 
-    def add_gphoton_lc(self, s2n_min=3.0, tbin=-1):
-        """
-        Add light curve from gPhoton. Only include points with no flags.
+    def add_gphoton_lc(self, s2n_min: float = 3.0, tbin: int = -1) -> None:
+        """Add light curve from gPhoton. Only include points with no flags.
         Assumes gPhoton flux is given for a 6 arcsec aperture.
 
-        Parameters
-        ----------
-        s2n_min: float, optional
-            Minimum significance of points for selection in light curve.
-        tbin_name int, optional
-            Time binning in seconds used in the gphoton analysis. If negative assume visit time binning.
-        Returns
-        -------
-        None
+        :param s2n_min: Minimum significance of points for selection in light curve.
+            (Default value = 3.0)
+        :type s2n_min: float, optional
+        :param tbin_name:
+        :type tbin_name: int, optional
+        :param tbin:  (Default value = -1)
+
+
         """
 
         # Get location of gphoton files
@@ -209,17 +195,14 @@ class Source(TableCollection):
             dd_gp_var["nr_det"][0].append(sel_flt.sum())
         self.add_table(dd_gp_var, "tt_gphoton_stats")
 
-    def add_spectrum(self, search_radius=2 * uu.arcsec):
-        """
-        Get spectrum from SDSS, if available
-        Parameters
-        ----------
-        search_radius, astropy.Quantity, optional
-            Search radius around multifrequency counterpart, or if this does not excist, around VASCA position.
+    def add_spectrum(self, search_radius: uu.Quantitiy = 2 * uu.arcsec) -> None:
+        """Get spectrum from SDSS, if available
 
-        Returns
-        -------
-        None
+        :param search_radius: Search radius around multifrequency counterpart, or if
+            this does not excist, around VASCA position. (Default value = 2 * uu.arcsec)
+        :type search_radius: :py:class:`~astropy.units.Quantity`, optional
+
+
         """
 
         # Prepare spectral query data
