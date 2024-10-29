@@ -36,10 +36,10 @@ A subset is used by VASCA, where GALEX specific parameters are added to the ones
 object [](#GALEXField) and its corresponding [column definitions](#vasca.tables_dict.galex_field).
 
 ## Data Structures
-All data structures in VASCA are based on [](#TableCollection). As the name tells, these
-objects describe a collection of astropy [Table](inv:#astropy.table.Table). A general
-API is provided to [add](#add_table) and [remove](#remove_tables) tables to and from
-these objects. This is used when, for instance, an individual VASCA [](#Source) is
+All data structures in VASCA are based on [](#TableCollection). As the name suggests
+these objects describe a collection of astropy (inv:astropy:std:doc#*.Table) objects. A
+general API is provided to [add](#add_table) and [remove](#remove_tables) tables to and
+from these objects. This is used when, for instance, an individual VASCA [](#Source) is
 extracted out of a [](#Region).
 
 ### VASCA Columns
@@ -80,10 +80,85 @@ df_cols = pd.DataFrame.from_dict(dd_vasca_columns)
 
 show(
     df_cols.T,
-    classes="display nowrap compact",
+    classes="display compact",
     scrollY="300px",
     scrollCollapse=True,
     paging=False,
     columnDefs=[{"className": "dt-body-left", "targets": "_all"}],
 )
 ```
+
+### VASCA Tables
+
+Below are shown all tables that are used in VASCA in various contexts (e.g. input,
+clustering, post-processing).
+
+**`tt_visits`**
+: Table that stores metadata about observational visits such as the visit ID (`vis_id`),
+the associated field ID (`field_id`) and observation start time (`time_bin_start`) as
+well as exposure time (`time_bin_size`).
+
+```{note}
+All parameters related to obersvational timing follow the naming scheme to be compatible
+with astropy [](inv:astropy:std:doc#*.BinnedTimeSeries). This ist then utilized when
+creating and analyzing light curves for specific sources.
+```
+
+**`tt_fields`**
+: Table storing metadata about all fields such as the field ID (`field_id`), the center
+coordinates (`ra`, `dec`), total exposure time (`time_bin_size_sum`) and the size of the
+field of view (`r_fov`).
+
+**`tt_coverage_hp`**
+: Region observations properties in healpix binning. RING ordering and equatorial
+coordinates
+
+**`tt_coadd_detections`**
+: Reference detections table. This data is provided at the input stage of the pipeline
+and contains no intra-visit information.
+
+
+**`tt_detections`**
+: Visit-level detections table.
+
+**`tt_sources`**
+: Source information table.
+
+**`tt_coadd_sources`**
+: Source information table. 
+
+**`tt_src_id_map`**
+: Map between region and field source IDs (`rg_src_id`, `fd_src_id`).
+
+**`tt_filters`**
+: Filters, their IDs and index.
+
+**`tt_sed`**
+: Spectral Energy Distribution from VizieR database.
+
+**`tt_gphoton_lc`**
+: Light curve from [`gPhoton.gAperture`](https://github.com/cmillion/gPhoton/blob/master/docs/UserGuide.md#gaperturepy)
+
+**`tt_spectrum`**
+: Spectrum table
+
+**`tt_lombscargle`**
+: LombScargle results information
+
+Additional tables (e.g. `tt_simbad` or `tt_gaiadr3`) are created during catalog
+cross-matching in the [post-processing stage](https://github.com/rbuehler/vasca/blob/main/vasca/examples/vasca_pipe_post_process.ipynb)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

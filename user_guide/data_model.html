@@ -321,10 +321,10 @@ object <a class="reference internal" href="../api/vasca/vasca.field.html#vasca.f
 </section>
 <section id="data-structures">
 <h2>Data Structures<a class="headerlink" href="#data-structures" title="Link to this heading">¶</a></h2>
-<p>All data structures in VASCA are based on <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">TableCollection</span></code></a>. As the name tells, these
-objects describe a collection of astropy <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="Astropy 6.1">Table</a>. A general
-API is provided to <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection.add_table" title="vasca.tables.TableCollection.add_table"><span class="xref myst py py-meth">add</span></a> and <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection.remove_tables" title="vasca.tables.TableCollection.remove_tables"><span class="xref myst py py-meth">remove</span></a> tables to and from
-these objects. This is used when, for instance, an individual VASCA <a class="reference internal" href="../api/vasca/vasca.source.html#vasca.source.Source" title="vasca.source.Source"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">Source</span></code></a> is
+<p>All data structures in VASCA are based on <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">TableCollection</span></code></a>. As the name suggests
+these objects describe a collection of astropy (inv:astropy:std:doc#*.Table) objects. A
+general API is provided to <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection.add_table" title="vasca.tables.TableCollection.add_table"><span class="xref myst py py-meth">add</span></a> and <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection.remove_tables" title="vasca.tables.TableCollection.remove_tables"><span class="xref myst py py-meth">remove</span></a> tables to and
+from these objects. This is used when, for instance, an individual VASCA <a class="reference internal" href="../api/vasca/vasca.source.html#vasca.source.Source" title="vasca.source.Source"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">Source</span></code></a> is
 extracted out of a <a class="reference internal" href="../api/vasca/vasca.region.html#vasca.region.Region" title="vasca.region.Region"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">Region</span></code></a>.</p>
 <section id="vasca-columns">
 <h3>VASCA Columns<a class="headerlink" href="#vasca-columns" title="Link to this heading">¶</a></h3>
@@ -475,7 +475,7 @@ This is the <code>init_notebook_mode</code> cell from ITables v2.2.2<br>
   font-size: small;
 }
 
-</style></div><div class="output text_html"><table id="itables_a34d0e71_1bf3_4475_9825_6b3636d67d10" class="display nowrap compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
+</style></div><div class="output text_html"><table id="itables_b74e54dd_06ef_4c82_a86c_8a7b7c0afaef" class="display compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
 <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -589,7 +589,7 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
 <script type="module">
     const { DataTable, jQuery: $ } = await import(window._datatables_src_for_itables_2_2_2);
 
-    document.querySelectorAll("#itables_a34d0e71_1bf3_4475_9825_6b3636d67d10:not(.dataTable)").forEach(table => {
+    document.querySelectorAll("#itables_b74e54dd_06ef_4c82_a86c_8a7b7c0afaef:not(.dataTable)").forEach(table => {
         if (!(table instanceof HTMLTableElement))
             return;
 
@@ -606,6 +606,55 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
 </script>
 </div></div>
 </div>
+</section>
+<section id="vasca-tables">
+<h3>VASCA Tables<a class="headerlink" href="#vasca-tables" title="Link to this heading">¶</a></h3>
+<p>Below are shown all tables that are used in VASCA in various contexts (e.g. input,
+clustering, post-processing).</p>
+<dl class="simple myst">
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_visits</span></code></strong></dt><dd><p>Table that stores metadata about observational visits such as the visit ID (<code class="docutils literal notranslate"><span class="pre">vis_id</span></code>),
+the associated field ID (<code class="docutils literal notranslate"><span class="pre">field_id</span></code>) and observation start time (<code class="docutils literal notranslate"><span class="pre">time_bin_start</span></code>) as
+well as exposure time (<code class="docutils literal notranslate"><span class="pre">time_bin_size</span></code>).</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All parameters related to obersvational timing follow the naming scheme to be compatible
+with astropy <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.timeseries.BinnedTimeSeries.html" title="Astropy 6.1">BinnedTimeSeries</a>. This ist then utilized when
+creating and analyzing light curves for specific sources.</p>
+</div>
+<dl class="simple myst">
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_fields</span></code></strong></dt><dd><p>Table storing metadata about all fields such as the field ID (<code class="docutils literal notranslate"><span class="pre">field_id</span></code>), the center
+coordinates (<code class="docutils literal notranslate"><span class="pre">ra</span></code>, <code class="docutils literal notranslate"><span class="pre">dec</span></code>), total exposure time (<code class="docutils literal notranslate"><span class="pre">time_bin_size_sum</span></code>) and the size of the
+field of view (<code class="docutils literal notranslate"><span class="pre">r_fov</span></code>).</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_coverage_hp</span></code></strong></dt><dd><p>Region observations properties in healpix binning. RING ordering and equatorial
+coordinates</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_coadd_detections</span></code></strong></dt><dd><p>Reference detections table. This data is provided at the input stage of the pipeline
+and contains no intra-visit information.</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_detections</span></code></strong></dt><dd><p>Visit-level detections table.</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_sources</span></code></strong></dt><dd><p>Source information table.</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_coadd_sources</span></code></strong></dt><dd><p>Source information table.</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_src_id_map</span></code></strong></dt><dd><p>Map between region and field source IDs (<code class="docutils literal notranslate"><span class="pre">rg_src_id</span></code>, <code class="docutils literal notranslate"><span class="pre">fd_src_id</span></code>).</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_filters</span></code></strong></dt><dd><p>Filters, their IDs and index.</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_sed</span></code></strong></dt><dd><p>Spectral Energy Distribution from VizieR database.</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_gphoton_lc</span></code></strong></dt><dd><p>Light curve from <a class="reference external" href="https://github.com/cmillion/gPhoton/blob/master/docs/UserGuide.md#gaperturepy"><code class="docutils literal notranslate"><span class="pre">gPhoton.gAperture</span></code></a></p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_spectrum</span></code></strong></dt><dd><p>Spectrum table</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_lombscargle</span></code></strong></dt><dd><p>LombScargle results information</p>
+</dd>
+</dl>
+<p>Additional tables (e.g. <code class="docutils literal notranslate"><span class="pre">tt_simbad</span></code> or <code class="docutils literal notranslate"><span class="pre">tt_gaiadr3</span></code>) are created during catalog
+cross-matching in the <a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/vasca_pipe_post_process.ipynb">post-processing stage</a></p>
 </section>
 </section>
 </section>
@@ -676,6 +725,7 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
 <li><a class="reference internal" href="#input-data">Input Data</a></li>
 <li><a class="reference internal" href="#data-structures">Data Structures</a><ul>
 <li><a class="reference internal" href="#vasca-columns">VASCA Columns</a></li>
+<li><a class="reference internal" href="#vasca-tables">VASCA Tables</a></li>
 </ul>
 </li>
 </ul>
@@ -689,7 +739,7 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=39026913"></script>
+</div><script src="../_static/documentation_options.js?v=e1629aa7"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -697,7 +747,7 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/user_guide/data_model.7e53ab2f-5807-43d3-8755-eb99d44b8748.js"></script>
+    <script defer="defer" src="../_static/tippy/user_guide/data_model.e6c11505-d9ff-4c70-b54d-5abf9513ae1e.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
