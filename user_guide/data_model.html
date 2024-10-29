@@ -316,99 +316,16 @@ of required columns can be see here: <a class="reference internal" href="../api/
 have a large number of different observables and parameters (columns) per detection (see
 GALEX docs <a class="reference external" href="http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1">here</a>).
 A subset is used by VASCA, where GALEX specific parameters are added to the ones used by
-<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseField</span></code>. This is implemented in the instrument specific <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">TableCollection</span></code></a>
+<a class="reference internal" href="../api/vasca/vasca.field.html#vasca.field.BaseField" title="vasca.field.BaseField"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></a>. This is implemented in the instrument specific <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">TableCollection</span></code></a>
 object <a class="reference internal" href="../api/vasca/vasca.field.html#vasca.field.GALEXField" title="vasca.field.GALEXField"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">GALEXField</span></code></a> and its corresponding <a class="reference internal" href="../api/vasca/vasca.tables_dict.html#vasca.tables_dict.galex_field" title="vasca.tables_dict.galex_field"><span class="xref myst py py-data">column definitions</span></a>.</p>
 </section>
 <section id="data-structures">
 <h2>Data Structures<a class="headerlink" href="#data-structures" title="Link to this heading">¶</a></h2>
 <p>All data structures in VASCA are based on <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">TableCollection</span></code></a>. As the name tells, these
-objects describe a collection of astropy <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="Astropy 6.1">Table</a>.</p>
-<dl class="py class">
-<dt class="sig sig-object py">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TableCollection</span></span></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">table_from_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dd_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">remove_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ll_table_names</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">add_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">remove_unselected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">write_to_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tables.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits_verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fix'</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">load_from_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">select_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dd_selections</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">select_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_unselected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">get_light_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fd_src_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rg_src_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'flux'</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">cluster_meanshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">ms_kw</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">set_src_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fd_src_id'</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">set_hardness_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_filter_id1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_filter_id2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">copy_table_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tab_name_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_name_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rg_src_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_matched</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">cross_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_s2n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tt_coadd_sources'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coadd_src_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coadd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tt_sources'</span></span></em><span class="sig-paren">)</span></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+objects describe a collection of astropy <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="Astropy 6.1">Table</a>. A general
+API is provided to <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection.add_table" title="vasca.tables.TableCollection.add_table"><span class="xref myst py py-meth">add</span></a> and <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection.remove_tables" title="vasca.tables.TableCollection.remove_tables"><span class="xref myst py py-meth">remove</span></a> tables to and from
+these objects. This is used when, for instance, an individual VASCA <a class="reference internal" href="../api/vasca/vasca.source.html#vasca.source.Source" title="vasca.source.Source"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">Source</span></code></a> is
+extracted out of a <a class="reference internal" href="../api/vasca/vasca.region.html#vasca.region.Region" title="vasca.region.Region"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">Region</span></code></a>.</p>
 <section id="vasca-columns">
 <h3>VASCA Columns<a class="headerlink" href="#vasca-columns" title="Link to this heading">¶</a></h3>
 <p>See the full list of data columns defined by VASCA below:</p>
@@ -558,7 +475,7 @@ This is the <code>init_notebook_mode</code> cell from ITables v2.2.2<br>
   font-size: small;
 }
 
-</style></div><div class="output text_html"><table id="itables_da872286_f074_4429_a493_212a07f724c5" class="display nowrap compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
+</style></div><div class="output text_html"><table id="itables_a34d0e71_1bf3_4475_9825_6b3636d67d10" class="display nowrap compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
 <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -672,7 +589,7 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
 <script type="module">
     const { DataTable, jQuery: $ } = await import(window._datatables_src_for_itables_2_2_2);
 
-    document.querySelectorAll("#itables_da872286_f074_4429_a493_212a07f724c5:not(.dataTable)").forEach(table => {
+    document.querySelectorAll("#itables_a34d0e71_1bf3_4475_9825_6b3636d67d10:not(.dataTable)").forEach(table => {
         if (!(table instanceof HTMLTableElement))
             return;
 
@@ -772,7 +689,7 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=3f704cae"></script>
+</div><script src="../_static/documentation_options.js?v=39026913"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -780,7 +697,7 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/user_guide/data_model.63f84e4f-b296-43ea-902f-1ab1d73526ad.js"></script>
+    <script defer="defer" src="../_static/tippy/user_guide/data_model.7e53ab2f-5807-43d3-8755-eb99d44b8748.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

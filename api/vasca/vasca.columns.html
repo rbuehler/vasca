@@ -329,20 +329,19 @@ tables dictionary module in the future.</p>
 <dd><p>Base class describing all parameters of VASCA columns.</p>
 <p>The parameters defined here, are used to construct the various <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>
 objects to be held by a <a class="reference internal" href="vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableCollection</span></code></a>.</p>
-<dl class="simple">
-<dt>name: str</dt><dd><p>Column Name</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Column Name</p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Data type of the column data (FITS compliant)</p></li>
+<li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Unit of the column data (FITS compliant)</p></li>
+<li><p><strong>default</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Default value taken as placeholder during initialization of
+<a class="reference internal" href="vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableCollection</span></code></a>.</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Short description of the column’s content</p></li>
+</ul>
 </dd>
-<dt>dtype: str</dt><dd><p>Data type of the column data (FITS compliant)</p>
-</dd>
-<dt>unit: str</dt><dd><p>Unit of the column data (FITS compliant)</p>
-</dd>
-<dt>default: str</dt><dd><p>Default value taken as placeholder during initialization of
-<a class="reference internal" href="vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableCollection</span></code></a>.</p>
-</dd>
-<dt>description: str</dt><dd><p>Short description of the column’s content</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dummy_column</span> <span class="o">=</span> <span class="n">VASCAColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int32&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;-1&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+<dt class="field-even">Example<span class="colon">:</span></dt>
+<dd class="field-even"><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dummy_column</span> <span class="o">=</span> <span class="n">VASCAColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;int32&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;-1&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dummy_column</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 <span class="go">{&#39;name&#39;: &#39;foo&#39;,</span>
 <span class="go"> &#39;dtype&#39;: &#39;int32&#39;,</span>
@@ -351,6 +350,8 @@ objects to be held by a <a class="reference internal" href="vasca.tables.html#va
 <span class="go"> &#39;description&#39;: &#39;bar&#39;}</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vasca.columns.VASCAColumn.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.columns.VASCAColumn.name" title="Link to this definition">¶</a></dt>
@@ -380,7 +381,7 @@ objects to be held by a <a class="reference internal" href="vasca.tables.html#va
 <dt class="sig sig-object py" id="vasca.columns.VASCAColumn.to_dict">
 <span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/vasca/columns.html#VASCAColumn.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.columns.VASCAColumn.to_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a dictionary representation of the dataclass using
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">asdict()</span></code>.</p>
+<a class="reference external" href="https://docs.python.org/3/library/dataclasses.html#dataclasses.asdict" title="(in Python v3.13)"><code class="xref py py-func docutils literal notranslate"><span class="pre">dataclasses.asdict()</span></code></a>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -487,7 +488,7 @@ objects to be held by a <a class="reference internal" href="vasca.tables.html#va
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=3f704cae"></script>
+</div><script src="../../_static/documentation_options.js?v=39026913"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -495,7 +496,7 @@ objects to be held by a <a class="reference internal" href="vasca.tables.html#va
     <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.columns.f371b8f9-d75d-43c1-a8ee-5cf015424530.js"></script>
+    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.columns.db222c1f-919a-4386-8862-11817c3ed777.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

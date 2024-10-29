@@ -294,35 +294,31 @@
 <a class="viewcode-back" href="../../api/vasca/vasca.columns.html#vasca.columns.VASCAColumn">[docs]</a>
 <span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
 <span class="k">class</span> <span class="nc">VASCAColumn</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Base class describing all parameters of VASCA columns.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class describing all parameters of VASCA columns.</span>
 
 <span class="sd">    The parameters defined here, are used to construct the various :py:class:`~astropy.table.Table`</span>
 <span class="sd">    objects to be held by a :class:`~vasca.tables.TableCollection`.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    name: str</span>
-<span class="sd">        Column Name</span>
-<span class="sd">    dtype: str</span>
-<span class="sd">        Data type of the column data (FITS compliant)</span>
-<span class="sd">    unit: str</span>
-<span class="sd">        Unit of the column data (FITS compliant)</span>
-<span class="sd">    default: str</span>
-<span class="sd">        Default value taken as placeholder during initialization of</span>
+<span class="sd">    :param name: Column Name</span>
+<span class="sd">    :type name: str</span>
+<span class="sd">    :param dtype: Data type of the column data (FITS compliant)</span>
+<span class="sd">    :type dtype: str</span>
+<span class="sd">    :param unit: Unit of the column data (FITS compliant)</span>
+<span class="sd">    :type unit: str</span>
+<span class="sd">    :param default: Default value taken as placeholder during initialization of</span>
 <span class="sd">        :class:`~vasca.tables.TableCollection`.</span>
-<span class="sd">    description: str</span>
-<span class="sd">        Short description of the column&#39;s content</span>
+<span class="sd">    :type default: str</span>
+<span class="sd">    :param description: Short description of the column&#39;s content</span>
+<span class="sd">    :type description: str</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; dummy_column = VASCAColumn(name=&quot;foo&quot;, dtype=&quot;int32&quot;, unit=&quot;1&quot;, default=&quot;-1&quot;, description=&quot;bar&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; dummy_column.to_dict()</span>
-<span class="sd">    {&#39;name&#39;: &#39;foo&#39;,</span>
-<span class="sd">     &#39;dtype&#39;: &#39;int32&#39;,</span>
-<span class="sd">     &#39;unit&#39;: &#39;1&#39;,</span>
-<span class="sd">     &#39;default&#39;: &#39;-1&#39;,</span>
-<span class="sd">     &#39;description&#39;: &#39;bar&#39;}</span>
+<span class="sd">    :example:</span>
+<span class="sd">        &gt;&gt;&gt; dummy_column = VASCAColumn(name=&quot;foo&quot;, dtype=&quot;int32&quot;, unit=&quot;1&quot;, default=&quot;-1&quot;, description=&quot;bar&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; dummy_column.to_dict()</span>
+<span class="sd">        {&#39;name&#39;: &#39;foo&#39;,</span>
+<span class="sd">         &#39;dtype&#39;: &#39;int32&#39;,</span>
+<span class="sd">         &#39;unit&#39;: &#39;1&#39;,</span>
+<span class="sd">         &#39;default&#39;: &#39;-1&#39;,</span>
+<span class="sd">         &#39;description&#39;: &#39;bar&#39;}</span>
 <span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
 
     <span class="c1">#: Column Name</span>
@@ -340,9 +336,8 @@
 <div class="viewcode-block" id="VASCAColumn.to_dict">
 <a class="viewcode-back" href="../../api/vasca/vasca.columns.html#vasca.columns.VASCAColumn.to_dict">[docs]</a>
     <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a dictionary representation of the dataclass using</span>
-<span class="sd">        :py:meth:`~dataclasses.asdict`.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary representation of the dataclass using</span>
+<span class="sd">        :py:func:`dataclasses.asdict`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 </div>
@@ -398,7 +393,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=3f704cae"></script>
+</div><script src="../../_static/documentation_options.js?v=39026913"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

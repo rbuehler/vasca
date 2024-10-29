@@ -300,8 +300,8 @@
 <table class="autosummary longtable docutils align-left">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TableCollection</span></code></a></p></td>
-<td><p>Collection of <a href="#id1"><span class="problematic" id="id2">astropy.table.Table_</span></a> objects. Base calss for data
-storage classes in VASCA.</p></td>
+<td><p>Collection of <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a> objects. Base calss for data storage
+classes in VASCA.</p></td>
 </tr>
 </tbody>
 </table>
@@ -345,260 +345,267 @@ storage classes in VASCA.</p></td>
 <dl class="py class">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vasca.tables.</span></span><span class="sig-name descname"><span class="pre">TableCollection</span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Collection of <a href="#id3"><span class="problematic" id="id4">astropy.table.Table_</span></a> objects. Base calss for data
-storage classes in VASCA.</p>
+<dd><p>Collection of <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a> objects. Base calss for data storage
+classes in VASCA.</p>
 <p class="rubric">Initialization</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.table_from_template">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">table_from_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dd_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.table_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.table_from_template" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">table_from_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dd_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><span class="pre">astropy.table.Table</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.table_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.table_from_template" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a new astropy table.</p>
-<dl class="simple">
-<dt>dd_data<span class="classifier">dict</span></dt><dd><p>Data dictionaty with the key corresponding to the templates columns.
-Id data==None an empty template table is returned.</p>
-</dd>
-<dt>template_name<span class="classifier">str</span></dt><dd><p>Identifier to select a table template. Templates are selected by
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dd_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Data dictionaty with the key corresponding to the templates
+columns. Id data==None an empty template table is returned.</p></li>
+<li><p><strong>template_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Identifier to select a table template. Templates are selected by
 setting the class key and a corresponding table key in one string
-separated by a colon, e.g. template_name=&lt;class_key&gt;:&lt;table_key&gt;.</p>
+separated by a colon, e.g. template_name=&lt;class_key&gt;:&lt;table_key&gt;.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a></p>
 </dd>
 </dl>
-<p>astropy.table.Table</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.remove_tables">
-<span class="sig-name descname"><span class="pre">remove_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ll_table_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.remove_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.remove_tables" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">remove_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ll_table_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.remove_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.remove_tables" title="Link to this definition">¶</a></dt>
 <dd><p>Removes table from collection</p>
-<dl class="simple">
-<dt>ll_table_names<span class="classifier">list of str</span></dt><dd><p>List with name of tables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ll_table_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – List with name of tables</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.add_table">
-<span class="sig-name descname"><span class="pre">add_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.add_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.add_table" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">numpy.ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.add_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.add_table" title="Link to this definition">¶</a></dt>
 <dd><p>Add a VASCA table to the colection</p>
-<dl class="simple">
-<dt>data<span class="classifier">list, array-like</span></dt><dd><p>Data of the table with shape (n, n_cols) or as dictionary with the
-key corresponding to the templates columns.</p>
-</dd>
-<dt>template_name<span class="classifier">str</span></dt><dd><p>Identifier to select a table template. Templates are selected by
-setting the class key and a corresponding table key in one string
-separated by a colon, e.g. template_name=&lt;class_key&gt;:&lt;table_key&gt;.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>array-like</em>) – Data of the table with shape (n, n_cols) or as dictionary with the
+key corresponding to the templates columns.</p></li>
+<li><p><strong>template_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Identifier to select a table template. Templates are
+selected by setting the class key and a corresponding table key in one
+string separated by a colon, e.g. template_name=&lt;class_key&gt;:&lt;table_key&gt;.
 If no “:” is in the templatename, assume that this is not a VASCA
 table, but proceed adding it to the collection anyhow. template_name
 will be used as a table name in that case. The available VASCA templates
-are defined in <code class="docutils literal notranslate"><span class="pre">vasca.tables_dict</span></code>.</p>
+are defined in <a class="reference internal" href="vasca.tables_dict.html#module-vasca.tables_dict" title="vasca.tables_dict"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tables_dict</span></code></a>.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.remove_unselected">
-<span class="sig-name descname"><span class="pre">remove_unselected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.remove_unselected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.remove_unselected" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">remove_unselected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.remove_unselected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.remove_unselected" title="Link to this definition">¶</a></dt>
 <dd><p>Remove unselected rows from given table</p>
-<dl class="simple">
-<dt>table_name<span class="classifier">str</span></dt><dd><p>Table to delete the unselected rows from. Has to contain the “sel” column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Table to delete the unselected rows from. Has to contain the
+“sel” column.</p>
 </dd>
 </dl>
-<p>None</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.write_to_fits">
-<span class="sig-name descname"><span class="pre">write_to_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tables.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits_verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fix'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.write_to_fits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.write_to_fits" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write_to_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tables.fits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits_verify</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fix'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.write_to_fits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.write_to_fits" title="Link to this definition">¶</a></dt>
 <dd><p>Write tables and image of a collection to a fits file.</p>
-<dl class="simple">
-<dt>file_name<span class="classifier">str, optional</span></dt><dd><p>File name. The default is “field_default.fits”.</p>
-</dd>
-<dt>overwrite<span class="classifier">bool, optional</span></dt><dd><p>Overwrite existing file. The default is True.</p>
-</dd>
-<dt>fits_verfy: str, optional</dt><dd><p>Verify if output is compatible with FITS format. Options are:
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – File name. The default is “field_default.fits”.</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Overwrite existing file. The default is True.</p></li>
+<li><p><strong>fits_verfy</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Verify if output is compatible with FITS format. Options are:
 ‘exception’, ‘ignore’, ‘fix’, ‘silentfix’, ‘warn’
 See <a class="reference external" href="https://docs.astropy.org/en/stable/io/fits/api/verification.html">https://docs.astropy.org/en/stable/io/fits/api/verification.html</a>
-The default is ‘warn’.</p>
+The default is ‘warn’.</p></li>
+</ul>
 </dd>
 </dl>
-<p>None.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.load_from_fits">
-<span class="sig-name descname"><span class="pre">load_from_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.load_from_fits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.load_from_fits" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_from_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.load_from_fits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.load_from_fits" title="Link to this definition">¶</a></dt>
 <dd><p>Loads collection from a fits file</p>
-<dl class="simple">
-<dt>file_name<span class="classifier">str, optional</span></dt><dd><p>File name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – File name</p>
 </dd>
 </dl>
-<p>None.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.info">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.info" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.info" title="Link to this definition">¶</a></dt>
 <dd><p>Print out information on tables in the collection.</p>
-<p>None.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.__str__">
-<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.__str__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.__str__" title="Link to this definition">¶</a></dt>
 <dd><p>Return string with information about the collection.</p>
-<p>str</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.select_from_config">
-<span class="sig-name descname"><span class="pre">select_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dd_selections</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.select_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.select_from_config" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">select_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dd_selections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.select_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.select_from_config" title="Link to this definition">¶</a></dt>
 <dd><p>Apply multiple selections at once.</p>
-<dl class="simple">
-<dt>dd_selections<span class="classifier">dict</span></dt><dd><p>Dictionary with selection table, variables and cut values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dd_selections</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary with selection table, variables and cut values</p>
 </dd>
 </dl>
-<p>None</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.select_rows">
-<span class="sig-name descname"><span class="pre">select_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_unselected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.select_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.select_rows" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">select_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_unselected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.select_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.select_rows" title="Link to this definition">¶</a></dt>
 <dd><p>Apply selection to a passed table.</p>
-<dl class="simple">
-<dt>selections<span class="classifier">dict</span></dt><dd><p>Dictionary with selection table, variables and cut values</p>
-</dd>
-<dt>remove_unselected: bool</dt><dd><p>Remove table rows with entry False in ‘sel’ table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selections</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary with selection table, variables and cut values</p></li>
+<li><p><strong>remove_unselected</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Remove table rows with entry False in ‘sel’ table.</p></li>
+</ul>
 </dd>
 </dl>
-<p>None</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.get_light_curve">
-<span class="sig-name descname"><span class="pre">get_light_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fd_src_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rg_src_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'flux'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.get_light_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.get_light_curve" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_light_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fd_src_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rg_src_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'flux'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.get_light_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.get_light_curve" title="Link to this definition">¶</a></dt>
 <dd><p>Get a light curves for one or list of sources, for regions or fields.</p>
-<dl class="simple">
-<dt>fd_src_ids<span class="classifier">list or int</span></dt><dd><p>List or single field source IDs to plot. Default is None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fd_src_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – List or single field source IDs to plot. Default is None.</p></li>
+<li><p><strong>rg_src_ids</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – List or single region source IDs to plot. Default is None.</p></li>
+<li><p><strong>flux_var</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Variable in table to be used to get flux Jy. Flux error assumed
+to be named flux_var+’_err’</p></li>
+</ul>
 </dd>
-<dt>rg_src_ids<span class="classifier">list or int</span></dt><dd><p>List or single region source IDs to plot. Default is None.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary {src_id : light_curve). Light curve as an astropy
+Table compatible with astropy BinnedTimeSeries.</p>
 </dd>
-<dt>flux_var: str, optional</dt><dd><p>Variable in table to be used to get flux Jy. Flux error assumed to be named
-flux_var+’_err’</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>dict</dt><dd><p>Dictionary {src_id : light_curve). Light curve as an astropy Table
-compatible with astropy BinnedTimeSeries.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.cluster_meanshift">
-<span class="sig-name descname"><span class="pre">cluster_meanshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">ms_kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.cluster_meanshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.cluster_meanshift" title="Link to this definition">¶</a></dt>
-<dd><p>Apply _MeanShift clustering algorithm using to derive sources. Runs only on selected
-detections or sources.</p>
-<dl class="simple">
-<dt>ms_kw<span class="classifier">dict, optional</span></dt><dd><p>Keywords passed to the scikit MeanShift function. Note that the
+<span class="sig-name descname"><span class="pre">cluster_meanshift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">ms_kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.cluster_meanshift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.cluster_meanshift" title="Link to this definition">¶</a></dt>
+<dd><p>Apply <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html">MeanShift</a> clustering algorithm using to derive sources. Runs only on
+selected detections or sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ms_kw</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Keywords passed to the scikit MeanShift function. Note that the
 bandwidth is assumed to be in units of arc seconds.</p>
 </dd>
-</dl>
-<dl class="simple">
-<dt>int</dt><dd><p>Number of detected clusters.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of detected clusters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.set_src_stats">
-<span class="sig-name descname"><span class="pre">set_src_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fd_src_id'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.set_src_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.set_src_stats" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_src_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_id_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fd_src_id'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.set_src_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.set_src_stats" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates source parameters from detections and stores them
 in the source table (tt_source).</p>
-<dl class="simple">
-<dt>src_id_name<span class="classifier">str, optional</span></dt><dd><p>Name of the src_id to calculate statistics for. ‘rg_src_id’ indicates
-operations being performed on <code class="docutils literal notranslate"><span class="pre">vasca.region</span></code> objects whereas ‘fd_src_id’
-would indicate <code class="docutils literal notranslate"><span class="pre">vasca.field</span></code> objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>src_id_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the src_id to calculate statistics for. ‘rg_src_id’
+indicates operations being performed on <code class="docutils literal notranslate"><span class="pre">vasca.region</span></code> objects whereas
+‘fd_src_id’ would indicate <code class="docutils literal notranslate"><span class="pre">vasca.field</span></code> objects.</p>
 </dd>
 </dl>
-<p>None</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.set_hardness_ratio">
-<span class="sig-name descname"><span class="pre">set_hardness_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_filter_id1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_filter_id2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.set_hardness_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.set_hardness_ratio" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_hardness_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_filter_id1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_filter_id2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.set_hardness_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.set_hardness_ratio" title="Link to this definition">¶</a></dt>
 <dd><p>Calculated hardness ratio from detections flux(filter_2)/ flux(filter_1).
 Only simultaneous detections are considered</p>
-<dl class="simple">
-<dt>obs_filter_id1<span class="classifier">int, optional</span></dt><dd><p>Observation filter ID1. The default is 1.</p>
-</dd>
-<dt>obs_filter_id2<span class="classifier">int, optional</span></dt><dd><p>Observation filter ID2. The default is 1. The default is 2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_filter_id1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Observation filter ID1. The default is 1.</p></li>
+<li><p><strong>obs_filter_id2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Observation filter ID2. The default is 1.
+The default is 2.</p></li>
+</ul>
 </dd>
 </dl>
-<p>None</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.add_column">
-<span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.add_column" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.add_column" title="Link to this definition">¶</a></dt>
 <dd><p>Adds column in a table, using the predefined VASCA columns.
 If column exists already replace it.</p>
-<dl class="simple">
-<dt>table_name<span class="classifier">str</span></dt><dd><p>Name of the table.</p>
-</dd>
-<dt>col_name: str</dt><dd><p>Name of the column</p>
-</dd>
-<dt>col_data  dict or array</dt><dd><p>Data to be inserted. If “None” use vasca.table_dict default value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the table.</p></li>
+<li><p><strong>col_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the column</p></li>
+<li><p><strong>col_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em> or </em><em>np.ndarray</em>) – Data to be inserted. If “None” use vasca.table_dict default
+value.</p></li>
+</ul>
 </dd>
 </dl>
-<p>None</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.copy_table_columns">
-<span class="sig-name descname"><span class="pre">copy_table_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tab_name_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_name_from</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rg_src_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_matched</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.copy_table_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.copy_table_columns" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">copy_table_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tab_name_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_name_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_vars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rg_src_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_matched</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.copy_table_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.copy_table_columns" title="Link to this definition">¶</a></dt>
 <dd><p>Copy a column from one table to the other, for those columns that have a
-matching variable value ‘match_variable’
-Parameters
-———-
-tab_name_to str</p>
-<blockquote>
-<div><p>Table name of tabla to copy into</p>
-</div></blockquote>
-<dl class="simple">
-<dt>tab_name_from str</dt><dd><p>Table name of tabla to copy into</p>
-</dd>
-<dt>copy_vars list</dt><dd><p>Variable names of column to copy</p>
-</dd>
-<dt>match_var</dt><dd><p>Variable name to match rows in tables</p>
-</dd>
-<dt>select_matched</dt><dd><p>Adjust the “sel” column in ‘tab_name_to’</p>
+matching variable value ‘match_variable’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tab_name_to</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Table name of tabla to copy into</p></li>
+<li><p><strong>tab_name_from</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Table name of tabla to copy into</p></li>
+<li><p><strong>copy_vars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – Variable names of column to copy</p></li>
+<li><p><strong>match_var</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Variable name to match rows in tables</p></li>
+<li><p><strong>select_matched</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Adjust the “sel” column in ‘tab_name_to’</p></li>
+</ul>
 </dd>
 </dl>
-<blockquote>
-<div><p>None</p>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.tables.TableCollection.cross_match">
-<span class="sig-name descname"><span class="pre">cross_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_s2n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tt_coadd_sources'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coadd_src_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coadd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tt_sources'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.cross_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.cross_match" title="Link to this definition">¶</a></dt>
-<dd><p>Cross match sources to a catalog by position. Typically this is the coadd catalog.</p>
-<dl class="simple">
-<dt>dist_max astropy.Quantity</dt><dd><p>Maximum angular distance under which all associations are done, independent
-of dist_s2n. The default is “1 arcsec”.</p>
-</dd>
-<dt>dist_s2n_max float</dt><dd><p>Maximum distance in units of position error. All sources below this cut are
-associated, independently of the dist_max selection.</p>
-</dd>
-<dt>cat_table_name<span class="classifier">str, optional</span></dt><dd><p>Catalog table name. Has to contain “ra”,”dec” (in deg), “flux” (in microJy)
-and “cat_id_name” columns.  Marks associated catalog sources
-in the “sel” column of the catalog table, if it exists.</p>
-</dd>
-<dt>cat_id_name<span class="classifier">str, optional</span></dt><dd><p>Catalog ID Br. variable name. The default is “coadd_src_id”.</p>
-</dd>
-<dt>src_table_name<span class="classifier">str, optional</span></dt><dd><p>Table to cross match to catalog. The default is “tt_sources”.</p>
+<span class="sig-name descname"><span class="pre">cross_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v6.1)"><span class="pre">astropy.units.Quantity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_s2n_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tt_coadd_sources'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_id_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'coadd_src_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'coadd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tt_sources'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/tables.html#TableCollection.cross_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.tables.TableCollection.cross_match" title="Link to this definition">¶</a></dt>
+<dd><p>Cross match sources to a catalog by position. Typically this is the coadd
+catalog.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist_max</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, optional) – Maximum angular distance under which all associations are done,
+independent of dist_s2n. The default is “1 arcsec”.</p></li>
+<li><p><strong>dist_s2n_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum distance in units of position error. All sources
+below this cut are associated, independently of the dist_max selection.</p></li>
+<li><p><strong>cat_table_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Catalog table name. Has to contain “ra”,”dec” (in deg),
+“flux” (in microJy) and “cat_id_name” columns.  Marks associated catalog
+sources in the “sel” column of the catalog table, if it exists.</p></li>
+<li><p><strong>cat_id_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Catalog ID Br. variable name. The default is “coadd_src_id”.</p></li>
+<li><p><strong>src_table_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Table to cross match to catalog. The default is
+“tt_sources”.</p></li>
+</ul>
 </dd>
 </dl>
-<p>None</p>
 </dd></dl>
 
 </dd></dl>
@@ -712,7 +719,7 @@ in the “sel” column of the catalog table, if it exists.</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=3f704cae"></script>
+</div><script src="../../_static/documentation_options.js?v=39026913"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -720,7 +727,7 @@ in the “sel” column of the catalog table, if it exists.</p>
     <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.tables.ee95fd03-52b3-4f54-b527-a0b66ce4f8d2.js"></script>
+    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.tables.8a93358f-1547-4d4f-b327-4d3f736bc533.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

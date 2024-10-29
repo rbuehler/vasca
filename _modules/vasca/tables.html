@@ -317,39 +317,36 @@
 
 <div class="viewcode-block" id="TableCollection">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection">[docs]</a>
-<span class="k">class</span> <span class="nc">TableCollection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TableCollection</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Collection of astropy.table.Table_ objects. Base calss for data</span>
-<span class="sd">    storage classes in VASCA.</span>
+<span class="sd">    Collection of :py:class:`~astropy.table.Table` objects. Base calss for data storage</span>
+<span class="sd">    classes in VASCA.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Configure logger</span>
         <span class="c1"># adds the class name as an extra key; accessible vie the handler format</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;classname&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">})</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span> <span class="o">=</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="TableCollection.table_from_template">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.table_from_template">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">table_from_template</span><span class="p">(</span><span class="n">dd_data</span><span class="p">,</span> <span class="n">template_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new astropy table.</span>
+    <span class="k">def</span> <span class="nf">table_from_template</span><span class="p">(</span><span class="n">dd_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">template_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a new astropy table.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        dd_data : dict</span>
-<span class="sd">            Data dictionaty with the key corresponding to the templates columns.</span>
-<span class="sd">            Id data==None an empty template table is returned.</span>
-<span class="sd">        template_name : str</span>
+<span class="sd">        :param dd_data: Data dictionaty with the key corresponding to the templates</span>
+<span class="sd">            columns. Id data==None an empty template table is returned.</span>
+<span class="sd">        :type dd_data: dict</span>
+<span class="sd">        :param template_name:</span>
 <span class="sd">            Identifier to select a table template. Templates are selected by</span>
 <span class="sd">            setting the class key and a corresponding table key in one string</span>
 <span class="sd">            separated by a colon, e.g. template_name=&lt;class_key&gt;:&lt;table_key&gt;.</span>
+<span class="sd">        :type template_name: str</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        astropy.table.Table</span>
+
+<span class="sd">        :rtype: :py:class:`~astropy.table.Table`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Check dd_data type</span>
@@ -415,13 +412,12 @@
 
 <div class="viewcode-block" id="TableCollection.remove_tables">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.remove_tables">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ll_table_names</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">remove_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ll_table_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes table from collection</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        ll_table_names : list of str</span>
-<span class="sd">            List with name of tables</span>
+<span class="sd">        :param ll_table_names: List with name of tables</span>
+<span class="sd">        :type ll_table_names: list[str]</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing tables &#39;</span><span class="si">{</span><span class="n">ll_table_names</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">ll_table_names</span><span class="p">:</span>
@@ -433,23 +429,20 @@
 
 <div class="viewcode-block" id="TableCollection.add_table">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.add_table">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">template_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a VASCA table to the colection</span>
+    <span class="k">def</span> <span class="nf">add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">template_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a VASCA table to the colection</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        data : list, array-like</span>
-<span class="sd">            Data of the table with shape (n, n_cols) or as dictionary with the</span>
+<span class="sd">        :param data: Data of the table with shape (n, n_cols) or as dictionary with the</span>
 <span class="sd">            key corresponding to the templates columns.</span>
-<span class="sd">        template_name : str</span>
-<span class="sd">            Identifier to select a table template. Templates are selected by</span>
-<span class="sd">            setting the class key and a corresponding table key in one string</span>
-<span class="sd">            separated by a colon, e.g. template_name=&lt;class_key&gt;:&lt;table_key&gt;.</span>
+<span class="sd">        :type data: list, array-like</span>
+<span class="sd">        :param template_name: Identifier to select a table template. Templates are</span>
+<span class="sd">            selected by setting the class key and a corresponding table key in one</span>
+<span class="sd">            string separated by a colon, e.g. template_name=&lt;class_key&gt;:&lt;table_key&gt;.</span>
 <span class="sd">            If no &quot;:&quot; is in the templatename, assume that this is not a VASCA</span>
 <span class="sd">            table, but proceed adding it to the collection anyhow. template_name</span>
 <span class="sd">            will be used as a table name in that case. The available VASCA templates</span>
-<span class="sd">            are defined in ``vasca.tables_dict``.</span>
+<span class="sd">            are defined in :py:mod:`~vasca.tables_dict`.</span>
+<span class="sd">        :type template_name: str</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding table &#39;</span><span class="si">{</span><span class="n">template_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
@@ -474,18 +467,12 @@
 
 <div class="viewcode-block" id="TableCollection.remove_unselected">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.remove_unselected">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_unselected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Remove unselected rows from given table</span>
+    <span class="k">def</span> <span class="nf">remove_unselected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove unselected rows from given table</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        table_name : str</span>
-<span class="sd">            Table to delete the unselected rows from. Has to contain the &quot;sel&quot; column.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        :param table_name: Table to delete the unselected rows from. Has to contain the</span>
+<span class="sd">            &quot;sel&quot; column.</span>
+<span class="sd">        :type table_name: str</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing unselected rows in table &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
@@ -500,25 +487,23 @@
 
 <div class="viewcode-block" id="TableCollection.write_to_fits">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.write_to_fits">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_to_fits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;tables.fits&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fits_verify</span><span class="o">=</span><span class="s2">&quot;fix&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write tables and image of a collection to a fits file.</span>
+    <span class="k">def</span> <span class="nf">write_to_fits</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tables.fits&quot;</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">fits_verify</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;fix&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write tables and image of a collection to a fits file.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        file_name : str, optional</span>
-<span class="sd">            File name. The default is &quot;field_default.fits&quot;.</span>
-<span class="sd">        overwrite : bool, optional</span>
-<span class="sd">            Overwrite existing file. The default is True.</span>
-<span class="sd">        fits_verfy: str, optional</span>
-<span class="sd">            Verify if output is compatible with FITS format. Options are:</span>
+<span class="sd">        :param file_name: File name. The default is &quot;field_default.fits&quot;.</span>
+<span class="sd">        :type file_name: str, optional</span>
+<span class="sd">        :param overwrite: Overwrite existing file. The default is True.</span>
+<span class="sd">        :type overwrite: bool, optional</span>
+<span class="sd">        :param fits_verfy: Verify if output is compatible with FITS format. Options are:</span>
 <span class="sd">            &#39;exception&#39;, &#39;ignore&#39;, &#39;fix&#39;, &#39;silentfix&#39;, &#39;warn&#39;</span>
 <span class="sd">            See https://docs.astropy.org/en/stable/io/fits/api/verification.html</span>
 <span class="sd">            The default is &#39;warn&#39;.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
+<span class="sd">        :type fits_verfy: str, optional</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing file with name &#39;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
@@ -616,18 +601,11 @@
 
 <div class="viewcode-block" id="TableCollection.load_from_fits">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.load_from_fits">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_from_fits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads collection from a fits file</span>
+    <span class="k">def</span> <span class="nf">load_from_fits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads collection from a fits file</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        file_name : str, optional</span>
-<span class="sd">            File name.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
+<span class="sd">        :param file_name: File name</span>
+<span class="sd">        :type file_name: str</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading file with name &#39;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
@@ -698,15 +676,8 @@
 
 <div class="viewcode-block" id="TableCollection.info">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.info">[docs]</a>
-    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Print out information on tables in the collection.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print out information on tables in the collection.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
@@ -716,15 +687,8 @@
 
 <div class="viewcode-block" id="TableCollection.__str__">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.__str__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return string with information about the collection.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return string with information about the collection.&quot;&quot;&quot;</span>
         <span class="n">out_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
@@ -735,18 +699,11 @@
 
 <div class="viewcode-block" id="TableCollection.select_from_config">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.select_from_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">select_from_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dd_selections</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Apply multiple selections at once.</span>
+    <span class="k">def</span> <span class="nf">select_from_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dd_selections</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply multiple selections at once.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        dd_selections : dict</span>
-<span class="sd">            Dictionary with selection table, variables and cut values</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        :param dd_selections: Dictionary with selection table, variables and cut values</span>
+<span class="sd">        :type dd_selections: dict</span>
 
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -758,20 +715,13 @@
 
 <div class="viewcode-block" id="TableCollection.select_rows">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.select_rows">[docs]</a>
-    <span class="k">def</span> <span class="nf">select_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selections</span><span class="p">,</span> <span class="n">remove_unselected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Apply selection to a passed table.</span>
+    <span class="k">def</span> <span class="nf">select_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selections</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">remove_unselected</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply selection to a passed table.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        selections : dict</span>
-<span class="sd">            Dictionary with selection table, variables and cut values</span>
-<span class="sd">        remove_unselected: bool</span>
-<span class="sd">            Remove table rows with entry False in &#39;sel&#39; table.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        :param selections: Dictionary with selection table, variables and cut values</span>
+<span class="sd">        :type selections: dict</span>
+<span class="sd">        :param remove_unselected: Remove table rows with entry False in &#39;sel&#39; table.</span>
+<span class="sd">        :type remove_unselected: bool, optional</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -875,39 +825,35 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting range for &#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">vals</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
                 <span class="n">tt</span><span class="p">[</span><span class="n">var</span><span class="p">][:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">tt</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span>
                     <span class="n">tt</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="p">)</span> <span class="o">*</span> <span class="n">vals</span><span class="p">[</span>
-                    <span class="mi">0</span>
-                <span class="p">]</span>  <span class="c1"># Set minimum</span>
+                <span class="p">)</span> <span class="o">*</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Set minimum</span>
                 <span class="n">tt</span><span class="p">[</span><span class="n">var</span><span class="p">][:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">vals</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">tt</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span>
                     <span class="n">tt</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="p">)</span> <span class="o">*</span> <span class="n">vals</span><span class="p">[</span>
-                    <span class="mi">1</span>
-                <span class="p">]</span>  <span class="c1"># Set maximum</span>
+                <span class="p">)</span> <span class="o">*</span> <span class="n">vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Set maximum</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tt</span></div>
 
 
 <div class="viewcode-block" id="TableCollection.get_light_curve">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.get_light_curve">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_light_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fd_src_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rg_src_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flux_var</span><span class="o">=</span><span class="s2">&quot;flux&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get a light curves for one or list of sources, for regions or fields.</span>
+    <span class="k">def</span> <span class="nf">get_light_curve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fd_src_ids</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rg_src_ids</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">flux_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;flux&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a light curves for one or list of sources, for regions or fields.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        fd_src_ids : list or int</span>
-<span class="sd">            List or single field source IDs to plot. Default is None.</span>
-<span class="sd">        rg_src_ids : list or int</span>
-<span class="sd">            List or single region source IDs to plot. Default is None.</span>
-<span class="sd">        flux_var: str, optional</span>
-<span class="sd">            Variable in table to be used to get flux Jy. Flux error assumed to be named</span>
-<span class="sd">            flux_var+&#39;_err&#39;</span>
+<span class="sd">        :param fd_src_ids: List or single field source IDs to plot. Default is None.</span>
+<span class="sd">        :type fd_src_ids: list, int, optional</span>
+<span class="sd">        :param rg_src_ids: List or single region source IDs to plot. Default is None.</span>
+<span class="sd">        :type rg_src_ids: list, int, optional</span>
+<span class="sd">        :param flux_var: Variable in table to be used to get flux Jy. Flux error assumed</span>
+<span class="sd">            to be named flux_var+&#39;_err&#39;</span>
+<span class="sd">        :type flux_var: str, optional</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            Dictionary {src_id : light_curve). Light curve as an astropy Table</span>
-<span class="sd">            compatible with astropy BinnedTimeSeries.</span>
+<span class="sd">        :returns: Dictionary {src_id : light_curve). Light curve as an astropy</span>
+<span class="sd">            Table compatible with astropy BinnedTimeSeries.</span>
+<span class="sd">        :rtype: dict</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -1001,23 +947,19 @@
 
 <div class="viewcode-block" id="TableCollection.cluster_meanshift">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.cluster_meanshift">[docs]</a>
-    <span class="k">def</span> <span class="nf">cluster_meanshift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">ms_kw</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Apply _MeanShift clustering algorithm using to derive sources. Runs only on selected</span>
-<span class="sd">        detections or sources.</span>
+    <span class="k">def</span> <span class="nf">cluster_meanshift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">ms_kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply MeanShift_ clustering algorithm using to derive sources. Runs only on</span>
+<span class="sd">        selected detections or sources.</span>
 
 <span class="sd">        .. _MeanShift: https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        ms_kw : dict, optional</span>
-<span class="sd">            Keywords passed to the scikit MeanShift function. Note that the</span>
+<span class="sd">        :param ms_kw: Keywords passed to the scikit MeanShift function. Note that the</span>
 <span class="sd">            bandwidth is assumed to be in units of arc seconds.</span>
+<span class="sd">        :type ms_kw: dict, optional</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        int</span>
-<span class="sd">            Number of detected clusters.</span>
+<span class="sd">        :returns: Number of detected clusters.</span>
+<span class="sd">        :rtype: int</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Select seed table, detections or sources</span>
@@ -1155,22 +1097,14 @@
     <span class="c1"># as this calculation is computationally intensive.</span>
 <div class="viewcode-block" id="TableCollection.set_src_stats">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.set_src_stats">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_src_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_id_name</span><span class="o">=</span><span class="s2">&quot;fd_src_id&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates source parameters from detections and stores them</span>
+    <span class="k">def</span> <span class="nf">set_src_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_id_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;fd_src_id&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates source parameters from detections and stores them</span>
 <span class="sd">        in the source table (tt_source).</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        src_id_name : str, optional</span>
-<span class="sd">            Name of the src_id to calculate statistics for. &#39;rg_src_id&#39; indicates</span>
-<span class="sd">            operations being performed on ``vasca.region`` objects whereas &#39;fd_src_id&#39;</span>
-<span class="sd">            would indicate ``vasca.field`` objects.</span>
-
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        :param src_id_name: Name of the src_id to calculate statistics for. &#39;rg_src_id&#39;</span>
+<span class="sd">            indicates operations being performed on ``vasca.region`` objects whereas</span>
+<span class="sd">            &#39;fd_src_id&#39; would indicate ``vasca.field`` objects.</span>
+<span class="sd">        :type src_id_name: str, optional</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -1316,21 +1250,17 @@
 
 <div class="viewcode-block" id="TableCollection.set_hardness_ratio">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.set_hardness_ratio">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_hardness_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_filter_id1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">obs_filter_id2</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculated hardness ratio from detections flux(filter_2)/ flux(filter_1).</span>
+    <span class="k">def</span> <span class="nf">set_hardness_ratio</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">obs_filter_id1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">obs_filter_id2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculated hardness ratio from detections flux(filter_2)/ flux(filter_1).</span>
 <span class="sd">        Only simultaneous detections are considered</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        obs_filter_id1 : int, optional</span>
-<span class="sd">            Observation filter ID1. The default is 1.</span>
-<span class="sd">        obs_filter_id2 : int, optional</span>
-<span class="sd">            Observation filter ID2. The default is 1. The default is 2.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        :param obs_filter_id1: Observation filter ID1. The default is 1.</span>
+<span class="sd">        :type obs_filter_id1: int, optional</span>
+<span class="sd">        :param obs_filter_id2: Observation filter ID2. The default is 1.</span>
+<span class="sd">            The default is 2.</span>
+<span class="sd">        :type obs_filter_id2: int, optional</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calculating hardness ratio&quot;</span><span class="p">)</span>
@@ -1383,23 +1313,19 @@
 
 <div class="viewcode-block" id="TableCollection.add_column">
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.add_column">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">col_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Adds column in a table, using the predefined VASCA columns.</span>
+    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">col_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds column in a table, using the predefined VASCA columns.</span>
 <span class="sd">        If column exists already replace it.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        table_name : str</span>
-<span class="sd">            Name of the table.</span>
-<span class="sd">        col_name: str</span>
-<span class="sd">            Name of the column</span>
-<span class="sd">        col_data  dict or array</span>
-<span class="sd">            Data to be inserted. If &quot;None&quot; use vasca.table_dict default value.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        :param table_name: Name of the table.</span>
+<span class="sd">        :type table_name: str</span>
+<span class="sd">        :param col_name: Name of the column</span>
+<span class="sd">        :type col_name: str</span>
+<span class="sd">        :param col_data: Data to be inserted. If &quot;None&quot; use vasca.table_dict default</span>
+<span class="sd">            value.</span>
+<span class="sd">        :type col_data:  dict or np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check if no data was given and fill with default</span>
@@ -1427,31 +1353,25 @@
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.copy_table_columns">[docs]</a>
     <span class="k">def</span> <span class="nf">copy_table_columns</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">tab_name_to</span><span class="p">,</span>
-        <span class="n">tab_name_from</span><span class="p">,</span>
-        <span class="n">copy_vars</span><span class="p">,</span>
-        <span class="n">match_var</span><span class="o">=</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">,</span>
-        <span class="n">select_matched</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Copy a column from one table to the other, for those columns that have a</span>
+        <span class="n">tab_name_to</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tab_name_from</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">copy_vars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">match_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rg_src_id&quot;</span><span class="p">,</span>
+        <span class="n">select_matched</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy a column from one table to the other, for those columns that have a</span>
 <span class="sd">        matching variable value &#39;match_variable&#39;</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        tab_name_to str</span>
-<span class="sd">            Table name of tabla to copy into</span>
-<span class="sd">        tab_name_from str</span>
-<span class="sd">            Table name of tabla to copy into</span>
-<span class="sd">        copy_vars list</span>
-<span class="sd">            Variable names of column to copy</span>
-<span class="sd">        match_var</span>
-<span class="sd">            Variable name to match rows in tables</span>
-<span class="sd">        select_matched</span>
-<span class="sd">            Adjust the &quot;sel&quot; column in &#39;tab_name_to&#39;</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">            None</span>
+<span class="sd">        :param tab_name_to: Table name of tabla to copy into</span>
+<span class="sd">        :type tab_name_to: str</span>
+<span class="sd">        :param tab_name_from: Table name of tabla to copy into</span>
+<span class="sd">        :type tab_name_from: str</span>
+<span class="sd">        :param copy_vars: Variable names of column to copy</span>
+<span class="sd">        :type copy_vars: list[str]</span>
+<span class="sd">        :param match_var: Variable name to match rows in tables</span>
+<span class="sd">        :type match_var: str</span>
+<span class="sd">        :param select_matched: Adjust the &quot;sel&quot; column in &#39;tab_name_to&#39;</span>
+<span class="sd">        :type select_matched: bool</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -1482,36 +1402,31 @@
 <a class="viewcode-back" href="../../api/vasca/vasca.tables.html#vasca.tables.TableCollection.cross_match">[docs]</a>
     <span class="k">def</span> <span class="nf">cross_match</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">dist_max</span><span class="o">=</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">uu</span><span class="o">.</span><span class="n">arcsec</span><span class="p">,</span>
-        <span class="n">dist_s2n_max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-        <span class="n">cat_table_name</span><span class="o">=</span><span class="s2">&quot;tt_coadd_sources&quot;</span><span class="p">,</span>
-        <span class="n">cat_id_name</span><span class="o">=</span><span class="s2">&quot;coadd_src_id&quot;</span><span class="p">,</span>
-        <span class="n">cat_name</span><span class="o">=</span><span class="s2">&quot;coadd&quot;</span><span class="p">,</span>
-        <span class="n">src_table_name</span><span class="o">=</span><span class="s2">&quot;tt_sources&quot;</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Cross match sources to a catalog by position. Typically this is the coadd catalog.</span>
+        <span class="n">dist_max</span><span class="p">:</span> <span class="n">uu</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">uu</span><span class="o">.</span><span class="n">arcsec</span><span class="p">,</span>
+        <span class="n">dist_s2n_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">cat_table_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tt_coadd_sources&quot;</span><span class="p">,</span>
+        <span class="n">cat_id_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coadd_src_id&quot;</span><span class="p">,</span>
+        <span class="n">cat_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coadd&quot;</span><span class="p">,</span>
+        <span class="n">src_table_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tt_sources&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cross match sources to a catalog by position. Typically this is the coadd</span>
+<span class="sd">        catalog.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        dist_max astropy.Quantity</span>
-<span class="sd">            Maximum angular distance under which all associations are done, independent</span>
-<span class="sd">            of dist_s2n. The default is &quot;1 arcsec&quot;.</span>
-<span class="sd">        dist_s2n_max float</span>
-<span class="sd">            Maximum distance in units of position error. All sources below this cut are</span>
-<span class="sd">            associated, independently of the dist_max selection.</span>
-<span class="sd">        cat_table_name : str, optional</span>
-<span class="sd">            Catalog table name. Has to contain &quot;ra&quot;,&quot;dec&quot; (in deg), &quot;flux&quot; (in microJy)</span>
-<span class="sd">            and &quot;cat_id_name&quot; columns.  Marks associated catalog sources</span>
-<span class="sd">            in the &quot;sel&quot; column of the catalog table, if it exists.</span>
-<span class="sd">        cat_id_name : str, optional</span>
-<span class="sd">            Catalog ID Br. variable name. The default is &quot;coadd_src_id&quot;.</span>
-<span class="sd">        src_table_name : str, optional</span>
-<span class="sd">            Table to cross match to catalog. The default is &quot;tt_sources&quot;.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        :param dist_max: Maximum angular distance under which all associations are done,</span>
+<span class="sd">            independent of dist_s2n. The default is &quot;1 arcsec&quot;.</span>
+<span class="sd">        :type dist_max: :py:class:`~astropy.units.Quantity`, optional</span>
+<span class="sd">        :param dist_s2n_max: Maximum distance in units of position error. All sources</span>
+<span class="sd">            below this cut are associated, independently of the dist_max selection.</span>
+<span class="sd">        :type dist_s2n_max: float, optional</span>
+<span class="sd">        :param cat_table_name: Catalog table name. Has to contain &quot;ra&quot;,&quot;dec&quot; (in deg),</span>
+<span class="sd">            &quot;flux&quot; (in microJy) and &quot;cat_id_name&quot; columns.  Marks associated catalog</span>
+<span class="sd">            sources in the &quot;sel&quot; column of the catalog table, if it exists.</span>
+<span class="sd">        :type cat_table_name: str, optional</span>
+<span class="sd">        :param cat_id_name: Catalog ID Br. variable name. The default is &quot;coadd_src_id&quot;.</span>
+<span class="sd">        :type cat_id_name: str, optional</span>
+<span class="sd">        :param src_table_name: Table to cross match to catalog. The default is</span>
+<span class="sd">            &quot;tt_sources&quot;.</span>
+<span class="sd">        :type src_table_name: str, optional</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -1646,7 +1561,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=3f704cae"></script>
+</div><script src="../../_static/documentation_options.js?v=39026913"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
