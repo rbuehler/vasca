@@ -310,8 +310,9 @@ which correspond to the field of view as defined by the instrument’s telescope
 field is then defined by a central coordinate and the diameter of the field of view.</p>
 <p>VASCA relies as its input on the science data products that missions/organizations create
 from their observational raw data. Specifically this means VASCA takes tables of
-photometric detections that have a field and visit ID. For a reference of the full list
-of required columns can be see here: <a class="reference internal" href="../api/vasca/vasca.tables_dict.html#vasca.tables_dict.base_field" title="vasca.tables_dict.base_field"><span class="xref myst py py-data"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></span></a>, <a class="reference internal" href="../api/vasca/vasca.tables_dict.html#vasca.tables_dict.region" title="vasca.tables_dict.region"><span class="xref myst py py-data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Region</span></code></span></a>.</p>
+photometric detections that have a field and visit ID. A reference of the full list
+of required columns can be found below <a class="reference internal" href="#vasca-columns"><span class="std std-ref">VASCA Columns</span></a> or in the API reference:
+<a class="reference internal" href="../api/vasca/vasca.tables_dict.html#vasca.tables_dict.base_field" title="vasca.tables_dict.base_field"><span class="xref myst py py-data"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></span></a>, <a class="reference internal" href="../api/vasca/vasca.tables_dict.html#vasca.tables_dict.region" title="vasca.tables_dict.region"><span class="xref myst py py-data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Region</span></code></span></a>.</p>
 <p>In the case of GALEX, the detection lists created by the mission pipeline (“mcat” files)
 have a large number of different observables and parameters (columns) per detection (see
 GALEX docs <a class="reference external" href="http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1">here</a>).
@@ -475,7 +476,7 @@ This is the <code>init_notebook_mode</code> cell from ITables v2.2.2<br>
   font-size: small;
 }
 
-</style></div><div class="output text_html"><table id="itables_b74e54dd_06ef_4c82_a86c_8a7b7c0afaef" class="display compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
+</style></div><div class="output text_html"><table id="itables_6742797c_9d36_4ca4_aaca_1a226a1c62d1" class="display compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
 <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -589,7 +590,7 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
 <script type="module">
     const { DataTable, jQuery: $ } = await import(window._datatables_src_for_itables_2_2_2);
 
-    document.querySelectorAll("#itables_b74e54dd_06ef_4c82_a86c_8a7b7c0afaef:not(.dataTable)").forEach(table => {
+    document.querySelectorAll("#itables_6742797c_9d36_4ca4_aaca_1a226a1c62d1:not(.dataTable)").forEach(table => {
         if (!(table instanceof HTMLTableElement))
             return;
 
@@ -609,10 +610,9 @@ Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
 </section>
 <section id="vasca-tables">
 <h3>VASCA Tables<a class="headerlink" href="#vasca-tables" title="Link to this heading">¶</a></h3>
-<p>Below are shown all tables that are used in VASCA in various contexts (e.g. input,
-clustering, post-processing).</p>
-<dl class="simple myst">
-<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_visits</span></code></strong></dt><dd><p>Table that stores metadata about observational visits such as the visit ID (<code class="docutils literal notranslate"><span class="pre">vis_id</span></code>),
+<p>Below is a short description of the most important tables that are used in VASCA:</p>
+<dl class="simple myst glossary">
+<dt id="term-tt_visits"><strong><code class="docutils literal notranslate"><span class="pre">tt_visits</span></code></strong></dt><dd><p>Table that stores metadata about observational visits such as the visit ID (<code class="docutils literal notranslate"><span class="pre">vis_id</span></code>),
 the associated field ID (<code class="docutils literal notranslate"><span class="pre">field_id</span></code>) and observation start time (<code class="docutils literal notranslate"><span class="pre">time_bin_start</span></code>) as
 well as exposure time (<code class="docutils literal notranslate"><span class="pre">time_bin_size</span></code>).</p>
 </dd>
@@ -623,27 +623,62 @@ well as exposure time (<code class="docutils literal notranslate"><span class="p
 with astropy <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.timeseries.BinnedTimeSeries.html" title="Astropy 6.1">BinnedTimeSeries</a>. This ist then utilized when
 creating and analyzing light curves for specific sources.</p>
 </div>
-<dl class="simple myst">
-<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_fields</span></code></strong></dt><dd><p>Table storing metadata about all fields such as the field ID (<code class="docutils literal notranslate"><span class="pre">field_id</span></code>), the center
+<dl class="simple myst glossary">
+<dt id="term-tt_fields"><strong><code class="docutils literal notranslate"><span class="pre">tt_fields</span></code></strong></dt><dd><p>Table storing metadata about all fields such as the field ID (<code class="docutils literal notranslate"><span class="pre">field_id</span></code>), the center
 coordinates (<code class="docutils literal notranslate"><span class="pre">ra</span></code>, <code class="docutils literal notranslate"><span class="pre">dec</span></code>), total exposure time (<code class="docutils literal notranslate"><span class="pre">time_bin_size_sum</span></code>) and the size of the
 field of view (<code class="docutils literal notranslate"><span class="pre">r_fov</span></code>).</p>
+</dd>
+</dl>
+<dl class="simple myst glossary">
+<dt id="term-tt_detections"><strong><code class="docutils literal notranslate"><span class="pre">tt_detections</span></code></strong></dt><dd><p>Visit-level detections table. All detections are listed that pass the quality cuts on
+signal-to-noise (<code class="docutils literal notranslate"><span class="pre">s2n</span></code>), artifacts (<code class="docutils literal notranslate"><span class="pre">artifacts</span></code>) and more. Both <a class="reference internal" href="../api/vasca/vasca.region.html#vasca.region.Region" title="vasca.region.Region"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">Region</span></code></a> and <a class="reference internal" href="../api/vasca/vasca.field.html#vasca.field.BaseField" title="vasca.field.BaseField"><code class="xref myst py py-class docutils literal notranslate"><span class="pre">BaseField</span></code></a>
+hold this table. So all VASCA-generated ID parameters are limited to the respective
+scope. Especially this also stores the region/field-level cluster ID for all detections,
+i.e., the ID that associates all detections belonging to one cosmic source (<code class="docutils literal notranslate"><span class="pre">rg_src_id</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fd_src_id</span></code>).</p>
+</dd>
+</dl>
+<dl class="simple myst glossary">
+<dt id="term-tt_sources"><strong><code class="docutils literal notranslate"><span class="pre">tt_sources</span></code></strong></dt><dd><p>Source information table where all cosmic sources are listed that pass the cuts applied
+used for variability detection. Important variability parameters (<code class="docutils literal notranslate"><span class="pre">flux_cpval</span></code>,
+<code class="docutils literal notranslate"><span class="pre">flux_nxv</span></code>) and cross-matching results (<code class="docutils literal notranslate"><span class="pre">gaiadr3_match_id</span></code>, <code class="docutils literal notranslate"><span class="pre">ogrp</span></code>) are given for each
+source.</p>
+</dd>
+</dl>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>VASCA supports field-level reference data that might be provided by the
+instrument’s mission pipelines. This includes field-averaged (co-added) intensity sky
+maps (<a class="reference internal" href="../api/vasca/vasca.field.html#vasca.field.BaseField.load_sky_map" title="vasca.field.BaseField.load_sky_map"><code class="xref myst py py-meth docutils literal notranslate"><span class="pre">load_sky_map</span></code></a>) and detection lists. This data is stored in
+<code class="docutils literal notranslate"><span class="pre">tt_coadd_detections</span></code> based on which <code class="docutils literal notranslate"><span class="pre">tt_coadd_sources</span></code> is created during the
+region-level clustering stage. This information is useful when visualizing pipeline
+results and for consistency checks on the source clustering.</p>
+</div>
+<dl class="simple myst">
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_coadd_detections</span></code></strong></dt><dd><p>Reference detections table. This data is provided at the input stage of the pipeline
+and contains no visit-to-visit information.</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_coadd_sources</span></code></strong></dt><dd><p>Reference source information table. This table is created in the region-level
+clustering stage where spatially overlapping detections in <code class="docutils literal notranslate"><span class="pre">tt_coadd_sources</span></code> are merged.</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_src_id_map</span></code></strong></dt><dd><p>Map between region and field source IDs (<code class="docutils literal notranslate"><span class="pre">rg_src_id</span></code>, <code class="docutils literal notranslate"><span class="pre">fd_src_id</span></code>).</p>
+</dd>
+<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_filters</span></code></strong></dt><dd><p>Instrument filters, their IDs and index.</p>
 </dd>
 <dt><strong><code class="docutils literal notranslate"><span class="pre">tt_coverage_hp</span></code></strong></dt><dd><p>Region observations properties in healpix binning. RING ordering and equatorial
 coordinates</p>
 </dd>
-<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_coadd_detections</span></code></strong></dt><dd><p>Reference detections table. This data is provided at the input stage of the pipeline
-and contains no intra-visit information.</p>
-</dd>
-<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_detections</span></code></strong></dt><dd><p>Visit-level detections table.</p>
-</dd>
-<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_sources</span></code></strong></dt><dd><p>Source information table.</p>
-</dd>
-<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_coadd_sources</span></code></strong></dt><dd><p>Source information table.</p>
-</dd>
-<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_src_id_map</span></code></strong></dt><dd><p>Map between region and field source IDs (<code class="docutils literal notranslate"><span class="pre">rg_src_id</span></code>, <code class="docutils literal notranslate"><span class="pre">fd_src_id</span></code>).</p>
-</dd>
-<dt><strong><code class="docutils literal notranslate"><span class="pre">tt_filters</span></code></strong></dt><dd><p>Filters, their IDs and index.</p>
-</dd>
+</dl>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Additional tables are created during <a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/vasca_pipe_post_process.ipynb">catalog cross-matching</a>
+(<code class="docutils literal notranslate"><span class="pre">tt_simbad</span></code> or <code class="docutils literal notranslate"><span class="pre">tt_gaiadr3</span></code>) and <a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_matches.ipynb">post-processing stages</a>
+(<code class="docutils literal notranslate"><span class="pre">tt_lombscargle</span></code>, <code class="docutils literal notranslate"><span class="pre">tt_sed</span></code>).</p>
+<p>VASCA, by design, handles visit-to-visit variability. In post-processing, users can
+<a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/run_gPhoton.py">investigate</a>
+inter-visit variability with the help of <a class="reference external" href="https://github.com/cmillion/gPhoton/tree/master"><code class="docutils literal notranslate"><span class="pre">gPhoton</span></code></a></p>
+</div>
+<dl class="simple myst">
 <dt><strong><code class="docutils literal notranslate"><span class="pre">tt_sed</span></code></strong></dt><dd><p>Spectral Energy Distribution from VizieR database.</p>
 </dd>
 <dt><strong><code class="docutils literal notranslate"><span class="pre">tt_gphoton_lc</span></code></strong></dt><dd><p>Light curve from <a class="reference external" href="https://github.com/cmillion/gPhoton/blob/master/docs/UserGuide.md#gaperturepy"><code class="docutils literal notranslate"><span class="pre">gPhoton.gAperture</span></code></a></p>
@@ -653,8 +688,6 @@ and contains no intra-visit information.</p>
 <dt><strong><code class="docutils literal notranslate"><span class="pre">tt_lombscargle</span></code></strong></dt><dd><p>LombScargle results information</p>
 </dd>
 </dl>
-<p>Additional tables (e.g. <code class="docutils literal notranslate"><span class="pre">tt_simbad</span></code> or <code class="docutils literal notranslate"><span class="pre">tt_gaiadr3</span></code>) are created during catalog
-cross-matching in the <a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/vasca_pipe_post_process.ipynb">post-processing stage</a></p>
 </section>
 </section>
 </section>
@@ -739,7 +772,7 @@ cross-matching in the <a class="reference external" href="https://github.com/rbu
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=e1629aa7"></script>
+</div><script src="../_static/documentation_options.js?v=58634f1a"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -747,7 +780,7 @@ cross-matching in the <a class="reference external" href="https://github.com/rbu
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/user_guide/data_model.e6c11505-d9ff-4c70-b54d-5abf9513ae1e.js"></script>
+    <script defer="defer" src="../_static/tippy/user_guide/data_model.bf213487-5171-49d0-9a31-ed91082e2835.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

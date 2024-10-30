@@ -60,6 +60,7 @@ All objects inheriting from [](#TableCollection) can be written to storage as [F
 files. These hold images and tables compatible with the FITS version 4.0 standard so that
 users my use tools like [DS9](https://sites.google.com/cfa.harvard.edu/saoimageds9) and
 [TOPCAT](https://www.star.bristol.ac.uk/mbt/topcat/) for data exploration and debugging.
+To see what kind of Tables are stored in VASCA's data structures, see the glossary [here](data_model.md#vasca-tables).
 
 ## Using `VASCA`
 More detailed information on using the package is provided on separate pages,
