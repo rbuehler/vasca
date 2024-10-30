@@ -119,6 +119,7 @@ myst_enable_extensions = [
     "colon_fence",
     "deflist",
     "html_image",
+    "attrs_block",
 ]
 nb_execution_mode = "cache"
 # -- Options for coppybutton ----------------------------------------------
