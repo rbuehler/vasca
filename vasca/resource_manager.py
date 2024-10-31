@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Resource manager for VASCA
 """
@@ -11,9 +10,11 @@ from pprint import pprint
 import dotenv
 import yaml
 
-# paths relative to the ResourceManager class
 CLASS_DIR = os.path.dirname(os.path.abspath(__file__))
+"""Path relative to the resource manager module directory"""
+
 PACKAGE_DIR = CLASS_DIR + "/.."
+"""Path to the root directory of VASCA"""
 
 
 class ResourceManager:
@@ -242,7 +243,6 @@ class ResourceManager:
         Function to check the resource_catalog.yml file for consistency.
         Potential problems to look out for are:
             - duplicate resource IDs/names for a given storage
-            - multiple resources with the same name at different storages
         Additionally check if cataloged files really exist
         """
         pass
@@ -250,7 +250,7 @@ class ResourceManager:
     def _check_resoruce_env_info(self):
         """
         Verify if
-            - not multiple env vars exist referring to one project and storage system
+            - if only unique env_var-storage pairings exist
         """
         pass
 
@@ -329,19 +329,21 @@ class ResourceManager:
             )
 
         # get resource metadata
+        success = False
         resource_id = None
         resource_description = None
         resource_type = None
-        project = None
+        # Loop over resource items for given storage
         for id in self.metadata["catalog"][storage]:
+            # Collect metadata if there is a matching resource item to the requested one
             if resource == self.metadata["catalog"][storage][id]["name"]:
-                project = self.metadata["catalog"][storage][id]["project"]
                 resource_id = id
                 resource_description = self.metadata["catalog"][storage][id][
                     "description"
                 ]
                 resource_type = self.metadata["catalog"][storage][id]["type"]
-        if project is None:
+                success = True
+        if not success:
             raise ValueError(
                 str.format(
                     "No matching resource found for '{}' at storage system '{}'",
@@ -351,19 +353,17 @@ class ResourceManager:
             )
         # identify environment variable
         env_var = None
+        # Loop over all environment variables to get the one matching the storage
         for var in self.metadata["envs"]:
-            if (storage == self.metadata["envs"][var]["storage"]) and (
-                project == self.metadata["envs"][var]["project"]
-            ):
+            if storage == self.metadata["envs"][var]["storage"]:
                 env_var = var
         if env_var is None:
             raise ValueError(
                 str.format(
                     "No matching environment variable found "
-                    "for resource '{}' of project '{}' at storage '{}'."
+                    "for resource '{}' at storage '{}'. "
                     "Verify metadata files for consistency.",
                     resource,
-                    project,
                     storage,
                 )
             )

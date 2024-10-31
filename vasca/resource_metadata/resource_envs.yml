@@ -1,15 +1,23 @@
 # List of required environment variables
-# with information on the corresponding storages and projects
+# with information on the corresponding storages
 #
 # Description of the document hierarchy:
 #
 # <VAR>: environment variable
 #   |___ storage: name of the corresponding storage system
-#   |___ project: name of the synced project directory
 #   |___ description: short description
 #
-# Note: Names for `storage` and `project` are required to match 
-# the names used in `resource_catalog.yml`!
+# Note: Name for `storage` are required to match 
+# the name used in `resource_catalog.yml`!
+
+#  --------------------------------------------------------------------------------------
+#
+VASCA_DEFAULT:
+    storage: vasca
+    project: vasca
+    description: "Default environment variable for data management in the VASCA package"
+
+# ULTRASAT ------------------------------------------------------------------------------
 #
 UC_SAS_VASCARCAT:
     storage: sas_cloud
@@ -19,7 +27,6 @@ UC_LUSTRE_VASCARCAT:
     storage: lustre
     project: vascarcat
     description: "Resoruces for the UV variability catalog project on DESY LUSTRE. Not used at the moment."
-UC_VASCA_TEST_RESOURCES:
-    storage: vasca
-    project: vasca
-    description: "Resources needed for unit testing of the VASCA module."
+
+# Add more variables below  -------------------------------------------------------------
+#
