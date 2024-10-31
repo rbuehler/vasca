@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Test Tutorial" href="simple_example.html" /><link rel="prev" title="vasca.tables" href="../api/vasca/vasca.tables.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Resource Manager" href="tutorial_rm.html" /><link rel="prev" title="vasca.tables" href="../api/vasca/vasca.tables.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>Tutorials - VASCA v1.0.15dev</title>
+        <title>Tutorials - VASCA v0.0.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">VASCA v1.0.15dev</div></a>
+      <a href="../index.html"><div class="brand">VASCA v0.0.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v1.0.15dev</span>
+  <span class="sidebar-brand-text">VASCA v0.0.1</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -231,6 +231,9 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Tutorials</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Tutorials</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_rm.html">Resource Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_field.html">GALEXField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial_pipe.html">Pipeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="simple_example.html">Test Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="test_table.html">Table Display</a></li>
 </ul>
@@ -246,6 +249,7 @@
 <li class="toctree-l1"><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
 </ul>
 
 </div>
@@ -299,37 +303,51 @@ is still under development.</p>
 <p>All tutorials are jupyter-based. This documentation uses <a class="reference external" href="https://myst-nb.readthedocs.io/en/latest/index.html"><code class="docutils literal notranslate"><span class="pre">myst-nb</span></code></a>
 and <a class="reference external" href="https://jupytext.readthedocs.io/en/latest/index.html"><code class="docutils literal notranslate"><span class="pre">jupytext</span></code></a> to execute and
 render the content.</p>
-<p>It is quite remarkable since I can use inline code cells as well:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up a random generator with fixed seed</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">seed</span> <span class="o">=</span> <span class="mi">123</span>
-<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now let’s see what we can do with it:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Print a random number. This should be the same number everytime this cell is evaluated.</span>
-<span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.6823518632481435
-</pre></div>
-</div>
-</div>
+<p>Additionally you can find various notebooks on post-processing VASCA’s pipeline results
+<a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples">here</a>:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Notebook</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/vasca_pipe_post_process.ipynb">vasca_pipe_post_process</a></p></td>
+<td><p>Post-process VASCA pipline results</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_source_distributions.ipynb">inspect_source_distributions</a></p></td>
+<td><p>Show detailed distribution of the main VASCA selection variables</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/select_sources.ipynb">select_sources</a></p></td>
+<td><p>Select VASCA sources based on chosen criteria</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_sources.ipynb">inspect_sources</a></p></td>
+<td><p>Inspect source light curves and sky maps</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_matches.ipynb">inspect_matches</a></p></td>
+<td><p>Analyse SIMBAD and Gaia counterparts</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_match_distance.ipynb">inspect_match_distance</a></p></td>
+<td><p>Compare match distance distribution to random</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/create_pubcat.ipynb">create_pubcat</a></p></td>
+<td><p>Prepare a VASCA region catalog for upload to CDS</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_artifacts.ipynb">inspect_artifacts</a></p></td>
+<td><p>Visualize artifacts and the detections on them</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="list-of-tutorials">
 <h2>List of Tutorials<a class="headerlink" href="#list-of-tutorials" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_rm.html">Resource Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_field.html">GALEXField</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_pipe.html">Pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simple_example.html">Test Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_table.html">Table Display</a></li>
 </ul>
@@ -342,12 +360,12 @@ render the content.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="simple_example.html">
+          <a class="next-page" href="tutorial_rm.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Test Tutorial</div>
+                <div class="title">Resource Manager</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -413,7 +431,7 @@ render the content.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=58634f1a"></script>
+</div><script src="../_static/documentation_options.js?v=6f77e80e"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -421,7 +439,7 @@ render the content.</p>
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/tutorials/index.dc83874b-3a12-4737-bcf9-fc4b3ae24624.js"></script>
+    <script defer="defer" src="../_static/tippy/tutorials/index.f0252cdd-7351-4f28-b958-4658bd0b943a.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

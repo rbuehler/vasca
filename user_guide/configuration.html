@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Supported Instruments" href="instruments.html" /><link rel="prev" title="Post-Processing" href="post_processing.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>Configuration - VASCA v1.0.15dev</title>
+        <title>Configuration - VASCA v0.0.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">VASCA v1.0.15dev</div></a>
+      <a href="../index.html"><div class="brand">VASCA v0.0.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v1.0.15dev</span>
+  <span class="sidebar-brand-text">VASCA v0.0.1</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -231,6 +231,9 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Tutorials</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_rm.html">Resource Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_field.html">GALEXField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/tutorial_pipe.html">Pipeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/simple_example.html">Test Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/test_table.html">Table Display</a></li>
 </ul>
@@ -246,6 +249,7 @@
 <li class="toctree-l1"><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
 </ul>
 
 </div>
@@ -293,7 +297,253 @@
           <section id="configuration">
 <h1>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h1>
 <p>VASCA’s pipeline can be configured using yaml files. See <a class="reference external" href="https://github.com/rbuehler/vasca/blob/main/vasca/vasca_cfg.yaml"><code class="docutils literal notranslate"><span class="pre">vasca/vasca_cfg.yml</span></code></a>
-as an example.</p>
+as an example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">authors </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;UC</span><span class="nv"> </span><span class="s">science&quot;</span>
+<span class="nt">comment </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Example</span><span class="nv"> </span><span class="s">configuration</span><span class="nv"> </span><span class="s">file&quot;</span>
+
+<span class="nt">general</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name            </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ALL_10-800&quot;</span><span class="w"> </span><span class="c1">#&quot;TDS_ELAISN1&quot;#&quot;ALL_10-800&quot; # #&quot;ALL_10-800_LOOSE&quot;  #&quot;&quot;TDS_ELAISN1&quot; # &quot;ALL_10-800&quot;</span>
+<span class="w">    </span><span class="nt">out_dir_base    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./examples/vasca_pipeline&quot;</span><span class="w">        </span><span class="c1"># If &quot;CWD&quot; current work directory will be used.</span>
+<span class="w">    </span><span class="nt">log_level       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INFO&quot;</span><span class="w">                            </span><span class="c1"># [&quot;NONE&quot;, &quot;DEBUG&quot;, &quot;INFO&quot;, &quot;WARNING&quot;, &quot;ERROR&quot;, &quot;CRITICAL&quot;]</span>
+<span class="w">    </span><span class="nt">log_file        </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w">                          </span><span class="c1"># Will be written into &quot;out_dir&quot;, if &quot;&quot;default&quot; a default name will be created </span>
+<span class="w">    </span><span class="nt">nr_cpus         </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span><span class="w">                                  </span><span class="c1"># Number of CPUs to use. If &quot;null&quot; all available are used.</span>
+<span class="w">    </span><span class="nt">save_ref_srcs   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">                               </span><span class="c1"># Store reference sources into region file</span>
+<span class="w">    </span><span class="nt">run_fields      </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">                             </span><span class="c1"># If fields have already been clustered and saved and should be reused set to &quot;false&quot;. Otherwise the default is true</span>
+<span class="w">    </span>
+<span class="nt">resources</span><span class="p">:</span><span class="w">                      </span>
+<span class="w">    </span><span class="nt">load_method      </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;VASCA&quot;</span><span class="w">                  </span><span class="c1"># Allowed are [&quot;MAST_REMOTE&quot;, &quot;MAST_LOCAL&quot;, &quot;VASCA&quot;, &quot;AUTO&quot;]</span>
+<span class="w">    </span><span class="nt">load_products    </span><span class="p">:</span><span class="w">  </span><span class="s">&quot;TABLES&quot;</span><span class="w">                           </span><span class="c1"># Data products from MAST:  &quot;NONE&quot;, &quot;TABLES&quot; for tables and reference image, &quot;ALL&quot; for tables and visit images</span>
+<span class="w">    </span><span class="nt">coadd_exists     </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">                           </span><span class="c1"># Coadd detection catalogs are available (co-added images may exist). If false, sections &#39;cluster_coadd_dets&#39;, &#39;selection/src_coadd_diff&#39; and &#39;observations/&lt;observatory&gt;/coadd_det_quality&#39; are unused</span>
+<span class="w">    </span><span class="nt">field_kwargs</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">data_path        </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">visits_data_path </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"> </span>
+
+<span class="nt">cluster_src</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">meanshift</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">bandwidth     </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w">               </span><span class="c1"># In arcsec, to estimate it automatically specify &quot;null&quot;</span>
+<span class="w">        </span><span class="nt">seeds         </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">bin_seeding   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">min_bin_freq  </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">cluster_all   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">n_jobs        </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">max_iter      </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+<span class="w">        </span><span class="nt">table_name    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_sources&quot;</span>
+
+<span class="nt">cluster_coadd_dets</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">meanshift</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">bandwidth     </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w">               </span><span class="c1"># In arcsec, to estimate it automatically specify &quot;null&quot;</span>
+<span class="w">        </span><span class="nt">seeds         </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">bin_seeding   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">min_bin_freq  </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">cluster_all   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">n_jobs        </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">max_iter      </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+<span class="w">        </span><span class="nt">table_name    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_coadd_detections&quot;</span>
+
+<span class="nt">assoc_src_coadd</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dist_max      </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">        </span><span class="c1"># Associate nearest source below this distance in arc_sec  OR</span>
+<span class="w">    </span><span class="nt">dist_s2n_max  </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">        </span><span class="c1"># Associate nearest source with this distance in units of &quot;squared sumed position error&quot;</span>
+
+<span class="nt">selection_src</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">src_variability_nuv</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">table       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_sources&quot;</span>
+<span class="w">        </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;or&quot;</span>
+<span class="w">        </span><span class="nt">sel_type    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">        </span><span class="nt">obs_filter  </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NUV&quot;</span><span class="w">                             </span><span class="c1"># Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions</span>
+<span class="w">        </span><span class="nt">range</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">nr_det</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">pos_cpval</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.0001</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">pos_xv</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">-.inf</span><span class="p p-Indicator">,</span><span class="nv">2</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">flux_cpval     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="nv">0.000000573303</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution</span>
+<span class="w">            </span><span class="nt">flux_nxv       </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.001</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="p p-Indicator">]</span><span class="w">          </span><span class="c1"># Excess variance above ~sqrt(cut)*100%</span>
+<span class="w">            </span><span class="nt">flux           </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.144543</span><span class="p p-Indicator">,</span><span class="nv">575.43</span><span class="p p-Indicator">]</span><span class="w">      </span><span class="c1"># Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end</span>
+<span class="w">    </span><span class="nt">src_coadd_diff_nuv</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">table       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_sources&quot;</span>
+<span class="w">        </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;or&quot;</span>
+<span class="w">        </span><span class="nt">sel_type    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">        </span><span class="nt">obs_filter  </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NUV&quot;</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">range</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">nr_det</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">pos_cpval</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.0001</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">pos_xv</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">-.inf</span><span class="p p-Indicator">,</span><span class="nv">2</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">coadd_ffactor   </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">coadd_fdiff_s2n </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">7</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">src_variability_fuv</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">table       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_sources&quot;</span>
+<span class="w">        </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;or&quot;</span>
+<span class="w">        </span><span class="nt">sel_type    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">        </span><span class="nt">obs_filter  </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;FUV&quot;</span><span class="w">                             </span><span class="c1"># Select filter to apply cut on, see vasca.utils.dd_filter_id for definitions</span>
+<span class="w">        </span><span class="nt">range</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">nr_det</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">pos_cpval</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.0001</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">pos_xv</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">-.inf</span><span class="p p-Indicator">,</span><span class="nv">2</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">flux_cpval     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="nv">0.000000573303</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># 5 sigma, see https://en.wikipedia.org/wiki/Normal_distribution</span>
+<span class="w">            </span><span class="nt">flux_nxv       </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.01</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="p p-Indicator">]</span><span class="w">          </span><span class="c1"># Excess variance above ~sqrt(cut)*100%</span>
+<span class="w">            </span><span class="nt">flux           </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.144543</span><span class="p p-Indicator">,</span><span class="nv">575.43</span><span class="p p-Indicator">]</span><span class="w">      </span><span class="c1"># Flux in 1e-6Jy, mag 17-26, see conversion table to AB magnitudes at the end</span>
+<span class="w">    </span><span class="nt">src_coadd_diff_fuv</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">table       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_sources&quot;</span>
+<span class="w">        </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;or&quot;</span>
+<span class="w">        </span><span class="nt">sel_type    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">        </span><span class="nt">obs_filter  </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;FUV&quot;</span>
+<span class="w">        </span><span class="nt">range</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">nr_det</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">pos_cpval</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.0001</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">pos_xv</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">-.inf</span><span class="p p-Indicator">,</span><span class="nv">2</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">coadd_ffactor   </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="p p-Indicator">]</span>
+<span class="w">            </span><span class="nt">coadd_fdiff_s2n </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">7</span><span class="p p-Indicator">,</span><span class="nv">.inf</span><span class="p p-Indicator">]</span>
+<span class="w">                    </span>
+<span class="nt">observations</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">observatory   </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;GALEX&quot;</span>
+<span class="w">      </span><span class="nt">obs_filter    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NUV&quot;</span>
+<span class="w">      </span><span class="nt">cluster_det</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">meanshift</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">bandwidth     </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w">               </span><span class="c1"># In arcsec, to estimate it automatically specify &quot;null&quot;</span>
+<span class="w">              </span><span class="nt">seeds         </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">              </span><span class="nt">bin_seeding   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">              </span><span class="nt">min_bin_freq  </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">              </span><span class="nt">cluster_all   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">              </span><span class="nt">n_jobs        </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">              </span><span class="nt">max_iter      </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+<span class="w">              </span><span class="nt">table_name    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_detections&quot;</span>
+<span class="w">    </span>
+<span class="w">      </span><span class="nt">selection</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">det_quality</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">table       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_detections&quot;</span>
+<span class="w">              </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">              </span><span class="nt">sel_type    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">              </span><span class="c1"># See variable description http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1</span>
+<span class="w">              </span><span class="nt">range</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">s2n            </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">.inf</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">r_fov          </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">ellip_world    </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">size_world     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6.0</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">class_star     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span><span class="w">        </span><span class="c1"># Extension classifier (extended=0, point like=1)</span>
+<span class="w">                  </span><span class="nt">chkobj_type    </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="nv">0.5</span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1"># Matched to a bright star (0=no, 1=yes)</span>
+<span class="w">                  </span><span class="nt">flux_app_ratio </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.3</span><span class="p p-Indicator">,</span><span class="nv">1.05</span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1"># </span>
+<span class="w">              </span><span class="nt">bitmask</span><span class="p">:</span>
+<span class="w">                  </span><span class="c1"># Specify the artifacts to remove</span>
+<span class="w">                  </span><span class="c1"># For GALEX a description is at the end of this document</span>
+<span class="w">                  </span><span class="nt">artifacts </span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="nv">128</span><span class="p p-Indicator">,</span><span class="nv">256</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1">#[2,4,8,128] ,8,16,32,64,128,256,512</span>
+<span class="w">              </span><span class="c1">#If below/above this value will set it to min/max</span>
+<span class="w">              </span><span class="nt">set_range</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">pos_err </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="nv">5</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># In arcsec</span>
+<span class="w">          </span><span class="nt">det_association </span><span class="p">:</span>
+<span class="w">              </span><span class="nt">table       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_detections&quot;</span>
+<span class="w">              </span><span class="nt">ref_table   </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_sources&quot;</span>
+<span class="w">              </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">              </span><span class="nt">sel_type    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;is_in&quot;</span>
+<span class="w">              </span><span class="nt">var         </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fd_src_id&quot;</span>
+<span class="w">          </span><span class="nt">coadd_det_quality</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">table    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_coadd_detections&quot;</span>
+<span class="w">              </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">              </span><span class="nt">sel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span><span class="w">  </span><span class="c1"># These are all AND selections</span>
+<span class="w">              </span><span class="nt">range</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">s2n            </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">.inf</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">r_fov          </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">ellip_world    </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">size_world     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6.0</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">class_star     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span><span class="w">        </span><span class="c1"># Extension classifier (extended=0, point like=1)</span>
+<span class="w">                  </span><span class="nt">chkobj_type    </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="nv">0.5</span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1"># Matched to a bright star (0=no, 1=yes)</span>
+<span class="w">                  </span><span class="nt">flux_app_ratio </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.3</span><span class="p p-Indicator">,</span><span class="nv">1.05</span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1">#</span>
+<span class="w">              </span><span class="nt">bitmask</span><span class="p">:</span>
+<span class="w">                  </span><span class="c1"># Specify the artifacts to remove</span>
+<span class="w">                  </span><span class="c1"># For GALEX a description is at the end of this document</span>
+<span class="w">                  </span><span class="nt">artifacts </span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="nv">128</span><span class="p p-Indicator">,</span><span class="nv">256</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1">#[] ,8,16,32,64,128,256,512</span>
+
+<span class="w">      </span><span class="c1">#obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml</span>
+<span class="w">      </span><span class="nt">obs_field_ids </span><span class="p">:</span><span class="w"> </span><span class="kt">!include</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_nuv_use.yaml</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">observatory   </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;GALEX&quot;</span>
+<span class="w">      </span><span class="nt">obs_filter    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;FUV&quot;</span>
+<span class="w">      </span><span class="nt">cluster_det</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">meanshift</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">bandwidth     </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">               </span><span class="c1"># In arcsec, to estimate it automatically specify &quot;null&quot;</span>
+<span class="w">              </span><span class="nt">seeds         </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">              </span><span class="nt">bin_seeding   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">              </span><span class="nt">min_bin_freq  </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">              </span><span class="nt">cluster_all   </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">              </span><span class="nt">n_jobs        </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">              </span><span class="nt">max_iter      </span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+<span class="w">              </span><span class="nt">table_name    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_detections&quot;</span>
+<span class="w">    </span>
+<span class="w">      </span><span class="nt">selection</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">det_quality</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">table       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_detections&quot;</span>
+<span class="w">              </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">              </span><span class="nt">sel_type    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">              </span><span class="c1"># See variable description http://www.galex.caltech.edu/wiki/Public:Documentation/Appendix_A.1</span>
+<span class="w">              </span><span class="nt">range</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">s2n            </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">.inf</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">r_fov          </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">ellip_world    </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">size_world     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6.0</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">class_star     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span><span class="w">        </span><span class="c1"># Extension classifier (extended=0, point like=1)</span>
+<span class="w">                  </span><span class="nt">chkobj_type    </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="nv">0.5</span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1"># Matched to a bright star (0=no, 1=yes)</span>
+<span class="w">                  </span><span class="nt">flux_app_ratio </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.3</span><span class="p p-Indicator">,</span><span class="nv">1.05</span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1"># </span>
+<span class="w">              </span><span class="nt">bitmask</span><span class="p">:</span>
+<span class="w">                  </span><span class="c1"># Specify the artifacts to remove</span>
+<span class="w">                  </span><span class="c1"># For GALEX a description is at the end of this document</span>
+<span class="w">                  </span><span class="nt">artifacts </span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="nv">128</span><span class="p p-Indicator">,</span><span class="nv">256</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1">#[] ,8,16,32,64,128,256,512</span>
+<span class="w">              </span><span class="c1">#If below/above this value will set it to min/max</span>
+<span class="w">              </span><span class="nt">set_range</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">pos_err </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="nv">5</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># In arcsec</span>
+<span class="w">          </span><span class="nt">det_association </span><span class="p">:</span>
+<span class="w">              </span><span class="nt">table       </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_detections&quot;</span>
+<span class="w">              </span><span class="nt">ref_table   </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_sources&quot;</span>
+<span class="w">              </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">              </span><span class="nt">sel_type    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;is_in&quot;</span>
+<span class="w">              </span><span class="nt">var         </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fd_src_id&quot;</span>
+<span class="w">          </span><span class="nt">coadd_det_quality</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">table    </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tt_coadd_detections&quot;</span>
+<span class="w">              </span><span class="nt">presel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span>
+<span class="w">              </span><span class="nt">sel_type </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;and&quot;</span><span class="w">  </span><span class="c1"># These are all AND selections</span>
+<span class="w">              </span><span class="nt">range</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">s2n            </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">.inf</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">r_fov          </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">ellip_world    </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">size_world     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6.0</span><span class="p p-Indicator">]</span>
+<span class="w">                  </span><span class="nt">class_star     </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span><span class="w">        </span><span class="c1"># Extension classifier (extended=0, point like=1)</span>
+<span class="w">                  </span><span class="nt">chkobj_type    </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="nv">0.5</span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1"># Matched to a bright star (0=no, 1=yes)</span>
+<span class="w">                  </span><span class="nt">flux_app_ratio </span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.3</span><span class="p p-Indicator">,</span><span class="nv">1.05</span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1">#</span>
+<span class="w">              </span><span class="nt">bitmask</span><span class="p">:</span>
+<span class="w">                  </span><span class="c1"># Specify the artifacts to remove</span>
+<span class="w">                  </span><span class="c1"># For GALEX a description is at the end of this document</span>
+<span class="w">                  </span><span class="nt">artifacts </span><span class="p">:</span><span class="w">  </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="nv">128</span><span class="p p-Indicator">,</span><span class="nv">256</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1">#[] ,8,16,32,64,128,256,512</span>
+
+<span class="w">      </span><span class="c1">#obs_field_ids : !include ./examples/resources/GALEX_field_id_lists/field_ids_TDS_ELAISN1.yaml</span>
+<span class="w">      </span><span class="nt">obs_field_ids </span><span class="p">:</span><span class="w"> </span><span class="kt">!include</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./examples/resources/GALEX_field_id_lists/field_ids_ALL_exp800_vis10_fuv_use.yaml</span>
+
+<span class="c1"># GALEX artifact flags</span>
+<span class="c1"># ( 1): edge; Detector bevel edge reflection (NUV only).</span>
+<span class="c1"># ( 2): window; Detector window reflection (NUV only).</span>
+<span class="c1"># ( 4): dichroic; Dichroic reflection.</span>
+<span class="c1"># ( 8): varpix; Varible pixel based on time slices.</span>
+<span class="c1"># ( 16): brtedge; Bright star near field edge (NUV only)</span>
+<span class="c1"># ( 32): Detector rim(annulus); proximity(&gt;0.6 deg fld ctr)</span>
+<span class="c1"># ( 64): dimask; dichroic reflection artifact mask flag</span>
+<span class="c1"># (128): varmask; Masked pixel determined by varpix.</span>
+<span class="c1"># (256): hotmask; Detector hot spots.</span>
+<span class="c1"># (512): yaghost; Possible ghost image from YA slope.</span>
+<span class="c1"># http://www.galex.caltech.edu/wiki/GCAT_Manual#Flags</span>
+
+<span class="c1"># mag(AB)	flux 1e-06 Jy</span>
+<span class="c1"># 14.0	9120.108393559061</span>
+<span class="c1"># 15.0	3630.7805477010033</span>
+<span class="c1"># 16.0	1445.4397707459225</span>
+<span class="c1"># 17.0	575.4399373371544</span>
+<span class="c1"># 18.0	229.0867652767766</span>
+<span class="c1"># 19.0	91.20108393559062</span>
+<span class="c1"># 20.0	36.307805477010035</span>
+<span class="c1"># 21.0	14.454397707459224</span>
+<span class="c1"># 22.0	5.754399373371545</span>
+<span class="c1"># 23.0	2.290867652767761</span>
+<span class="c1"># 24.0	0.9120108393559042</span>
+<span class="c1"># 25.0	0.36307805477010036</span>
+<span class="c1"># 26.0	0.14454397707459224</span>
+<span class="c1"># 27.0	0.05754399373371544</span>
+</pre></div>
+</div>
 </section>
 
         </article>
@@ -352,7 +602,7 @@ as an example.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=58634f1a"></script>
+</div><script src="../_static/documentation_options.js?v=6f77e80e"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -360,7 +610,7 @@ as an example.</p>
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/user_guide/configuration.b96f8f9c-061e-44f9-8b5a-e7cab5921123.js"></script>
+    <script defer="defer" src="../_static/tippy/user_guide/configuration.70ef534c-4aaf-4b87-a7d6-08d04a74f716.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

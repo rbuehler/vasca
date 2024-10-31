@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>vasca.resource_manager - VASCA v1.0.15dev</title>
+        <title>vasca.resource_manager - VASCA v0.0.1</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">VASCA v1.0.15dev</div></a>
+      <a href="../../index.html"><div class="brand">VASCA v0.0.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -194,7 +194,7 @@
     <img class="sidebar-logo" src="../../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v1.0.15dev</span>
+  <span class="sidebar-brand-text">VASCA v0.0.1</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -230,6 +230,9 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Tutorials</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_rm.html">Resource Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_field.html">GALEXField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_pipe.html">Pipeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/simple_example.html">Test Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/test_table.html">Table Display</a></li>
 </ul>
@@ -245,6 +248,7 @@
 <li class="toctree-l1"><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
 </ul>
 
 </div>
@@ -281,7 +285,6 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for vasca.resource_manager</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Resource manager for VASCA</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -293,9 +296,11 @@
 <span class="kn">import</span> <span class="nn">dotenv</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="c1"># paths relative to the ResourceManager class</span>
 <span class="n">CLASS_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="sd">&quot;&quot;&quot;Path relative to the resource manager module directory&quot;&quot;&quot;</span>
+
 <span class="n">PACKAGE_DIR</span> <span class="o">=</span> <span class="n">CLASS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/..&quot;</span>
+<span class="sd">&quot;&quot;&quot;Path to the root directory of VASCA&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="ResourceManager">
@@ -543,7 +548,6 @@
 <span class="sd">        Function to check the resource_catalog.yml file for consistency.</span>
 <span class="sd">        Potential problems to look out for are:</span>
 <span class="sd">            - duplicate resource IDs/names for a given storage</span>
-<span class="sd">            - multiple resources with the same name at different storages</span>
 <span class="sd">        Additionally check if cataloged files really exist</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
@@ -554,7 +558,7 @@
     <span class="k">def</span> <span class="nf">_check_resoruce_env_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Verify if</span>
-<span class="sd">            - not multiple env vars exist referring to one project and storage system</span>
+<span class="sd">            - if only unique env_var-storage pairings exist</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -636,19 +640,21 @@
             <span class="p">)</span>
 
         <span class="c1"># get resource metadata</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">resource_id</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">resource_description</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">resource_type</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Loop over resource items for given storage</span>
         <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">][</span><span class="n">storage</span><span class="p">]:</span>
+            <span class="c1"># Collect metadata if there is a matching resource item to the requested one</span>
             <span class="k">if</span> <span class="n">resource</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">][</span><span class="n">storage</span><span class="p">][</span><span class="nb">id</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span>
-                <span class="n">project</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">][</span><span class="n">storage</span><span class="p">][</span><span class="nb">id</span><span class="p">][</span><span class="s2">&quot;project&quot;</span><span class="p">]</span>
                 <span class="n">resource_id</span> <span class="o">=</span> <span class="nb">id</span>
                 <span class="n">resource_description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">][</span><span class="n">storage</span><span class="p">][</span><span class="nb">id</span><span class="p">][</span>
                     <span class="s2">&quot;description&quot;</span>
                 <span class="p">]</span>
                 <span class="n">resource_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">][</span><span class="n">storage</span><span class="p">][</span><span class="nb">id</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="s2">&quot;No matching resource found for &#39;</span><span class="si">{}</span><span class="s2">&#39; at storage system &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
@@ -658,19 +664,17 @@
             <span class="p">)</span>
         <span class="c1"># identify environment variable</span>
         <span class="n">env_var</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Loop over all environment variables to get the one matching the storage</span>
         <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">storage</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">][</span><span class="n">var</span><span class="p">][</span><span class="s2">&quot;storage&quot;</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span>
-                <span class="n">project</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">][</span><span class="n">var</span><span class="p">][</span><span class="s2">&quot;project&quot;</span><span class="p">]</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="n">storage</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">][</span><span class="n">var</span><span class="p">][</span><span class="s2">&quot;storage&quot;</span><span class="p">]:</span>
                 <span class="n">env_var</span> <span class="o">=</span> <span class="n">var</span>
         <span class="k">if</span> <span class="n">env_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="s2">&quot;No matching environment variable found &quot;</span>
-                    <span class="s2">&quot;for resource &#39;</span><span class="si">{}</span><span class="s2">&#39; of project &#39;</span><span class="si">{}</span><span class="s2">&#39; at storage &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="s2">&quot;for resource &#39;</span><span class="si">{}</span><span class="s2">&#39; at storage &#39;</span><span class="si">{}</span><span class="s2">&#39;. &quot;</span>
                     <span class="s2">&quot;Verify metadata files for consistency.&quot;</span><span class="p">,</span>
                     <span class="n">resource</span><span class="p">,</span>
-                    <span class="n">project</span><span class="p">,</span>
                     <span class="n">storage</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -736,7 +740,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=58634f1a"></script>
+</div><script src="../../_static/documentation_options.js?v=6f77e80e"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

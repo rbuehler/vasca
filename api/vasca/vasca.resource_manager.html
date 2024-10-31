@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="vasca.source" href="vasca.source.html" /><link rel="prev" title="vasca.tables_dict" href="vasca.tables_dict.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>vasca.resource_manager - VASCA v1.0.15dev</title>
+        <title>vasca.resource_manager - VASCA v0.0.1</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">VASCA v1.0.15dev</div></a>
+      <a href="../../index.html"><div class="brand">VASCA v0.0.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v1.0.15dev</span>
+  <span class="sidebar-brand-text">VASCA v0.0.1</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -231,6 +231,9 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Tutorials</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_rm.html">Resource Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_field.html">GALEXField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_pipe.html">Pipeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/simple_example.html">Test Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/test_table.html">Table Display</a></li>
 </ul>
@@ -246,6 +249,7 @@
 <li class="toctree-l1"><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
 </ul>
 
 </div>
@@ -313,10 +317,10 @@
 <table class="autosummary longtable docutils align-left">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#vasca.resource_manager.CLASS_DIR" title="vasca.resource_manager.CLASS_DIR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CLASS_DIR</span></code></a></p></td>
-<td></td>
+<td><p>Path relative to the resource manager module directory</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#vasca.resource_manager.PACKAGE_DIR" title="vasca.resource_manager.PACKAGE_DIR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PACKAGE_DIR</span></code></a></p></td>
-<td></td>
+<td><p>Path to the root directory of VASCA</p></td>
 </tr>
 </tbody>
 </table>
@@ -327,12 +331,14 @@
 <dl class="py data">
 <dt class="sig sig-object py" id="vasca.resource_manager.CLASS_DIR">
 <span class="sig-prename descclassname"><span class="pre">vasca.resource_manager.</span></span><span class="sig-name descname"><span class="pre">CLASS_DIR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dirname(...)'</span></em><a class="headerlink" href="#vasca.resource_manager.CLASS_DIR" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Path relative to the resource manager module directory</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="vasca.resource_manager.PACKAGE_DIR">
 <span class="sig-prename descclassname"><span class="pre">vasca.resource_manager.</span></span><span class="sig-name descname"><span class="pre">PACKAGE_DIR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.resource_manager.PACKAGE_DIR" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Path to the root directory of VASCA</p>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="vasca.resource_manager.ResourceManager">
@@ -402,7 +408,6 @@ Potential problems to look out for are:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>duplicate resource IDs/names for a given storage</p></li>
-<li><p>multiple resources with the same name at different storages</p></li>
 </ul>
 </div></blockquote>
 <p>Additionally check if cataloged files really exist</p>
@@ -413,7 +418,7 @@ Potential problems to look out for are:</p>
 <span class="sig-name descname"><span class="pre">_check_resoruce_env_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/resource_manager.html#ResourceManager._check_resoruce_env_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.resource_manager.ResourceManager._check_resoruce_env_info" title="Link to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Verify if</dt><dd><ul class="simple">
-<li><p>not multiple env vars exist referring to one project and storage system</p></li>
+<li><p>if only unique env_var-storage pairings exist</p></li>
 </ul>
 </dd>
 </dl>
@@ -554,7 +559,7 @@ The variable names are listed in <cite>CLASSDIR/resource_metadata/resource_envs.
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=58634f1a"></script>
+</div><script src="../../_static/documentation_options.js?v=6f77e80e"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -562,7 +567,7 @@ The variable names are listed in <cite>CLASSDIR/resource_metadata/resource_envs.
     <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.resource_manager.f702898e-7e84-4f69-a384-b4d59e541a36.js"></script>
+    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.resource_manager.96b3e127-f143-4c5d-80c1-05a3dc5efdd3.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
