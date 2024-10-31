@@ -12,27 +12,28 @@ All tutorials are jupyter-based. This documentation uses [`myst-nb`](https://mys
 and [`jupytext`](https://jupytext.readthedocs.io/en/latest/index.html) to execute and
 render the content.
 
-It is quite remarkable since I can use inline code cells as well:
+Additionally you can find various notebooks on post-processing VASCA's pipeline results
+[here](https://github.com/rbuehler/vasca/blob/main/vasca/examples):
 
-```{code-cell}
-# Set up a random generator with fixed seed
-import numpy as np
-
-seed = 123
-rng = np.random.default_rng(seed)
-```
-
-Now let's see what we can do with it:
-```{code-cell}
-# Print a random number. This should be the same number everytime this cell is evaluated.
-rng.random()
-```
+| Notebook                                                                                                                      | Description                                                      |
+|-------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
+| [vasca_pipe_post_process](https://github.com/rbuehler/vasca/blob/main/vasca/examples/vasca_pipe_post_process.ipynb)           | Post-process VASCA pipline results                               |
+| [inspect_source_distributions](https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_source_distributions.ipynb) | Show detailed distribution of the main VASCA selection variables |
+| [select_sources](https://github.com/rbuehler/vasca/blob/main/vasca/examples/select_sources.ipynb)                             | Select VASCA sources based on chosen criteria                    |
+| [inspect_sources](https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_sources.ipynb)                           | Inspect source light curves and sky maps                         |
+| [inspect_matches](https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_matches.ipynb)                           | Analyse SIMBAD and Gaia counterparts                             |
+| [inspect_match_distance](https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_match_distance.ipynb)             | Compare match distance distribution to random                    |
+| [create_pubcat](https://github.com/rbuehler/vasca/blob/main/vasca/examples/create_pubcat.ipynb)                               | Prepare a VASCA region catalog for upload to CDS                 |
+| [inspect_artifacts](https://github.com/rbuehler/vasca/blob/main/vasca/examples/inspect_artifacts.ipynb)                       | Visualize artifacts and the detections on them                   |
 
 ## List of Tutorials
 ```{toctree}
 :maxdepth: 2
 :titlesonly:
 
+tutorial_rm
+tutorial_field
+tutorial_pipe
 simple_example
 test_table
 ```
