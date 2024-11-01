@@ -49,8 +49,10 @@ jobs:
           git describe
           python -m ipykernel install --user --name vasca-github --display-name "vasca-github"
           jupyter kernelspec list
-
-
+      
+      - name: Create .env file
+        run: |
+          echo -e "VASCA_DEFAULT='$(pwd)'\nUC_SAS_VASCARCAT='/dev/null'\nUC_LUSTRE_VASCARCAT='/dev/null'" > .env
 
       - name: Build Sphinx documentation
         run: sphinx-build docs docs/_build
