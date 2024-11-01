@@ -79,5 +79,5 @@ config["general"] = {
 ```
 
 ```{code-cell}
-# Enable the logging
+# To be continued ...
 ```
