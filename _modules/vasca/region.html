@@ -1,0 +1,1315 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
+        <title>vasca.region - VASCA v1.0.16dev</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">VASCA v1.0.16dev</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/VASCA_icon.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">VASCA v1.0.16dev</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../user_guide/index.html">User Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of User Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/data_model.html">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/pipeline.html">Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/post_processing.html">Post-Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide/instruments.html">Supported Instruments</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../api/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../api/vasca/vasca.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca</span></code></a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of vasca</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.region.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.region</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.visualization.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.visualization</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.utils</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.columns.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.columns</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.field.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.field</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.tables_dict.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.tables_dict</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.resource_manager.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.resource_manager</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.source.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.source</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.vasca_pipe.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.vasca_pipe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../api/vasca/vasca.tables.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vasca.tables</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Tutorials</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_rm.html">Resource Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_field.html">GALEXField</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/tutorial_pipe.html">Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/simple_example.html">Test Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/test_table.html">Table Display</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/rbuehler/vasca">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/vasca">PyPi</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">See Also</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.galex.caltech.edu">GALEX</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://ilariacaiazzo.com/uv-club/">UV Club</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for vasca.region</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">healpy</span> <span class="k">as</span> <span class="nn">hpy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">uu</span>
+<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">unique</span>
+<span class="kn">from</span> <span class="nn">astropy.timeseries</span> <span class="kn">import</span> <span class="n">LombScargle</span>
+<span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="kn">from</span> <span class="nn">astroquery.vizier</span> <span class="kn">import</span> <span class="n">Vizier</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">vasca.field</span> <span class="kn">import</span> <span class="n">BaseField</span><span class="p">,</span> <span class="n">GALEXDSField</span><span class="p">,</span> <span class="n">GALEXField</span>
+<span class="kn">from</span> <span class="nn">vasca.source</span> <span class="kn">import</span> <span class="n">Source</span>
+<span class="kn">from</span> <span class="nn">vasca.tables</span> <span class="kn">import</span> <span class="n">TableCollection</span>
+<span class="kn">from</span> <span class="nn">vasca.tables_dict</span> <span class="kn">import</span> <span class="n">dd_vasca_tables</span><span class="p">,</span> <span class="n">dd_vasca_columns</span>
+<span class="kn">from</span> <span class="nn">vasca.utils</span> <span class="kn">import</span> <span class="n">dd_filter2id</span><span class="p">,</span> <span class="n">run_LombScargle</span><span class="p">,</span> <span class="n">get_config</span>
+
+
+<div class="viewcode-block" id="Region">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region">[docs]</a>
+<span class="k">class</span> <span class="nc">Region</span><span class="p">(</span><span class="n">TableCollection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Defines a region in the sky as a</span>
+<span class="sd">    list of vasca.field objects. It provides functionality to</span>
+<span class="sd">    loop over fields to derive source lists, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Many class attributes are stored in astropy.table.Table_. To see a</span>
+<span class="sd">        description of each of their columns run :meth: `~vasca.Regions.info`.</span>
+
+<span class="sd">        .. _astropy.table.Table: https://docs.astropy.org/en/stable/api/astropy.table.Table.html</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Sets skeleton</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Path where region and fields are stored</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">region_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># dictionary of field_id and field objects</span>
+
+<div class="viewcode-block" id="Region.load_from_config">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.load_from_config">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load_from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vasca_cfg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads region from configuration dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        vasca_cfg : dict</span>
+<span class="sd">            Dictionary with region parameters derived from the vasca pipeline</span>
+<span class="sd">            YAML configuration file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rg</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">rg</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;region:tt_fields&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading fields from config file&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Loop over all observations</span>
+        <span class="n">rg_fd_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observatory&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GALEX&quot;</span> <span class="ow">or</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observatory&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GALEX_DS&quot;</span><span class="p">:</span>
+                <span class="n">gfield_load_func</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">GALEXDSField</span><span class="o">.</span><span class="n">load</span>
+                    <span class="k">if</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observatory&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GALEX_DS&quot;</span>
+                    <span class="k">else</span> <span class="n">GALEXField</span><span class="o">.</span><span class="n">load</span>
+                <span class="p">)</span>
+                <span class="c1"># Loop over fields and store info</span>
+                <span class="k">for</span> <span class="n">gfield_id</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;obs_field_ids&quot;</span><span class="p">]:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="c1"># Data needs to be preloaded serially, to avoid many parallel</span>
+                        <span class="c1"># requests to the MAST server later which results in errors</span>
+                        <span class="n">gf</span> <span class="o">=</span> <span class="n">gfield_load_func</span><span class="p">(</span>
+                            <span class="n">gfield_id</span><span class="p">,</span>
+                            <span class="n">obs_filter</span><span class="o">=</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;obs_filter&quot;</span><span class="p">],</span>
+                            <span class="n">method</span><span class="o">=</span><span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;resources&quot;</span><span class="p">][</span><span class="s2">&quot;load_method&quot;</span><span class="p">],</span>
+                            <span class="n">load_products</span><span class="o">=</span><span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;resources&quot;</span><span class="p">][</span><span class="s2">&quot;load_products&quot;</span><span class="p">],</span>
+                            <span class="o">**</span><span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;resources&quot;</span><span class="p">][</span><span class="s2">&quot;field_kwargs&quot;</span><span class="p">],</span>
+                        <span class="p">)</span>
+
+                        <span class="n">rg_fd_id</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">gf</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="n">field_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">tt_fields</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;fov_diam&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">fov_diam</span>
+                        <span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;nr_vis&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">nr_vis</span>
+                        <span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;time_bin_size_sum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">time_bin_size_sum</span>
+                        <span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;time_start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">time_start</span><span class="o">.</span><span class="n">mjd</span>
+                        <span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;time_stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">time_stop</span><span class="o">.</span><span class="n">mjd</span>
+                        <span class="n">field_info</span><span class="p">[</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rg_fd_id</span>
+                        <span class="n">rg</span><span class="o">.</span><span class="n">tt_fields</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">field_info</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Faild to load field &#39;</span><span class="si">{</span><span class="n">gfield_id</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Moving on to next field. Exception:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Selected observatory `&quot;</span> <span class="o">+</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observatory&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;` not supported&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Add region path</span>
+        <span class="n">rg</span><span class="o">.</span><span class="n">region_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;general&quot;</span><span class="p">][</span><span class="s2">&quot;out_dir_base&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;general&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Add filter table</span>
+        <span class="n">rg</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;region:tt_filters&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">flt</span><span class="p">,</span> <span class="n">flt_id</span> <span class="ow">in</span> <span class="n">dd_filter2id</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">rg</span><span class="o">.</span><span class="n">tt_filters</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;obs_filter&quot;</span><span class="p">:</span> <span class="n">flt</span><span class="p">,</span> <span class="s2">&quot;obs_filter_id&quot;</span><span class="p">:</span> <span class="n">flt_id</span><span class="p">,</span> <span class="s2">&quot;obs_filter_idx&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">rg</span></div>
+
+
+<div class="viewcode-block" id="Region.add_table_from_fields">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.add_table_from_fields">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_table_from_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">only_selected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add tables from the fields to the region by stacking them,</span>
+<span class="sd">        adding the rg_fd_id column.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table_name : str</span>
+<span class="sd">            Table to be added.</span>
+<span class="sd">        only_selected : bool, optional</span>
+<span class="sd">            Only selected rows from the field tables are copied over to the region.</span>
+<span class="sd">            The default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding table from fields: </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Table &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39; already exists, overwriting&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Loop over fields and add field_id column and field id table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="o">.</span><span class="n">add_index</span><span class="p">(</span><span class="s2">&quot;field_id&quot;</span><span class="p">)</span>
+
+        <span class="n">ll_tt</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of &quot;table_name&quot; tables for all fields</span>
+        <span class="k">for</span> <span class="n">field_id</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">rg_fd_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;field_id&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">field_id</span><span class="p">]][</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">field</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">tt</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No table </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> found for field </span><span class="si">{</span><span class="n">field_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Apply row selection</span>
+            <span class="n">sel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tt</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bool&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">only_selected</span><span class="p">:</span>
+                <span class="n">sel</span> <span class="o">=</span> <span class="n">tt</span><span class="p">[</span><span class="s2">&quot;sel&quot;</span><span class="p">]</span>
+            <span class="n">tt_sel</span> <span class="o">=</span> <span class="n">tt</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+            <span class="n">tt_sel</span><span class="p">[</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tt_sel</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="n">rg_fd_id</span><span class="p">]</span>
+            <span class="n">ll_tt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tt_sel</span><span class="p">)</span>
+
+        <span class="c1"># colnames = dd_vasca_tables[&quot;region&quot;][table_name][&quot;names&quot;]</span>
+        <span class="n">colnames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">dd_vasca_tables</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">][</span><span class="n">table_name</span><span class="p">][</span><span class="s2">&quot;names&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">ll_tt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">colnames</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create empty data structure and then fill it with field tables</span>
+        <span class="n">dd_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">colnames</span><span class="p">,</span> <span class="p">[</span><span class="nb">list</span><span class="p">()</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colnames</span><span class="p">))]))</span>
+        <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="n">ll_tt</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">:</span>
+                <span class="n">dd_data</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">dd_data</span><span class="p">,</span> <span class="s2">&quot;region:&quot;</span> <span class="o">+</span> <span class="n">table_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Region.add_coverage_hp">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.add_coverage_hp">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_coverage_hp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nside</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">coord_sys</span><span class="o">=</span><span class="s2">&quot;galactic&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates healpix arrays of Nr visits, fields and total exposure.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nside : int, optional</span>
+<span class="sd">            NSIDE of healpix binning. The default is 4096.</span>
+<span class="sd">        coord_sys : str, optional</span>
+<span class="sd">            Coordinate system, &quot;galactic&quot; or &quot;icrs&quot;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of int</span>
+<span class="sd">            Array with number of visits per pixel.</span>
+<span class="sd">        list of int</span>
+<span class="sd">            Array with exposure per pixel.</span>
+<span class="sd">        list of int</span>
+<span class="sd">            Array with number of fields.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">npix</span> <span class="o">=</span> <span class="n">hpy</span><span class="o">.</span><span class="n">nside2npix</span><span class="p">(</span><span class="n">nside</span><span class="p">)</span>
+        <span class="n">pix_diam</span> <span class="o">=</span> <span class="n">hpy</span><span class="o">.</span><span class="n">nside2resol</span><span class="p">(</span><span class="n">nside</span><span class="p">,</span> <span class="n">arcmin</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">uu</span><span class="o">.</span><span class="n">deg</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Healpix NSIDE: </span><span class="si">{</span><span class="n">nside</span><span class="si">}</span><span class="s2">, NPIX: </span><span class="si">{</span><span class="n">npix</span><span class="si">}</span><span class="s2">, pixel diameter: </span><span class="si">{</span><span class="n">pix_diam</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">pix_nrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">npix</span><span class="p">)</span>
+        <span class="n">hp_nr_vis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">npix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+        <span class="n">hp_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">npix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+        <span class="n">hp_nr_fds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">npix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="p">:</span>
+            <span class="n">pos_vec</span> <span class="o">=</span> <span class="n">hpy</span><span class="o">.</span><span class="n">ang2vec</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span> <span class="n">field</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">],</span> <span class="n">lonlat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">coord_sys</span> <span class="o">==</span> <span class="s2">&quot;galactic&quot;</span><span class="p">:</span>
+                <span class="n">cel</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span> <span class="n">field</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">],</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
+                <span class="n">pos_vec</span> <span class="o">=</span> <span class="n">hpy</span><span class="o">.</span><span class="n">ang2vec</span><span class="p">(</span>
+                    <span class="n">cel</span><span class="o">.</span><span class="n">galactic</span><span class="o">.</span><span class="n">l</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">cel</span><span class="o">.</span><span class="n">galactic</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">lonlat</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+
+            <span class="n">rdisc</span> <span class="o">=</span> <span class="n">field</span><span class="p">[</span><span class="s2">&quot;fov_diam&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="c1"># TODO: Here a more general query_polygon will have to be done for ULTRASAT</span>
+            <span class="n">ipix_disc</span> <span class="o">=</span> <span class="n">hpy</span><span class="o">.</span><span class="n">query_disc</span><span class="p">(</span>
+                <span class="n">nside</span><span class="o">=</span><span class="n">nside</span><span class="p">,</span> <span class="n">vec</span><span class="o">=</span><span class="n">pos_vec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">rdisc</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">hp_nr_vis</span><span class="p">[</span><span class="n">ipix_disc</span><span class="p">]</span> <span class="o">+=</span> <span class="n">field</span><span class="p">[</span><span class="s2">&quot;nr_vis&quot;</span><span class="p">]</span>
+            <span class="n">hp_exp</span><span class="p">[</span><span class="n">ipix_disc</span><span class="p">]</span> <span class="o">+=</span> <span class="n">field</span><span class="p">[</span><span class="s2">&quot;time_bin_size_sum&quot;</span><span class="p">]</span>
+            <span class="n">hp_nr_fds</span><span class="p">[</span><span class="n">ipix_disc</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Write to table</span>
+        <span class="n">sel_pix</span> <span class="o">=</span> <span class="n">hp_nr_vis</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">keys_data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pix_id&quot;</span><span class="p">,</span> <span class="s2">&quot;nr_vis&quot;</span><span class="p">,</span> <span class="s2">&quot;exp&quot;</span><span class="p">,</span> <span class="s2">&quot;nr_fds&quot;</span><span class="p">]</span>
+        <span class="n">ll_data</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">pix_nrs</span><span class="p">[</span><span class="n">sel_pix</span><span class="p">],</span>
+            <span class="n">hp_nr_vis</span><span class="p">[</span><span class="n">sel_pix</span><span class="p">],</span>
+            <span class="n">hp_exp</span><span class="p">[</span><span class="n">sel_pix</span><span class="p">],</span>
+            <span class="n">hp_nr_fds</span><span class="p">[</span><span class="n">sel_pix</span><span class="p">],</span>
+        <span class="p">]</span>
+        <span class="n">dd_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys_data</span><span class="p">,</span> <span class="n">ll_data</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">dd_data</span><span class="p">,</span> <span class="s2">&quot;region:tt_coverage_hp&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tt_coverage_hp</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;NSIDE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nside</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tt_coverage_hp</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;COOR_SYS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord_sys</span>
+
+        <span class="n">hp_exp</span><span class="p">[</span><span class="n">hp_exp</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">]</span> <span class="o">=</span> <span class="n">hpy</span><span class="o">.</span><span class="n">UNSEEN</span>
+        <span class="n">hp_nr_vis</span><span class="p">[</span><span class="n">hp_nr_vis</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">]</span> <span class="o">=</span> <span class="n">hpy</span><span class="o">.</span><span class="n">UNSEEN</span>
+        <span class="n">hp_nr_vis</span><span class="p">[</span><span class="n">hp_nr_fds</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">]</span> <span class="o">=</span> <span class="n">hpy</span><span class="o">.</span><span class="n">UNSEEN</span>
+
+        <span class="k">return</span> <span class="n">hp_nr_vis</span><span class="p">,</span> <span class="n">hp_exp</span><span class="p">,</span> <span class="n">hp_nr_fds</span></div>
+
+
+<div class="viewcode-block" id="Region.load_from_fits">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.load_from_fits">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_from_fits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">load_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads field from a fits file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str, optional</span>
+<span class="sd">            Region file name.</span>
+<span class="sd">        load_fields : bool, optional</span>
+<span class="sd">            Load the fields, which have to be located as fits in the subfolder &quot;./fields/&quot;</span>
+<span class="sd">            of the region file in &quot;file_name&quot;. Default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Load file from TableCollection base class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_from_fits</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">region_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="c1"># Load fields</span>
+        <span class="k">if</span> <span class="n">load_fields</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
+                    <span class="n">field_id</span><span class="o">=</span><span class="n">ff</span><span class="p">[</span><span class="s2">&quot;field_id&quot;</span><span class="p">],</span> <span class="n">load_method</span><span class="o">=</span><span class="s2">&quot;FITS&quot;</span><span class="p">,</span> <span class="n">add_field</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Region.get_src_from_id">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.get_src_from_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_src_from_id</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rg_src_id</span><span class="p">,</span>
+        <span class="n">load_from_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">write_to_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">add_sed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">add_gphoton</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">add_spectrum</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get Source object containing all region table entries</span>
+<span class="sd">        relevant for the passed rg_src_id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rg_src_id : int</span>
+<span class="sd">            Region source ID.</span>
+<span class="sd">        load_from_file : bool, optional</span>
+<span class="sd">            Load from a previously stored source, assumed to be in the &quot;./sources&quot;</span>
+<span class="sd">            directory of the analysis directory. The default is True.</span>
+<span class="sd">        write_to_file: bool, optional</span>
+<span class="sd">            Store source into the  &quot;./sources&quot; directory of the analysis directory.</span>
+<span class="sd">            The default is True.</span>
+<span class="sd">        add_sed: bool, optional</span>
+<span class="sd">            Add Spectral Energy Distribution using ``vasca.source.Source.add_vizier_SED()``.</span>
+<span class="sd">            The default is True.</span>
+<span class="sd">        add_gphoton: bool, optional</span>
+<span class="sd">            Add gphoton light curve using ``vasca.source.Source.add_gphoton_lc()``.</span>
+<span class="sd">            The default is True.</span>
+<span class="sd">        add_spectrum: bool, optional</span>
+<span class="sd">            Add spectrum using ``vasca.source.Source.add_spectrum()``.</span>
+<span class="sd">            The default is True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        vasca.table.source</span>
+<span class="sd">            VASCA source object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting Source object for rg_src_id: </span><span class="si">{</span><span class="n">rg_src_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="p">()</span>
+
+        <span class="n">src_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rg_src_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;src_name&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="o">.</span><span class="n">add_index</span><span class="p">(</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">)</span>
+            <span class="n">src_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">rg_src_id</span><span class="p">]][</span><span class="s2">&quot;src_name&quot;</span><span class="p">])</span>
+            <span class="n">src_name</span> <span class="o">=</span> <span class="n">src_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check if source shall be loaded for file and file exists</span>
+        <span class="n">fname_src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region_path</span> <span class="o">+</span> <span class="s2">&quot;/sources/src_&quot;</span> <span class="o">+</span> <span class="n">src_name</span> <span class="o">+</span> <span class="s2">&quot;.fits&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname_src</span><span class="p">)</span> <span class="ow">and</span> <span class="n">load_from_file</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading source from file </span><span class="si">{</span><span class="n">fname_src</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">src</span><span class="o">.</span><span class="n">load_from_fits</span><span class="p">(</span><span class="n">fname_src</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">src</span>
+        <span class="c1"># Otherwise derive from region</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Adding source and detection table</span>
+            <span class="c1"># Tables to copy entries from, if they exist in region</span>
+            <span class="n">ll_tables</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;tt_sources&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tt_detections&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tt_coadd_sources&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tt_simbad&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tt_gaiadr3&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tt_lombscargle&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tt_gaiaedr3_wd&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tt_gfcat&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">tt_name</span> <span class="ow">in</span> <span class="n">ll_tables</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tt_name</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">rg_src_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tt_name</span><span class="p">][</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tt_name</span><span class="p">]</span><span class="o">.</span><span class="n">add_index</span><span class="p">(</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">)</span>
+                        <span class="n">src</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span>
+                            <span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tt_name</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">rg_src_id</span><span class="p">]]),</span>
+                            <span class="n">tt_name</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+            <span class="c1"># Add visits</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tt_visits</span><span class="o">.</span><span class="n">add_index</span><span class="p">(</span><span class="s2">&quot;vis_id&quot;</span><span class="p">)</span>
+            <span class="n">vis_ids</span> <span class="o">=</span> <span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">tt_detections</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="s2">&quot;vis_id&quot;</span><span class="p">))[</span><span class="s2">&quot;vis_id&quot;</span><span class="p">]</span>
+            <span class="n">src</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_visits</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;vis_id&quot;</span><span class="p">,</span> <span class="n">vis_ids</span><span class="p">]),</span> <span class="s2">&quot;tt_visits&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add fields</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="o">.</span><span class="n">add_index</span><span class="p">(</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">)</span>
+            <span class="n">rg_fd_ids</span> <span class="o">=</span> <span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">tt_detections</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">))[</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">]</span>
+            <span class="n">src</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">,</span> <span class="n">rg_fd_ids</span><span class="p">]),</span> <span class="s2">&quot;tt_fields&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add filter</span>
+            <span class="n">src</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_filters</span><span class="p">),</span> <span class="s2">&quot;tt_filters&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add light curve</span>
+            <span class="n">src</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">get_light_curve</span><span class="p">(</span><span class="n">rg_src_ids</span><span class="o">=</span><span class="n">rg_src_id</span><span class="p">)[</span><span class="n">rg_src_id</span><span class="p">],</span> <span class="s2">&quot;tt_source_lc&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Add additional info if asked</span>
+            <span class="k">if</span> <span class="n">add_sed</span><span class="p">:</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">add_vizier_SED</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">add_gphoton</span><span class="p">:</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">add_gphoton_lc</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">add_spectrum</span><span class="p">:</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">add_spectrum</span><span class="p">()</span>
+
+            <span class="c1"># Write if asked</span>
+            <span class="k">if</span> <span class="n">write_to_file</span><span class="p">:</span>
+                <span class="c1"># create source directory if it does not exist</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">region_path</span> <span class="o">+</span> <span class="s2">&quot;/sources&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">write_to_fits</span><span class="p">(</span><span class="n">fname_src</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">src</span></div>
+
+
+<div class="viewcode-block" id="Region.set_src_id_info">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.set_src_id_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_src_id_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores the mapping of rg_src_id to rg_fd_id and fd_src_id</span>
+<span class="sd">        into tt_src_id_map table.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting table tt_src_id_map.&quot;</span><span class="p">)</span>
+
+        <span class="n">dd_ids</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;rg_fd_id&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;fd_src_id&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;sel&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="n">tt_ids</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tt_detections</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">,</span> <span class="s2">&quot;rg_fd_id&quot;</span><span class="p">,</span> <span class="s2">&quot;fd_src_id&quot;</span><span class="p">,</span> <span class="s2">&quot;sel&quot;</span><span class="p">],</span>
+            <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">,</span> <span class="s2">&quot;fd_src_id&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">tt_ids</span><span class="o">.</span><span class="n">add_index</span><span class="p">(</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: This could be done much more effieciently</span>
+        <span class="k">for</span> <span class="n">rg_src_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">]:</span>
+            <span class="c1"># tt_det = Table()</span>
+            <span class="n">ids_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tt_ids</span><span class="o">.</span><span class="n">loc_indices</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">rg_src_id</span><span class="p">]])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dd_ids</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">dd_ids</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tt_ids</span><span class="p">[</span><span class="n">ids_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dd_ids</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tt_ids</span><span class="p">[</span><span class="n">ids_idx</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">dd_ids</span><span class="p">,</span> <span class="s2">&quot;region:tt_src_id_map&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Region.get_src_from_sky_pos">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.get_src_from_sky_pos">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_src_from_sky_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordx</span><span class="p">,</span> <span class="n">coordy</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get Source object containing all region table entries</span>
+<span class="sd">        relevant for the passed source position. The nearest source is matched.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coordx : str or float</span>
+<span class="sd">            First coordinate component in any astropy.SkyCoord compatible format.</span>
+<span class="sd">        coordy : str or float</span>
+<span class="sd">            Second coordinate component in any astropy.SkyCoord compatible format.</span>
+<span class="sd">        frame : str</span>
+<span class="sd">            Coordinate system. Any astropy compatible format,</span>
+<span class="sd">            see https://docs.astropy.org/en/stable/coordinates/skycoord.html</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        vasca.table.source</span>
+<span class="sd">            VASCA source object.</span>
+<span class="sd">        astropy.Quantity</span>
+<span class="sd">            Distance to the nearest source</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting Source object for coord: </span><span class="si">{</span><span class="n">coordx</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">coordy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">coord_srcs</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">],</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span>
+        <span class="p">)</span>
+        <span class="n">coord_ref</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">coordx</span><span class="p">,</span> <span class="n">coordy</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">idx</span><span class="p">,</span> <span class="n">d2d</span><span class="p">,</span> <span class="n">d3d</span> <span class="o">=</span> <span class="n">coord_ref</span><span class="o">.</span><span class="n">match_to_catalog_sky</span><span class="p">(</span><span class="n">coord_srcs</span><span class="p">)</span>
+
+        <span class="n">rg_src_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">]</span>
+
+        <span class="n">src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_src_from_id</span><span class="p">(</span><span class="n">rg_src_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">src</span><span class="p">,</span> <span class="o">*</span><span class="n">d2d</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Region.get_field">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.get_field">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_field</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">field_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rg_fd_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">load_method</span><span class="o">=</span><span class="s2">&quot;FITS&quot;</span><span class="p">,</span>
+        <span class="n">add_field</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">mast_products</span><span class="o">=</span><span class="s2">&quot;TABLES&quot;</span><span class="p">,</span>
+        <span class="n">field_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a field from a region, tt_fields table needs to include this field.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        field_id : str</span>
+<span class="sd">            Field ID. The default is None.</span>
+<span class="sd">        rg_fd_id : int</span>
+<span class="sd">            Region field ID. The default is None.</span>
+<span class="sd">        load_method : str, optional</span>
+<span class="sd">            Method to load the field. Either from &quot;FITS&quot;, from &quot;MAST&quot; or from &quot;VASCA&quot;.</span>
+<span class="sd">            The default is &quot;FITS&quot;. Note that if the field is already in the</span>
+<span class="sd">            region.fields dictionary, this will be ignored and the later be returned.</span>
+<span class="sd">        add_field : bool, optional</span>
+<span class="sd">            Add the field to the region.fields dictionary. The default is True.</span>
+<span class="sd">        mast_products : str, optional</span>
+<span class="sd">            load_products option of field.load_from_MAST. Sets to what level data</span>
+<span class="sd">            products are downloaded.</span>
+<span class="sd">        field_kwargs : dict, optional</span>
+<span class="sd">            Keyword arguments passed to the field loading function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        vasca.field</span>
+<span class="sd">            VASCA field</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Select field and set both field ids</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">field_id</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">sel_fd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="p">[</span><span class="s2">&quot;field_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">field_id</span>
+            <span class="n">rg_fd_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="p">[</span><span class="n">sel_fd</span><span class="p">][</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">rg_fd_id</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+            <span class="n">sel_fd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="p">[</span><span class="s2">&quot;rg_fd_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">rg_fd_id</span>
+            <span class="n">field_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="p">[</span><span class="n">sel_fd</span><span class="p">][</span><span class="s2">&quot;field_id&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Need to specify either field_id or rg_fd_id&quot;</span><span class="p">)</span>
+
+        <span class="n">fd_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_fields</span><span class="p">[</span><span class="n">sel_fd</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fd_row</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not identify single field for </span><span class="si">{</span><span class="n">field_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">rg_fd_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># ** Load field accorading to passed method **</span>
+
+        <span class="c1"># If already loaded into field dictionary return it</span>
+        <span class="k">if</span> <span class="n">field_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">field_id</span><span class="p">]</span>
+
+        <span class="c1"># If it shall be loaded from a fits file</span>
+        <span class="k">elif</span> <span class="n">load_method</span> <span class="o">==</span> <span class="s2">&quot;FITS&quot;</span><span class="p">:</span>
+            <span class="n">fd</span> <span class="o">=</span> <span class="n">BaseField</span><span class="p">()</span>
+            <span class="n">fd</span><span class="o">.</span><span class="n">load_from_fits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">region_path</span> <span class="o">+</span> <span class="s2">&quot;/fields/field_&quot;</span> <span class="o">+</span> <span class="n">field_id</span> <span class="o">+</span> <span class="s2">&quot;.fits&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">add_field</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">field_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">fd</span>
+            <span class="k">return</span> <span class="n">fd</span>
+
+        <span class="c1"># If it should be loaded from MAST or VASCA-MAST file database</span>
+        <span class="k">elif</span> <span class="n">fd_row</span><span class="p">[</span><span class="s2">&quot;observatory&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GALEX&quot;</span> <span class="ow">or</span> <span class="n">fd_row</span><span class="p">[</span><span class="s2">&quot;observatory&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GALEX_DS&quot;</span><span class="p">:</span>
+            <span class="n">gfield_load_func</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">GALEXDSField</span><span class="o">.</span><span class="n">load</span>
+                <span class="k">if</span> <span class="n">fd_row</span><span class="p">[</span><span class="s2">&quot;observatory&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GALEX_DS&quot;</span>
+                <span class="k">else</span> <span class="n">GALEXField</span><span class="o">.</span><span class="n">load</span>
+            <span class="p">)</span>
+
+            <span class="n">gf</span> <span class="o">=</span> <span class="n">gfield_load_func</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">fd_row</span><span class="p">[</span><span class="s2">&quot;field_name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">fd_row</span><span class="p">[</span><span class="s2">&quot;observatory&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GALEX_DS&quot;</span>
+                    <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fd_row</span><span class="p">[</span><span class="s2">&quot;field_id&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])[</span><span class="mi">3</span><span class="p">:])</span>
+                <span class="p">),</span>
+                <span class="n">obs_filter</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">fd_row</span><span class="p">[</span><span class="s2">&quot;obs_filter&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="n">method</span><span class="o">=</span><span class="n">load_method</span><span class="p">,</span>
+                <span class="n">load_products</span><span class="o">=</span><span class="n">mast_products</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">field_kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">add_field</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">field_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span>
+            <span class="k">return</span> <span class="n">gf</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Usupported loading method&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1"># def set_lomb_scargle(self):</span>
+
+<div class="viewcode-block" id="Region.cross_match_cds">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.cross_match_cds">[docs]</a>
+    <span class="k">def</span> <span class="nf">cross_match_cds</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query_radius</span><span class="o">=</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">uu</span><span class="o">.</span><span class="n">arcsec</span><span class="p">,</span>
+        <span class="n">query_table</span><span class="o">=</span><span class="s2">&quot;I/355/gaiadr3&quot;</span><span class="p">,</span>
+        <span class="n">vizier_columns</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PQSO&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PGal&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PSS&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RPlx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;VarFlag&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;o_Gmag&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RFRP&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RFBP&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;AG&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;E(BP-RP)&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Match sources in region with SIMBAD-catalogs or Vizier database catalog. Runs</span>
+<span class="sd">        only over selected sources.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query_radius : astropy.quantity, optional</span>
+<span class="sd">            Query up to this distance from VASCA sources. The default is 1 * uu.arcsec.</span>
+<span class="sd">        query_table : str, optional</span>
+<span class="sd">            Vizier table to query, if &quot;simbad&quot; query SIMBAD instead. The default is the</span>
+<span class="sd">            main GAIA-DR3 table.</span>
+<span class="sd">        vizier_columns: list, optional</span>
+<span class="sd">            Vizier catalog columns to get from the catalog. \* is for default columns,</span>
+<span class="sd">            \*\* for all columns. The default is for selected `Vizier GAIA columns`_</span>
+
+<span class="sd">            .. _Vizier GAIA columns: https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=I/355/gaiadr3</span>
+
+<span class="sd">        overwrite: bool, optional</span>
+<span class="sd">            Overwrite preexisting association for this source. The default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query </span><span class="si">{</span><span class="n">query_table</span><span class="si">}</span><span class="s2"> table&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Define variables for later, depending on catalog source</span>
+        <span class="k">if</span> <span class="n">query_table</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;simbad&quot;</span><span class="p">:</span>
+            <span class="n">cat_name</span> <span class="o">=</span> <span class="s2">&quot;simbad&quot;</span>
+        <span class="k">elif</span> <span class="n">query_table</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;j/mnras/508/3877/maincat&quot;</span><span class="p">:</span>
+            <span class="n">cat_name</span> <span class="o">=</span> <span class="s2">&quot;gaiaedr3_wd&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cat_name</span> <span class="o">=</span> <span class="n">query_table</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">tab_name</span> <span class="o">=</span> <span class="s2">&quot;tt_&quot;</span> <span class="o">+</span> <span class="n">cat_name</span>
+
+        <span class="k">if</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Region already contained </span><span class="si">{</span><span class="n">tab_name</span><span class="si">}</span><span class="s2"> info&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_tables</span><span class="p">([</span><span class="n">tab_name</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;As overwrite is </span><span class="si">{</span><span class="n">overwrite</span><span class="si">}</span><span class="s2">, query stopped&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="c1"># Get selected sources</span>
+        <span class="n">tt_src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="s2">&quot;sel&quot;</span><span class="p">]]</span>
+
+        <span class="c1"># Get coordinates for query</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+            <span class="n">tt_src</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
+            <span class="n">tt_src</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
+            <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">,</span>
+        <span class="p">)</span>  <span class="c1"># [:100]</span>
+
+        <span class="c1"># ---- Run SIMBAD query and modify query results</span>
+        <span class="k">if</span> <span class="n">query_table</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;simbad&quot;</span><span class="p">:</span>
+            <span class="n">customSimbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+            <span class="n">customSimbad</span><span class="o">.</span><span class="n">TIMEOUT</span> <span class="o">=</span> <span class="mi">600</span>
+
+            <span class="c1"># Get only this subset of SIMBAD variables</span>
+            <span class="n">vo_entries</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;otype(opt)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;otypes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;distance&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;distance_result&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;velocity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;z_value&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sptype&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="n">customSimbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="o">*</span><span class="n">vo_entries</span><span class="p">)</span>
+
+            <span class="c1"># TODO: Split here and for Vizier below into multiple queries to avoid</span>
+            <span class="c1"># server time out for &gt;&gt;10000 srcs</span>
+            <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting SIMBAD query for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="si">}</span><span class="s2"> sources..&quot;</span><span class="p">)</span>
+                <span class="n">tt_qr</span> <span class="o">=</span> <span class="n">customSimbad</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">query_radius</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;..query done.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add rg_src_id</span>
+            <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tt_src</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">][</span><span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;SCRIPT_NUMBER_ID&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># Change type for astropy</span>
+            <span class="n">vo_change_type</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;MAIN_ID&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;COO_BIBCODE&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;OTYPE_opt&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;OTYPES&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;RVZ_BIBCODE&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;SP_TYPE&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;SP_QUAL&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;SP_BIBCODE&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">vo</span> <span class="ow">in</span> <span class="n">vo_change_type</span><span class="p">:</span>
+                <span class="n">tt_qr</span><span class="p">[</span><span class="n">vo</span><span class="p">]</span> <span class="o">=</span> <span class="n">tt_qr</span><span class="p">[</span><span class="n">vo</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;S32&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Lower case column names</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">tt_qr</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">tt_qr</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+            <span class="c1"># Change unit to astropy format and change some names</span>
+            <span class="n">skycoords</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+                <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="n">uu</span><span class="o">.</span><span class="n">hourangle</span><span class="p">,</span> <span class="n">uu</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skycoords</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span> <span class="o">*</span> <span class="n">uu</span><span class="o">.</span><span class="n">deg</span>
+            <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skycoords</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span> <span class="o">*</span> <span class="n">uu</span><span class="o">.</span><span class="n">deg</span>
+            <span class="n">tt_qr</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;otype_opt&quot;</span><span class="p">,</span> <span class="s2">&quot;otype&quot;</span><span class="p">)</span>
+            <span class="n">tt_qr</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;distance_result&quot;</span><span class="p">,</span> <span class="s2">&quot;match_distance&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ---- Run Vizier query and modify query results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting Vizier query for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="si">}</span><span class="s2"> sources..&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Define columns from GAIA to get.</span>
+            <span class="c1"># https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=I/355/gaiadr3</span>
+
+            <span class="n">customVizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">vizier_columns</span><span class="p">,</span>
+                <span class="n">catalog</span><span class="o">=</span><span class="n">query_table</span><span class="p">,</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">tt_qr</span> <span class="o">=</span> <span class="p">(</span><span class="n">customVizier</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">query_radius</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;..query done.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Fix to avoid fits writing error when descriptions are too long</span>
+            <span class="n">tt_qr</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="c1"># Add rg_src_id</span>
+            <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tt_src</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">][</span><span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;_q&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># Rename columns</span>
+            <span class="n">tt_qr</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;RA_ICRS&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">)</span>
+            <span class="n">tt_qr</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;DE_ICRS&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add distance between Vizier and VASCA source</span>
+            <span class="n">match_coords</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span>
+                <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;ra&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;dec&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;icrs&quot;</span>
+            <span class="p">)</span>
+            <span class="n">idx_cat</span><span class="p">,</span> <span class="n">dist_cat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">match_coords</span><span class="o">.</span><span class="n">match_to_catalog_sky</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+            <span class="n">tt_qr</span><span class="p">[</span><span class="s2">&quot;match_distance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist_cat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">uu</span><span class="o">.</span><span class="n">arcsec</span><span class="p">)</span>
+
+        <span class="c1"># Add vasca internal coutnerpart ID</span>
+        <span class="n">tt_qr</span><span class="p">[</span><span class="n">cat_name</span> <span class="o">+</span> <span class="s2">&quot;_match_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tt_qr</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="c1"># # Sort table</span>
+        <span class="n">tt_qr</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">,</span> <span class="s2">&quot;match_distance&quot;</span><span class="p">])</span>
+        <span class="c1">#</span>
+        <span class="c1"># Add match_id to tt_sources</span>
+        <span class="n">tu_qr</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">tt_qr</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="o">.</span><span class="n">add_index</span><span class="p">(</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="o">.</span><span class="n">loc_indices</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">,</span> <span class="n">tu_qr</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="n">cat_name</span> <span class="o">+</span> <span class="s2">&quot;_match_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="n">cat_name</span> <span class="o">+</span> <span class="s2">&quot;_match_id&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tu_qr</span><span class="p">[</span><span class="n">cat_name</span> <span class="o">+</span> <span class="s2">&quot;_match_id&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Add table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">tt_qr</span><span class="p">,</span> <span class="n">tab_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Region.add_simbad_otype_info">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.add_simbad_otype_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_simbad_otype_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add table explaing SIMBAD object groups</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">tu_qr</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_simbad</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get all associated otypes</span>
+        <span class="n">otypes_all</span><span class="p">,</span> <span class="n">otype_cts_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">tu_qr</span><span class="p">[</span><span class="s2">&quot;otype&quot;</span><span class="p">],</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Read files with otype description</span>
+        <span class="c1"># TODO make the ressource manager handle this</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="n">tt_nodes</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+            <span class="n">fpath</span> <span class="o">+</span> <span class="s2">&quot;/examples/resources/SIMBAD_otypes/otypes_nodes.csv&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get index for all associated otypes in deeescription table</span>
+        <span class="n">ids</span><span class="p">,</span> <span class="n">ids_idx</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span>
+            <span class="n">tt_nodes</span><span class="p">[</span><span class="s2">&quot;Id&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">otypes_all</span><span class="p">),</span> <span class="n">return_indices</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Consider also unused otypes (marked by?)</span>
+        <span class="n">candidate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">tt_nodes</span><span class="p">[</span><span class="s2">&quot;Candidate&quot;</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">can</span><span class="p">,</span> <span class="n">can_idx</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span>
+            <span class="n">candidate</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">otypes_all</span><span class="p">),</span> <span class="n">return_indices</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Merge index of sure and unsure otypes</span>
+        <span class="n">all_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ids_idx</span><span class="p">,</span> <span class="n">can_idx</span><span class="p">))</span>
+        <span class="n">tt_nodes</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="s2">&quot;otype&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Add table and ogroup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">tt_nodes</span><span class="p">[</span><span class="n">all_idx</span><span class="p">],</span> <span class="s2">&quot;tt_otypes&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Region.synch_src_sel">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.synch_src_sel">[docs]</a>
+    <span class="k">def</span> <span class="nf">synch_src_sel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remove_unselected</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize selections among tables. Select rows for tables containing</span>
+<span class="sd">        &quot;rg_src_id&quot; for sources selected in tt_sources.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        remove_unselected: bool, optional</span>
+<span class="sd">            Remove table rows which were not selected</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;rg_src_id&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">]</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Synchronizing selection in table </span><span class="si">{</span><span class="n">tab_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">sel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">][</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="s2">&quot;sel&quot;</span><span class="p">]],</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">][</span><span class="s2">&quot;sel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sel</span>
+                <span class="k">if</span> <span class="n">remove_unselected</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">][</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">][</span><span class="s2">&quot;sel&quot;</span><span class="p">]</span>
+                    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Region.get_region_catalog">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.get_region_catalog">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_region_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a reduced region, which only contains info on selected sources</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        vasca.Region</span>
+<span class="sd">            Region with only the selected sources</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Create catalog region</span>
+        <span class="n">rg</span> <span class="o">=</span> <span class="n">Region</span><span class="p">()</span>
+
+        <span class="c1"># keep only selected sources and detections, etc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synch_src_sel</span><span class="p">()</span>
+
+        <span class="c1"># Copy the tables listed below fully into catalog region</span>
+        <span class="k">for</span> <span class="n">tab_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;sel&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">]</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">rg</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">][</span><span class="s2">&quot;sel&quot;</span><span class="p">]],</span>
+                    <span class="n">tab_name</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rg</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">tab_name</span><span class="p">],</span> <span class="n">tab_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rg</span></div>
+
+
+<div class="viewcode-block" id="Region.set_LombScargle">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.set_LombScargle">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_LombScargle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_filters</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;NUV&quot;</span><span class="p">,</span> <span class="s2">&quot;FUV&quot;</span><span class="p">],</span> <span class="n">nbins_min</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply LombScargle analysis to selected sources. Results</span>
+<span class="sd">        are stored into the tt_lombscargle table of the region.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obs_filters : array, optional</span>
+<span class="sd">            Observation filters to apply Lomb Scargle on.</span>
+
+<span class="sd">        nbins_min : int, optional</span>
+<span class="sd">            Minimum number of time bins to perform LombScargle. The default is 20.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tt_src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="s2">&quot;sel&quot;</span><span class="p">]]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running LombScargle..&quot;</span><span class="p">)</span>
+        <span class="n">dd_lcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_light_curve</span><span class="p">(</span><span class="n">rg_src_ids</span><span class="o">=</span><span class="n">tt_src</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">])</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting source loop&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Prepare results dictionary</span>
+        <span class="n">dd_ls</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;rg_src_id&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s2">&quot;ls_peak_power&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s2">&quot;ls_peak_freq&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s2">&quot;ls_peak_pval&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s2">&quot;ls_pval_alt_flt&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s2">&quot;ls_model_rchiq&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+            <span class="s2">&quot;ls_model_pval&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">tt_lc</span> <span class="ow">in</span> <span class="n">dd_lcs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Consider only NUV fil</span>
+            <span class="n">sel_flt0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">tt_lc</span><span class="p">[</span><span class="s2">&quot;obs_filter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">obs_filters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">tt_lc</span><span class="p">[</span><span class="s2">&quot;sel&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">dd_ls_results</span> <span class="o">=</span> <span class="n">run_LombScargle</span><span class="p">(</span><span class="n">tt_lc</span><span class="p">[</span><span class="n">sel_flt0</span><span class="p">],</span> <span class="n">nbins_min</span><span class="o">=</span><span class="n">nbins_min</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dd_ls_results</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">dd_ls_results</span><span class="p">[</span><span class="s2">&quot;rg_src_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">src_id</span>
+            <span class="n">dd_ls_results</span><span class="p">[</span><span class="s2">&quot;ls_pval_alt_flt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dd_vasca_columns</span><span class="p">[</span><span class="s2">&quot;ls_pval_alt_flt&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;default&quot;</span>
+            <span class="p">]</span>  <span class="c1"># * uu.Unit(dd_vasca_columns[&quot;ls_pval_alt_flt&quot;][&quot;unit&quot;])</span>
+
+            <span class="c1"># For second filter only check peak probability at first filter peak</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_filters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">sel_flt1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">tt_lc</span><span class="p">[</span><span class="s2">&quot;obs_filter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">obs_filters</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">tt_lc</span><span class="p">[</span><span class="s2">&quot;sel&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">),</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">sel_flt1</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">nbins_min</span><span class="p">:</span>
+                    <span class="n">ls</span> <span class="o">=</span> <span class="n">LombScargle</span><span class="p">(</span>
+                        <span class="n">tt_lc</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][</span><span class="n">sel_flt1</span><span class="p">],</span>
+                        <span class="n">tt_lc</span><span class="p">[</span><span class="s2">&quot;flux&quot;</span><span class="p">][</span><span class="n">sel_flt1</span><span class="p">],</span>
+                        <span class="n">tt_lc</span><span class="p">[</span><span class="s2">&quot;flux_err&quot;</span><span class="p">][</span><span class="n">sel_flt1</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">power</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">dd_ls_results</span><span class="p">[</span><span class="s2">&quot;ls_peak_freq&quot;</span><span class="p">])</span>
+                    <span class="n">Pval</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">false_alarm_probability</span><span class="p">(</span><span class="n">power</span><span class="p">)</span>
+                    <span class="n">dd_ls_results</span><span class="p">[</span><span class="s2">&quot;ls_pval_alt_flt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pval</span>
+
+            <span class="n">dd_ls_results</span><span class="p">[</span><span class="s2">&quot;ls_peak_freq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dd_ls_results</span><span class="p">[</span><span class="s2">&quot;ls_peak_freq&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+            <span class="c1"># Write out results</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">dd_ls</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">dd_ls</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dd_ls_results</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">dd_ls</span><span class="p">,</span> <span class="s2">&quot;region:tt_lombscargle&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Region.redo_src_selection">
+<a class="viewcode-back" href="../../api/vasca/vasca.region.html#vasca.region.Region.redo_src_selection">[docs]</a>
+    <span class="k">def</span> <span class="nf">redo_src_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg_file_name</span><span class="o">=</span><span class="s2">&quot;./vasca_cfg.yaml&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Redo source selection, set in the tt_sources[&quot;sel&quot;] column</span>
+<span class="sd">        of the region based on the passed configuration file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cfg_file_name: str, optional</span>
+<span class="sd">            File name of the YAML configuration file specifying the source selection.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get src selection dictionary from file</span>
+        <span class="n">vasca_cfg</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">cfg_file_name</span><span class="p">)</span>
+
+        <span class="c1"># Apply selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tt_sources</span><span class="p">[</span><span class="s2">&quot;sel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">select_from_config</span><span class="p">(</span><span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;selection_src&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synch_src_sel</span><span class="p">(</span><span class="n">remove_unselected</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; BSD 3-Clause License
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/rbuehler/vasca" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=072cb9e1"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
+    </body>
+</html>

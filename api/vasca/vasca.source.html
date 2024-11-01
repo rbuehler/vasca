@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="vasca.vasca_pipe" href="vasca.vasca_pipe.html" /><link rel="prev" title="vasca.resource_manager" href="vasca.resource_manager.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>vasca.source - VASCA v0.0.1</title>
+        <title>vasca.source - VASCA v1.0.16dev</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">VASCA v0.0.1</div></a>
+      <a href="../../index.html"><div class="brand">VASCA v1.0.16dev</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v0.0.1</span>
+  <span class="sidebar-brand-text">VASCA v1.0.16dev</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -250,6 +250,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://ilariacaiazzo.com/uv-club/">UV Club</a></li>
 </ul>
 
 </div>
@@ -335,7 +336,7 @@ and Region classes containing this source.</p></td>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="vasca.source.Source">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vasca.source.</span></span><span class="sig-name descname"><span class="pre">Source</span></span><a class="headerlink" href="#vasca.source.Source" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vasca.source.</span></span><span class="sig-name descname"><span class="pre">Source</span></span><a class="reference internal" href="../../_modules/vasca/source.html#Source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.source.Source" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vasca.tables.TableCollection</span></code></a></p>
 <p>Class to store all VASCA information for one particular
 source. This class is for convenience, the same data is also found in the Field
@@ -344,7 +345,7 @@ and Region classes containing this source.</p>
 <p>Many class attributes are stored in <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v6.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.source.Source.add_vizier_SED">
-<span class="sig-name descname"><span class="pre">add_vizier_SED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vizier_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v6.1)"><span class="pre">astropy.units.Quantity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#vasca.source.Source.add_vizier_SED" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_vizier_SED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vizier_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v6.1)"><span class="pre">astropy.units.Quantity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/source.html#Source.add_vizier_SED"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.source.Source.add_vizier_SED" title="Link to this definition">¶</a></dt>
 <dd><p>Add spectral energy distribution table (tt_sed) with all
 spectral points from VizieR within given radius. Uses
 <a class="reference internal" href="vasca.utils.html#vasca.utils.query_vizier_sed" title="vasca.utils.query_vizier_sed"><code class="xref py py-func docutils literal notranslate"><span class="pre">query_vizier_sed()</span></code></a></p>
@@ -358,7 +359,7 @@ spectral points from VizieR within given radius. Uses
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.source.Source.add_gphoton_lc">
-<span class="sig-name descname"><span class="pre">add_gphoton_lc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s2n_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tbin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#vasca.source.Source.add_gphoton_lc" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_gphoton_lc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s2n_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tbin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/source.html#Source.add_gphoton_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.source.Source.add_gphoton_lc" title="Link to this definition">¶</a></dt>
 <dd><p>Add light curve from gPhoton. Only include points with no flags.
 Assumes gPhoton flux is given for a 6 arcsec aperture.</p>
 <dl class="field-list simple">
@@ -375,7 +376,7 @@ Assumes gPhoton flux is given for a 6 arcsec aperture.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.source.Source.add_spectrum">
-<span class="sig-name descname"><span class="pre">add_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v6.1)"><span class="pre">astropy.units.Quantity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#vasca.source.Source.add_spectrum" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v6.1)"><span class="pre">astropy.units.Quantity</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/source.html#Source.add_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.source.Source.add_spectrum" title="Link to this definition">¶</a></dt>
 <dd><p>Get spectrum from SDSS, if available</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -480,7 +481,7 @@ this does not excist, around VASCA position. (Default value = 2 * uu.arcsec)</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6f77e80e"></script>
+</div><script src="../../_static/documentation_options.js?v=072cb9e1"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -488,7 +489,7 @@ this does not excist, around VASCA position. (Default value = 2 * uu.arcsec)</p>
     <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.source.741e90fc-88d5-435f-85d5-1a2cc72c21f9.js"></script>
+    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.source.271dab5f-1d52-4243-a200-683b3d030d16.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

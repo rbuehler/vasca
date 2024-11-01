@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="vasca.visualization" href="vasca.visualization.html" /><link rel="prev" title="vasca" href="vasca.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>vasca.region - VASCA v0.0.1</title>
+        <title>vasca.region - VASCA v1.0.16dev</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">VASCA v0.0.1</div></a>
+      <a href="../../index.html"><div class="brand">VASCA v1.0.16dev</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v0.0.1</span>
+  <span class="sidebar-brand-text">VASCA v1.0.16dev</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -250,6 +250,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://ilariacaiazzo.com/uv-club/">UV Club</a></li>
 </ul>
 
 </div>
@@ -316,7 +317,7 @@ loop over fields to derive source lists, etc.</p></td>
 <h3>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="vasca.region.Region">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vasca.region.</span></span><span class="sig-name descname"><span class="pre">Region</span></span><a class="headerlink" href="#vasca.region.Region" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vasca.region.</span></span><span class="sig-name descname"><span class="pre">Region</span></span><a class="reference internal" href="../../_modules/vasca/region.html#Region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="vasca.tables.html#vasca.tables.TableCollection" title="vasca.tables.TableCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vasca.tables.TableCollection</span></code></a></p>
 <p>Defines a region in the sky as a
 list of vasca.field objects. It provides functionality to
@@ -327,7 +328,7 @@ description of each of their columns run :meth: <cite>~vasca.Regions.info</cite>
 <p>None</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.load_from_config">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vasca_cfg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.load_from_config" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vasca_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.load_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.load_from_config" title="Link to this definition">¶</a></dt>
 <dd><p>Loads region from configuration dictionary.</p>
 <dl class="simple">
 <dt>vasca_cfg<span class="classifier">dict</span></dt><dd><p>Dictionary with region parameters derived from the vasca pipeline
@@ -339,7 +340,7 @@ YAML configuration file.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.add_table_from_fields">
-<span class="sig-name descname"><span class="pre">add_table_from_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_selected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.add_table_from_fields" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_table_from_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_selected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.add_table_from_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.add_table_from_fields" title="Link to this definition">¶</a></dt>
 <dd><p>Add tables from the fields to the region by stacking them,
 adding the rg_fd_id column.</p>
 <dl class="simple">
@@ -354,7 +355,7 @@ The default is False.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.add_coverage_hp">
-<span class="sig-name descname"><span class="pre">add_coverage_hp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nside</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_sys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'galactic'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.add_coverage_hp" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_coverage_hp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nside</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coord_sys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'galactic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.add_coverage_hp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.add_coverage_hp" title="Link to this definition">¶</a></dt>
 <dd><p>Creates healpix arrays of Nr visits, fields and total exposure.</p>
 <dl class="simple">
 <dt>nside<span class="classifier">int, optional</span></dt><dd><p>NSIDE of healpix binning. The default is 4096.</p>
@@ -374,7 +375,7 @@ The default is False.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.load_from_fits">
-<span class="sig-name descname"><span class="pre">load_from_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.load_from_fits" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_from_fits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.load_from_fits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.load_from_fits" title="Link to this definition">¶</a></dt>
 <dd><p>Loads field from a fits file.</p>
 <dl class="simple">
 <dt>file_name<span class="classifier">str, optional</span></dt><dd><p>Region file name.</p>
@@ -388,7 +389,7 @@ of the region file in “file_name”. Default is False.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.get_src_from_id">
-<span class="sig-name descname"><span class="pre">get_src_from_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rg_src_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_from_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_sed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_gphoton</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_spectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.get_src_from_id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_src_from_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rg_src_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_from_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_sed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_gphoton</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_spectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.get_src_from_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.get_src_from_id" title="Link to this definition">¶</a></dt>
 <dd><p>Get Source object containing all region table entries
 relevant for the passed rg_src_id.</p>
 <dl class="simple">
@@ -418,7 +419,7 @@ The default is True.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.set_src_id_info">
-<span class="sig-name descname"><span class="pre">set_src_id_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.set_src_id_info" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_src_id_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.set_src_id_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.set_src_id_info" title="Link to this definition">¶</a></dt>
 <dd><p>Stores the mapping of rg_src_id to rg_fd_id and fd_src_id
 into tt_src_id_map table.</p>
 <p>None</p>
@@ -426,7 +427,7 @@ into tt_src_id_map table.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.get_src_from_sky_pos">
-<span class="sig-name descname"><span class="pre">get_src_from_sky_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'icrs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.get_src_from_sky_pos" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_src_from_sky_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'icrs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.get_src_from_sky_pos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.get_src_from_sky_pos" title="Link to this definition">¶</a></dt>
 <dd><p>Get Source object containing all region table entries
 relevant for the passed source position. The nearest source is matched.</p>
 <dl class="simple">
@@ -448,7 +449,7 @@ see <a class="reference external" href="https://docs.astropy.org/en/stable/coord
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.get_field">
-<span class="sig-name descname"><span class="pre">get_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rg_fd_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FITS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mast_products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'TABLES'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">dict()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.get_field" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rg_fd_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FITS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mast_products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'TABLES'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">dict()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.get_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.get_field" title="Link to this definition">¶</a></dt>
 <dd><p>Load a field from a region, tt_fields table needs to include this field.</p>
 <dl class="simple">
 <dt>field_id<span class="classifier">str</span></dt><dd><p>Field ID. The default is None.</p>
@@ -475,7 +476,7 @@ products are downloaded.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.cross_match_cds">
-<span class="sig-name descname"><span class="pre">cross_match_cds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'I/355/gaiadr3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vizier_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['*',</span> <span class="pre">'PQSO',</span> <span class="pre">'PGal',</span> <span class="pre">'PSS',</span> <span class="pre">'RPlx',</span> <span class="pre">'VarFlag',</span> <span class="pre">'o_Gmag',</span> <span class="pre">'RFRP',</span> <span class="pre">'RFBP',</span> <span class="pre">'AG',</span> <span class="pre">'E(BP-RP)']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.cross_match_cds" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cross_match_cds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span> <span class="pre">*</span> <span class="pre">uu.arcsec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'I/355/gaiadr3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vizier_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['*',</span> <span class="pre">'PQSO',</span> <span class="pre">'PGal',</span> <span class="pre">'PSS',</span> <span class="pre">'RPlx',</span> <span class="pre">'VarFlag',</span> <span class="pre">'o_Gmag',</span> <span class="pre">'RFRP',</span> <span class="pre">'RFBP',</span> <span class="pre">'AG',</span> <span class="pre">'E(BP-RP)']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.cross_match_cds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.cross_match_cds" title="Link to this definition">¶</a></dt>
 <dd><p>Match sources in region with SIMBAD-catalogs or Vizier database catalog. Runs
 only over selected sources.</p>
 <dl class="simple">
@@ -495,13 +496,13 @@ main GAIA-DR3 table.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.add_simbad_otype_info">
-<span class="sig-name descname"><span class="pre">add_simbad_otype_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.add_simbad_otype_info" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_simbad_otype_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.add_simbad_otype_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.add_simbad_otype_info" title="Link to this definition">¶</a></dt>
 <dd><p>Add table explaing SIMBAD object groups</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.synch_src_sel">
-<span class="sig-name descname"><span class="pre">synch_src_sel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remove_unselected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.synch_src_sel" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">synch_src_sel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remove_unselected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.synch_src_sel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.synch_src_sel" title="Link to this definition">¶</a></dt>
 <dd><p>Synchronize selections among tables. Select rows for tables containing
 “rg_src_id” for sources selected in tt_sources.</p>
 <dl class="simple">
@@ -513,7 +514,7 @@ main GAIA-DR3 table.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.get_region_catalog">
-<span class="sig-name descname"><span class="pre">get_region_catalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.get_region_catalog" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_region_catalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.get_region_catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.get_region_catalog" title="Link to this definition">¶</a></dt>
 <dd><p>Create a reduced region, which only contains info on selected sources</p>
 <dl class="simple">
 <dt>vasca.Region</dt><dd><p>Region with only the selected sources</p>
@@ -523,7 +524,7 @@ main GAIA-DR3 table.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.set_LombScargle">
-<span class="sig-name descname"><span class="pre">set_LombScargle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['NUV',</span> <span class="pre">'FUV']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.set_LombScargle" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_LombScargle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['NUV',</span> <span class="pre">'FUV']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.set_LombScargle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.set_LombScargle" title="Link to this definition">¶</a></dt>
 <dd><p>Apply LombScargle analysis to selected sources. Results
 are stored into the tt_lombscargle table of the region.</p>
 <dl class="simple">
@@ -537,7 +538,7 @@ are stored into the tt_lombscargle table of the region.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vasca.region.Region.redo_src_selection">
-<span class="sig-name descname"><span class="pre">redo_src_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg_file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./vasca_cfg.yaml'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vasca.region.Region.redo_src_selection" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">redo_src_selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg_file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./vasca_cfg.yaml'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/region.html#Region.redo_src_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.region.Region.redo_src_selection" title="Link to this definition">¶</a></dt>
 <dd><p>Redo source selection, set in the tt_sources[“sel”] column
 of the region based on the passed configuration file.</p>
 <dl class="simple">
@@ -651,7 +652,7 @@ of the region based on the passed configuration file.</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6f77e80e"></script>
+</div><script src="../../_static/documentation_options.js?v=072cb9e1"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -659,7 +660,7 @@ of the region based on the passed configuration file.</p>
     <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.region.1881060a-51e0-4c16-8fdc-382fce36d098.js"></script>
+    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.region.fd7a97cc-655b-444e-8d97-df20d02870fd.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

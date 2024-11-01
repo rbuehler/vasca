@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Pipeline" href="tutorial_pipe.html" /><link rel="prev" title="Resource Manager" href="tutorial_rm.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>GALEXField - VASCA v0.0.1</title>
+        <title>GALEXField - VASCA v1.0.16dev</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">VASCA v0.0.1</div></a>
+      <a href="../index.html"><div class="brand">VASCA v1.0.16dev</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v0.0.1</span>
+  <span class="sidebar-brand-text">VASCA v1.0.16dev</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -250,6 +250,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://ilariacaiazzo.com/uv-club/">UV Club</a></li>
 </ul>
 
 </div>
@@ -326,39 +327,7 @@ data.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">Exception</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rm</span> <span class="o">=</span> <span class="n">ResourceManager</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">test_dir</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;test_resources&quot;</span><span class="p">,</span> <span class="s2">&quot;vasca&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">test_dir</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/resource_manager.py:68,</span> in <span class="ni">ResourceManager.__init__</span><span class="nt">(self, verbose)</span>
-<span class="g g-Whitespace">     </span><span class="mi">65</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_metadata</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">67</span> <span class="c1"># set environment variables</span>
-<span class="ne">---&gt; </span><span class="mi">68</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_env</span><span class="p">()</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/resource_manager.py:159,</span> in <span class="ni">ResourceManager._load_env</span><span class="nt">(self, config_path, overwrite)</span>
-<span class="g g-Whitespace">    </span><span class="mi">157</span> <span class="c1"># raise error if no env var was previously set and config file is also missing</span>
-<span class="g g-Whitespace">    </span><span class="mi">158</span> <span class="k">elif</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">env_status_list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">found_config</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">159</span>     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">160</span>         <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">161</span>             <span class="s2">&quot;Unable to set environemt variables </span><span class="si">{}</span><span class="s2">. &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">162</span>             <span class="s2">&quot;Solve it by adding them to the config file at &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">163</span>             <span class="s2">&quot;or setting the variables manually in your shell config.&quot;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">164</span>             <span class="p">[</span>
-<span class="g g-Whitespace">    </span><span class="mi">165</span>                 <span class="n">var</span>
-<span class="g g-Whitespace">    </span><span class="mi">166</span>                 <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">167</span>                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">][</span><span class="n">var</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">168</span>             <span class="p">],</span>
-<span class="g g-Whitespace">    </span><span class="mi">169</span>             <span class="n">config_path</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">170</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">171</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">172</span> <span class="c1"># if not all env vars have been set previously but a config file exists</span>
-<span class="g g-Whitespace">    </span><span class="mi">173</span> <span class="c1"># missing env vars are replaced</span>
-<span class="g g-Whitespace">    </span><span class="mi">174</span> <span class="k">elif</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">env_status_list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">found_config</span><span class="p">:</span>
-
-<span class="ne">Exception</span>: Unable to set environemt variables [&#39;VASCA_DEFAULT&#39;, &#39;UC_SAS_VASCARCAT&#39;, &#39;UC_LUSTRE_VASCARCAT&#39;]. Solve it by adding them to the config file at &#39;/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/../.env&#39; or setting the variables manually in your shell config.
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;6388191295067652096&#39;, &#39;6371091720297250816&#39;]
 </pre></div>
 </div>
 </div>
@@ -380,11 +349,100 @@ data.</p>
 </div>
 <p>Using the <a class="reference internal" href="../api/vasca/vasca.tables.html#vasca.tables.TableCollection.info" title="vasca.tables.TableCollection.info"><code class="xref myst py py-meth docutils literal notranslate"><span class="pre">TableCollection.info</span></code></a> method one can see all data tables the field contains.</p>
 <div class="cell tag_hide-output docutils container">
-<div class="cell_input docutils container">
+<div class="cell_input above-output-prompt docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fd</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> tt_fields:
+&lt;Table length=1&gt;
+    name     dtype  unit                       description                      
+----------- ------- ---- -------------------------------------------------------
+   field_id bytes32                                       Field source ID number
+ field_name bytes32                                                   Field name
+    project bytes32                         Field project, typically survey name
+         ra float64  deg                  Sky coordinate Right Ascension (J2000)
+        dec float64  deg                      Sky coordinate Declination (J2000)
+observatory bytes22                    Telescope of the observation (e.g. GALEX)
+ obs_filter  bytes8                         Filter of the observation (e.g. NUV)
+   fov_diam float32  deg Field radius or box size (depending on the observatory)
+        sel    bool                         Selection of rows for VASCA analysis
+{&#39;DATAPATH&#39;: &#39;None&#39;, &#39;INFO&#39;: &#39;Field information table&#39;}
+
+ tt_visits:
+&lt;Table length=2&gt;
+     name       dtype  unit                description               
+-------------- ------- ---- -----------------------------------------
+        vis_id  uint64                                Visit ID number
+time_bin_start float64    d Visit exposure start date and time in MJD
+ time_bin_size float32    s                  Visit exposure time in s
+           sel    bool           Selection of rows for VASCA analysis
+ obs_filter_id   int32                   Observation filter ID number
+            ra float64  deg    Sky coordinate Right Ascension (J2000)
+           dec float64  deg        Sky coordinate Declination (J2000)
+{&#39;INFO&#39;: &#39;Visit information table&#39;}
+
+ tt_detections:
+&lt;Table length=8484&gt;
+     name       dtype    unit                                             description                                           
+-------------- ------- -------- ------------------------------------------------------------------------------------------------
+        vis_id  uint64                                                                                           Visit ID number
+     fd_src_id   int32                                                               Source ID associated to the visit detection
+            ra float64      deg                                                           Sky coordinate Right Ascension (J2000)
+           dec float64      deg                                                               Sky coordinate Declination (J2000)
+       pos_err float32   arcsec                                                                    Sky coordinate position error
+          flux float32 1e-06 Jy                                                                                     Flux density
+      flux_err float32 1e-06 Jy                                                                               Flux density error
+flux_app_ratio float32                     Flux ratio measured at a different apertures (3.8 arcsec / 6 arcsec radius for GALEX)
+           s2n float32                                                                                      Flux signal to noise
+ obs_filter_id   int32                                                                              Observation filter ID number
+           sel    bool                                                                      Selection of rows for VASCA analysis
+         r_fov float32      deg                                                           Distance from center of FOV in degrees
+     artifacts   int64                                                                              Logical OR of artifact flags
+    class_star float32          Point-source probability: 0.0 (resolved), 1.0 (unresolved, mcat file filter_CLASS_STAR variable)
+   chkobj_type   int32                        Detection matched to a known star (bright_match=1, mcat file chkobj_type variable)
+    size_world float32   arcsec                                      Mean RMS of the ellipse size: (major axis + minor axis) / 2
+   ellip_world float32                                                                    Ellipticity of the detection or source
+     flux_auto float32       Jy                                                                 Flux from SExtractor auto option
+ flux_auto_err float32       Jy                          Flux error from a fixed circular aperture (3.8 arcsec radius for GALEX)
+        det_id   int64                                                                                Reference source ID number
+          E_bv float32                                                                    Galactic reddening expressed as E(B-V)
+{&#39;INFO&#39;: &#39;Visit detections table&#39;, &#39;PRECUTS&#39;: &#39;List of pre-cuts&#39;}
+
+ tt_coadd_detections:
+&lt;Table length=4914&gt;
+     name       dtype    unit                                             description                                           
+-------------- ------- -------- ------------------------------------------------------------------------------------------------
+        det_id   int64                                                                                Reference source ID number
+            ra float64      deg                                                           Sky coordinate Right Ascension (J2000)
+           dec float64      deg                                                               Sky coordinate Declination (J2000)
+       pos_err float32   arcsec                                                                    Sky coordinate position error
+          flux float32 1e-06 Jy                                                                                     Flux density
+      flux_err float32 1e-06 Jy                                                                               Flux density error
+flux_app_ratio float32                     Flux ratio measured at a different apertures (3.8 arcsec / 6 arcsec radius for GALEX)
+           s2n float32                                                                                      Flux signal to noise
+ obs_filter_id   int32                                                                              Observation filter ID number
+           sel    bool                                                                      Selection of rows for VASCA analysis
+         r_fov float32      deg                                                           Distance from center of FOV in degrees
+     artifacts   int64                                                                              Logical OR of artifact flags
+    class_star float32          Point-source probability: 0.0 (resolved), 1.0 (unresolved, mcat file filter_CLASS_STAR variable)
+   chkobj_type   int32                        Detection matched to a known star (bright_match=1, mcat file chkobj_type variable)
+    size_world float32   arcsec                                      Mean RMS of the ellipse size: (major axis + minor axis) / 2
+   ellip_world float32                                                                    Ellipticity of the detection or source
+     flux_auto float32       Jy                                                                 Flux from SExtractor auto option
+ flux_auto_err float32       Jy                          Flux error from a fixed circular aperture (3.8 arcsec radius for GALEX)
+          E_bv float32                                                                    Galactic reddening expressed as E(B-V)
+{&#39;INFO&#39;: &#39;Reference detections table&#39;, &#39;PRECUTS&#39;: &#39;List of pre-cuts&#39;}
+</pre></div>
+</div>
+</div>
+</details>
 </div>
 <p>For convenience, some important attributes can be accessed directly:</p>
 <p>For example, the total exposure time over all visits or the center coordinate:</p>
@@ -394,10 +452,22 @@ data.</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="math-wrapper output text_latex docutils container">
+<div class="output text_latex math notranslate nohighlight">
+\[192 \; \mathrm{s}\]</div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fd</span><span class="o">.</span><span class="n">center</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;SkyCoord (ICRS): (ra, dec) in deg
+    (291.31877036, 54.25174628)&gt;
 </pre></div>
 </div>
 </div>
@@ -431,6 +501,23 @@ data.</p>
 </div>
 </div>
 </details>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>field_id                     GNU6371091720297250816                                              Unique field ID
+field_name                               AIS_5_1_40                                   Optional name if the field
+ra                           291.31877036165906 deg                           Right ascention coordinate (J2000)
+dec                            54.2517462844149 deg                               Declination coordinate (J2000)
+fov_diam                     1.2000000476837158 deg                                   Size of the field of view 
+observatory                                   GALEX                                          The instrument name
+obs_filter                                      NUV                                 Observation band-pass filter
+center               &lt;SkyCoord (ICRS): (ra, dec) in deg
+    (291.31877036, 54.25174628)&gt;                                 Center coordinate on the sky
+nr_vis                                            2                               Number of observational visits
+time_bin_size_sum                           192.0 s                        Total exposure summed over all visits
+time_start                        53991.48782407407                           Beggining of the first observation
+time_stop                         54087.62482638889                                   End of the last obseration
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 </section>
@@ -510,7 +597,7 @@ data.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6f77e80e"></script>
+</div><script src="../_static/documentation_options.js?v=072cb9e1"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -518,7 +605,7 @@ data.</p>
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/tutorials/tutorial_field.e58fc33b-f0e0-48e9-914d-b612a06e15fd.js"></script>
+    <script defer="defer" src="../_static/tippy/tutorials/tutorial_field.0b276471-fe6f-40ad-b2db-42efaa52d232.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

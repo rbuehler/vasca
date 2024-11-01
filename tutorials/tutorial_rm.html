@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="GALEXField" href="tutorial_field.html" /><link rel="prev" title="Tutorials" href="index.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.08.06 -->
-        <title>Resource Manager - VASCA v0.0.1</title>
+        <title>Resource Manager - VASCA v1.0.16dev</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">VASCA v0.0.1</div></a>
+      <a href="../index.html"><div class="brand">VASCA v1.0.16dev</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo" src="../_static/VASCA_icon.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">VASCA v0.0.1</span>
+  <span class="sidebar-brand-text">VASCA v1.0.16dev</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -250,6 +250,7 @@
 <li class="toctree-l1"><a class="reference external" href="https://archive.stsci.edu/missions-and-data/galex">GALEX MAST</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html">MAST Portal</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://www.weizmann.ac.il/ultrasat/">ULTRASAT</a></li>
+<li class="toctree-l1"><a class="reference external" href="http://ilariacaiazzo.com/uv-club/">UV Club</a></li>
 </ul>
 
 </div>
@@ -352,59 +353,106 @@ named <a class="reference external" href="https://github.com/rbuehler/vasca/tree
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">Exception</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">vasca.resource_manager</span> <span class="kn">import</span> <span class="n">ResourceManager</span>
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">rm</span> <span class="o">=</span> <span class="n">ResourceManager</span><span class="p">()</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/resource_manager.py:68,</span> in <span class="ni">ResourceManager.__init__</span><span class="nt">(self, verbose)</span>
-<span class="g g-Whitespace">     </span><span class="mi">65</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_metadata</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">67</span> <span class="c1"># set environment variables</span>
-<span class="ne">---&gt; </span><span class="mi">68</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_env</span><span class="p">()</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/resource_manager.py:159,</span> in <span class="ni">ResourceManager._load_env</span><span class="nt">(self, config_path, overwrite)</span>
-<span class="g g-Whitespace">    </span><span class="mi">157</span> <span class="c1"># raise error if no env var was previously set and config file is also missing</span>
-<span class="g g-Whitespace">    </span><span class="mi">158</span> <span class="k">elif</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">env_status_list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">found_config</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">159</span>     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">160</span>         <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">161</span>             <span class="s2">&quot;Unable to set environemt variables </span><span class="si">{}</span><span class="s2">. &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">162</span>             <span class="s2">&quot;Solve it by adding them to the config file at &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">163</span>             <span class="s2">&quot;or setting the variables manually in your shell config.&quot;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">164</span>             <span class="p">[</span>
-<span class="g g-Whitespace">    </span><span class="mi">165</span>                 <span class="n">var</span>
-<span class="g g-Whitespace">    </span><span class="mi">166</span>                 <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">167</span>                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">][</span><span class="n">var</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">168</span>             <span class="p">],</span>
-<span class="g g-Whitespace">    </span><span class="mi">169</span>             <span class="n">config_path</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">170</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">171</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">172</span> <span class="c1"># if not all env vars have been set previously but a config file exists</span>
-<span class="g g-Whitespace">    </span><span class="mi">173</span> <span class="c1"># missing env vars are replaced</span>
-<span class="g g-Whitespace">    </span><span class="mi">174</span> <span class="k">elif</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">env_status_list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">found_config</span><span class="p">:</span>
-
-<span class="ne">Exception</span>: Unable to set environemt variables [&#39;VASCA_DEFAULT&#39;, &#39;UC_SAS_VASCARCAT&#39;, &#39;UC_LUSTRE_VASCARCAT&#39;]. Solve it by adding them to the config file at &#39;/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/../.env&#39; or setting the variables manually in your shell config.
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell tag_hide-output docutils container">
-<div class="cell_input docutils container">
+<div class="cell_input above-output-prompt docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Resource item catalog</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">rm</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">],</span> <span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;sas_cloud&#39;: {0: {&#39;name&#39;: &#39;gal_visits_list&#39;,
+                   &#39;description&#39;: &#39;Complete list of all GALEX visits with NUV &#39;
+                                  &#39;exposure.&#39;,
+                   &#39;type&#39;: &#39;file&#39;,
+                   &#39;path&#39;: &#39;/GALEX_visits_list/GALEX_visits_list_qualvars.fits&#39;},
+               1: {&#39;name&#39;: &#39;gal_fields&#39;,
+                   &#39;description&#39;: &#39;Collection of GALEX dataproducts for fileds &#39;
+                                  &#39;of interest.&#39;,
+                   &#39;type&#39;: &#39;directory&#39;,
+                   &#39;path&#39;: &#39;/GALEX_fields&#39;},
+               2: {&#39;name&#39;: &#39;gal_gphoton&#39;,
+                   &#39;description&#39;: &#39;Collection of GALEX gphoton runs.&#39;,
+                   &#39;type&#39;: &#39;directory&#39;,
+                   &#39;path&#39;: &#39;/GALEX_gPhoton&#39;},
+               3: {&#39;name&#39;: &#39;gal_visits_list_qualsel&#39;,
+                   &#39;description&#39;: &#39;Complete list of all GALEX visits.&#39;,
+                   &#39;type&#39;: &#39;file&#39;,
+                   &#39;path&#39;: &#39;/GALEX_visits_list/GALEX_visits_list_qualsel.fits&#39;}},
+ &#39;lustre&#39;: {0: {&#39;name&#39;: &#39;gal_ds_visits_list&#39;,
+                &#39;description&#39;: &#39;Complete list of all GALEX drift-scan visits.&#39;,
+                &#39;type&#39;: &#39;file&#39;,
+                &#39;path&#39;: &#39;/GALEX_DS_GCK_visits_list/GALEX_DS_GCK_visits_list.fits&#39;},
+            1: {&#39;name&#39;: &#39;gal_ds_fields&#39;,
+                &#39;description&#39;: &#39;Collection of GALEX drift scan dataproducts&#39;,
+                &#39;type&#39;: &#39;directory&#39;,
+                &#39;path&#39;: &#39;/GALEX_DS_GCK_fields&#39;},
+            2: {&#39;name&#39;: &#39;gal_gphoton&#39;,
+                &#39;description&#39;: &#39;Collection of GALEX gphoton runs.&#39;,
+                &#39;type&#39;: &#39;directory&#39;,
+                &#39;path&#39;: &#39;/GALEX_gPhoton&#39;}},
+ &#39;vasca&#39;: {0: {&#39;name&#39;: &#39;test_resources&#39;,
+               &#39;description&#39;: &#39;Data used for VASCA development&#39;,
+               &#39;type&#39;: &#39;directory&#39;,
+               &#39;path&#39;: &#39;/vasca/test/resources&#39;},
+           1: {&#39;name&#39;: &#39;gal_visits_list&#39;,
+               &#39;description&#39;: &#39;Complete list of all GALEX visits with NUV &#39;
+                              &#39;exposure.&#39;,
+               &#39;type&#39;: &#39;file&#39;,
+               &#39;path&#39;: &#39;/vasca/test/resources/GALEX_visits_list.fits&#39;},
+           2: {&#39;name&#39;: &#39;docs_resources&#39;,
+               &#39;description&#39;: &#39;Data used for VASCA documentation&#39;,
+               &#39;type&#39;: &#39;directory&#39;,
+               &#39;path&#39;: &#39;/docs/tutorial_resources&#39;}}}
+</pre></div>
+</div>
+</div>
+</details>
 </div>
 <div class="cell tag_hide-output docutils container">
-<div class="cell_input docutils container">
+<div class="cell_input above-output-prompt docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Resource environment variables</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">rm</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;envs&quot;</span><span class="p">],</span> <span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;VASCA_DEFAULT&#39;: {&#39;storage&#39;: &#39;vasca&#39;,
+                   &#39;project&#39;: &#39;vasca&#39;,
+                   &#39;description&#39;: &#39;Default environment variable for data &#39;
+                                  &#39;management in the VASCA package&#39;,
+                   &#39;set&#39;: True,
+                   &#39;path&#39;: &#39;/home/runner/work/vasca/vasca&#39;},
+ &#39;UC_SAS_VASCARCAT&#39;: {&#39;storage&#39;: &#39;sas_cloud&#39;,
+                      &#39;project&#39;: &#39;vascarcat&#39;,
+                      &#39;description&#39;: &#39;Resources for the UV variability catalog &#39;
+                                     &#39;project on DESY Sync &amp; Share. Remote &#39;
+                                     &#39;directory: &#39;
+                                     &#39;ULTRASAT-data/uc_science/vascarcat&#39;,
+                      &#39;set&#39;: True,
+                      &#39;path&#39;: &#39;/dev/null&#39;},
+ &#39;UC_LUSTRE_VASCARCAT&#39;: {&#39;storage&#39;: &#39;lustre&#39;,
+                         &#39;project&#39;: &#39;vascarcat&#39;,
+                         &#39;description&#39;: &#39;Resoruces for the UV variability &#39;
+                                        &#39;catalog project on DESY LUSTRE. Not &#39;
+                                        &#39;used at the moment.&#39;,
+                         &#39;set&#39;: True,
+                         &#39;path&#39;: &#39;/dev/null&#39;}}
+</pre></div>
+</div>
+</div>
+</details>
 </div>
 <p>The main functionality: receiving paths from the ResourceManager to specific resource
 items:</p>
@@ -412,6 +460,11 @@ items:</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rpath</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="s2">&quot;gal_visits_list&quot;</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="s2">&quot;vasca&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">rpath</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/vasca/vasca/vasca/test/resources/GALEX_visits_list.fits
 </pre></div>
 </div>
 </div>
@@ -425,6 +478,11 @@ items:</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
 </div>
 <p>Otherwise actionable error messages are given.</p>
 <p>Resource name not found:</p>
@@ -434,11 +492,61 @@ items:</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rm</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="s2">&quot;vasca&quot;</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/resource_manager.py:323,</span> in <span class="ni">ResourceManager.get_path</span><span class="nt">(self, resource, storage)</span>
+<span class="g g-Whitespace">    </span><span class="mi">321</span> <span class="c1"># validate resource name</span>
+<span class="g g-Whitespace">    </span><span class="mi">322</span> <span class="k">if</span> <span class="n">resource</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resource_list</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">323</span>     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">324</span>         <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">325</span>             <span class="s2">&quot;Unknown resource &#39;</span><span class="si">{}</span><span class="s2">&#39;. Select one from </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">326</span>             <span class="n">resource</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">327</span>             <span class="n">resource_list_verbose</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">328</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">329</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">331</span> <span class="c1"># get resource metadata</span>
+<span class="g g-Whitespace">    </span><span class="mi">332</span> <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="ne">KeyError</span>: &quot;Unknown resource &#39;foo&#39;. Select one from [&#39;gal_visits_list(sas_cloud:0)&#39;, &#39;gal_fields(sas_cloud:1)&#39;, &#39;gal_gphoton(sas_cloud:2)&#39;, &#39;gal_visits_list_qualsel(sas_cloud:3)&#39;, &#39;gal_ds_visits_list(lustre:0)&#39;, &#39;gal_ds_fields(lustre:1)&#39;, &#39;gal_gphoton(lustre:2)&#39;, &#39;test_resources(vasca:0)&#39;, &#39;gal_visits_list(vasca:1)&#39;, &#39;docs_resources(vasca:2)&#39;].&quot;
+</pre></div>
+</div>
+</div>
 </div>
 <p>Storage system not recognized:</p>
 <div class="cell tag_raises-exception docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rm</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="s2">&quot;gal_visits_list&quot;</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rm</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="s2">&quot;gal_visits_list&quot;</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/resource_manager.py:300,</span> in <span class="ni">ResourceManager.get_path</span><span class="nt">(self, resource, storage)</span>
+<span class="g g-Whitespace">    </span><span class="mi">298</span> <span class="c1"># validate storage name</span>
+<span class="g g-Whitespace">    </span><span class="mi">299</span> <span class="k">if</span> <span class="n">storage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">]:</span>
+<span class="ne">--&gt; </span><span class="mi">300</span>     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">301</span>         <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">302</span>             <span class="p">(</span><span class="s2">&quot;Unknown storage system &#39;</span><span class="si">{}</span><span class="s2">&#39;. Select one from </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">303</span>             <span class="n">storage</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">304</span>             <span class="p">[</span><span class="n">strg</span> <span class="k">for</span> <span class="n">strg</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())],</span>
+<span class="g g-Whitespace">    </span><span class="mi">305</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">306</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">307</span> <span class="c1"># list of all known resources: [&lt;resource name&gt;]</span>
+<span class="g g-Whitespace">    </span><span class="mi">308</span> <span class="n">resource_list</span> <span class="o">=</span> <span class="p">[</span>
+<span class="g g-Whitespace">    </span><span class="mi">309</span>     <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">][</span><span class="n">strg</span><span class="p">][</span><span class="nb">id</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">    </span><span class="mi">310</span>     <span class="k">for</span> <span class="n">strg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">    </span><span class="mi">311</span>     <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;catalog&quot;</span><span class="p">][</span><span class="n">strg</span><span class="p">]</span>
+<span class="g g-Whitespace">    </span><span class="mi">312</span> <span class="p">]</span>
+
+<span class="ne">KeyError</span>: &quot;Unknown storage system &#39;foo&#39;. Select one from [&#39;sas_cloud&#39;, &#39;lustre&#39;, &#39;vasca&#39;].&quot;
 </pre></div>
 </div>
 </div>
@@ -527,7 +635,7 @@ items:</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6f77e80e"></script>
+</div><script src="../_static/documentation_options.js?v=072cb9e1"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -535,7 +643,7 @@ items:</p>
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/tutorials/tutorial_rm.604bf778-ef6e-459a-b5a9-6f5888a5cebd.js"></script>
+    <script defer="defer" src="../_static/tippy/tutorials/tutorial_rm.44cc11c8-da9d-470d-9d4a-4573dc48eeb2.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
