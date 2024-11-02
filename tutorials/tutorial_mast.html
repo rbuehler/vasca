@@ -477,26 +477,6 @@ download fresh data.</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># Initialize ResourceManager</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">rm</span> <span class="o">=</span> <span class="n">ResourceManager</span><span class="p">()</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">docs_resources</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;docs_resources&quot;</span><span class="p">,</span> <span class="s2">&quot;vasca&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">gal_visits</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;gal_visits_list&quot;</span><span class="p">,</span> <span class="s2">&quot;vasca&quot;</span><span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/vasca/resource_manager.py:380,</span> in <span class="ni">ResourceManager.get_path</span><span class="nt">(self, resource, storage)</span>
-<span class="g g-Whitespace">    </span><span class="mi">378</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not a file at &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-<span class="g g-Whitespace">    </span><span class="mi">379</span> <span class="k">elif</span> <span class="n">resource_type</span> <span class="o">==</span> <span class="s2">&quot;directory&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">380</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not a directory at &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-<span class="g g-Whitespace">    </span><span class="mi">382</span> <span class="c1"># success message if verbose</span>
-<span class="g g-Whitespace">    </span><span class="mi">383</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s2">&quot;verbose&quot;</span><span class="p">]:</span>
-
-<span class="ne">ValueError</span>: Not a directory at &#39;/home/runner/work/vasca/vasca/docs/tutorial_resources&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -519,9 +499,160 @@ download fresh data.</p>
 </div>
 </div>
 <div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html"><table id="itables_8326fca5_47c7_42c4_8b42_836e3a57fc35" class="display nowrap compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
+<thead>
+    <tr style="text-align: right;">
+      
+      <th>RATileCenter</th>
+      <th>DECTileCenter</th>
+      <th>survey</th>
+      <th>nexptime</th>
+      <th>fexptime</th>
+      <th>imgRunID</th>
+      <th>ParentImgRunID</th>
+      <th>joinID</th>
+      <th>tileNum</th>
+      <th>specTileNum</th>
+      <th>source</th>
+      <th>nPhotoObjects</th>
+      <th>nPhotoVisits</th>
+      <th>PhotoObsDate</th>
+      <th>spectra</th>
+      <th>nSpectra</th>
+      <th>nSpectraVisits</th>
+      <th>SpecObsDate</th>
+      <th>visitNum</th>
+      <th>subvis</th>
+      <th>minPhotoObsDate</th>
+      <th>maxPhotoObsDate</th>
+      <th>minSpecObsDate</th>
+      <th>maxSpecObsDate</th>
+      <th>PhotoObsDate_MJD</th>
+    </tr>
+  </thead><tbody><tr>
+<td style="vertical-align:middle; text-align:left">
+<div style="float:left; margin-right: 10px;">
+<a href=https://mwouts.github.io/itables/><svg class="main-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+width="64" viewBox="0 0 500 400" style="font-family: 'Droid Sans', sans-serif;">
+    <g style="fill:#d9d7fc">
+        <path d="M100,400H500V357H100Z" />
+        <path d="M100,300H400V257H100Z" />
+        <path d="M0,200H400V157H0Z" />
+        <path d="M100,100H500V57H100Z" />
+        <path d="M100,350H500V307H100Z" />
+        <path d="M100,250H400V207H100Z" />
+        <path d="M0,150H400V107H0Z" />
+        <path d="M100,50H500V7H100Z" />
+    </g>
+    <g style="fill:#1a1366;stroke:#1a1366;">
+   <rect x="100" y="7" width="400" height="43">
+    <animate
+      attributeName="width"
+      values="0;400;0"
+      dur="5s"
+      repeatCount="indefinite" />
+      <animate
+      attributeName="x"
+      values="100;100;500"
+      dur="5s"
+      repeatCount="indefinite" />
+  </rect>
+        <rect x="0" y="107" width="400" height="43">
+    <animate
+      attributeName="width"
+      values="0;400;0"
+      dur="3.5s"
+      repeatCount="indefinite" />
+    <animate
+      attributeName="x"
+      values="0;0;400"
+      dur="3.5s"
+      repeatCount="indefinite" />
+  </rect>
+        <rect x="100" y="207" width="300" height="43">
+    <animate
+      attributeName="width"
+      values="0;300;0"
+      dur="3s"
+      repeatCount="indefinite" />
+    <animate
+      attributeName="x"
+      values="100;100;400"
+      dur="3s"
+      repeatCount="indefinite" />
+  </rect>
+        <rect x="100" y="307" width="400" height="43">
+    <animate
+      attributeName="width"
+      values="0;400;0"
+      dur="4s"
+      repeatCount="indefinite" />
+      <animate
+      attributeName="x"
+      values="100;100;500"
+      dur="4s"
+      repeatCount="indefinite" />
+  </rect>
+        <g style="fill:transparent;stroke-width:8; stroke-linejoin:round" rx="5">
+            <g transform="translate(45 50) rotate(-45)">
+                <circle r="33" cx="0" cy="0" />
+                <rect x="-8" y="32" width="16" height="30" />
+            </g>
+
+            <g transform="translate(450 152)">
+                <polyline points="-15,-20 -35,-20 -35,40 25,40 25,20" />
+                <rect x="-15" y="-40" width="60" height="60" />
+            </g>
+
+            <g transform="translate(50 352)">
+                <polygon points="-35,-5 0,-40 35,-5" />
+                <polygon points="-35,10 0,45 35,10" />
+            </g>
+
+            <g transform="translate(75 250)">
+                <polyline points="-30,30 -60,0 -30,-30" />
+                <polyline points="0,30 -30,0 0,-30" />
+            </g>
+
+            <g transform="translate(425 250) rotate(180)">
+                <polyline points="-30,30 -60,0 -30,-30" />
+                <polyline points="0,30 -30,0 0,-30" />
+            </g>
+        </g>
+    </g>
+</svg>
+</a>
+</div>
+<div>
+Loading ITables v2.2.2 from the <code>init_notebook_mode</code> cell...
+(need <a href=https://mwouts.github.io/itables/troubleshooting.html>help</a>?)</td>
+</div>
+</tr></tbody>
+
+</table>
+<script type="module">
+    const { DataTable, jQuery: $ } = await import(window._datatables_src_for_itables_2_2_2);
+
+    document.querySelectorAll("#itables_8326fca5_47c7_42c4_8b42_836e3a57fc35:not(.dataTable)").forEach(table => {
+        if (!(table instanceof HTMLTableElement))
+            return;
+
+        // Define the table data
+        const data = [[83.491746, 22.072144, "b'AIS'", 87.0, 0.0, BigInt("6381787619088400384"), BigInt("6381787756527353856"), 72113, 50309, -999, "b'visitI'", 3615, 1, "b'11/29/2011 10:12:57 AM'", "b'False'", "b'null'", "b'null'", "b'null'", 1, 28, "b'11/29/2011 10:12:57 AM'", "b'11/29/2011 10:14:24 AM'", "b'null'", "b'null'", 55894.42566], [83.503034, 22.056946, "b'AIS'", 80.0, 0.0, BigInt("6381787619121954816"), BigInt("6381787756527353856"), 84312, 50309, -999, "b'visitI'", 3565, 1, "b'11/29/2011 11:51:34 AM'", "b'False'", "b'null'", "b'null'", "b'null'", 2, 28, "b'11/29/2011 11:51:34 AM'", "b'11/29/2011 11:52:54 AM'", "b'null'", "b'null'", 55894.494144]];
+
+        // Define the dt_args
+        let dt_args = {"scrollY": "300px", "scrollCollapse": true, "paging": false, "columnDefs": [{"className": "dt-body-left", "targets": "_all"}], "layout": {"topStart": null, "topEnd": null, "bottomStart": null, "bottomEnd": null}, "order": [], "warn_on_selected_rows_not_rendered": true};
+        dt_args["data"] = data;
+
+        
+        new DataTable(table, dt_args);
+    });
+</script>
+</div></div>
 </div>
 <div class="cell tag_hide-output docutils container">
-<div class="cell_input docutils container">
+<div class="cell_input above-output-prompt docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize a new field and</span>
 <span class="c1"># download data from MAST</span>
 <span class="n">fd</span> <span class="o">=</span> <span class="n">GALEXField</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
@@ -535,6 +666,161 @@ download fresh data.</p>
 </pre></div>
 </div>
 </div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:43.620</span> | <span class=" -Color -Color-Bold">INFO    </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">load</span>:<span class=" -Color -Color-Cyan">747</span> - <span class=" -Color -Color-Bold">Loading field &#39;6381787756527353856&#39; with method &#39;MAST_REMOTE&#39; for filter &#39;NUV&#39; and load_products &#39;ALL&#39;.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:43.621</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">__init__</span>:<span class=" -Color -Color-Cyan">533</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Field data path set to: &#39;/home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:43.622</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">__init__</span>:<span class=" -Color -Color-Cyan">534</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Visits data path set to: &#39;/home/runner/work/vasca/vasca/vasca/test/resources/GALEX_visits_list.fits&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:43.623</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_field_info</span>:<span class=" -Color -Color-Cyan">888</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Downloading archive field info and saving to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/MAST_6381787756527353856_NUV_coadd.fits.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:43.978</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_field_info</span>:<span class=" -Color -Color-Cyan">908</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Constructing &#39;tt_fields&#39;.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:43.981</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">add_table</span>:<span class=" -Color -Color-Cyan">156</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Adding table &#39;base_field:tt_fields&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:43.983</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_visits_info</span>:<span class=" -Color -Color-Cyan">957</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Loading GALEX visit info :6381787756527353856 NUV None</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:43.983</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_visits_info</span>:<span class=" -Color -Color-Cyan">988</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Reading archive visit info from cashed file &#39;/home/runner/work/vasca/vasca/vasca/test/resources/GALEX_visits_list.fits&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.012</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">add_table</span>:<span class=" -Color -Color-Cyan">156</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Adding table &#39;galex_field:tt_visits&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.014</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;field_id&#39;: b&#39;GNU6381787756527353856&#39;, , S</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.014</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;field_name&#39;: b&#39;AIS_309_1_28&#39;, None, S</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.015</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;ra&#39;: 83.49715416019251, deg, f</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.015</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;dec&#39;: 22.0648638252376, deg, f</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.016</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;fov_diam&#39;: 1.2000000476837158, deg, f</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.016</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;observatory&#39;: b&#39;GALEX&#39;, None, S</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.017</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;obs_filter&#39;: b&#39;NUV&#39;, None, S</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.017</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;ra&#39;: 83.49715416019251, deg, f</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.018</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">get_field_par</span>:<span class=" -Color -Color-Cyan">403</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Getting parameter &#39;dec&#39;: 22.0648638252376, deg, f</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.019</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">set_field_attr</span>:<span class=" -Color -Color-Cyan">324</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Set attributes: {&#39;tt_fields&#39;: [&#39;field_id&#39;, &#39;field_name&#39;, &#39;ra&#39;, &#39;dec&#39;, &#39;fov_diam&#39;, &#39;observatory&#39;, &#39;obs_filter&#39;, &#39;center&#39;], &#39;tt_visits&#39;: [&#39;nr_vis&#39;, &#39;time_bin_size_sum&#39;, &#39;time_start&#39;, &#39;time_stop&#39;]}</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.020</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_archive_products</span>:<span class=" -Color -Color-Cyan">1076</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Reading archive field info from cashed file &#39;/home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/MAST_6381787756527353856_NUV_coadd.fits&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:44.035</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_archive_products</span>:<span class=" -Color -Color-Cyan">1081</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Downloading archive data products list and saving to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/MAST_6381787756527353856_NUV_data.fits.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:45.054</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_archive_products</span>:<span class=" -Color -Color-Cyan">1164</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Downloading archive data products. Manifest saved to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/MAST_6381787756527353856_NUV_down.ecsv.</span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading URL https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:GALEX/url/data/GR6/pipe/02-vsn/50309-AIS_309/d/00-visits/0001-img/07-try/AIS_309_0001_sg28-nd-int.fits.gz to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787619088400384/AIS_309_0001_sg28-nd-int.fits.gz ...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> [Done]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading URL https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:GALEX/url/data/GR6/pipe/02-vsn/50309-AIS_309/d/00-visits/0001-img/07-try/AIS_309_0001_sg28-xd-mcat.fits.gz to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787619088400384/AIS_309_0001_sg28-xd-mcat.fits.gz ...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> [Done]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading URL https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:GALEX/url/data/GR6/pipe/02-vsn/50309-AIS_309/d/00-visits/0002-img/07-try/AIS_309_0002_sg28-nd-int.fits.gz to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787619121954816/AIS_309_0002_sg28-nd-int.fits.gz ...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> [Done]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading URL https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:GALEX/url/data/GR6/pipe/02-vsn/50309-AIS_309/d/00-visits/0002-img/07-try/AIS_309_0002_sg28-xd-mcat.fits.gz to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787619121954816/AIS_309_0002_sg28-xd-mcat.fits.gz ...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> [Done]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading URL https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:GALEX/url/data/GR6/pipe/02-vsn/50309-AIS_309/d/01-main/0001-img/07-try/AIS_309_sg28-nd-int.fits.gz to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787756527353856/AIS_309_sg28-nd-int.fits.gz ...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> [Done]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading URL https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:GALEX/url/data/GR6/pipe/02-vsn/50309-AIS_309/d/01-main/0001-img/07-try/AIS_309_sg28-xd-mcat.fits.gz to /home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787756527353856/AIS_309_sg28-xd-mcat.fits.gz ...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> [Done]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:47.861</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">add_table</span>:<span class=" -Color -Color-Cyan">156</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Adding table &#39;galex_field:tt_detections&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:47.866</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_archive_products</span>:<span class=" -Color -Color-Cyan">1391</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Constructed &#39;tt_detections&#39;.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:47.877</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">add_table</span>:<span class=" -Color -Color-Cyan">156</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Adding table &#39;galex_field:tt_coadd_detections&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:47.881</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">_load_galex_archive_products</span>:<span class=" -Color -Color-Cyan">1396</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Constructed &#39;tt_coadd_detections&#39;.</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:47.882</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">load_sky_map</span>:<span class=" -Color -Color-Cyan">117</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Loading skypmap from file: &#39;/home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787756527353856/AIS_309_sg28-nd-int.fits.gz&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:48.449</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">load_sky_map</span>:<span class=" -Color -Color-Cyan">117</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Loading skypmap from file: &#39;/home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787619088400384/AIS_309_0001_sg28-nd-int.fits.gz&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:49.033</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">load_sky_map</span>:<span class=" -Color -Color-Cyan">117</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Loading skypmap from file: &#39;/home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/mastDownload/GALEX/6381787619121954816/AIS_309_0002_sg28-nd-int.fits.gz&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:49.615</span> | <span class=" -Color -Color-Bold">INFO    </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">write_to_fits</span>:<span class=" -Color -Color-Cyan">211</span> - <span class=" -Color -Color-Bold">Writing file with name &#39;/home/runner/work/vasca/vasca/docs/tutorial_resources/6381787756527353856/VASCA_GALEX_6381787756527353856_NUV_field_data.fits&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:49.616</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">write_to_fits</span>:<span class=" -Color -Color-Cyan">222</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Storing image data of shape (3840, 3840)</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:49.630</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">write_to_fits</span>:<span class=" -Color -Color-Cyan">236</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Storing image data of shape (2, 3840, 3840)</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:52.273</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">write_to_fits</span>:<span class=" -Color -Color-Cyan">251</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Writing table &#39;tt_fields&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:52.287</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">write_to_fits</span>:<span class=" -Color -Color-Cyan">251</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Writing table &#39;tt_visits&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:52.299</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">write_to_fits</span>:<span class=" -Color -Color-Cyan">251</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Writing table &#39;tt_detections&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:52.331</span> | <span class=" -Color -Color-Bold -Color-Bold-Blue">DEBUG   </span> | <span class=" -Color -Color-Cyan">vasca.tables</span>:<span class=" -Color -Color-Cyan">write_to_fits</span>:<span class=" -Color -Color-Cyan">251</span> - <span class=" -Color -Color-Bold -Color-Bold-Blue">Writing table &#39;tt_coadd_detections&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-11-02 17:21:52.392</span> | <span class=" -Color -Color-Bold">INFO    </span> | <span class=" -Color -Color-Cyan">vasca.field</span>:<span class=" -Color -Color-Cyan">from_MAST</span>:<span class=" -Color -Color-Cyan">683</span> - <span class=" -Color -Color-Bold">Loaded new GALEX field &#39;6381787756527353856&#39; with obs_filter &#39;NUV&#39;from MAST data .</span>
+</pre></div>
+</div>
+</div>
+</details>
 </div>
 </section>
 
@@ -594,7 +880,7 @@ download fresh data.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=7f74508f"></script>
+</div><script src="../_static/documentation_options.js?v=9187990a"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -602,7 +888,7 @@ download fresh data.</p>
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/tutorials/tutorial_mast.16b4bcc4-fec4-40ff-9ef8-9f5ddffba02e.js"></script>
+    <script defer="defer" src="../_static/tippy/tutorials/tutorial_mast.df6493e3-88fe-4d87-be9e-ca4b68c2c995.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
