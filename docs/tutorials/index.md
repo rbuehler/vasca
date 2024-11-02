@@ -32,7 +32,9 @@ Additionally you can find various notebooks on post-processing VASCA's pipeline 
 :titlesonly:
 
 tutorial_rm
+tutorial_gal_vis
 tutorial_field
+tutorial_mast
 tutorial_pipe
 simple_example
 test_table
