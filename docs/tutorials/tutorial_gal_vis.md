@@ -148,7 +148,20 @@ for survey in survey_names:
     survey_stats[survey] = stats
 
 df_survey_stats = pd.DataFrame().from_dict(survey_stats).T
-df_survey_stats
+# df_survey_stats
+```
+
+```{code-cell}
+:tags: [remove-input]
+
+show(
+    df_survey_stats,
+    classes="display nowrap compact",
+    scrollY="300px",
+    scrollCollapse=True,
+    paging=False,
+    columnDefs=[{"className": "dt-body-left", "targets": "_all"}],
+)
 ```
 
 **Number of visits**

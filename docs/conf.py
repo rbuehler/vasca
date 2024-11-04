@@ -122,6 +122,8 @@ myst_enable_extensions = [
     "attrs_block",
 ]
 nb_execution_mode = "cache"
+nb_execution_timeout = -1
+
 # -- Options for coppybutton ----------------------------------------------
 #
 
