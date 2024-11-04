@@ -45,10 +45,12 @@ display(HTML(f"<style>{class_specific_css}</style>"))
 # %% [markdown]
 # # Pipeline
 #
-# This is a tutorial showcasing VASCA's pipeline flow on a simple example. We will go through
-# all the steps equivalent to what is done in [](#vasca_pipe.run_from_file). The goal
-# is to create a VASCA [](#Region) from multiple [](#GALEXField) for which we download the
-# raw data online from [MAST](https://astroquery.readthedocs.io/en/latest/mast/mast.html).
+# This is a tutorial showcasing VASCA's pipeline flow on a simple example. We will go
+# through all the steps equivalent to what is done in [](#vasca_pipe.run_from_file).
+# This is the same function that is called when starting the pipeline from the CLI using ``vasca-pipe``.
+#
+# The goal is to create a VASCA [](#Region) from multiple [](#GALEXField) for which we
+# download the raw data online from [MAST](https://astroquery.readthedocs.io/en/latest/mast/mast.html).
 # We apply quality cuts and do source clustering followed by variability analysis and
 # finally source cross-matching.
 #
@@ -261,6 +263,8 @@ show(
 
 # %% [markdown]
 # In the next step we will initialize a VASCA [](#Region) with all fields sequentially.
+# [](#load_from_config) is a convenience function that acts as an interface between the
+# region object and field-specific loading functions.
 
 # %% tags=["hide-output"]
 from vasca.region import Region
@@ -269,7 +273,7 @@ rg = Region.load_from_config(config)
 
 # %% [markdown]
 # This populates the region object with all specified fields, the relevant metadata is
-# stored in {term}`tt_fields`
+# stored in {term}`tt_fields`.
 
 # %%
 rg.info()
@@ -287,6 +291,140 @@ show(
     paging=False,
     columnDefs=[{"className": "dt-body-left", "targets": "_all"}],
 )
+
+# %% [markdown]
+# ## Field-level analysis
+#
+# The field-level analysis incorporates, first, the data reduction and parameter mapping
+# from raw data to VASCA field objects, second, the data quality selection and finally
+# source clustering on the remaining high-quality detections.
+#
+# The first step is implicitly taken care of by the [](#GALEXField) class, where the raw
+# data is loaded and only the column parameters are kept that are specified in the [](#tables_dict)
+# module. A shortcut is provided through the [](#Region.get_field) method which is an
+# interface to the ``load`` method of
+# any field class.
+#
+# The configuration for the next two step requires the ``selection`` and ``cluster_det``
+# entries under the observations section.
+#
+# ### Data selection
+# ```{note}
+# A crucial part of VASCA's flexibility to adapt to raw data of virtually any instrument
+# comes from the fact that the parameter list used for data quality selection is not
+# fixed and is allowed to vary for different instruments and filters. The only
+# requirement is an existent entry in the [](#tables_dict) module for any parameter and
+# a corresponding field class that includes these parameters in the {term}`tt_detections`
+# table.
+# ```
+#
+# The API for the data selection is provided by the [](#TableCollection.select_rows)
+# method. Each entry under selection maps to this interface. The ``table`` parameters
+# specifies which table to select on. Any selection operation modifies the ``sel``
+# column of a given table. It contains boolean values so ``0`` means _unselected_ and
+# ``1`` means _selected_.
+#
+# By specifying the ``presel_type``parameter, one controls the logic by which an
+# existing selection is combined with a new one. The ``sel_type`` parameter specifies
+# the logic by which the selection on a set of multiple column parameters is combined.
+# Parameters ``range`` and ``bitmask`` provide the column parameter and artifact
+# bitflag values that are used to make the selection. Using ``set_range`` on can choose
+# to clip values of a certain column to minimum and maximum values.
+#
+# In combination with ``sel_type = "is_in"`` and ``var`` parameters, it is possible to select the rows of given column ``var``in the target table if a value is also present in the same collumn of a reference table (``ref_table``).
+
+# %%
+import numpy as np
+
+# Updating the [config](#observations) for GALEX-NUV observations
+config["observations"][0].update(
+    {
+        "selection": {
+            # Quality cuts on visit-level detections
+            "det_quality": {
+                "table": "tt_detections",
+                "presel_type": "and",
+                "sel_type": "and",
+                "range": {
+                    "s2n": [3.0, np.inf],
+                    "r_fov": [0.0, 0.5],
+                    "ellip_world": [0.0, 0.5],
+                    "size_world": [0.0, 6.0],
+                    "class_star": [0.15, 1.0],
+                    "chkobj_type": [-0.5, 0.5],
+                    "flux_app_ratio": [0.3, 1.05],
+                },
+                "bitmask": {
+                    "artifacts": [2, 4, 8, 128, 256],
+                },
+                "set_range": {"pos_err": [0.5, 5]},
+            },
+            # Quality cuts on field-averaged detections
+            "coadd_det_quality": {
+                "table": "tt_detections",
+                "presel_type": "and",
+                "sel_type": "and",
+                "range": {
+                    "s2n": [5.0, np.inf],
+                    "r_fov": [0.0, 0.5],
+                    "ellip_world": [0.0, 0.5],
+                    "size_world": [0.0, 6.0],
+                    "class_star": [0.15, 1.0],
+                    "chkobj_type": [-0.5, 0.5],
+                    "flux_app_ratio": [0.3, 1.05],
+                },
+                "bitmask": {
+                    "artifacts": [2, 4, 8, 128, 256],
+                },
+            },
+            # Selection on only those detections wich are part of clusters
+            "det_association": {
+                "table": "tt_detections",
+                "presel_type": "and",
+                "sel_type": "is_in",
+                "ref_table": "tt_sources",
+                "var": "fd_src_id",
+            },
+        },
+    }
+)
+
+# %% [markdown]
+# ### Clustering
+#
+# Also the field-level clustering configuration showcases VASCA's modular
+# approach. In the ``cluster_det`` section on specifies the clustering algorithm
+# which, in principle, can be different for each instrument and filter. Although,
+# at the moment only [mean-shift clustering](https://en.wikipedia.org/wiki/Mean_shift)
+# is supported by VASCA.
+#
+# Again, the responsible API is provided by [](#TableCollection.cluster_meanshift).
+# This method wraps a method provided by the [scikit-learn package](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html)
+
+# %%
+# Updating the [config](#observations) for GALEX-NUV observations continued...
+config["observations"][0].update(
+    {
+        "cluster_det": {
+            "meanshift": {
+                "bandwidth": 4,
+                "seeds": None,
+                "bin_seeding": False,
+                "min_bin_freq": 1,
+                "cluster_all": True,
+                "n_jobs": None,
+                "max_iter": 300,
+                "table_name": "tt_detections",
+            },
+        },
+    },
+)
+
+# %% [markdown]
+# ### Pipeline flow
+# According to the configuration above, we can finally run the analysis. VASCA
+# implements parallel processing for this part of the pipeline by applying the
+# [](#run_field) method in parallel for each field.
 
 # %%
 # To be continued ...
