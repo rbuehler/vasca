@@ -8,6 +8,9 @@ import argparse
 import os
 import sys
 from multiprocessing import Pool
+from pathlib import Path
+from importlib.resources import files
+
 
 import yaml
 from astropy import units as uu
@@ -19,8 +22,28 @@ from vasca.region import Region
 from vasca.tables_dict import dd_vasca_tables
 from vasca.tables import TableCollection
 from vasca.utils import dd_obs_id_add, get_config
+from vasca.field import BaseField
 
 import numpy as np
+
+
+def set_pipe_dir(vasca_cfg: dict) -> Path:
+    """Creates the pipeline output directory and necessary parent directories.
+
+    :returns: Path object pointing to the pipeline directory
+    :rtype: :py:class:`~pathlib.Path`
+    """
+    # Setup root output directory
+    out_dir_base: Path = Path(
+        files("vasca").parent / vasca_cfg["general"]["out_dir_base"]
+    )
+    out_dir_base.mkdir(parents=True, exist_ok=True)
+
+    # Setup pipeline directory
+    pipe_dir: Path = out_dir_base / vasca_cfg["general"]["name"]
+    pipe_dir.mkdir(parents=True, exist_ok=True)
+
+    return pipe_dir
 
 
 def set_logger(vasca_cfg):
@@ -179,6 +202,76 @@ def run_field(obs_nr, field_id, rg, vasca_cfg):
     # Keep only data needed for further analysis
     keep_base_field(field)
     logger.info("Done with field:" + str(field_id))
+
+    return field
+
+
+def run_field_docs(
+    obs_nr: int, field_id: str, rg: Region, vasca_cfg: dict
+) -> BaseField | None:
+    """Run field-level analysis (docs-version)
+
+    :par obs_nr: Observation list index
+    :type obs_nr: int
+    :par field_id: Field ID
+    :type field_id: str, int
+    :par rg: VASCA region object from where the fields are loaded
+    :type rg: :py:class:`~vasca.region.Region`
+    :par vasca_cfg: Pipeline configuration
+    :type vasca_cfg: dict
+    """
+
+    logger.info(f"Analysing field: {field_id}")
+
+    # Load field from VASCA-field file
+    try:
+        field: BaseField = rg.get_field(
+            field_id=field_id,
+            load_method="VASCA",
+            mast_products=vasca_cfg["resources"]["load_products"],
+            field_kwargs=vasca_cfg["resources"]["field_kwargs"],
+        )
+    except Exception as e:
+        logger.exception(
+            f"Faild to run pipeline for field '{field_id}'. "
+            f"Returning None. Exception:\n {e}"
+        )
+        return None
+
+    # Get configuration for this field
+    obs_cfg = vasca_cfg["observations"][obs_nr]
+
+    # Apply detections selections
+
+    # Visit detections
+    field.select_rows(obs_cfg["selection"]["det_quality"], remove_unselected=False)
+    # Coadd detections
+    if hasattr(field, "tt_coadd_detections"):
+        field.select_rows(
+            obs_cfg["selection"]["coadd_det_quality"], remove_unselected=False
+        )
+
+    # Clustering
+    if len(field.tt_detections) > 0:
+        # Run clustering
+        logger.info(f"Clustering field detections ({field_id})")
+        field.cluster_meanshift(
+            **obs_cfg["cluster_det"]["meanshift"],
+        )
+
+    # Select detections used in clustering
+    field.select_rows(obs_cfg["selection"]["det_association"], remove_unselected=False)
+
+    # Create directory structure for fields in pipeline output location
+    field_out_dir: Path = set_pipe_dir(vasca_cfg) / "fields"
+    Path(field_out_dir).mkdir(parents=True, exist_ok=True)
+
+    # Write out VASCA-field
+    field.write_to_fits(field_out_dir / f"field_{field.field_id}.fits")
+
+    # Memory efficiency: keep only data needed for further analysis
+    keep_base_field(field)
+    logger.info(f"Done with field: {field_id}")
 
     return field
 
