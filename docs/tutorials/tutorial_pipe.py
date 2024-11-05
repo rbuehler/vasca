@@ -61,7 +61,7 @@ display(HTML(f"<style>{class_specific_css}</style>"))
 # :::{figure-md} galex-fields-ps1-10jh
 # <img src="../images/GALEX_fields_ps1-10jh.jpg" alt="galex_fields_ps1-10jh" class="bg-primary mb-1" width="400px">
 #
-# Field footprints for GALEX observations around the location of PS1-10jh (purple
+# GALEX sky map with field footprints of observations around the location of PS1-10jh (purple
 # crosshair). Sreenshot from [MAST Portal](https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html)
 # :::
 
@@ -110,7 +110,7 @@ config["general"] = {
     "out_dir_base": "docs/tutorial_resources/vasca_pipeline",
     "log_level": "DEBUG",
     "log_file": "default",
-    "nr_cpus": 1,
+    "nr_cpus": 3,
     "save_ref_srcs": True,
     "run_fields": True,
 }
@@ -223,21 +223,15 @@ config["observations"] = [
         "observatory": "GALEX",
         "obs_filter": "NUV",
         "obs_field_ids": [
-            2432438716514435072,  # MISDR1_10450_0621
-            3880803393752530944,  # MISGCSN2_10493_0117*
-            2529617952223789056,  # ELAISN1_04
+            3880803393752530944,  # MISGCSN2_10493_0117
             2529969795944677376,  # ELAISN1_09
-            2597664528044916736,  # PS_ELAISN1_MOS15*
-            6374997199557754880,  # AIS_116_1_53
-            6374997210295173120,  # AIS_116_1_63
+            2597664528044916736,  # PS_ELAISN1_MOS15
         ],
         # "cluster_det": {},
         # "selection": {},
     },
     # More instruments/filters...
 ]
-
-# *These are the only fields with observations in the relevant time frame onwards from 2010
 
 # %% [markdown]
 # Find below the visit metadata about the fields under investigation.
@@ -264,7 +258,11 @@ show(
 # %% [markdown]
 # In the next step we will initialize a VASCA [](#Region) with all fields sequentially.
 # [](#load_from_config) is a convenience function that acts as an interface between the
-# region object and field-specific loading functions.
+# region object and field-specific loading functions. This will downloads the data from
+# MAST, it will detect if the data is already present on disc and loads the cashed
+# files. To safe compute time later, a VASCA-field file is written to the download
+# location so that one can use this file instead of creating a new field from raw data.
+# This will be used during the field-level [processing](#field-level-analysis).
 
 # %% tags=["hide-output"]
 from vasca.region import Region
@@ -331,12 +329,14 @@ show(
 # bitflag values that are used to make the selection. Using ``set_range`` on can choose
 # to clip values of a certain column to minimum and maximum values.
 #
-# In combination with ``sel_type = "is_in"`` and ``var`` parameters, it is possible to select the rows of given column ``var``in the target table if a value is also present in the same collumn of a reference table (``ref_table``).
+# In combination with ``sel_type = "is_in"`` and ``var`` parameters, it is possible to
+# select the rows of given column ``var``in the target table if a value is also present
+# in the same column of a reference table (``ref_table``).
 
 # %%
 import numpy as np
 
-# Updating the [config](#observations) for GALEX-NUV observations
+# Updating the observations for GALEX-NUV observations
 config["observations"][0].update(
     {
         "selection": {
@@ -399,10 +399,25 @@ config["observations"][0].update(
 # is supported by VASCA.
 #
 # Again, the responsible API is provided by [](#TableCollection.cluster_meanshift).
-# This method wraps a method provided by the [scikit-learn package](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html)
+# This method wraps a method provided by the [scikit-learn package](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html). The end result is that each field optains
+# a new {term}`tt_visits` table that lists all identified sources as defined
+# by their culstered detections. Sources have at the minimum one and as manny as ``n_vis``
+# detections.
+#
+# Mean-shift is well suited for this use case due to several resons. Most importantly
+# it is that the algorithm doesn't require the total number of clusters as a parameter.
+# In fact it is determining that number which would be otherwise very difficult to
+# predict from the visit-level detections before having done the clustering.
+#
+# Another reason is its relatively simple algrorithm where only one parameters is
+# required. It is called the ``bandwidth`` which means, translated to the astronomy use
+# case, the radial size of a typical source on the sky. It should be roughly chosen
+# to match the instrument's PSF, which, for GALEX, is about 5 arcseconds. We set
+# it slightly smaller to limit false associations also considering that the
+# soure center is usually much better constrained than the PSF might suggest.
 
 # %%
-# Updating the [config](#observations) for GALEX-NUV observations continued...
+# Updating the observations for GALEX-NUV observations continued...
 config["observations"][0].update(
     {
         "cluster_det": {
@@ -423,8 +438,44 @@ config["observations"][0].update(
 # %% [markdown]
 # ### Pipeline flow
 # According to the configuration above, we can finally run the analysis. VASCA
-# implements parallel processing for this part of the pipeline by applying the
-# [](#run_field) method in parallel for each field.
+# implements parallel processing ([](inv:#*.Pool.starmap)) for this part of the pipeline
+# by applying the [](#run_field) method in parallel for each field.
+
+# %%
+import vasca.utils as vutils
+
+# Collect parameters from config
+fd_pars: list = []
+vobs: list[dict] = config["observations"]
+
+obs_nr: int
+field_nr: str
+# Loop over observation list index
+for obs_nr, _ in enumerate(vobs):
+    # Loop over fields
+    for field_nr in vobs[obs_nr]["obs_field_ids"]:
+        # Construct VASCA field ID (prepending instrument/filter identifier)
+        iprefix: str = vutils.dd_obs_id_add[
+            vobs[obs_nr]["observatory"] + vobs[obs_nr]["obs_filter"]
+        ]
+        field_id: str = f"{iprefix}{field_nr}"
+        # Save parameters outside loop
+        fd_pars.append([obs_nr, field_id, rg, config])
+
+
+# %%
+from multiprocessing.pool import Pool
+import vasca.vasca_pipe as vpipe
+
+# Run each field in a separate process in parallel
+nr_cpus = config["general"]["nr_cpus"]
+logger.info(f"Analyzing {len(fd_pars)} fields on {nr_cpus} parallel threads.")
+
+with Pool(processes=nr_cpus) as pool:
+    pool_return = pool.starmap(vpipe.run_field_docs, fd_pars)
+pool.join()
+
+logger.info("Done analyzing individual fields.")
 
 # %%
 # To be continued ...

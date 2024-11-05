@@ -49,10 +49,12 @@ display(HTML(f"<style>{class_specific_css}</style>"))
 
 # Pipeline
 
-This is a tutorial showcasing VASCA's pipeline flow on a simple example. We will go through
-all the steps equivalent to what is done in [](#vasca_pipe.run_from_file). The goal
-is to create a VASCA [](#Region) from multiple [](#GALEXField) for which we download the
-raw data online from [MAST](https://astroquery.readthedocs.io/en/latest/mast/mast.html).
+This is a tutorial showcasing VASCA's pipeline flow on a simple example. We will go
+through all the steps equivalent to what is done in [](#vasca_pipe.run_from_file).
+This is the same function that is called when starting the pipeline from the CLI using ``vasca-pipe``.
+
+The goal is to create a VASCA [](#Region) from multiple [](#GALEXField) for which we
+download the raw data online from [MAST](https://astroquery.readthedocs.io/en/latest/mast/mast.html).
 We apply quality cuts and do source clustering followed by variability analysis and
 finally source cross-matching.
 
@@ -63,7 +65,7 @@ contain the location of famous Tidal Disruption Event [_PS1-10jh_](https://en.wi
 :::{figure-md} galex-fields-ps1-10jh
 <img src="../images/GALEX_fields_ps1-10jh.jpg" alt="galex_fields_ps1-10jh" class="bg-primary mb-1" width="400px">
 
-Field footprints for GALEX observations around the location of PS1-10jh (purple
+GALEX sky map with field footprints of observations around the location of PS1-10jh (purple
 crosshair). Sreenshot from [MAST Portal](https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html)
 :::
 
@@ -113,7 +115,7 @@ config["general"] = {
     "out_dir_base": "docs/tutorial_resources/vasca_pipeline",
     "log_level": "DEBUG",
     "log_file": "default",
-    "nr_cpus": 1,
+    "nr_cpus": 3,
     "save_ref_srcs": True,
     "run_fields": True,
 }
@@ -227,21 +229,15 @@ config["observations"] = [
         "observatory": "GALEX",
         "obs_filter": "NUV",
         "obs_field_ids": [
-            2432438716514435072,  # MISDR1_10450_0621
-            3880803393752530944,  # MISGCSN2_10493_0117*
-            2529617952223789056,  # ELAISN1_04
+            3880803393752530944,  # MISGCSN2_10493_0117
             2529969795944677376,  # ELAISN1_09
-            2597664528044916736,  # PS_ELAISN1_MOS15*
-            6374997199557754880,  # AIS_116_1_53
-            6374997210295173120,  # AIS_116_1_63
+            2597664528044916736,  # PS_ELAISN1_MOS15
         ],
         # "cluster_det": {},
         # "selection": {},
     },
     # More instruments/filters...
 ]
-
-# *These are the only fields with observations in the relevant time frame onwards from 2010
 ```
 
 Find below the visit metadata about the fields under investigation.
@@ -270,7 +266,11 @@ show(
 
 In the next step we will initialize a VASCA [](#Region) with all fields sequentially.
 [](#load_from_config) is a convenience function that acts as an interface between the
-region object and field-specific loading functions.
+region object and field-specific loading functions. This will downloads the data from
+MAST, it will detect if the data is already present on disc and loads the cashed
+files. To safe compute time later, a VASCA-field file is written to the download
+location so that one can use this file instead of creating a new field from raw data.
+This will be used during the field-level [processing](#field-level-analysis).
 
 ```{code-cell}
 :tags: [hide-output]
@@ -306,29 +306,50 @@ show(
 
 ## Field-level analysis
 
-The field-level analysis incorporates, first, the data reduction and parameter mapping from raw data to VASCA field objects, second, the data quality selection and finally source clustering on the remaining high-quality detections.
+The field-level analysis incorporates, first, the data reduction and parameter mapping
+from raw data to VASCA field objects, second, the data quality selection and finally
+source clustering on the remaining high-quality detections.
 
-The first step is implicitly taken care of by the [](#GALEXField) class, where the raw data is loaded
-and only the column parameters are kept that are specified in the [](#tables_dict) module.
+The first step is implicitly taken care of by the [](#GALEXField) class, where the raw
+data is loaded and only the column parameters are kept that are specified in the [](#tables_dict)
+module. A shortcut is provided through the [](#Region.get_field) method which is an
+interface to the ``load`` method of
+any field class.
 
-The configuration for the next two step requires the ``selection`` and ``cluster_det`` entries under
-the observations section.
+The configuration for the next two step requires the ``selection`` and ``cluster_det``
+entries under the observations section.
 
 ### Data selection
 ```{note}
-A crucial part of VASCA's flexibility to adapt to raw data of virtually any instrument comes from the fact that the parameter list used for data quality selection is not fixed and is allowed to vary for different instruments and filters. The only requirement is an existent entry in the [](#tables_dict) module for any parameter and a corresponding field class that includes these parameters in the {term}`tt_detections` table.
+A crucial part of VASCA's flexibility to adapt to raw data of virtually any instrument
+comes from the fact that the parameter list used for data quality selection is not
+fixed and is allowed to vary for different instruments and filters. The only
+requirement is an existent entry in the [](#tables_dict) module for any parameter and
+a corresponding field class that includes these parameters in the {term}`tt_detections`
+table.
 ```
 
-The API for the data selection is provided by the [](#TableCollection.select_rows) method. Each entry under
-selection maps to this interface. The ``table`` parameters specifies which table to select on. Any selection operation modifies the ``sel`` column of a given table. It contains boolean values so ``0`` means _unselected_ and ``1`` means _selected_.
+The API for the data selection is provided by the [](#TableCollection.select_rows)
+method. Each entry under selection maps to this interface. The ``table`` parameters
+specifies which table to select on. Any selection operation modifies the ``sel``
+column of a given table. It contains boolean values so ``0`` means _unselected_ and
+``1`` means _selected_.
 
-By specifying the ``presel_type``paremeter, one controlles the logic by which an exsisting selection is combined with a new one. The ``sel_type`` parameter specifies the logic by which the selection on a set of multiple column parameters is combined. Parameters ``range`` and ``bitmask`` provide the column parameter and artifact bitflag values that are used to make the selection. Using ``set_range`` on can choose to clip values of a certain column to minumum and maximum values.
+By specifying the ``presel_type``parameter, one controls the logic by which an
+existing selection is combined with a new one. The ``sel_type`` parameter specifies
+the logic by which the selection on a set of multiple column parameters is combined.
+Parameters ``range`` and ``bitmask`` provide the column parameter and artifact
+bitflag values that are used to make the selection. Using ``set_range`` on can choose
+to clip values of a certain column to minimum and maximum values.
 
-In combination with ``sel_type = "is_in"`` and ``var`` parameters, it is possible to select the rows of given column ``var``in the target table if a value is also present in the same collumn of a reference table (``ref_table``).
+In combination with ``sel_type = "is_in"`` and ``var`` parameters, it is possible to
+select the rows of given column ``var``in the target table if a value is also present
+in the same column of a reference table (``ref_table``).
 
 ```{code-cell}
 import numpy as np
-# Updating the [config](#observations) for GALEX-NUV observations
+
+# Updating the observations for GALEX-NUV observations
 config["observations"][0].update(
     {
         "selection": {
@@ -343,15 +364,13 @@ config["observations"][0].update(
                     "ellip_world": [0.0, 0.5],
                     "size_world": [0.0, 6.0],
                     "class_star": [0.15, 1.0],
-                    "chkobj_type": [-0.5,0.5],
-                    "flux_app_ratio": [0.3,1.05],
+                    "chkobj_type": [-0.5, 0.5],
+                    "flux_app_ratio": [0.3, 1.05],
                 },
                 "bitmask": {
-                    "artifacts": [2,4,8,128,256],
+                    "artifacts": [2, 4, 8, 128, 256],
                 },
-                "set_range": {
-                    "pos_err" : [0.5,5]
-                },
+                "set_range": {"pos_err": [0.5, 5]},
             },
             # Quality cuts on field-averaged detections
             "coadd_det_quality": {
@@ -364,11 +383,11 @@ config["observations"][0].update(
                     "ellip_world": [0.0, 0.5],
                     "size_world": [0.0, 6.0],
                     "class_star": [0.15, 1.0],
-                    "chkobj_type": [-0.5,0.5],
-                    "flux_app_ratio": [0.3,1.05],
+                    "chkobj_type": [-0.5, 0.5],
+                    "flux_app_ratio": [0.3, 1.05],
                 },
                 "bitmask": {
-                    "artifacts": [2,4,8,128,256],
+                    "artifacts": [2, 4, 8, 128, 256],
                 },
             },
             # Selection on only those detections wich are part of clusters
@@ -393,10 +412,25 @@ at the moment only [mean-shift clustering](https://en.wikipedia.org/wiki/Mean_sh
 is supported by VASCA.
 
 Again, the responsible API is provided by [](#TableCollection.cluster_meanshift).
-This method wraps a method provided by the [scikit-learn package](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html)
+This method wraps a method provided by the [scikit-learn package](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html). The end result is that each field optains
+a new {term}`tt_visits` table that lists all identified sources as defined
+by their culstered detections. Sources have at the minimum one and as manny as ``n_vis``
+detections.
+
+Mean-shift is well suited for this use case due to several resons. Most importantly
+it is that the algorithm doesn't require the total number of clusters as a parameter.
+In fact it is determining that number which would be otherwise very difficult to
+predict from the visit-level detections before having done the clustering.
+
+Another reason is its relatively simple algrorithm where only one parameters is
+required. It is called the ``bandwidth`` which means, translated to the astronomy use
+case, the radial size of a typical source on the sky. It should be roughly chosen
+to match the instrument's PSF, which, for GALEX, is about 5 arcseconds. We set
+it slightly smaller to limit false associations also considering that the
+soure center is usually much better constrained than the PSF might suggest.
 
 ```{code-cell}
-# Updating the [config](#observations) for GALEX-NUV observations continued...
+# Updating the observations for GALEX-NUV observations continued...
 config["observations"][0].update(
     {
         "cluster_det": {
@@ -417,7 +451,42 @@ config["observations"][0].update(
 
 ### Pipeline flow
 According to the configuration above, we can finally run the analysis. VASCA
-implements parallel processing for this part of the pipeline using 
+implements parallel processing ([](inv:py:meth#*.Pool.starmap)) for this part
+of the pipeline by applying the [](#run_field) method in parallel for each field.
+
+```{code-cell}
+import vasca.utils as vutils
+# Collect parameters from config
+fd_pars: list = []
+vobs: list[dict] = config["observations"]
+
+obs_nr: int
+field_nr: str
+# Loop over observation list index
+for obs_nr, _ in enumerate(vobs):
+    # Loop over fields
+    for field_nr in vobs[obs_nr]["obs_field_ids"]:
+        # Construct VASCA field ID (prepending instrument/filter identifier) 
+        iprefix: str = vutils.dd_obs_id_add[vobs[obs_nr]["observatory"] + vobs[obs_nr]["obs_filter"]]
+        field_id:str = f"{iprefix}{field_nr}"
+        # Save parameters outside loop
+        fd_pars.append([obs_nr, field_id, rg, config])
+```
+
+```{code-cell}
+from multiprocessing.pool import Pool
+import vasca.vasca_pipe as vpipe
+
+# Run each field in a separate process in parallel
+nr_cpus = config["general"]["nr_cpus"]
+logger.info(f"Analyzing {len(fd_pars)} fields on {nr_cpus} parallel threads.")
+
+with Pool(processes=nr_cpus) as pool:
+    pool_return = pool.starmap(vpipe.run_field_docs, fd_pars)
+pool.join()
+
+logger.info("Done analyzing individual fields.")
+```
 
 ```{code-cell}
 # To be continued ...
