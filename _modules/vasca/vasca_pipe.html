@@ -297,6 +297,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">importlib.resources</span> <span class="kn">import</span> <span class="n">files</span>
+
 
 <span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">uu</span>
@@ -308,8 +311,31 @@
 <span class="kn">from</span> <span class="nn">vasca.tables_dict</span> <span class="kn">import</span> <span class="n">dd_vasca_tables</span>
 <span class="kn">from</span> <span class="nn">vasca.tables</span> <span class="kn">import</span> <span class="n">TableCollection</span>
 <span class="kn">from</span> <span class="nn">vasca.utils</span> <span class="kn">import</span> <span class="n">dd_obs_id_add</span><span class="p">,</span> <span class="n">get_config</span>
+<span class="kn">from</span> <span class="nn">vasca.field</span> <span class="kn">import</span> <span class="n">BaseField</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="set_pipe_dir">
+<a class="viewcode-back" href="../../api/vasca/vasca.vasca_pipe.html#vasca.vasca_pipe.set_pipe_dir">[docs]</a>
+<span class="k">def</span> <span class="nf">set_pipe_dir</span><span class="p">(</span><span class="n">vasca_cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates the pipeline output directory and necessary parent directories.</span>
+
+<span class="sd">    :returns: Path object pointing to the pipeline directory</span>
+<span class="sd">    :rtype: :py:class:`~pathlib.Path`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Setup root output directory</span>
+    <span class="n">out_dir_base</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+        <span class="n">files</span><span class="p">(</span><span class="s2">&quot;vasca&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;general&quot;</span><span class="p">][</span><span class="s2">&quot;out_dir_base&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">out_dir_base</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Setup pipeline directory</span>
+    <span class="n">pipe_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">out_dir_base</span> <span class="o">/</span> <span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;general&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">pipe_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pipe_dir</span></div>
+
 
 
 <div class="viewcode-block" id="set_logger">
@@ -476,6 +502,79 @@
     <span class="c1"># Keep only data needed for further analysis</span>
     <span class="n">keep_base_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with field:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">field_id</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">field</span></div>
+
+
+
+<div class="viewcode-block" id="run_field_docs">
+<a class="viewcode-back" href="../../api/vasca/vasca.vasca_pipe.html#vasca.vasca_pipe.run_field_docs">[docs]</a>
+<span class="k">def</span> <span class="nf">run_field_docs</span><span class="p">(</span>
+    <span class="n">obs_nr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">field_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rg</span><span class="p">:</span> <span class="n">Region</span><span class="p">,</span> <span class="n">vasca_cfg</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseField</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run field-level analysis (docs-version)</span>
+
+<span class="sd">    :par obs_nr: Observation list index</span>
+<span class="sd">    :type obs_nr: int</span>
+<span class="sd">    :par field_id: Field ID</span>
+<span class="sd">    :type field_id: str, int</span>
+<span class="sd">    :par rg: VASCA region object from where the fields are loaded</span>
+<span class="sd">    :type rg: :py:class:`~vasca.region.Region`</span>
+<span class="sd">    :par vasca_cfg: Pipeline configuration</span>
+<span class="sd">    :type vasca_cfg: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analysing field: </span><span class="si">{</span><span class="n">field_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Load field from VASCA-field file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">field</span><span class="p">:</span> <span class="n">BaseField</span> <span class="o">=</span> <span class="n">rg</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span>
+            <span class="n">field_id</span><span class="o">=</span><span class="n">field_id</span><span class="p">,</span>
+            <span class="n">load_method</span><span class="o">=</span><span class="s2">&quot;VASCA&quot;</span><span class="p">,</span>
+            <span class="n">mast_products</span><span class="o">=</span><span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;resources&quot;</span><span class="p">][</span><span class="s2">&quot;load_products&quot;</span><span class="p">],</span>
+            <span class="n">field_kwargs</span><span class="o">=</span><span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;resources&quot;</span><span class="p">][</span><span class="s2">&quot;field_kwargs&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Faild to run pipeline for field &#39;</span><span class="si">{</span><span class="n">field_id</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Returning None. Exception:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Get configuration for this field</span>
+    <span class="n">obs_cfg</span> <span class="o">=</span> <span class="n">vasca_cfg</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">][</span><span class="n">obs_nr</span><span class="p">]</span>
+
+    <span class="c1"># Apply detections selections</span>
+
+    <span class="c1"># Visit detections</span>
+    <span class="n">field</span><span class="o">.</span><span class="n">select_rows</span><span class="p">(</span><span class="n">obs_cfg</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;det_quality&quot;</span><span class="p">],</span> <span class="n">remove_unselected</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Coadd detections</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">&quot;tt_coadd_detections&quot;</span><span class="p">):</span>
+        <span class="n">field</span><span class="o">.</span><span class="n">select_rows</span><span class="p">(</span>
+            <span class="n">obs_cfg</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;coadd_det_quality&quot;</span><span class="p">],</span> <span class="n">remove_unselected</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Clustering</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">tt_detections</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Run clustering</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clustering field detections (</span><span class="si">{</span><span class="n">field_id</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="n">field</span><span class="o">.</span><span class="n">cluster_meanshift</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">obs_cfg</span><span class="p">[</span><span class="s2">&quot;cluster_det&quot;</span><span class="p">][</span><span class="s2">&quot;meanshift&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Select detections used in clustering</span>
+    <span class="n">field</span><span class="o">.</span><span class="n">select_rows</span><span class="p">(</span><span class="n">obs_cfg</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;det_association&quot;</span><span class="p">],</span> <span class="n">remove_unselected</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Create directory structure for fields in pipeline output location</span>
+    <span class="n">field_out_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">set_pipe_dir</span><span class="p">(</span><span class="n">vasca_cfg</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;fields&quot;</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">field_out_dir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Write out VASCA-field</span>
+    <span class="n">field</span><span class="o">.</span><span class="n">write_to_fits</span><span class="p">(</span><span class="n">field_out_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;field_</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="n">field_id</span><span class="si">}</span><span class="s2">.fits&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Memory efficiency: keep only data needed for further analysis</span>
+    <span class="n">keep_base_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Done with field: </span><span class="si">{</span><span class="n">field_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">field</span></div>
 
@@ -766,7 +865,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=ef87eb7e"></script>
+</div><script src="../../_static/documentation_options.js?v=a5e20ebf"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

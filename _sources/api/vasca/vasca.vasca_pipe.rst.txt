@@ -16,6 +16,9 @@ Functions
    :class: autosummary longtable
    :align: left
 
+   * - :py:obj:`set_pipe_dir <vasca.vasca_pipe.set_pipe_dir>`
+     - .. autodoc2-docstring:: vasca.vasca_pipe.set_pipe_dir
+          :summary:
    * - :py:obj:`set_logger <vasca.vasca_pipe.set_logger>`
      - .. autodoc2-docstring:: vasca.vasca_pipe.set_logger
           :summary:
@@ -24,6 +27,9 @@ Functions
           :summary:
    * - :py:obj:`run_field <vasca.vasca_pipe.run_field>`
      - .. autodoc2-docstring:: vasca.vasca_pipe.run_field
+          :summary:
+   * - :py:obj:`run_field_docs <vasca.vasca_pipe.run_field_docs>`
+     - .. autodoc2-docstring:: vasca.vasca_pipe.run_field_docs
           :summary:
    * - :py:obj:`run_cluster_fields <vasca.vasca_pipe.run_cluster_fields>`
      - .. autodoc2-docstring:: vasca.vasca_pipe.run_cluster_fields
@@ -37,6 +43,11 @@ Functions
 
 API
 ~~~
+
+.. py:function:: set_pipe_dir(vasca_cfg: dict) -> pathlib.Path
+   :canonical: vasca.vasca_pipe.set_pipe_dir
+
+   .. autodoc2-docstring:: vasca.vasca_pipe.set_pipe_dir
 
 .. py:function:: set_logger(vasca_cfg)
    :canonical: vasca.vasca_pipe.set_logger
@@ -52,6 +63,11 @@ API
    :canonical: vasca.vasca_pipe.run_field
 
    .. autodoc2-docstring:: vasca.vasca_pipe.run_field
+
+.. py:function:: run_field_docs(obs_nr: int, field_id: str, rg: vasca.region.Region, vasca_cfg: dict) -> vasca.field.BaseField | None
+   :canonical: vasca.vasca_pipe.run_field_docs
+
+   .. autodoc2-docstring:: vasca.vasca_pipe.run_field_docs
 
 .. py:function:: run_cluster_fields(meanshift_cfg, tt_fd_src, tt_fd_det=None, cluster_coadd=False)
    :canonical: vasca.vasca_pipe.run_cluster_fields

@@ -307,14 +307,20 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-left">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.vasca_pipe.set_logger" title="vasca.vasca_pipe.set_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_logger</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.vasca_pipe.set_pipe_dir" title="vasca.vasca_pipe.set_pipe_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_pipe_dir</span></code></a></p></td>
+<td><p>Creates the pipeline output directory and necessary parent directories.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.vasca_pipe.set_logger" title="vasca.vasca_pipe.set_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_logger</span></code></a></p></td>
 <td><p>Setup logger. Gets configuration from global config variable set with get_config.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#vasca.vasca_pipe.keep_base_field" title="vasca.vasca_pipe.keep_base_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keep_base_field</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.vasca_pipe.keep_base_field" title="vasca.vasca_pipe.keep_base_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keep_base_field</span></code></a></p></td>
 <td><p>Remove field data that is not needed for further analysis to save memory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.vasca_pipe.run_field" title="vasca.vasca_pipe.run_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_field</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.vasca_pipe.run_field" title="vasca.vasca_pipe.run_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_field</span></code></a></p></td>
 <td><p>Run analysis on a single field</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.vasca_pipe.run_field_docs" title="vasca.vasca_pipe.run_field_docs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_field_docs</span></code></a></p></td>
+<td><p>Run field-level analysis (docs-version)</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#vasca.vasca_pipe.run_cluster_fields" title="vasca.vasca_pipe.run_cluster_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_cluster_fields</span></code></a></p></td>
 <td><p>Helper function to do clustering for passed sources or detections.
@@ -332,6 +338,20 @@ The main purpose is to only keep the needed tables, to save memory usage</p></td
 </section>
 <section id="api">
 <h3>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.vasca_pipe.set_pipe_dir">
+<span class="sig-prename descclassname"><span class="pre">vasca.vasca_pipe.</span></span><span class="sig-name descname"><span class="pre">set_pipe_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vasca_cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">pathlib.Path</span></a></span></span><a class="reference internal" href="../../_modules/vasca/vasca_pipe.html#set_pipe_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.vasca_pipe.set_pipe_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Creates the pipeline output directory and necessary parent directories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path object pointing to the pipeline directory</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="vasca.vasca_pipe.set_logger">
 <span class="sig-prename descclassname"><span class="pre">vasca.vasca_pipe.</span></span><span class="sig-name descname"><span class="pre">set_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vasca_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/vasca/vasca_pipe.html#set_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.vasca_pipe.set_logger" title="Link to this definition">¶</a></dt>
@@ -370,6 +390,26 @@ The main purpose is to only keep the needed tables, to save memory usage</p></td
 </dl>
 <dl class="simple">
 <dt>vasca.field.BaseField</dt><dd><p>Modified field with results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vasca.vasca_pipe.run_field_docs">
+<span class="sig-prename descclassname"><span class="pre">vasca.vasca_pipe.</span></span><span class="sig-name descname"><span class="pre">run_field_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_nr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="vasca.region.html#vasca.region.Region" title="vasca.region.Region"><span class="pre">vasca.region.Region</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">vasca_cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="vasca.field.html#vasca.field.BaseField" title="vasca.field.BaseField"><span class="pre">vasca.field.BaseField</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/vasca/vasca_pipe.html#run_field_docs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vasca.vasca_pipe.run_field_docs" title="Link to this definition">¶</a></dt>
+<dd><p>Run field-level analysis (docs-version)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Par obs_nr<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Observation list index</p>
+</dd>
+<dt class="field-even">Par field_id<span class="colon">:</span></dt>
+<dd class="field-even"><p>Field ID</p>
+</dd>
+<dt class="field-odd">Par rg<span class="colon">:</span></dt>
+<dd class="field-odd"><p>VASCA region object from where the fields are loaded</p>
+</dd>
+<dt class="field-even">Par vasca_cfg<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pipeline configuration</p>
 </dd>
 </dl>
 </dd></dl>
@@ -483,9 +523,11 @@ The main purpose is to only keep the needed tables, to save memory usage</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#api">API</a><ul>
+<li><a class="reference internal" href="#vasca.vasca_pipe.set_pipe_dir"><code class="docutils literal notranslate"><span class="pre">set_pipe_dir()</span></code></a></li>
 <li><a class="reference internal" href="#vasca.vasca_pipe.set_logger"><code class="docutils literal notranslate"><span class="pre">set_logger()</span></code></a></li>
 <li><a class="reference internal" href="#vasca.vasca_pipe.keep_base_field"><code class="docutils literal notranslate"><span class="pre">keep_base_field()</span></code></a></li>
 <li><a class="reference internal" href="#vasca.vasca_pipe.run_field"><code class="docutils literal notranslate"><span class="pre">run_field()</span></code></a></li>
+<li><a class="reference internal" href="#vasca.vasca_pipe.run_field_docs"><code class="docutils literal notranslate"><span class="pre">run_field_docs()</span></code></a></li>
 <li><a class="reference internal" href="#vasca.vasca_pipe.run_cluster_fields"><code class="docutils literal notranslate"><span class="pre">run_cluster_fields()</span></code></a></li>
 <li><a class="reference internal" href="#vasca.vasca_pipe.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
 <li><a class="reference internal" href="#vasca.vasca_pipe.run_from_file"><code class="docutils literal notranslate"><span class="pre">run_from_file()</span></code></a></li>
@@ -504,7 +546,7 @@ The main purpose is to only keep the needed tables, to save memory usage</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=ef87eb7e"></script>
+</div><script src="../../_static/documentation_options.js?v=a5e20ebf"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -512,7 +554,7 @@ The main purpose is to only keep the needed tables, to save memory usage</p>
     <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.vasca_pipe.092dca4d-28c9-4e99-9e69-496dac45fca9.js"></script>
+    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.vasca_pipe.c19bc9ab-6ab9-42e2-9abe-d14a27032ffe.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
