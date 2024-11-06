@@ -451,13 +451,18 @@ config["observations"][0].update(
 
 ### Pipeline flow
 According to the configuration above, we can finally run the analysis. VASCA
-implements parallel processing ([](inv:py:meth#*.Pool.starmap)) for this part
-of the pipeline by applying the [](#run_field) method in parallel for each field.
+implements parallel processing ([](inv:#*.Pool.starmap)) for this part of the pipeline
+by applying the [](#run_field) method in parallel for each field.
+
++++
+
+First, the parameters for [](#run_field) are collected.
 
 ```{code-cell}
 import vasca.utils as vutils
+
 # Collect parameters from config
-fd_pars: list = []
+fd_pars: list[list[int, str, Region, dict]] = []
 vobs: list[dict] = config["observations"]
 
 obs_nr: int
@@ -466,14 +471,20 @@ field_nr: str
 for obs_nr, _ in enumerate(vobs):
     # Loop over fields
     for field_nr in vobs[obs_nr]["obs_field_ids"]:
-        # Construct VASCA field ID (prepending instrument/filter identifier) 
-        iprefix: str = vutils.dd_obs_id_add[vobs[obs_nr]["observatory"] + vobs[obs_nr]["obs_filter"]]
-        field_id:str = f"{iprefix}{field_nr}"
+        # Construct VASCA field ID (prepending instrument/filter identifier)
+        iprefix: str = vutils.dd_obs_id_add[
+            vobs[obs_nr]["observatory"] + vobs[obs_nr]["obs_filter"]
+        ]
+        field_id: str = f"{iprefix}{field_nr}"
         # Save parameters outside loop
         fd_pars.append([obs_nr, field_id, rg, config])
 ```
 
+Second, all fields are processed in parallel.
+
 ```{code-cell}
+:tags: [hide-output]
+
 from multiprocessing.pool import Pool
 import vasca.vasca_pipe as vpipe
 
@@ -487,6 +498,135 @@ pool.join()
 
 logger.info("Done analyzing individual fields.")
 ```
+
+Finally, the pool results are unpacked and the region object is updated with
+processed field information.
+
+A memory-saving procedure is used where first all fields are brought to the
+scope of the region object by filling the ``Region.field`` dictionary from
+which the field-level data is taken and stacked in respective region-owned
+tables using the [](#Region.add_table_from_fields) method. After this step
+all fields are discarded from the scope, to be deleted from the garbage collector.
+
+```{hint}
+In VASCA a [](#Region) object keeps track of its fields in the ``Region.tt_fields``
+table. At any time one can load field data of a specific field using [](#Region.get_field).
+```
+
+```{code-cell}
+from astropy.table import unique
+
+# Loop over processed fields
+for field in pool_return:
+    # Populate region field dictionary with field data
+    rg.fields[field.field_id] = field
+    logger.info(f"Added field {field.field_id} from pool to region")
+
+# Add field tables to region
+
+# Visits metadata
+rg.add_table_from_fields("tt_visits")
+rg.tt_visits = unique(rg.tt_visits, keys="vis_id")
+
+# Clustered sources
+rg.add_table_from_fields("tt_sources")
+
+# Visit-level detections
+rg.add_table_from_fields("tt_detections", only_selected=False)
+
+# Field-averaged detectsion
+rg.add_table_from_fields("tt_coadd_detections")
+
+# Discard fields. All that was needed has been transferred to region tables
+del rg.fields
+```
+
+## Region-level analysis
+
+In the final stage of the pipeline, all region-level analysis steps are performed.
+This stage encompasses three key tasks: first, managing sources located in
+overlapping sky regions; second, evaluating statistics for use in variability
+detection; and finally, preparing the pipeline results for writing to disk and
+generating the VASCA variable source catalog.
+
++++
+
+### Overlapping fields
+
+VASCA merges field-level sources in overlapping sky regions in a second clustering step,
+where the same mean-shift algorithm is used but with a dedicated configuration.
+
+In case field-averaged (co-added) data exists, the field-level detections are merged
+in the same way, again, with a seperate configuraion. 
+
+```{code-cell}
+config["cluster_src"] = {
+    "meanshift": {
+        "bandwidth": 4,
+        "seeds": None,
+        "bin_seeding": False,
+        "min_bin_freq": 1,
+        "cluster_all": True,
+        "n_jobs": 1,
+        "max_iter": 300,
+        "table_name": "tt_sources",
+    }
+}
+
+config["cluster_coadd_dets"]= {
+    "meanshift": {
+        "bandwidth": 4,
+        "seeds": None,
+        "bin_seeding": False,
+        "min_bin_freq": 1,
+        "cluster_all": True,
+        "n_jobs": 1,
+        "max_iter": 300,
+        "table_name": "tt_coadd_detections",
+    }
+}
+```
+
+```{code-cell}
+# Cluster field sources and co-adds in parallel
+ll_cluster = [
+    [
+        config["cluster_src"]["meanshift"],
+        rg.tt_sources,
+        rg.tt_detections,
+        False,
+    ],
+    [
+        config["cluster_coadd_dets"]["meanshift"],
+        rg.tt_coadd_detections,
+        False,
+        True,
+    ],
+]
+
+with Pool(processes=2) as pool:
+    pool_return = pool.starmap(vpipe.run_cluster_fields, ll_cluster)
+pool.join()
+
+# Copy parallelized results into region
+for pool_rg in pool_return:
+    if "tt_sources" in pool_rg._table_names:
+        rg.tt_sources = pool_rg.tt_sources
+        rg.tt_detections = pool_rg.tt_detections
+    else:
+        rg.add_table(pool_rg.tt_coadd_sources, "region:tt_coadd_sources")
+        rg.tt_coadd_detections = pool_rg.tt_coadd_detections
+```
+
+```{code-cell}
+
+```
+
+### Source statistics
+
++++
+
+### Pipeline Output
 
 ```{code-cell}
 # To be continued ...
