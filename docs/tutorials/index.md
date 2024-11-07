@@ -35,6 +35,7 @@ tutorial_rm
 tutorial_gal_vis
 tutorial_field
 tutorial_mast
+tutorial_var_stats
 tutorial_pipe
 simple_example
 test_table

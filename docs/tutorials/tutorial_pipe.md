@@ -414,20 +414,20 @@ is supported by VASCA.
 Again, the responsible API is provided by [](#TableCollection.cluster_meanshift).
 This method wraps a method provided by the [scikit-learn package](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html). The end result is that each field optains
 a new {term}`tt_visits` table that lists all identified sources as defined
-by their culstered detections. Sources have at the minimum one and as manny as ``n_vis``
+by their clustered detections. Sources have at the minimum one and as manny as ``n_vis``
 detections.
 
-Mean-shift is well suited for this use case due to several resons. Most importantly
+Mean-shift is well suited for this use case due to several reasons. Most importantly
 it is that the algorithm doesn't require the total number of clusters as a parameter.
 In fact it is determining that number which would be otherwise very difficult to
 predict from the visit-level detections before having done the clustering.
 
-Another reason is its relatively simple algrorithm where only one parameters is
+Another reason is its relatively simple algorithm where only one parameters is
 required. It is called the ``bandwidth`` which means, translated to the astronomy use
 case, the radial size of a typical source on the sky. It should be roughly chosen
 to match the instrument's PSF, which, for GALEX, is about 5 arcseconds. We set
 it slightly smaller to limit false associations also considering that the
-soure center is usually much better constrained than the PSF might suggest.
+source center is usually much better constrained than the PSF might suggest.
 
 ```{code-cell}
 # Updating the observations for GALEX-NUV observations continued...
@@ -514,6 +514,8 @@ table. At any time one can load field data of a specific field using [](#Region.
 ```
 
 ```{code-cell}
+:tags: [hide-output]
+
 from astropy.table import unique
 
 # Loop over processed fields
@@ -553,11 +555,11 @@ generating the VASCA variable source catalog.
 
 ### Overlapping fields
 
-VASCA merges field-level sources in overlapping sky regions in a second clustering step,
-where the same mean-shift algorithm is used but with a dedicated configuration.
+VASCA merges field-level sources in overlapping sky regions in a second clustering
+step, where the same mean-shift algorithm is used but with a dedicated configuration.
 
 In case field-averaged (co-added) data exists, the field-level detections are merged
-in the same way, again, with a seperate configuraion. 
+in the same way, again, with a separate configuration.
 
 ```{code-cell}
 config["cluster_src"] = {
@@ -573,7 +575,7 @@ config["cluster_src"] = {
     }
 }
 
-config["cluster_coadd_dets"]= {
+config["cluster_coadd_dets"] = {
     "meanshift": {
         "bandwidth": 4,
         "seeds": None,
@@ -588,6 +590,8 @@ config["cluster_coadd_dets"]= {
 ```
 
 ```{code-cell}
+:tags: [hide-output]
+
 # Cluster field sources and co-adds in parallel
 ll_cluster = [
     [

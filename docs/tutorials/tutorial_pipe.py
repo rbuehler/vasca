@@ -498,7 +498,7 @@ logger.info("Done analyzing individual fields.")
 # table. At any time one can load field data of a specific field using [](#Region.get_field).
 # ```
 
-# %%
+# %% tags=["hide-output"]
 from astropy.table import unique
 
 # Loop over processed fields
