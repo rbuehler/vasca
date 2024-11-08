@@ -3,6 +3,7 @@
 """
 Utilities for VASCA
 """
+
 import hashlib
 import warnings
 from datetime import timedelta
@@ -46,8 +47,11 @@ from vasca.tables_dict import dd_vasca_columns
 #: 1,2,4,8,..
 dd_filter2id = {"NUV": 1, "FUV": 2}
 #: Inverted ``dd_filter2id``
-dd_id2filter = dict((v, k) for (k, v) in dd_filter2id.items())
-
+dd_id2filter = {v: k for k, v in dd_filter2id.items()}
+# Index for multi-dimensional variable columns
+dd_filter2idx = dict(
+    zip(dd_filter2id.keys(), np.arange(len(dd_filter2id.keys())), strict=True)
+)
 #: Central wavelength for a given filter
 dd_filter2wavelength = {"NUV": 2271 * uu.AA, "FUV": 1528 * uu.AA}
 
@@ -623,27 +627,45 @@ def select_obs_filter(tt_in, obs_filter_id):
 
     """
     tt = Table(tt_in, copy=True)
-    nr_flts = len(
-        np.array(tt[0]["obs_filter_id"]).flatten()
-    )  # Check if var entries are arrays
-    if obs_filter_id is not None:
-        # If obs_id is in the table, select on it
-        if nr_flts == 1:
-            tt = tt[tt["obs_filter_id"].data.flatten() == obs_filter_id]
-        else:
-            flt_idx = np.where(tt["obs_filter_id"][0] == obs_filter_id)
-            for colname in tt.colnames:
-                nr_entries = len(np.array(tt[0][colname]).flatten())
-                if nr_entries == nr_flts:
-                    with warnings.catch_warnings():
-                        warnings.simplefilter("ignore", AstropyWarning)
-                        col_template_copy = dd_vasca_columns[colname].copy()
-                        del col_template_copy["default"]
-                        col = Column(
-                            tt[colname][:, flt_idx].data.flatten(), **col_template_copy
-                        )
+    # Filter name
+    fltr = dd_id2filter[obs_filter_id]
+    # Filter index
+    flt_idx = dd_filter2idx[fltr]
+    # Replace multi-dimensional columns with only the data at the index according to
+    # given filter ID
+    for colname in tt.colnames:
+        is_multidim = len(np.array(tt[0][colname]).shape) != 0
+        if is_multidim:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", AstropyWarning)
+                col_template_copy = dd_vasca_columns[colname].copy()
+                del col_template_copy["default"]
+                col = Column(
+                    tt[colname][:, flt_idx].data.flatten(), **col_template_copy
+                )
 
-                        tt.replace_column(colname, col)
+                tt.replace_column(colname, col)
+    #     nr_flts = len(
+    #         np.array(tt[0]["obs_filter_id"]).flatten()
+    #     )  # Check if var entries are arrays
+    #     if obs_filter_id is not None:
+    #         # If obs_id is in the table, select on it
+    #         if nr_flts == 1:
+    #             tt = tt[tt["obs_filter_id"].data.flatten() == obs_filter_id]
+    #         else:
+    #             flt_idx = np.where(tt["obs_filter_id"][0] == obs_filter_id)
+    #             for colname in tt.colnames:
+    #                 nr_entries = len(np.array(tt[0][colname]).flatten())
+    #                 if nr_entries == nr_flts:
+    #                     with warnings.catch_warnings():
+    #                         warnings.simplefilter("ignore", AstropyWarning)
+    #                         col_template_copy = dd_vasca_columns[colname].copy()
+    #                         del col_template_copy["default"]
+    #                         col = Column(
+    #                             tt[colname][:, flt_idx].data.flatten(), **col_template_copy
+    #                         )
+    #
+    #                         tt.replace_column(colname, col)
     return tt
 
 
@@ -680,12 +702,10 @@ def get_flat_table(tt_in):
 
         # Loop oover all columns
         for colname in tt.colnames:
-
             nr_entries = len(np.array(tt[0][colname]).flatten())
             # print("Colname", colname, "with nr of entries", nr_entries)
 
             if nr_entries == nr_flts:
-
                 # Loop over filters
                 for flt_idx in flt_indices:
                     flt_name = dd_id2filter[flt_ids[flt_idx]]
