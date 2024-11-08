@@ -55,18 +55,18 @@ This is the same function that is called when starting the pipeline from the CLI
 
 The goal is to create a VASCA [](#Region) from multiple [](#GALEXField) for which we
 download the raw data online from [MAST](https://astroquery.readthedocs.io/en/latest/mast/mast.html).
-We apply quality cuts and do source clustering followed by variability analysis and
-finally source cross-matching.
+We apply quality cuts and do source clustering followed by variability analysis.
 
 For this tutorial we are interested in the near-ultraviolet (NUV) observations
 by GALEX. We are going to look at neighboring/overlapping fields all of which
-contain the location of famous Tidal Disruption Event [_PS1-10jh_](https://en.wikipedia.org/wiki/Pan-STARRS#Selected_discoveries) discovered by Pan-STARRS and observed by GALEX in 2010.
+contain the location of famous Tidal Disruption Event [_PS1-10jh_](https://en.wikipedia.org/wiki/Pan-STARRS#Selected_discoveries)
+discovered by Pan-STARRS and observed by GALEX in 2010.
 
 :::{figure-md} galex-fields-ps1-10jh
 <img src="../images/GALEX_fields_ps1-10jh.jpg" alt="galex_fields_ps1-10jh" class="bg-primary mb-1" width="400px">
 
-GALEX sky map with field footprints of observations around the location of PS1-10jh (purple
-crosshair). Sreenshot from [MAST Portal](https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html)
+GALEX sky map with field footprints of observations around the location of PS1-10jh (
+purple crosshair). Screenshot from [MAST Portal](https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html)
 :::
 
 +++
@@ -622,15 +622,158 @@ for pool_rg in pool_return:
         rg.tt_coadd_detections = pool_rg.tt_coadd_detections
 ```
 
-```{code-cell}
-
-```
-
 ### Source statistics
 
-+++
+The primary statistic used by VASCA to detect variability is the probability of
+obtaining a flux with the observed fluctuations under the assumption that the null
+hypothesis is true, that is, constant flux (``flux_cpval``). The default selection is
+such that the chance for the observed variability being purely random can be ruled out
+at [5-sigma significance](https://en.wikipedia.org/wiki/Normal_distribution#Standard_deviation_and_coverage).
+
+Additionally the normalized excess variance (``flux_nxv``) and absolute flux limits
+is used to limit a contamination due to potential hidden systematic flux variations.
+
+Similarly a selection on variation of the spatial coordinates (``pos_cpval``. ``pos_xv``)
+is used to reduce the contamination du to false association of visit-levl detections
+in the clustering step.
+
+To ensure the statistical correctness only sources with more than three detections are
+considers (``n_det>3``).
+
+```{note}
+The source selection is configured independently for each observational filter. This
+allows to adapt to potential systematics in a very flexible way.
+```
+
+For a more concrete example on these calculations in VASCA, have a
+look at the tutorial on [Variability Statistics](tutorial_vat_stat.md).
+
+```{code-cell}
+config["selection_src"] = {
+    "src_variability_nuv": {
+        "table": "tt_sources",
+        "presel_type": "or",
+        "sel_type": "and",
+        "obs_filter": "NUV",
+        "range": {
+            "nr_det": [3, np.inf],
+            "pos_cpval": [0.0001, np.inf],
+            "pos_xv": [-np.inf, 2],
+            "flux_cpval": [-0.5, 0.000000573303],
+            "flux_nxv": [0.001, np.inf],
+            "flux": [0.144543, 575.43],
+        },
+    },
+    "src_coadd_diff_nuv": {
+        "table": "tt_sources",
+        "presel_type": "or",
+        "sel_type": "and",
+        "obs_filter": "NUV",
+        "range": {
+            "nr_det": [2, np.inf],
+            "pos_cpval": [0.0001, np.inf],
+            "pos_xv": [-np.inf, 2],
+            "coadd_ffactor": [2.0, np.inf],
+            "coadd_fdiff_s2n": [7, np.inf],
+        },
+    },
+}
+```
+
+ An additional selection may be possible if co-added data is available. In this case
+ the association between VASCA sources and the field-averaged input data can be made.
+ This serves as cross-check since most static sources should be recovered in the
+ clustering step and match the field average.
+
+%%s
+config["assoc_src_coadd"] = {
+    "dist_max": 1,  # Associate nearest source below this distance in arc_sec  OR
+    "dist_s2n_max": 3,  # Associate nearest source with this distance in units of "squared summed position error"
+}
+
+```{code-cell}
+:tags: [hide-output]
+
+import astropy.units as uu
+
+# Calculate source statistics
+rg.set_src_stats(src_id_name="rg_src_id")
+rg.set_src_stats(src_id_name="coadd_src_id")
+
+# Match sources to coadd sources
+rg.cross_match(
+    dist_max=config["assoc_src_coadd"]["dist_max"] * uu.arcsec,
+    dist_s2n_max=config["assoc_src_coadd"]["dist_s2n_max"],
+)
+
+# Select variable sources, deselect all sources before and
+# make sure all tables containting the region source ID
+# are syncronized to this selection
+rg.tt_sources["sel"] = False
+rg.select_from_config(
+    config["selection_src"]
+)  # Loops over TableCollection.select_rows()
+rg.synch_src_sel(remove_unselected=False)
+
+# Set source ID mapping table
+rg.set_src_id_info()
+```
+
+```{code-cell}
+:tags: [hide-output]
+
+# View all table attributes that have been added to the region object
+rg.info()
+```
+
+```{code-cell}
+:tags: [hide-input]
+:title: '# %%'
+
+# View all sources that passed the selection
+df_sources = (
+    vutils.select_obs_filter(rg.tt_sources, obs_filter_id=1)
+    .to_pandas()
+    .apply(lambda x: x.str.decode("utf-8") if x.dtype == "O" else x)
+)
+df_select = df_sources.query("sel")
+show(
+    df_select,
+    classes="display nowrap compact",
+    scrollY="300px",
+    scrollCollapse=True,
+    paging=False,
+    columnDefs=[{"className": "dt-body-left", "targets": "_all"}],
+)
+```
 
 ### Pipeline Output
+
+With a few simple export functions the full region file, the variable source catalog
+and its pipeline configuration are saved to the pipeline output directory.
+
+This concludes the tutorial. Readers are invited to look into the post-processing
+notebooks as listed [here](index.md).
+
+```{code-cell}
+:tags: [hide-output]
+
+import yaml
+
+# Write region file
+rg.write_to_fits(file_name=pipe_dir / f'region_{config["general"]["name"]}.fits')
+
+# Export variable source catalog (only selected sources are included)
+rc = rg.get_region_catalog()
+rc.write_to_fits(file_name=pipe_dir / f'region_{config["general"]["name"]}_cat.fits')
+
+# Write used config file
+yaml_out_name = pipe_dir / f'cfg_ran_{config["general"]["name"]}.yaml'
+with open(yaml_out_name, "w") as yaml_file:
+    yaml.dump(config, yaml_file)
+
+logger.info("Done running VASCA pipeline.")
+```
 
 ```{code-cell}
 # To be continued ...

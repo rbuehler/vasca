@@ -253,8 +253,8 @@ def interpret_statistics(scenario_name: str, stats: dict) -> str:
     Generate human-readable interpretation of the statistics
     """
     interpretations = {
-        "Quiet Star": f"Non-variable star showing noise-dominated behavior:\n"
-        f"• Excess variance ({stats['nxv']:.3f}) near zero as expected\n"
+        "Quiet Star": f"Non-variable star showing noisy and constant flux:\n"
+        f"• Excess variance ({stats['nxv']:.5f}) near zero as expected\n"
         f"• Reduced χ² ({stats['rchiq']:.2f}) ≈ 1 indicates good fit to constant flux\n"
         f"• High p-value ({stats['cpval']:.2e}) suggests no significant variability",
         "Pulsating Star": f"Clear periodic variability detected:\n"
@@ -264,24 +264,25 @@ def interpret_statistics(scenario_name: str, stats: dict) -> str:
         "Flare Star": f"Episodic flare behavior detected:\n"
         f"• Extreme excess variance ({stats['nxv']:.3f}) due to flare events\n"
         f"• Very high reduced χ² ({stats['rchiq']:.2f}) from strong flux excursions\n"
-        f"• P-value ({stats['cpval']:.2e}) indicates definite variability",
+        f"• P-value ({stats['cpval']:.2e}) indicates definite variability (numerical zero)",
         "Low-Amplitude Variable": f"Subtle variability detected due to precise measurements:\n"
-        f"• Moderate excess variance ({stats['nxv']:.3f}) despite low amplitude\n"
-        f"• Reduced χ² ({stats['rchiq']:.2f}) shows clear detection\n"
+        f"• Excess variance ({stats['nxv']:.5f}) near zero due to low amplitude\n"
+        f"• Reduced χ² ({stats['rchiq']:.2f}) indicates deviation from constant flux\n"
         f"• Low p-value ({stats['cpval']:.2e}) confirms significance",
         "Noisy Variable": f"Variability partially masked by measurement errors:\n"
-        f"• Modest excess variance ({stats['nxv']:.3f}) due to noise\n"
-        f"• Reduced χ² ({stats['rchiq']:.2f}) near detection threshold\n"
+        f"• Small excess variance ({stats['nxv']:.3f}) due to large noise\n"
+        f"• Reduced χ² ({stats['rchiq']:.2f}) allows no clear interpretation\n"
         f"• Marginal p-value ({stats['cpval']:.2e}) suggests weak detection",
         "Secular Trend": f"Systematic brightness change detected:\n"
-        f"• High excess variance ({stats['nxv']:.3f}) from trend\n"
-        f"• Large reduced χ² ({stats['rchiq']:.2f}) indicates non-constant flux\n"
-        f"• Very low p-value ({stats['cpval']:.2e}) confirms trend significance",
+        f"• Small excess variance ({stats['nxv']:.3f}) from trend\n"
+        f"• Reduced χ² ({stats['rchiq']:.2f}) allows no clear interpretation\n"
+        f"• Marginal p-value ({stats['cpval']:.2e}) suggests weak detection",
     }
 
     return interpretations.get(
         scenario_name,
-        f"No interpretation available\n{pformat(stats, sort_dicts=False)}",
+        "No interpretation available yet\nVariabilits Statistics:\n"
+        f"{pformat(stats, sort_dicts=False)}",
     )
 
 
@@ -323,11 +324,13 @@ def visualize_results(
             color="r",
             alpha=0.2,
         )
-        ax1.set_xlabel("Time (days)")
+        ax1.set_xlabel("Time")
         ax1.set_ylabel("Flux")
         ax1.set_title(f"{result.scenario_name} Light Curve")
-        ax1.grid(True, alpha=0.3)
-        ax1.legend()
+        ax1.grid(visible=True, linewidth=0.5, color="k", alpha=0.3, zorder=0)
+        ax1.tick_params(axis="y", direction="in", left=True, right=True, which="both")
+        ax1.tick_params(axis="x", direction="in", top=True, bottom=True, which="both")
+        ax1.legend(loc="upper right")
 
         # Statistics and interpretation text
         ax2 = fig.add_subplot(gs[i, 1])
@@ -360,6 +363,9 @@ def visualize_results(
     return pd.DataFrame(summary_data)
 
 
+# %% [markdown]
+# ## Run Example
+
 # %%
 # Analyze all predefined scenarios
 np.random.seed(42)  # For reproducibility
@@ -374,6 +380,9 @@ summary_df = visualize_results(results)
 # Display summary table
 print("\nVariability Analysis Summary:")
 print(summary_df.to_string(index=False))
+
+# %% [markdown]
+# ## Custom Light Curves
 
 # %%
 # Example of custom scenario analysis
@@ -394,6 +403,15 @@ custom_summary = visualize_results([custom_result])
 name = "Pulsating Star"
 custom_params = create_custom_scenario(
     name, n_points=500, period=10, amplitude=0.05, measurement_error_fraction=0.03
+)
+custom_result = analyze_scenario(f"Custom {name}", custom_params)
+custom_summary = visualize_results([custom_result])
+
+# %%
+# Example of custom scenario analysis
+name = "Secular Trend"
+custom_params = create_custom_scenario(
+    name, n_points=50, slope=-1.5, measurement_error_fraction=0.04
 )
 custom_result = analyze_scenario(f"Custom {name}", custom_params)
 custom_summary = visualize_results([custom_result])

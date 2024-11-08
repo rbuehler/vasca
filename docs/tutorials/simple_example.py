@@ -86,6 +86,9 @@ plt.ylabel("amplitude")
 #
 # [Second Item](https://en.wikipedia.org/wiki/Tidal_disruption_event)
 # : The second item links to TDEs
+#
+# Third Item
+# : Definition text contains a link to another [tutorial](tutorial_pipe.md)
 
 
 # ## Execution Statistics
