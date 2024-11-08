@@ -293,6 +293,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Utilities for VASCA</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
@@ -336,8 +337,11 @@
 <span class="c1">#: 1,2,4,8,..</span>
 <span class="n">dd_filter2id</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;NUV&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;FUV&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
 <span class="c1">#: Inverted ``dd_filter2id``</span>
-<span class="n">dd_id2filter</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dd_filter2id</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-
+<span class="n">dd_id2filter</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dd_filter2id</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<span class="c1"># Index for multi-dimensional variable columns</span>
+<span class="n">dd_filter2idx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="nb">zip</span><span class="p">(</span><span class="n">dd_filter2id</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dd_filter2id</span><span class="o">.</span><span class="n">keys</span><span class="p">())),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">)</span>
 <span class="c1">#: Central wavelength for a given filter</span>
 <span class="n">dd_filter2wavelength</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;NUV&quot;</span><span class="p">:</span> <span class="mi">2271</span> <span class="o">*</span> <span class="n">uu</span><span class="o">.</span><span class="n">AA</span><span class="p">,</span> <span class="s2">&quot;FUV&quot;</span><span class="p">:</span> <span class="mi">1528</span> <span class="o">*</span> <span class="n">uu</span><span class="o">.</span><span class="n">AA</span><span class="p">}</span>
 
@@ -945,27 +949,45 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tt</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">tt_in</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">nr_flts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;obs_filter_id&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="p">)</span>  <span class="c1"># Check if var entries are arrays</span>
-    <span class="k">if</span> <span class="n">obs_filter_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># If obs_id is in the table, select on it</span>
-        <span class="k">if</span> <span class="n">nr_flts</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">tt</span> <span class="o">=</span> <span class="n">tt</span><span class="p">[</span><span class="n">tt</span><span class="p">[</span><span class="s2">&quot;obs_filter_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">==</span> <span class="n">obs_filter_id</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">flt_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="s2">&quot;obs_filter_id&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">obs_filter_id</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">tt</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
-                <span class="n">nr_entries</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">colname</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-                <span class="k">if</span> <span class="n">nr_entries</span> <span class="o">==</span> <span class="n">nr_flts</span><span class="p">:</span>
-                    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">AstropyWarning</span><span class="p">)</span>
-                        <span class="n">col_template_copy</span> <span class="o">=</span> <span class="n">dd_vasca_columns</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                        <span class="k">del</span> <span class="n">col_template_copy</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span>
-                        <span class="n">col</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span>
-                            <span class="n">tt</span><span class="p">[</span><span class="n">colname</span><span class="p">][:,</span> <span class="n">flt_idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="o">**</span><span class="n">col_template_copy</span>
-                        <span class="p">)</span>
+    <span class="c1"># Filter name</span>
+    <span class="n">fltr</span> <span class="o">=</span> <span class="n">dd_id2filter</span><span class="p">[</span><span class="n">obs_filter_id</span><span class="p">]</span>
+    <span class="c1"># Filter index</span>
+    <span class="n">flt_idx</span> <span class="o">=</span> <span class="n">dd_filter2idx</span><span class="p">[</span><span class="n">fltr</span><span class="p">]</span>
+    <span class="c1"># Replace multi-dimensional columns with only the data at the index according to</span>
+    <span class="c1"># given filter ID</span>
+    <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">tt</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+        <span class="n">is_multidim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">colname</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">is_multidim</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">AstropyWarning</span><span class="p">)</span>
+                <span class="n">col_template_copy</span> <span class="o">=</span> <span class="n">dd_vasca_columns</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">col_template_copy</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span>
+                    <span class="n">tt</span><span class="p">[</span><span class="n">colname</span><span class="p">][:,</span> <span class="n">flt_idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="o">**</span><span class="n">col_template_copy</span>
+                <span class="p">)</span>
 
-                        <span class="n">tt</span><span class="o">.</span><span class="n">replace_column</span><span class="p">(</span><span class="n">colname</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+                <span class="n">tt</span><span class="o">.</span><span class="n">replace_column</span><span class="p">(</span><span class="n">colname</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    <span class="c1">#     nr_flts = len(</span>
+    <span class="c1">#         np.array(tt[0][&quot;obs_filter_id&quot;]).flatten()</span>
+    <span class="c1">#     )  # Check if var entries are arrays</span>
+    <span class="c1">#     if obs_filter_id is not None:</span>
+    <span class="c1">#         # If obs_id is in the table, select on it</span>
+    <span class="c1">#         if nr_flts == 1:</span>
+    <span class="c1">#             tt = tt[tt[&quot;obs_filter_id&quot;].data.flatten() == obs_filter_id]</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             flt_idx = np.where(tt[&quot;obs_filter_id&quot;][0] == obs_filter_id)</span>
+    <span class="c1">#             for colname in tt.colnames:</span>
+    <span class="c1">#                 nr_entries = len(np.array(tt[0][colname]).flatten())</span>
+    <span class="c1">#                 if nr_entries == nr_flts:</span>
+    <span class="c1">#                     with warnings.catch_warnings():</span>
+    <span class="c1">#                         warnings.simplefilter(&quot;ignore&quot;, AstropyWarning)</span>
+    <span class="c1">#                         col_template_copy = dd_vasca_columns[colname].copy()</span>
+    <span class="c1">#                         del col_template_copy[&quot;default&quot;]</span>
+    <span class="c1">#                         col = Column(</span>
+    <span class="c1">#                             tt[colname][:, flt_idx].data.flatten(), **col_template_copy</span>
+    <span class="c1">#                         )</span>
+    <span class="c1">#</span>
+    <span class="c1">#                         tt.replace_column(colname, col)</span>
     <span class="k">return</span> <span class="n">tt</span></div>
 
 
@@ -1005,12 +1027,10 @@
 
         <span class="c1"># Loop oover all columns</span>
         <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">tt</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
-
             <span class="n">nr_entries</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">colname</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
             <span class="c1"># print(&quot;Colname&quot;, colname, &quot;with nr of entries&quot;, nr_entries)</span>
 
             <span class="k">if</span> <span class="n">nr_entries</span> <span class="o">==</span> <span class="n">nr_flts</span><span class="p">:</span>
-
                 <span class="c1"># Loop over filters</span>
                 <span class="k">for</span> <span class="n">flt_idx</span> <span class="ow">in</span> <span class="n">flt_indices</span><span class="p">:</span>
                     <span class="n">flt_name</span> <span class="o">=</span> <span class="n">dd_id2filter</span><span class="p">[</span><span class="n">flt_ids</span><span class="p">[</span><span class="n">flt_idx</span><span class="p">]]</span>
@@ -2163,7 +2183,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=67649a7e"></script>
+</div><script src="../../_static/documentation_options.js?v=982f9776"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

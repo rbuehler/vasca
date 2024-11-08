@@ -466,22 +466,25 @@ qualitative palettes adopted from seaborn.</p></td>
 <tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_id2filter" title="vasca.utils.dd_id2filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_id2filter</span></code></a></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_filter2wavelength" title="vasca.utils.dd_filter2wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_filter2wavelength</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_filter2idx" title="vasca.utils.dd_filter2idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_filter2idx</span></code></a></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_obs_id_add" title="vasca.utils.dd_obs_id_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_obs_id_add</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_filter2wavelength" title="vasca.utils.dd_filter2wavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_filter2wavelength</span></code></a></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_ogrp2otypes" title="vasca.utils.dd_ogrp2otypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_ogrp2otypes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_obs_id_add" title="vasca.utils.dd_obs_id_add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_obs_id_add</span></code></a></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_otype2ogroup" title="vasca.utils.dd_otype2ogroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_otype2ogroup</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_ogrp2otypes" title="vasca.utils.dd_ogrp2otypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_ogrp2otypes</span></code></a></p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_ogrp2col" title="vasca.utils.dd_ogrp2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_ogrp2col</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_otype2ogroup" title="vasca.utils.dd_otype2ogroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_otype2ogroup</span></code></a></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_spec_lines" title="vasca.utils.dd_spec_lines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_spec_lines</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#vasca.utils.dd_ogrp2col" title="vasca.utils.dd_ogrp2col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_ogrp2col</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#vasca.utils.dd_spec_lines" title="vasca.utils.dd_spec_lines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_spec_lines</span></code></a></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -497,7 +500,12 @@ qualitative palettes adopted from seaborn.</p></td>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="vasca.utils.dd_id2filter">
-<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_id2filter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dict(...)'</span></em><a class="headerlink" href="#vasca.utils.dd_id2filter" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_id2filter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#vasca.utils.dd_id2filter" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="vasca.utils.dd_filter2idx">
+<span class="sig-prename descclassname"><span class="pre">vasca.utils.</span></span><span class="sig-name descname"><span class="pre">dd_filter2idx</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dict(...)'</span></em><a class="headerlink" href="#vasca.utils.dd_filter2idx" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -1215,6 +1223,7 @@ Light curve table</p>
 <li><a class="reference internal" href="#api">API</a><ul>
 <li><a class="reference internal" href="#vasca.utils.dd_filter2id"><code class="docutils literal notranslate"><span class="pre">dd_filter2id</span></code></a></li>
 <li><a class="reference internal" href="#vasca.utils.dd_id2filter"><code class="docutils literal notranslate"><span class="pre">dd_id2filter</span></code></a></li>
+<li><a class="reference internal" href="#vasca.utils.dd_filter2idx"><code class="docutils literal notranslate"><span class="pre">dd_filter2idx</span></code></a></li>
 <li><a class="reference internal" href="#vasca.utils.dd_filter2wavelength"><code class="docutils literal notranslate"><span class="pre">dd_filter2wavelength</span></code></a></li>
 <li><a class="reference internal" href="#vasca.utils.dd_obs_id_add"><code class="docutils literal notranslate"><span class="pre">dd_obs_id_add</span></code></a></li>
 <li><a class="reference internal" href="#vasca.utils.dd_ogrp2otypes"><code class="docutils literal notranslate"><span class="pre">dd_ogrp2otypes</span></code></a></li>
@@ -1275,7 +1284,7 @@ Light curve table</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=67649a7e"></script>
+</div><script src="../../_static/documentation_options.js?v=982f9776"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -1283,7 +1292,7 @@ Light curve table</p>
     <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.utils.a8d022b9-203d-4d29-9797-f060d26930ad.js"></script>
+    <script defer="defer" src="../../_static/tippy/api/vasca/vasca.utils.810766a7-8c5a-4f5c-8883-d8a1a473bac9.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

@@ -552,8 +552,8 @@ parameters like amplitude and period.</p>
 <span class="sd">    Generate human-readable interpretation of the statistics</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">interpretations</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;Quiet Star&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Non-variable star showing noise-dominated behavior:</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• Excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">) near zero as expected</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;Quiet Star&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Non-variable star showing noisy and constant flux:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;• Excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">) near zero as expected</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;• Reduced χ² (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rchiq&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) ≈ 1 indicates good fit to constant flux</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;• High p-value (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;cpval&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">) suggests no significant variability&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Pulsating Star&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Clear periodic variability detected:</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -563,24 +563,25 @@ parameters like amplitude and period.</p>
         <span class="s2">&quot;Flare Star&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Episodic flare behavior detected:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;• Extreme excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">) due to flare events</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;• Very high reduced χ² (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rchiq&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) from strong flux excursions</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• P-value (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;cpval&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">) indicates definite variability&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;• P-value (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;cpval&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">) indicates definite variability (numerical zero)&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Low-Amplitude Variable&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Subtle variability detected due to precise measurements:</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• Moderate excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">) despite low amplitude</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• Reduced χ² (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rchiq&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) shows clear detection</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;• Excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">) near zero due to low amplitude</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;• Reduced χ² (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rchiq&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) indicates deviation from constant flux</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;• Low p-value (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;cpval&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">) confirms significance&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Noisy Variable&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Variability partially masked by measurement errors:</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• Modest excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">) due to noise</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• Reduced χ² (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rchiq&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) near detection threshold</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;• Small excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">) due to large noise</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;• Reduced χ² (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rchiq&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) allows no clear interpretation</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;• Marginal p-value (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;cpval&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">) suggests weak detection&quot;</span><span class="p">,</span>
         <span class="s2">&quot;Secular Trend&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Systematic brightness change detected:</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• High excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">) from trend</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• Large reduced χ² (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rchiq&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) indicates non-constant flux</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;• Very low p-value (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;cpval&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">) confirms trend significance&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;• Small excess variance (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;nxv&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">) from trend</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;• Reduced χ² (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rchiq&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">) allows no clear interpretation</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;• Marginal p-value (</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;cpval&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">) suggests weak detection&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">interpretations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="n">scenario_name</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;No interpretation available</span><span class="se">\n</span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span><span class="w"> </span><span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;No interpretation available yet</span><span class="se">\n</span><span class="s2">Variabilits Statistics:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span><span class="w"> </span><span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -622,11 +623,13 @@ parameters like amplitude and period.</p>
             <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (days)&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
         <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Flux&quot;</span><span class="p">)</span>
         <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">scenario_name</span><span class="si">}</span><span class="s2"> Light Curve&quot;</span><span class="p">)</span>
-        <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-        <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
 
         <span class="c1"># Statistics and interpretation text</span>
         <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
@@ -661,6 +664,9 @@ parameters like amplitude and period.</p>
 </div>
 </div>
 </div>
+</section>
+<section id="run-example">
+<h2>Run Example<a class="headerlink" href="#run-example" title="Link to this heading">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Analyze all predefined scenarios</span>
@@ -690,9 +696,12 @@ Low-Amplitude Variable     998.2±1.4           0.000       5.31  1.56e-30
          Secular Trend     949.1±4.2           0.001       2.43  8.91e-08
 </pre></div>
 </div>
-<img alt="../_images/8535c3cdff58cbd32d1b777941e41be353519b317a135d6fbc51fdd0642d5cb6.png" src="../_images/8535c3cdff58cbd32d1b777941e41be353519b317a135d6fbc51fdd0642d5cb6.png" />
+<img alt="../_images/d48a8b118b2b3cb1ea9776d594a5cf1be9c391c3a6184121f99dd488805dd0f4.png" src="../_images/d48a8b118b2b3cb1ea9776d594a5cf1be9c391c3a6184121f99dd488805dd0f4.png" />
 </div>
 </div>
+</section>
+<section id="custom-light-curves">
+<h2>Custom Light Curves<a class="headerlink" href="#custom-light-curves" title="Link to this heading">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example of custom scenario analysis</span>
@@ -711,7 +720,7 @@ Low-Amplitude Variable     998.2±1.4           0.000       5.31  1.56e-30
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/5938e41b1aeaf5a717eac776176d34987cce1a4eaa9dcd6da8618d3e492b3e15.png" src="../_images/5938e41b1aeaf5a717eac776176d34987cce1a4eaa9dcd6da8618d3e492b3e15.png" />
+<img alt="../_images/714956124c250534d9968139b8770be080dd73612e4fa98ade2c90a5ba861a7d.png" src="../_images/714956124c250534d9968139b8770be080dd73612e4fa98ade2c90a5ba861a7d.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -727,7 +736,23 @@ Low-Amplitude Variable     998.2±1.4           0.000       5.31  1.56e-30
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/29aa90b16bcb4261fed88da76223dd70a474659e838c0e77e01c8a4e7928552a.png" src="../_images/29aa90b16bcb4261fed88da76223dd70a474659e838c0e77e01c8a4e7928552a.png" />
+<img alt="../_images/eecfe844bc6f329cf7ef2f55a2658759c5902d5796f14636edcc29f6ce6905ac.png" src="../_images/eecfe844bc6f329cf7ef2f55a2658759c5902d5796f14636edcc29f6ce6905ac.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example of custom scenario analysis</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Secular Trend&quot;</span>
+<span class="n">custom_params</span> <span class="o">=</span> <span class="n">create_custom_scenario</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">slope</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">measurement_error_fraction</span><span class="o">=</span><span class="mf">0.04</span>
+<span class="p">)</span>
+<span class="n">custom_result</span> <span class="o">=</span> <span class="n">analyze_scenario</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Custom </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">custom_params</span><span class="p">)</span>
+<span class="n">custom_summary</span> <span class="o">=</span> <span class="n">visualize_results</span><span class="p">([</span><span class="n">custom_result</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/535a232164b94359fd7782fd6782e9039aae5db5fb777b7b5039d5d26457c7bd.png" src="../_images/535a232164b94359fd7782fd6782e9039aae5db5fb777b7b5039d5d26457c7bd.png" />
 </div>
 </div>
 </section>
@@ -798,6 +823,8 @@ Low-Amplitude Variable     998.2±1.4           0.000       5.31  1.56e-30
 <li><a class="reference internal" href="#">Variability Statistics</a><ul>
 <li><a class="reference internal" href="#synthetic-light-curves">Synthetic Light Curves</a></li>
 <li><a class="reference internal" href="#visualization">Visualization</a></li>
+<li><a class="reference internal" href="#run-example">Run Example</a></li>
+<li><a class="reference internal" href="#custom-light-curves">Custom Light Curves</a></li>
 </ul>
 </li>
 </ul>
@@ -809,7 +836,7 @@ Low-Amplitude Variable     998.2±1.4           0.000       5.31  1.56e-30
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=67649a7e"></script>
+</div><script src="../_static/documentation_options.js?v=982f9776"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
@@ -817,7 +844,7 @@ Low-Amplitude Variable     998.2±1.4           0.000       5.31  1.56e-30
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script defer="defer" src="https://unpkg.com/@popperjs/core@2"></script>
     <script defer="defer" src="https://unpkg.com/tippy.js@6"></script>
-    <script defer="defer" src="../_static/tippy/tutorials/tutorial_var_stats.dc80c281-6841-4664-8270-353580de474b.js"></script>
+    <script defer="defer" src="../_static/tippy/tutorials/tutorial_var_stats.7bdea60c-1b3c-48d7-9418-bc3f93f42335.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

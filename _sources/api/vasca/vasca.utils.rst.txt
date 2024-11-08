@@ -147,6 +147,9 @@ Data
    * - :py:obj:`dd_id2filter <vasca.utils.dd_id2filter>`
      - .. autodoc2-docstring:: vasca.utils.dd_id2filter
           :summary:
+   * - :py:obj:`dd_filter2idx <vasca.utils.dd_filter2idx>`
+     - .. autodoc2-docstring:: vasca.utils.dd_filter2idx
+          :summary:
    * - :py:obj:`dd_filter2wavelength <vasca.utils.dd_filter2wavelength>`
      - .. autodoc2-docstring:: vasca.utils.dd_filter2wavelength
           :summary:
@@ -177,9 +180,15 @@ API
 
 .. py:data:: dd_id2filter
    :canonical: vasca.utils.dd_id2filter
-   :value: 'dict(...)'
+   :value: None
 
    .. autodoc2-docstring:: vasca.utils.dd_id2filter
+
+.. py:data:: dd_filter2idx
+   :canonical: vasca.utils.dd_filter2idx
+   :value: 'dict(...)'
+
+   .. autodoc2-docstring:: vasca.utils.dd_filter2idx
 
 .. py:data:: dd_filter2wavelength
    :canonical: vasca.utils.dd_filter2wavelength

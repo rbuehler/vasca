@@ -2,8 +2,9 @@
 
 This guide aims to introduce VASCA's basic functionality and central building blocks
 of the package's internals. Good understanding of the latter will help expanding VASCA
-to more instruments. For more detailed guides and descriptions see the respective [API reference](../api/index.rst)
-and [Jupyter examples](https://github.com/rbuehler/vasca/tree/main/vasca/examples).
+to more instruments. For more detailed guides and descriptions see the respective [API reference](../api/index.rst),
+[tutorials](../tutorials/tutorial_pipe.md) and [Jupyter examples](https://github.com/rbuehler/vasca/tree/main/vasca/examples)
+on post-processing listed [here](../tutorials/index.md).
 
 ## Intro
 
